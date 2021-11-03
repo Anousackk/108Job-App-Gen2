@@ -427,7 +427,7 @@ class _VerifyRegisterPageState extends State<VerifyRegisterPage> {
                                     return AlertAction(
                                       title: l.ok,
                                       onTap: () {
-                                        SmartDialog.showLoading();
+                                        showDialogLoading(context);
                                         runMutation({
                                           'email': widget.number == null ||
                                                   widget.number?.trim() ==
@@ -462,7 +462,7 @@ class _VerifyRegisterPageState extends State<VerifyRegisterPage> {
                   return BlueButton(
                     onPressed: () {
                       if (otp.toString().length == 6) {
-                        SmartDialog.showLoading();
+                        showDialogLoading(context);
                         runMutation({
                           "verifyToken": user.token,
                           "verifyCode":

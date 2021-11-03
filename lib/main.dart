@@ -12,6 +12,8 @@ void main() {
   runApp(const MyApp());
 }
 
+AuthUtil authUtil = AuthUtil();
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -20,8 +22,6 @@ class MyApp extends StatelessWidget {
   Widget build(
     BuildContext context,
   ) {
-    AuthUtil authUtil = AuthUtil();
-
     Link authLink;
 
     authLink = AuthLink(

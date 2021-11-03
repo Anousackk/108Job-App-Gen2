@@ -1,3 +1,7 @@
+// import 'package:flutter/material.dart';
+
+// import 'package:flutter/material.dart';
+
 class CutDateString {
   cutDateString(String? date) {
     int cutoff = 10;
@@ -23,3 +27,21 @@ class CutDateString {
     return '$year-$month-$day';
   }
 }
+
+// bool myJobSave = false;
+// bool SavedIsChange(
+//     List<bool?> getter, List<dynamic> repositories, String mapper) {
+//   bool checker = false;
+//   int index = 0;
+//   debugPrint('doing function chechsaved');
+//   if (getter.length == repositories.length) {
+//     for (var element in repositories) {
+//       if (element[mapper] != getter[index]) {
+//         checker = true;
+//       }
+//       index = index + 1;
+//     }
+//   }
+//   debugPrint('return checker: ' + checker.toString());
+//   return checker;
+// }

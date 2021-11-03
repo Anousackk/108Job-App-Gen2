@@ -16,7 +16,7 @@ class AuthUtil {
       var reading = await SharedPref().read('token');
       token = reading;
     } catch (e) {
-      token = "null";
+      token = null;
       debugPrint(e.toString());
     }
   }

@@ -1,3 +1,4 @@
+import 'package:app/function/pluginfunction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -136,7 +137,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   return BlueButton(
                     onPressed: () {
                       if (!alertpassword) {
-                        SmartDialog.showLoading();
+                        showDialogLoading(context);
                         runMutation({
                           "changePassToken": user.changepassToken,
                           "newPassword": controller.text

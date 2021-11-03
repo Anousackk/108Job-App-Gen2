@@ -69,7 +69,7 @@ class _MyResumePageState extends State<MyResumePage> {
   ImagePicker picker = ImagePicker();
   bool? pastbox;
   bool isLoading = false;
-
+  dynamic dataSeeker;
   int? uploadPercent;
   double? imagePercent = 0;
   double? resumePercent = 0;
@@ -189,6 +189,105 @@ class _MyResumePageState extends State<MyResumePage> {
         resumename = resumeFile!.path.split('/').last;
         edited = true;
       }
+    }
+  }
+
+  getData() {
+    if (firstRead == false) {
+      registerseekerID = dataSeeker['registerSeeker']['_id'];
+      imageUrl = dataSeeker['registerSeeker']['fileId']['src'];
+      resumename = dataSeeker['resume']['fileId']['link'].split('/').last;
+      pastresumename = dataSeeker['resume']['fileId']['link'].split('/').last;
+
+      myResume.firstname = dataSeeker['registerSeeker']['firstName'];
+      myResume.lastname = dataSeeker['registerSeeker']['lastName'];
+      myResume.myResumeDOB = dataSeeker['registerSeeker']['dateOfBirth'];
+      myResume.myResumeDOB =
+          CutDateString().cutDateString(myResume.myResumeDOB);
+      myResume.gender = dataSeeker['registerSeeker']['genderId']['name'];
+      myResume.genderID = dataSeeker['registerSeeker']['genderId']['_id'];
+      myResume.maritalStatusID =
+          dataSeeker['registerSeeker']['maritalStatusId']['_id'];
+
+      myResume.maritalStatus =
+          dataSeeker['registerSeeker']['maritalStatusId']['name'];
+      myResume.drivingLicense = dataSeeker['registerSeeker']['drivingLicenses'];
+      myResume.districtOrCityID =
+          dataSeeker['registerSeeker']['districtId']['_id'];
+      myResume.districtOrCity =
+          dataSeeker['registerSeeker']['districtId']['name'];
+      myResume.provinceOrState =
+          dataSeeker['registerSeeker']['districtId']['provinceId']['name'];
+      myResume.provinceOrStateID =
+          dataSeeker['registerSeeker']['districtId']['provinceId']['_id'];
+      myResume.profSummary =
+          dataSeeker['registerSeeker']['professionalSummary'];
+
+      try {
+        workEXPID = dataSeeker['resume']['workingExperience']['_id'];
+        myResume.latestJobTitle =
+            dataSeeker['resume']['workingExperience']['LatestJobTitle'];
+        myResume.salary =
+            dataSeeker['resume']['workingExperience']['SalayRangeId']['name'];
+        myResume.salaryID =
+            dataSeeker['resume']['workingExperience']['SalayRangeId']['_id'];
+        List? previousJobTitlesId =
+            dataSeeker['resume']['workingExperience']['previousJobTitlesId'];
+        previousJobTitlesId?.forEach((element) {
+          myResume.previousJobTitle?.add(element['name']);
+        });
+        List? previousEmployersId =
+            dataSeeker['resume']['workingExperience']['previousEmployersId'];
+        previousEmployersId?.forEach((element) {
+          myResume.previousEmployer?.add(element['name']);
+        });
+
+        List? industry = dataSeeker['resume']['workingExperience']
+            ['previousEmployerIndustryId'];
+        industry?.forEach((element) {
+          myResume.previousIndustry?.add(element['name']);
+          myResume.previousIndID?.add(element['_id']);
+        });
+        myResume.totalWorkEXP = dataSeeker['resume']['workingExperience']
+                ['totalWorkingExperience']
+            .toString();
+        if (readData == false) {
+          checkbox = false;
+        }
+        readData = true;
+      } catch (e) {
+        if (readData == false) {
+          checkbox = true;
+        }
+
+        readData = true;
+      }
+
+      List? education = dataSeeker['resume']['education'];
+
+      education?.forEach((element) {
+        eduID?.add(element['_id']);
+        myResume.fieldstudyName?.add(element['department']);
+        myResume.degreeID?.add(element['degreeId']['_id']);
+        myResume.fieldstudyDegree?.add(element['degreeId']['name']);
+      });
+      List? langskill = dataSeeker['resume']['languageSkill'];
+      langskill?.forEach((element) {
+        langskillID?.add(element['_id']);
+        myResume.langNameID?.add(element['LanguageId']['_id']);
+        myResume.langName?.add(element['LanguageId']['name']);
+        myResume.langLevelID?.add(element['LanguageLevelId']['_id']);
+        myResume.langLevel?.add(element['LanguageLevelId']['name']);
+      });
+      showStudyField =
+          setShowFieldStudy(myResume.fieldstudyName, myResume.fieldstudyDegree);
+      showLang = setShowLang(myResume.langName, myResume.langLevel);
+      List? keySkill = dataSeeker['resume']['keySkillIds'];
+      keySkill?.forEach((element) {
+        myResume.keySkill?.add(element['name']);
+      });
+
+      firstRead = true;
     }
   }
 
@@ -325,8 +424,9 @@ class _MyResumePageState extends State<MyResumePage> {
     // );Z
     return Query(
       options: QueryOptions(
-        document: gql(queryInfo.qeuryResume),
-      ),
+          document: gql(
+        queryInfo.qeuryResume,
+      )),
       builder: (result, {fetchMore, refetch}) {
         if (result.isLoading) {
           return const Loading(
@@ -341,103 +441,9 @@ class _MyResumePageState extends State<MyResumePage> {
           }
           reloadmyResume = false;
         }
-        var data = result.data?['findSeeker'];
-        if (firstRead == false) {
-          registerseekerID = data['registerSeeker']['_id'];
-          imageUrl = data['registerSeeker']['fileId']['src'];
-          resumename = data['resume']['fileId']['link'].split('/').last;
-          pastresumename = data['resume']['fileId']['link'].split('/').last;
 
-          myResume.firstname = data['registerSeeker']['firstName'];
-          myResume.lastname = data['registerSeeker']['lastName'];
-          myResume.myResumeDOB = data['registerSeeker']['dateOfBirth'];
-          myResume.myResumeDOB =
-              CutDateString().cutDateString(myResume.myResumeDOB);
-          myResume.gender = data['registerSeeker']['genderId']['name'];
-          myResume.genderID = data['registerSeeker']['genderId']['_id'];
-          myResume.maritalStatusID =
-              data['registerSeeker']['maritalStatusId']['_id'];
-
-          myResume.maritalStatus =
-              data['registerSeeker']['maritalStatusId']['name'];
-          myResume.drivingLicense = data['registerSeeker']['drivingLicenses'];
-          myResume.districtOrCityID =
-              data['registerSeeker']['districtId']['_id'];
-          myResume.districtOrCity =
-              data['registerSeeker']['districtId']['name'];
-          myResume.provinceOrState =
-              data['registerSeeker']['districtId']['provinceId']['name'];
-          myResume.provinceOrStateID =
-              data['registerSeeker']['districtId']['provinceId']['_id'];
-          myResume.profSummary = data['registerSeeker']['professionalSummary'];
-
-          try {
-            workEXPID = data['resume']['workingExperience']['_id'];
-            myResume.latestJobTitle =
-                data['resume']['workingExperience']['LatestJobTitle'];
-            myResume.salary =
-                data['resume']['workingExperience']['SalayRangeId']['name'];
-            myResume.salaryID =
-                data['resume']['workingExperience']['SalayRangeId']['_id'];
-            List? previousJobTitlesId =
-                data['resume']['workingExperience']['previousJobTitlesId'];
-            previousJobTitlesId?.forEach((element) {
-              myResume.previousJobTitle?.add(element['name']);
-            });
-            List? previousEmployersId =
-                data['resume']['workingExperience']['previousEmployersId'];
-            previousEmployersId?.forEach((element) {
-              myResume.previousEmployer?.add(element['name']);
-            });
-
-            List? industry = data['resume']['workingExperience']
-                ['previousEmployerIndustryId'];
-            industry?.forEach((element) {
-              myResume.previousIndustry?.add(element['name']);
-              myResume.previousIndID?.add(element['_id']);
-            });
-            myResume.totalWorkEXP = data['resume']['workingExperience']
-                    ['totalWorkingExperience']
-                .toString();
-            if (readData == false) {
-              checkbox = false;
-            }
-            readData = true;
-          } catch (e) {
-            if (readData == false) {
-              checkbox = true;
-            }
-
-            readData = true;
-          }
-
-          List? education = data['resume']['education'];
-
-          education?.forEach((element) {
-            eduID?.add(element['_id']);
-            myResume.fieldstudyName?.add(element['department']);
-            myResume.degreeID?.add(element['degreeId']['_id']);
-            myResume.fieldstudyDegree?.add(element['degreeId']['name']);
-          });
-          List? langskill = data['resume']['languageSkill'];
-          langskill?.forEach((element) {
-            langskillID?.add(element['_id']);
-            myResume.langNameID?.add(element['LanguageId']['_id']);
-            myResume.langName?.add(element['LanguageId']['name']);
-            myResume.langLevelID?.add(element['LanguageLevelId']['_id']);
-            myResume.langLevel?.add(element['LanguageLevelId']['name']);
-          });
-          showStudyField = setShowFieldStudy(
-              myResume.fieldstudyName, myResume.fieldstudyDegree);
-          showLang = setShowLang(myResume.langName, myResume.langLevel);
-          List? keySkill = data['resume']['keySkillIds'];
-          keySkill?.forEach((element) {
-            myResume.keySkill?.add(element['name']);
-          });
-
-          firstRead = true;
-        }
-
+        dataSeeker = result.data?['findSeeker'];
+        getData();
         return Mutation(
             options: MutationOptions(
               update: (cache, result) {},
@@ -451,7 +457,7 @@ class _MyResumePageState extends State<MyResumePage> {
                 }
                 setState(() {});
                 isLoading = true;
-                Future.delayed(const Duration(milliseconds: 500)).then((value) {
+                Future.delayed(const Duration(milliseconds: 750)).then((value) {
                   reloadprofilePage = true;
                   reloadmyResume = true;
 
@@ -500,9 +506,10 @@ class _MyResumePageState extends State<MyResumePage> {
                               previousIndID: myResume.previousIndID,
                               previousJob: myResume.previousJobTitle,
                               profsum: myResume.profSummary,
-                              registerseekerID: data['registerSeeker']['_id'],
+                              registerseekerID: dataSeeker['registerSeeker']
+                                  ['_id'],
                               salaryRangID: myResume.salaryID,
-                              seekerID: data['_id'],
+                              seekerID: dataSeeker['_id'],
                               totalWorkingExp: myResume.totalWorkEXP),
                         );
                       } else {
@@ -523,9 +530,10 @@ class _MyResumePageState extends State<MyResumePage> {
                             langLevelID: myResume.langLevelID,
                             maritalID: myResume.maritalStatusID,
                             profsum: myResume.profSummary,
-                            registerseekerID: data['registerSeeker']['_id'],
-                            resumeID: data['resume']['_id'],
-                            seekerID: data['_id'],
+                            registerseekerID: dataSeeker['registerSeeker']
+                                ['_id'],
+                            resumeID: dataSeeker['resume']['_id'],
+                            seekerID: dataSeeker['_id'],
                           ),
                         );
                       }
@@ -804,7 +812,7 @@ class _MyResumePageState extends State<MyResumePage> {
 
                                                 image = responseImage.data;
                                                 runMutationLogo({
-                                                  "seekerId": data['_id'],
+                                                  "seekerId": dataSeeker['_id'],
                                                   "logo": image['file']
                                                 });
                                                 // await upLoadDioImage(picture.path, queryInfo.apiUpLoadImage)
@@ -850,7 +858,7 @@ class _MyResumePageState extends State<MyResumePage> {
 
                                                 image = responseImage.data;
                                                 runMutationLogo({
-                                                  "seekerId": data['_id'],
+                                                  "seekerId": dataSeeker['_id'],
                                                   "logo": image['file']
                                                 });
                                                 // await upLoadDioImage(picture.path, queryInfo.apiUpLoadImage)
@@ -1331,7 +1339,7 @@ class _MyResumePageState extends State<MyResumePage> {
                                                       resume = response.data;
                                                       runMutationResume({
                                                         "resumeId":
-                                                            data['resume']
+                                                            dataSeeker['resume']
                                                                 ['_id'],
                                                         "file": resume['myFile']
                                                       });

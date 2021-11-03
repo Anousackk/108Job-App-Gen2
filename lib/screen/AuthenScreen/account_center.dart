@@ -303,7 +303,7 @@ class _AccountCenterPageState extends State<AccountCenterPage> {
                         ),
                       ),
                       onTap: () {
-                        SmartDialog.showLoading();
+                        showDialogLoading(context);
                         AuthUtil().removeToken();
                         Future.delayed(const Duration(milliseconds: 1000))
                             .then((value) {
@@ -426,7 +426,7 @@ class _ChangePhoneNumberPageState extends State<ChangePhoneNumberPage> {
                   onPressed: () {
                     if (controller.text.length == 8) {
                       if (past != controller.text) {
-                        SmartDialog.showLoading();
+                        showDialogLoading(context);
                         runMutation(
                             {"email": email, "mobile": controller.text});
                       } else {
@@ -581,7 +581,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   if (currentpass.text.isNotEmpty &&
                       !alertConfirmPassword &&
                       !alertNewPassword) {
-                    SmartDialog.showLoading();
+                    showDialogLoading(context);
 
                     runMutation({
                       "oldPassword": currentpass.text,
@@ -847,7 +847,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                 onPressed: () {
                   if (isEmail(controller.text)) {
                     if (past != controller.text) {
-                      SmartDialog.showLoading();
+                      showDialogLoading(context);
                       runMutation({"email": controller.text, "mobile": number});
                     } else {
                       Navigator.pop(context);

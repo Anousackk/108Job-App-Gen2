@@ -1,3 +1,4 @@
+// import 'package:app/function/calculated.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:app/api/auth.dart';
@@ -836,11 +837,11 @@ class _SearchJobPageState extends State<SearchJobPage> {
                                                   debugPrint(
                                                       repository['jobTag']);
                                                   return StatefulBuilder(
-                                                    builder:
-                                                        (context, setState) {
+                                                    builder: (context,
+                                                        setStateWidget) {
                                                       return WidgetAllJobListView(
                                                         onTapIcon: () {
-                                                          setState(() {
+                                                          setStateWidget(() {
                                                             if (isSavejobList?[
                                                                     index] ==
                                                                 true) {
@@ -892,7 +893,14 @@ class _SearchJobPageState extends State<SearchJobPage> {
                                                                           jobID:
                                                                               jobID,
                                                                         )),
-                                                          );
+                                                          ).then((value) {
+                                                            try {
+                                                              refetch!();
+                                                            } catch (e) {
+                                                              debugPrint(
+                                                                  e.toString());
+                                                            }
+                                                          });
                                                         },
                                                       );
                                                     },
@@ -968,6 +976,30 @@ class _SearchJobPageState extends State<SearchJobPage> {
                             });
                             oneTimeFetch = false;
                           }
+                        }
+                        if (myJobsave == true) {
+                          try {
+                            refetch!();
+                          } catch (e) {
+                            debugPrint(e.toString());
+                          }
+
+                          myJobsave = false;
+                        }
+                        // checkSavedIsChange(isSavejobList!, dataJob!, 'isSaved');
+                        if (myJobsave) {
+                          Future.delayed(const Duration(milliseconds: 750))
+                              .then((value) {
+                            isSavejobList = [];
+                            debugPrint(dataJob?.length.toString());
+                            dataJob?.forEach((element) {
+                              debugPrint(element.toString());
+                              isSavejobList?.add(element['isSaved']);
+                            });
+                            setState(() {});
+                          });
+
+                          myJobsave = false;
                         }
                         if (dataJob!.isEmpty) {
                           return Column(
@@ -1058,10 +1090,11 @@ class _SearchJobPageState extends State<SearchJobPage> {
                                               });
                                               debugPrint(repository['jobTag']);
                                               return StatefulBuilder(
-                                                builder: (context, setState) {
+                                                builder:
+                                                    (context, setStateWidget) {
                                                   return WidgetAllJobListView(
                                                     onTapIcon: () {
-                                                      setState(() {
+                                                      setStateWidget(() {
                                                         if (isSavejobList?[
                                                                 index] ==
                                                             true) {
@@ -1107,7 +1140,14 @@ class _SearchJobPageState extends State<SearchJobPage> {
                                                                 JobDetailPage(
                                                                   jobID: jobID,
                                                                 )),
-                                                      );
+                                                      ).then((value) {
+                                                        try {
+                                                          refetch!();
+                                                        } catch (e) {
+                                                          debugPrint(
+                                                              e.toString());
+                                                        }
+                                                      });
                                                     },
                                                   );
                                                 },

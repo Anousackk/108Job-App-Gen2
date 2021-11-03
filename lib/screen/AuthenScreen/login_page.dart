@@ -227,9 +227,7 @@ class _LoginPageState extends State<LoginPage> {
                                       return AlertAction(
                                         title: 'Yes',
                                         onTap: () {
-                                          SmartDialog.showLoading(
-                                              background: AppColors.white,
-                                              msg: l.loading);
+                                          showDialogLoading(context);
                                           runMutation2({
                                             "mobile": numberController.text,
                                           });
@@ -266,7 +264,7 @@ class _LoginPageState extends State<LoginPage> {
                       }
                       debugPrint(data.toString());
 
-                      Future.delayed(const Duration(milliseconds: 500))
+                      Future.delayed(const Duration(milliseconds: 750))
                           .then((value) {
                         Map<String, dynamic>? result = data;
 
@@ -383,7 +381,8 @@ class _LoginPageState extends State<LoginPage> {
                                   if (!currentFocus.hasPrimaryFocus) {
                                     currentFocus.unfocus();
                                   }
-                                  SmartDialog.showLoading();
+
+                                  showDialogLoading(context);
                                   runMutation({
                                     'email': loginWithEmail == true
                                         ? emailController.text
@@ -414,7 +413,8 @@ class _LoginPageState extends State<LoginPage> {
                                   if (!currentFocus.hasPrimaryFocus) {
                                     currentFocus.unfocus();
                                   }
-                                  SmartDialog.showLoading();
+
+                                  showDialogLoading(context);
                                   runMutation({
                                     'email': loginWithEmail == true
                                         ? emailController.text

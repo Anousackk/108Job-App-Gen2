@@ -20,11 +20,13 @@ import 'package:app/screen/widget/image_network_retry.dart';
 import 'package:app/screen/widget/job_list_view.dart';
 import 'package:shimmer/shimmer.dart';
 
+// import '../main.dart';
 import 'ControlScreen/bottom_navigation.dart';
 import 'Shimmer/listcompanyshimmer.dart';
 import 'Shimmer/listjobshimmer.dart';
 import 'company_detail.dart';
 import 'job_detail_page.dart';
+import 'my_jobs_page.dart';
 import 'search_job_page.dart';
 
 class LandingPage extends StatefulWidget {
@@ -154,7 +156,14 @@ class _LandingPageState extends State<LandingPage> {
         dosomething();
       }
     });
-
+    Future.delayed(const Duration(seconds: 1)).then((value) {
+      setState(() {
+        /// delay wating token
+      });
+    });
+    // authUtil.getToken().then((value) {
+    //   setState(() {});
+    // });
     super.initState();
   }
 
@@ -677,10 +686,8 @@ class _LandingPageState extends State<LandingPage> {
                             provinceselect.add(repository['name']);
                             Navigator.push(
                               context,
-                              PageRouteBuilder(
-                                pageBuilder: (_, __, ___) =>
-                                    const SearchJobPage(true),
-                                transitionDuration: const Duration(seconds: 0),
+                              MaterialPageRoute(
+                                builder: (context) => const SearchJobPage(true),
                               ),
                             );
                           },
@@ -1085,7 +1092,7 @@ class _LandingPageState extends State<LandingPage> {
                                         // bool isSaved = repository['isSaved'];
                                         if (index == 0) {
                                           return StatefulBuilder(
-                                            builder: (context, setState) {
+                                            builder: (context, setStateWidget) {
                                               return Container(
                                                 margin: const EdgeInsets.only(
                                                     bottom: 5),
@@ -1103,7 +1110,7 @@ class _LandingPageState extends State<LandingPage> {
                                                     jobTag:
                                                         repository['jobTag'],
                                                     onTapIcon: () {
-                                                      setState(() {
+                                                      setStateWidget(() {
                                                         if (isSavejobList?[
                                                                 index] ==
                                                             true) {
@@ -1153,7 +1160,14 @@ class _LandingPageState extends State<LandingPage> {
                                                                 JobDetailPage(
                                                                   jobID: jobID,
                                                                 )),
-                                                      );
+                                                      ).then((value) {
+                                                        try {
+                                                          refetch!();
+                                                        } catch (e) {
+                                                          debugPrint(
+                                                              e.toString());
+                                                        }
+                                                      });
                                                     },
                                                   ),
                                                 ),
@@ -1162,13 +1176,13 @@ class _LandingPageState extends State<LandingPage> {
                                           );
                                         }
                                         return StatefulBuilder(
-                                          builder: (context, setState) {
+                                          builder: (context, setStateWidget) {
                                             return Container(
                                               margin: const EdgeInsets.only(
                                                   bottom: 5),
                                               child: WidgetAllJobListView(
                                                 onTapIcon: () {
-                                                  setState(() {
+                                                  setStateWidget(() {
                                                     if (isSavejobList?[index] ==
                                                         true) {
                                                       runMutationUnSave(
@@ -1210,7 +1224,13 @@ class _LandingPageState extends State<LandingPage> {
                                                             JobDetailPage(
                                                               jobID: jobID,
                                                             )),
-                                                  );
+                                                  ).then((value) {
+                                                    try {
+                                                      refetch!();
+                                                    } catch (e) {
+                                                      debugPrint(e.toString());
+                                                    }
+                                                  });
                                                 },
                                               ),
                                             );
@@ -1267,6 +1287,21 @@ class _LandingPageState extends State<LandingPage> {
                         oneTimeFetch = false;
                       }
                       debugPrint('ending onetimeFetch');
+                    }
+
+                    if (myJobsave) {
+                      Future.delayed(const Duration(milliseconds: 750))
+                          .then((value) {
+                        isSavejobList = [];
+                        debugPrint(dataBottomJob?.length.toString());
+                        dataBottomJob?.forEach((element) {
+                          debugPrint(element.toString());
+                          isSavejobList?.add(element['isSaved']);
+                        });
+                        setState(() {});
+                      });
+
+                      myJobsave = false;
                     }
 
                     return Column(
@@ -1327,7 +1362,7 @@ class _LandingPageState extends State<LandingPage> {
                                     // bool isSaved = repository['isSaved'];
                                     if (index == 0) {
                                       return StatefulBuilder(
-                                        builder: (context, setState) {
+                                        builder: (context, setStateWidget) {
                                           return Container(
                                             decoration: const BoxDecoration(
                                                 color: AppColors.white,
@@ -1342,7 +1377,7 @@ class _LandingPageState extends State<LandingPage> {
                                             child: WidgetAllJobListView(
                                               jobTag: repository['jobTag'],
                                               onTapIcon: () {
-                                                setState(() {
+                                                setStateWidget(() {
                                                   if (isSavejobList?[index] ==
                                                       true) {
                                                     runMutationUnSave(
@@ -1384,7 +1419,13 @@ class _LandingPageState extends State<LandingPage> {
                                                           JobDetailPage(
                                                             jobID: jobID,
                                                           )),
-                                                );
+                                                ).then((value) {
+                                                  try {
+                                                    refetch!();
+                                                  } catch (e) {
+                                                    debugPrint(e.toString());
+                                                  }
+                                                });
                                               },
                                             ),
                                           );
@@ -1392,14 +1433,14 @@ class _LandingPageState extends State<LandingPage> {
                                       );
                                     }
                                     return StatefulBuilder(
-                                      builder: (context, setState) {
+                                      builder: (context, setStateWidget) {
                                         return Container(
                                           margin:
                                               const EdgeInsets.only(bottom: 5),
                                           child: WidgetAllJobListView(
                                             jobTag: repository['jobTag'],
                                             onTapIcon: () {
-                                              setState(() {
+                                              setStateWidget(() {
                                                 if (isSavejobList?[index] ==
                                                     true) {
                                                   runMutationUnSave(
@@ -1438,7 +1479,13 @@ class _LandingPageState extends State<LandingPage> {
                                                         JobDetailPage(
                                                           jobID: jobID,
                                                         )),
-                                              );
+                                              ).then((value) {
+                                                try {
+                                                  refetch!();
+                                                } catch (e) {
+                                                  debugPrint(e.toString());
+                                                }
+                                              });
                                             },
                                           ),
                                         );
@@ -1512,7 +1559,7 @@ featureJobWidget(repository, context, index) {
               builder: (context) => JobDetailPage(
                     jobID: jobID,
                   )),
-        );
+        ).then((value) {});
       },
       child: Container(
         margin: EdgeInsets.only(

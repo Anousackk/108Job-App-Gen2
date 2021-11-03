@@ -1266,7 +1266,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                 //   height: 17,
                 // ),
                 WidgetCompanyListView(
-                  picture: '${data['findJ']['logo']}',
+                  picture: '${data?['findJ']['logo']}',
                   onTap: () {
                     debugPrint(data['findJ']['companyID']);
                     Navigator.push(

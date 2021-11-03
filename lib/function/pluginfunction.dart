@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:app/constant/colors.dart';
 import 'package:app/constant/languagedemo.dart';
@@ -323,3 +324,41 @@ seperateTranslate(List localList) {
   }
   return list;
 }
+
+showDialogLoading(context) {
+  SmartDialog.show(
+      widget: Container(
+    width: mediaWidthSized(context, 2),
+    height: mediaWidthSized(context, 3),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: mediaWidthSized(context, 10),
+          width: mediaWidthSized(context, 10),
+          child: CircularProgressIndicator(
+            strokeWidth: mediaWidthSized(context, 80),
+            valueColor: const AlwaysStoppedAnimation(AppColors.blue),
+          ),
+        ),
+        SizedBox(
+          height: mediaWidthSized(context, 23),
+        ),
+        // SizedBox(
+
+        // ),
+        Text(
+          l.loading,
+          style:
+              textStyleBold(context: context, size: 24, color: AppColors.blue),
+        )
+      ],
+    ),
+    decoration: BoxDecoration(
+        color: AppColors.white, borderRadius: BorderRadius.circular(5)),
+  ));
+}
+
+// dismissDialogLoading() {
+//   SmartDialog.dismiss();
+// }

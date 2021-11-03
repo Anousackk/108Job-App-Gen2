@@ -14,6 +14,7 @@ import 'package:app/screen/widget/job_list_view.dart';
 import 'ControlScreen/bottom_navigation.dart';
 import 'Shimmer/listjobshimmer.dart';
 import 'job_detail_page.dart';
+import 'my_jobs_page.dart';
 
 // import 'Widget/Morebutton.dart';
 
@@ -231,7 +232,7 @@ class _JobTabViewState extends State<JobTabView> {
                     }),
                 builder: (QueryResult result, {refetch, fetchMore}) {
                   if (result.hasException) {
-                    debugPrint(result.exception?.graphqlErrors[0].toString());
+                    // debugPrint(result.exception?.graphqlErrors[0].toString());
                     if (result.exception?.linkException?.originalException
                             .toString()
                             .substring(0, 50) ==
@@ -325,12 +326,13 @@ class _JobTabViewState extends State<JobTabView> {
                                               });
                                               String jobID = repository['_id'];
                                               return StatefulBuilder(
-                                                builder: (context, setState) {
+                                                builder:
+                                                    (context, setStateWidget) {
                                                   return WidgetAllJobListView(
                                                     isSaved:
                                                         isSavejobList?[index],
                                                     onTapIcon: () {
-                                                      setState(() {
+                                                      setStateWidget(() {
                                                         if (isSavejobList?[
                                                                 index] ==
                                                             true) {
@@ -374,7 +376,14 @@ class _JobTabViewState extends State<JobTabView> {
                                                                 JobDetailPage(
                                                                   jobID: jobID,
                                                                 )),
-                                                      );
+                                                      ).then((value) {
+                                                        try {
+                                                          refetch!();
+                                                        } catch (e) {
+                                                          debugPrint(
+                                                              e.toString());
+                                                        }
+                                                      });
                                                     },
                                                   );
                                                 },
@@ -405,6 +414,7 @@ class _JobTabViewState extends State<JobTabView> {
                   }
 
                   dataJob = result.data?['getJobAPP']['allJobs'];
+
                   if (oneTimeFetch == true) {
                     debugPrint('onetimeFetch');
                     if (dataJob!.length != isSavejobList!.length) {
@@ -416,6 +426,21 @@ class _JobTabViewState extends State<JobTabView> {
                       });
                       oneTimeFetch = false;
                     }
+                  }
+
+                  if (myJobsave) {
+                    Future.delayed(const Duration(milliseconds: 750))
+                        .then((value) {
+                      isSavejobList = [];
+                      debugPrint(dataJob?.length.toString());
+                      dataJob?.forEach((element) {
+                        debugPrint(element.toString());
+                        isSavejobList?.add(element['isSaved']);
+                      });
+                      setState(() {});
+                    });
+
+                    myJobsave = false;
                   }
                   debugPrint(dataJob.toString());
                   amount = result.data?['getJobAPP']['totals'].toString();
@@ -483,11 +508,11 @@ class _JobTabViewState extends State<JobTabView> {
                                       });
                                       String jobID = repository['_id'];
                                       return StatefulBuilder(
-                                        builder: (context, setState) {
+                                        builder: (context, setStateWidget) {
                                           return WidgetAllJobListView(
                                             isSaved: isSavejobList?[index],
                                             onTapIcon: () {
-                                              setState(() {
+                                              setStateWidget(() {
                                                 if (isSavejobList?[index] ==
                                                     true) {
                                                   runMutationUnSave(
@@ -521,7 +546,13 @@ class _JobTabViewState extends State<JobTabView> {
                                                         JobDetailPage(
                                                           jobID: jobID,
                                                         )),
-                                              );
+                                              ).then((value) {
+                                                try {
+                                                  refetch!();
+                                                } catch (e) {
+                                                  debugPrint(e.toString());
+                                                }
+                                              });
                                             },
                                           );
                                         },

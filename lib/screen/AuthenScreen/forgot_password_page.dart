@@ -1,3 +1,4 @@
+import 'package:app/function/pluginfunction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -147,7 +148,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     return BlueButton(
                       onPressed: () {
                         if (controller.text.length == 8) {
-                          SmartDialog.showLoading();
+                          showDialogLoading(context);
                           runMutation({
                             "mobile": controller.text,
                           });

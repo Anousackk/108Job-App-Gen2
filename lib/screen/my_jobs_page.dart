@@ -147,7 +147,7 @@ class _MyJobsPageState extends State<MyJobsPage> {
   }
 }
 
-bool? myJobsave;
+bool myJobsave = false;
 bool? myJobload = false;
 CutDateString convertDate = CutDateString();
 QueryInfo queryInfo = QueryInfo();
@@ -289,7 +289,7 @@ class _SavedApplyJobTabViewState extends State<SavedApplyJobTabView> {
                     ),
                   );
                 }
-                if (result.isLoading) {
+                if (result.isLoading && dataJob == null) {
                   return const ListJobLoad();
                 }
                 debugPrint(result.data.toString());
@@ -424,8 +424,8 @@ class _SavedApplyJobTabViewState extends State<SavedApplyJobTabView> {
                   itemBuilder: (context, index) {
                     var repository = dataJob?[index];
                     bool fade = true;
-                    return StatefulBuilder(
-                        builder: (BuildContext context, StateSetter setState) {
+                    return StatefulBuilder(builder:
+                        (BuildContext context, StateSetter setStateWidget) {
                       return Visibility(
                         visible: visible[index],
                         child: FadeReverse(
@@ -501,20 +501,20 @@ class _SavedApplyJobTabViewState extends State<SavedApplyJobTabView> {
                                               case 1:
                                                 if (onInvisible == false) {
                                                   onInvisible = true;
-                                                  setState(() {
+                                                  setStateWidget(() {
                                                     fade = false;
                                                     edit = index;
+                                                  });
+                                                  Future.delayed(const Duration(
+                                                          milliseconds: 200))
+                                                      .then((value) {
+                                                    setStateWidget(() {
+                                                      visible[index] = false;
+                                                    });
                                                     runMutation({
                                                       "type": widget.type,
                                                       "JobId":
                                                           repository['jobId']
-                                                    });
-                                                  });
-                                                  Future.delayed(const Duration(
-                                                          milliseconds: 270))
-                                                      .then((value) {
-                                                    setState(() {
-                                                      visible[index] = false;
                                                     });
                                                   });
                                                 }
