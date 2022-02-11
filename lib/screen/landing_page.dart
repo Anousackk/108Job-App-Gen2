@@ -37,6 +37,7 @@ class LandingPage extends StatefulWidget {
 }
 
 bool isShowedUpdate = false;
+
 CutDateString convertDate = CutDateString();
 
 class _LandingPageState extends State<LandingPage> {
@@ -148,6 +149,7 @@ class _LandingPageState extends State<LandingPage> {
       });
       setState(() {});
     });
+    debugPrint('getDevice:');
 
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
@@ -156,6 +158,9 @@ class _LandingPageState extends State<LandingPage> {
         dosomething();
       }
     });
+    if (isCheckedDevice == false) {
+      sendNotifyToken();
+    }
     Future.delayed(const Duration(seconds: 1)).then((value) {
       setState(() {
         /// delay wating token

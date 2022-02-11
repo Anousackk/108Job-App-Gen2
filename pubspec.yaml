@@ -50,6 +50,7 @@ dependencies:
   otp_text_field: 
   flutter_native_splash: 
   fluttertoast: 
+  device_info_plus:
   # flutter_phoenix: 
   url_launcher: 
   page_transition: 
@@ -57,7 +58,6 @@ dependencies:
   youtube_plyr_iframe: 
   intl: 
   share: 
-  flutter_local_notifications: 
   firebase_messaging: 
   firebase_core: 
   flutter_smart_dialog:

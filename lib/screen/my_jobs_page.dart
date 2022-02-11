@@ -1,3 +1,4 @@
+import 'package:app/painter/login_painter.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -227,17 +228,14 @@ class _SavedApplyJobTabViewState extends State<SavedApplyJobTabView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: MediaQuery.of(context).size.height / 5,
+                          height: MediaQuery.of(context).size.height / 7.5,
                         ),
-                        Text(
-                          'user-times',
-                          style: TextStyle(
-                              fontSize: mediaWidthSized(context, 4),
-                              color: AppColors.blue,
-                              fontFamily: 'FontAwesomeProSolid'),
-                        ),
-                        const SizedBox(
-                          height: 20,
+                        CustomPaint(
+                          size: Size(
+                              mediaWidthSized(context, 1.4),
+                              (mediaWidthSized(context, 1.4) * 0.625)
+                                  .toDouble()),
+                          painter: GotoLoginCustomPaint(),
                         ),
                         Text(
                           l.younotSignin,
@@ -300,17 +298,14 @@ class _SavedApplyJobTabViewState extends State<SavedApplyJobTabView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: MediaQuery.of(context).size.height / 5,
+                          height: MediaQuery.of(context).size.height / 7.5,
                         ),
-                        Text(
-                          'user-times',
-                          style: TextStyle(
-                              fontSize: mediaWidthSized(context, 4),
-                              color: AppColors.blue,
-                              fontFamily: 'FontAwesomeProSolid'),
-                        ),
-                        const SizedBox(
-                          height: 20,
+                        CustomPaint(
+                          size: Size(
+                              mediaWidthSized(context, 1.4),
+                              (mediaWidthSized(context, 1.4) * 0.625)
+                                  .toDouble()),
+                          painter: GotoLoginCustomPaint(),
                         ),
                         Text(
                           l.younotSignin,

@@ -4,6 +4,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'api/auth.dart';
 import 'api/graphqlapi.dart';
+
 import 'screen/AuthenScreen/login_page.dart';
 import 'screen/ControlScreen/bottom_navigation.dart';
 
@@ -13,6 +14,7 @@ void main() {
 }
 
 AuthUtil authUtil = AuthUtil();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -43,6 +45,7 @@ class MyApp extends StatelessWidget {
       child: CacheProvider(
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
+          navigatorKey: navigatorKey,
           initialRoute: '/',
           theme: ThemeData(
             primarySwatch: Colors.blue,
