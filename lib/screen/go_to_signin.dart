@@ -1,3 +1,4 @@
+import 'package:app/painter/login_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:app/constant/colors.dart';
 import 'package:app/constant/languagedemo.dart';
@@ -19,15 +20,10 @@ class GotoSignInPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'user-times',
-                  style: TextStyle(
-                      fontSize: mediaWidthSized(context, 4),
-                      color: AppColors.blue,
-                      fontFamily: 'FontAwesomeProSolid'),
-                ),
-                const SizedBox(
-                  height: 20,
+                CustomPaint(
+                  size: Size(mediaWidthSized(context, 1.4),
+                      (mediaWidthSized(context, 1.4) * 0.625).toDouble()),
+                  painter: GotoLoginCustomPaint(),
                 ),
                 Text(
                   l.younotSignin,

@@ -461,7 +461,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                       Map result = data;
                                       debugPrint(result.toString());
                                       try {
-                                        refetch!();
+                                        // refetch!();
                                       } catch (e) {
                                         debugPrint(e.toString());
                                       }
@@ -469,18 +469,23 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                     onError: (error) {},
                                     document: gql(queryInfo.mutaSearchable)),
                                 builder: (runMutation, result) {
-                                  return CupertinoSwitch(
-                                    activeColor: AppColors.blue,
-                                    value: resumeswitch!,
-                                    onChanged: (value) {
-                                      setState(() {});
-                                      if (resumeswitch == false) {
-                                        resumeswitch = true;
-                                      } else {
-                                        resumeswitch = false;
-                                      }
-                                      runMutation(
-                                          {"resumeId": data['resume']['_id']});
+                                  return StatefulBuilder(
+                                    builder: (context, setState) {
+                                      return CupertinoSwitch(
+                                        activeColor: AppColors.blue,
+                                        value: resumeswitch!,
+                                        onChanged: (value) {
+                                          setState(() {});
+                                          if (resumeswitch == false) {
+                                            resumeswitch = true;
+                                          } else {
+                                            resumeswitch = false;
+                                          }
+                                          runMutation({
+                                            "resumeId": data['resume']['_id']
+                                          });
+                                        },
+                                      );
                                     },
                                   );
                                 },

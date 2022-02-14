@@ -428,14 +428,14 @@ class _MyResumePageState extends State<MyResumePage> {
         queryInfo.qeuryResume,
       )),
       builder: (result, {fetchMore, refetch}) {
-        if (result.isLoading) {
+        if (result.isLoading && dataSeeker == null) {
           return const Loading(
             internet: false,
           );
         }
         if (reloadmyResume == true) {
           try {
-            refetch!();
+            // refetch!();
           } catch (e) {
             debugPrint(e.toString());
           }

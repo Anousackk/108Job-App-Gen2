@@ -588,25 +588,25 @@ class WidgetAllJobListView extends StatelessWidget {
               ),
             ),
           ),
-          jobTag != null && jobTag == 'Highlight'
-              ? Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: mediaWidthSized(context, 46.44)),
-                  height: mediaWidthSized(context, 3.9),
-                  decoration: const BoxDecoration(
-                      // color: AppColors.white,
-                      // borderRadius: BorderRadius.all(Radius.circular(3)),
-                      border: Border(
-                          top: BorderSide(
-                            color: AppColors.red,
-                            width: 0.5,
-                          ),
-                          bottom: BorderSide(
-                            color: AppColors.red,
-                            width: 0.5,
-                          ))),
-                )
-              : Container(),
+          // jobTag != null && jobTag == 'Highlight'
+          //     ? Container(
+          //         padding: EdgeInsets.symmetric(
+          //             horizontal: mediaWidthSized(context, 46.44)),
+          //         height: mediaWidthSized(context, 3.9),
+          //         decoration: const BoxDecoration(
+          //             // color: AppColors.white,
+          //             // borderRadius: BorderRadius.all(Radius.circular(3)),
+          //             border: Border(
+          //                 top: BorderSide(
+          //                   color: AppColors.red,
+          //                   width: 0.5,
+          //                 ),
+          //                 bottom: BorderSide(
+          //                   color: AppColors.red,
+          //                   width: 0.5,
+          //                 ))),
+          //       )
+          //     : Container(),
           jobTag != null && jobTag == 'Highlight'
               ? Container(
                   margin: EdgeInsets.only(
