@@ -47,7 +47,6 @@ dependencies:
   validators: 
   dio: 
   http_parser: 
-  otp_text_field: 
   flutter_native_splash: 
   fluttertoast: 
   device_info_plus:

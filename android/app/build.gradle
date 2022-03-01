@@ -53,8 +53,8 @@ android {
         applicationId "com.onehundredeightjobs.app"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 15
-        versionName "2.3.3"
+        versionCode 20
+        versionName "2.4.1"
         multiDexEnabled true
     }
     signingConfigs {
