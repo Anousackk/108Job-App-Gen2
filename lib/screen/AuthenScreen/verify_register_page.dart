@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,10 +15,8 @@ import 'package:app/function/sized.dart';
 import 'package:app/screen/ControlScreen/bottom_navigation.dart';
 import 'package:app/screen/widget/alertdialog.dart';
 import 'package:app/screen/widget/button.dart';
-
+// import 'package:sms_autofill/sms_autofill.dart';
 // import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:otp_text_field/otp_text_field.dart';
-import 'package:otp_text_field/style.dart';
 
 import 'change_password.dart';
 
@@ -34,6 +33,7 @@ class VerifyRegisterPage extends StatefulWidget {
 }
 
 class _VerifyRegisterPageState extends State<VerifyRegisterPage> {
+  TextEditingController otpController = TextEditingController();
   late final String? number = widget.number;
   int? otp;
   late final bool justverify = widget.justverify ?? false;
@@ -159,24 +159,79 @@ class _VerifyRegisterPageState extends State<VerifyRegisterPage> {
               //   // },
               //   appContext: null,
               // ),
-              OTPTextField(
-                length: 6,
-                width: MediaQuery.of(context).size.width / 1.2,
-                fieldWidth: MediaQuery.of(context).size.width / 10,
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width / 20,
-                    fontFamily: 'PoppinsSemiBold'),
-                textFieldAlignment: MainAxisAlignment.spaceAround,
-                fieldStyle: FieldStyle.underline,
-                onChanged: (pin) {
-                  debugPrint(pin);
-                  otp = int.parse(pin);
-                },
-                onCompleted: (pin) {
-                  debugPrint(pin.toString());
-                  otp = int.parse(pin);
-                },
-              ),
+
+              Container(
+                  margin: EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: mediaHeightSized(context, 20)),
+                  height: mediaWidthSized(context, 11),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Container(
+                                color: AppColors.greyWhite.withOpacity(0.50),
+                                width: mediaWidthSized(context, 1.5),
+                                height: mediaWidthSized(context, 11),
+                                child: TextField(
+                                  onChanged: (value) {
+                                    otp = int.parse(value);
+                                  },
+                                  textAlign: TextAlign.center,
+                                  controller: otpController,
+                                  maxLength: 6,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp('[0-9]')),
+                                  ],
+                                  keyboardType: TextInputType.number,
+                                  style: textStyleMedium(
+                                      context: context, size: 20),
+                                  decoration: const InputDecoration(
+                                    counterText: '',
+                                    fillColor: AppColors.greyWhite,
+                                  ),
+                                )),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      GestureDetector(
+                          onTap: () async {
+                            try {
+                              ClipboardData? data =
+                                  await Clipboard.getData('text/plain');
+                              if (6 < data!.text!.trim().length) {
+                                throw Exception('Error length');
+                              }
+                              otp = int.parse(data.text?.trim() ?? '');
+                              otpController.text = data.text?.trim() ?? '';
+                              setState(() {});
+                            } catch (e) {
+                              Fluttertoast.showToast(
+                                msg:
+                                    'OTP must be numberic and length must equal 6, check clipboard again',
+                                gravity: ToastGravity.BOTTOM,
+                              );
+                              debugPrint(e.toString());
+                            }
+                          },
+                          child: Container(
+                            color: AppColors.white,
+                            child: Text(
+                              'Paste',
+                              style: textStyleBold(
+                                  context: context,
+                                  size: 24,
+                                  color: AppColors.yellow),
+                            ),
+                          ))
+                    ],
+                  )),
               SizedBox(
                 height: MediaQuery.of(context).size.height / 30,
               ),

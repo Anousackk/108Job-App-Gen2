@@ -59,6 +59,7 @@ dependencies:
   share: 
   firebase_messaging: 
   firebase_core: 
+  sms_autofill:
   flutter_smart_dialog:
 
   new_version:
