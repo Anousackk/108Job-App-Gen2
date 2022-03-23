@@ -306,6 +306,26 @@ class _JobDetailPageState extends State<JobDetailPage> {
                           },
                           onError: (error) {
                             // debugPrint(data);
+                            if (error != null) {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertPlainDialog(
+                                    title: 'Problem',
+                                    actions: [
+                                      AlertAction(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                        title: 'Ok',
+                                      )
+                                    ],
+                                    content: error.graphqlErrors[0].message
+                                        .toString(),
+                                  );
+                                },
+                              );
+                            }
                           },
                         ),
                         builder: (runMutationunSave, result) {
@@ -319,6 +339,26 @@ class _JobDetailPageState extends State<JobDetailPage> {
                               },
                               onError: (error) {
                                 // debugPrint(data);
+                                if (error != null) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertPlainDialog(
+                                        title: 'Problem',
+                                        actions: [
+                                          AlertAction(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
+                                            title: 'Ok',
+                                          )
+                                        ],
+                                        content: error.graphqlErrors[0].message
+                                            .toString(),
+                                      );
+                                    },
+                                  );
+                                }
                               },
                             ),
                             builder: (runMutation, result) {
@@ -441,32 +481,51 @@ class _JobDetailPageState extends State<JobDetailPage> {
                               },
                               onError: (error) {
                                 debugPrint(error.toString());
-
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertPlainDialog(
-                                      title: indexL == 0
-                                          ? 'Failed'
-                                          : 'ເກີດຂໍ້ຜິດພາດ',
-                                      color: AppColors.blue,
-                                      content: indexL == 0
-                                          ? 'Please try again'
-                                          : 'ກະລຸນາລອງໃຫມ່ອີກຄັ້ງ',
-                                      actions: [
-                                        AlertAction(
-                                          title: l.ok,
-                                          onTap: () {
-                                            isPressApply = false;
-                                            setState(() {});
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  },
-                                );
+                                if (error != null) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertPlainDialog(
+                                        title: 'Problem',
+                                        actions: [
+                                          AlertAction(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
+                                            title: 'Ok',
+                                          )
+                                        ],
+                                        content: error.graphqlErrors[0].message
+                                            .toString(),
+                                      );
+                                    },
+                                  );
+                                }
+                                // showDialog(
+                                //   context: context,
+                                //   builder: (context) {
+                                //     return AlertPlainDialog(
+                                //       title: indexL == 0
+                                //           ? 'Failed'
+                                //           : 'ເກີດຂໍ້ຜິດພາດ',
+                                //       color: AppColors.blue,
+                                //       content: indexL == 0
+                                //           ? 'Please try again'
+                                //           : 'ກະລຸນາລອງໃຫມ່ອີກຄັ້ງ',
+                                //       actions: [
+                                //         AlertAction(
+                                //           title: l.ok,
+                                //           onTap: () {
+                                //             isPressApply = false;
+                                //             setState(() {});
+                                //             Navigator.pop(context);
+                                //             Navigator.pop(context);
+                                //           },
+                                //         )
+                                //       ],
+                                //     );
+                                //   },
+                                // );
                               },
                             ),
                             builder: (runMutationApplied, result) {

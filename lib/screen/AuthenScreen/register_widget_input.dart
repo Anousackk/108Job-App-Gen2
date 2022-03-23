@@ -506,6 +506,7 @@ class _InputProvinceStateState extends State<InputProvinceState> {
   @override
   void initState() {
     super.initState();
+    debugPrint(result.toString());
     if (fromRegister!) {
       register.getProvinceOrState();
       register
@@ -519,6 +520,7 @@ class _InputProvinceStateState extends State<InputProvinceState> {
   @override
   Widget build(BuildContext context) {
     List repositories = result?.data['getProvinces'];
+
     // QueryInfo queryInfo = QueryInfo();
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -538,7 +540,7 @@ class _InputProvinceStateState extends State<InputProvinceState> {
             ),
             centerTitle: true,
             title: Text(
-              l.province,
+              l.provincAndDistrict,
               style: TextStyle(
                   fontFamily: 'PoppinsSemiBold',
                   color: Colors.black,
@@ -573,29 +575,42 @@ class _InputProvinceStateState extends State<InputProvinceState> {
                   color: AppColors.white,
                   onTap: () {
                     if (fromRegister!) {
-                      register.districtRepoindex = index;
+                      // register.districtRepoindex = index;
                       register.provinceOrState = repository['name'];
                       register.provinceOrStateID = repository['_id'];
-                      register.setDistrictRepoindex();
+                      // register.setDistrictRepoindex();
                       register.setProvinceOrState();
                       register.setprovinceOrStateID();
-                      if (register.provinceOrState != tocheck) {
-                        register.districtOrCity = null;
-                        register.districtOrCityID = null;
-                        register.setDistrictOrCity();
-                        register.setDistrictOrCityID();
-                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => InputDistrictCity(
+                                  result.data?['getProvinces'][index],
+                                  true,
+                                  provinceID: repository['_id'],
+                                  provinceName: repository['name'],
+                                )),
+                      );
+                      // pushPage(context, page)
+                      // if (register.provinceOrState != tocheck) {
+                      //   register.districtOrCity = null;
+                      //   register.districtOrCityID = null;
+                      //   register.setDistrictOrCity();
+                      //   register.setDistrictOrCityID();
+                      // }
                     } else {
                       myResume.districtRepoindex = index;
                       myResume.provinceOrState = repository['name'];
                       myResume.provinceOrStateID = repository['_id'];
-                      if (myResume.provinceOrState != tocheck) {
-                        myResume.districtOrCity = null;
-                        myResume.districtOrCityID = null;
-                      }
+
+                      // if (myResume.provinceOrState != tocheck) {
+                      //   myResume.districtOrCity = null;
+                      //   myResume.districtOrCityID = null;
+                      // }
+                      Navigator.pop(context);
                     }
 
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                   },
                 );
               },
@@ -608,8 +623,11 @@ class _InputProvinceStateState extends State<InputProvinceState> {
 }
 
 class InputDistrictCity extends StatefulWidget {
-  const InputDistrictCity(this.repoDistrict, this.fromRegister, {Key? key})
+  const InputDistrictCity(this.repoDistrict, this.fromRegister,
+      {Key? key, this.provinceID, this.provinceName})
       : super(key: key);
+  final String? provinceID;
+  final String? provinceName;
   final dynamic repoDistrict;
   final bool? fromRegister;
   @override
@@ -676,12 +694,20 @@ class _InputDistrictCityState extends State<InputDistrictCity> {
                   if (fromRegister) {
                     register.districtOrCity = repository['name'];
                     register.districtOrCityID = repository['_id'];
+                    // register.districtRepoindex = index;
+                    register.provinceOrState = widget.provinceName;
+                    register.provinceOrStateID = widget.provinceID;
+                    // register.setDistrictRepoindex();
+                    register.setProvinceOrState();
+                    register.setprovinceOrStateID();
                     register.setDistrictOrCity();
                     register.setDistrictOrCityID();
+                    Navigator.pop(context);
                   } else {
                     myResume.districtOrCity = repository['name'];
                     myResume.districtOrCityID = repository['_id'];
                   }
+
                   Navigator.pop(context);
                 },
               );

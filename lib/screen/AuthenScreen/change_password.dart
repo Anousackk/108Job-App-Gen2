@@ -105,7 +105,29 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               ),
               Mutation(
                 options: MutationOptions(
-                    onError: (error) {},
+                    onError: (error) {
+                      if (error != null) {
+                        SmartDialog.dismiss();
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertPlainDialog(
+                              title: 'Problem',
+                              actions: [
+                                AlertAction(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  title: 'Ok',
+                                )
+                              ],
+                              content:
+                                  error.graphqlErrors[0].message.toString(),
+                            );
+                          },
+                        );
+                      }
+                    },
                     onCompleted: (data) {
                       SmartDialog.dismiss();
                       Map<String, dynamic>? result = data;

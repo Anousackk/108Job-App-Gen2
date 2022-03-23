@@ -13,6 +13,7 @@ import 'package:app/function/sized.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'AuthenScreen/account_center.dart';
+import 'Widget/alertdialog.dart';
 import 'go_to_signin.dart';
 import 'my_resume.dart';
 // import 'widget/apploading.dart';
@@ -466,7 +467,29 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                         debugPrint(e.toString());
                                       }
                                     },
-                                    onError: (error) {},
+                                    onError: (error) {
+                                      if (error != null) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertPlainDialog(
+                                              title: 'Problem',
+                                              actions: [
+                                                AlertAction(
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  title: 'Ok',
+                                                )
+                                              ],
+                                              content: error
+                                                  .graphqlErrors[0].message
+                                                  .toString(),
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
                                     document: gql(queryInfo.mutaSearchable)),
                                 builder: (runMutation, result) {
                                   return StatefulBuilder(

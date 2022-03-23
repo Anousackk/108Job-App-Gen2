@@ -92,7 +92,8 @@ class Languages {
   String gender = indexL == 0 ? 'Gender' : 'ເພດ';
   String maritalstt = indexL == 0 ? 'Marital Status' : 'ສະຖານະ';
   String drivinglic = indexL == 0 ? 'Driving license' : 'ໃບຂັບຂີ່';
-  String province = indexL == 0 ? 'Province / State' : 'ແຂວງ';
+  String provincAndDistrict =
+      indexL == 0 ? 'Province / State, District / City' : 'ແຂວງ ແລະ ເມືອງ';
   String district = indexL == 0 ? 'District / City' : 'ເມືອງ';
   String profesSum = indexL == 0 ? 'Professional Summary' : 'ທັກສະໂດຍລວມ';
   String uploadCv = indexL == 0 ? 'UPLOAD CV' : 'ອັບໂຫຼດ ຊີວະປະຫວັດ';

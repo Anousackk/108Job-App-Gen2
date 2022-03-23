@@ -24,6 +24,7 @@ import 'package:shimmer/shimmer.dart';
 import 'ControlScreen/bottom_navigation.dart';
 import 'Shimmer/listcompanyshimmer.dart';
 import 'Shimmer/listjobshimmer.dart';
+import 'Widget/alertdialog.dart';
 import 'company_detail.dart';
 import 'job_detail_page.dart';
 import 'my_jobs_page.dart';
@@ -75,8 +76,10 @@ class _LandingPageState extends State<LandingPage> {
       // fetchmore = true;
       setState(() {});
     } else {
-      debugPrint(
-          'debugPrint' + dataBottomJob!.length.toString() + item.toString());
+      if (dataBottomJob != null) {
+        debugPrint(
+            'debugPrint' + dataBottomJob!.length.toString() + item.toString());
+      }
     }
   }
 
@@ -162,9 +165,9 @@ class _LandingPageState extends State<LandingPage> {
       sendNotifyToken();
     }
     Future.delayed(const Duration(seconds: 1)).then((value) {
-      setState(() {
-        /// delay wating token
-      });
+      if (mounted) {
+        setState(() {});
+      }
     });
     // authUtil.getToken().then((value) {
     //   setState(() {});
@@ -1053,6 +1056,27 @@ class _LandingPageState extends State<LandingPage> {
                                 },
                                 onError: (error) {
                                   debugPrint('error ' + error.toString());
+                                  if (error != null) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertPlainDialog(
+                                          title: 'Problem',
+                                          actions: [
+                                            AlertAction(
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              title: 'Ok',
+                                            )
+                                          ],
+                                          content: error
+                                              .graphqlErrors[0].message
+                                              .toString(),
+                                        );
+                                      },
+                                    );
+                                  }
                                 },
                               ),
                               builder: (runMutationSave, result) {
@@ -1074,6 +1098,27 @@ class _LandingPageState extends State<LandingPage> {
                                     },
                                     onError: (error) {
                                       debugPrint('error ' + error.toString());
+                                      if (error != null) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertPlainDialog(
+                                              title: 'Problem',
+                                              actions: [
+                                                AlertAction(
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  title: 'Ok',
+                                                )
+                                              ],
+                                              content: error
+                                                  .graphqlErrors[0].message
+                                                  .toString(),
+                                            );
+                                          },
+                                        );
+                                      }
                                     },
                                   ),
                                   builder: (runMutationUnSave, result) {
@@ -1327,6 +1372,26 @@ class _LandingPageState extends State<LandingPage> {
                             },
                             onError: (error) {
                               debugPrint('error ' + error.toString());
+                              if (error != null) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertPlainDialog(
+                                      title: 'Problem',
+                                      actions: [
+                                        AlertAction(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          title: 'Ok',
+                                        )
+                                      ],
+                                      content: error.graphqlErrors[0].message
+                                          .toString(),
+                                    );
+                                  },
+                                );
+                              }
                             },
                           ),
                           builder: (runMutationSave, result) {
@@ -1347,6 +1412,27 @@ class _LandingPageState extends State<LandingPage> {
                                 },
                                 onError: (error) {
                                   debugPrint('error ' + error.toString());
+                                  if (error != null) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertPlainDialog(
+                                          title: 'Problem',
+                                          actions: [
+                                            AlertAction(
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              title: 'Ok',
+                                            )
+                                          ],
+                                          content: error
+                                              .graphqlErrors[0].message
+                                              .toString(),
+                                        );
+                                      },
+                                    );
+                                  }
                                 },
                               ),
                               builder: (runMutationUnSave, result) {

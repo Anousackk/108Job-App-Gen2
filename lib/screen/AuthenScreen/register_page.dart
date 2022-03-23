@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,6 +40,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   late ScrollController scroll;
+  bool? uploadError = false;
   List<Widget>? genderActions = [];
   List<Widget>? mStatusActions = [];
   Register register = Register();
@@ -53,7 +55,6 @@ class _RegisterPageState extends State<RegisterPage> {
       alertmarital = false,
       // alertlicense = false,
       alertprovince = false,
-      alertdistrict = false,
       alertsalary = false,
       alertLatestJob = false,
       alertPrejob = false,
@@ -316,9 +317,10 @@ class _RegisterPageState extends State<RegisterPage> {
       alertcv = register.cv == null;
       alertprofsum =
           register.profSummary == null || register.profSummary!.trim().isEmpty;
-      alertdistrict = register.districtOrCityID == null;
+      // alertdistrict = register.districtOrCityID == null;
 
-      alertprovince = register.provinceOrStateID == null;
+      alertprovince = register.provinceOrStateID == null ||
+          register.districtOrCityID == null;
       // alertlicense =
       //     register.drivingLicense == null || register.drivingLicense == [];
       alertfullname = register.firstname == null ||
@@ -365,9 +367,10 @@ class _RegisterPageState extends State<RegisterPage> {
       alertcv = register.cv == null;
       alertprofsum =
           register.profSummary == null || register.profSummary!.trim().isEmpty;
-      alertdistrict = register.districtOrCityID == null;
+      // alertdistrict = register.districtOrCityID == null;
 
-      alertprovince = register.provinceOrStateID == null;
+      alertprovince = register.provinceOrStateID == null ||
+          register.districtOrCityID == null;
       // alertlicense =
       //     register.drivingLicense == null || register.drivingLicense == [];
       alertfullname = register.firstname == null ||
@@ -982,11 +985,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                 alertvisible: alertprovince,
                                 alertText: l.enterProvince,
                                 icon: 'chevron-right ',
-                                header: l.province,
+                                header: l.provincAndDistrict,
                                 showField: isEmptyString(
                                         register.provinceOrState)
                                     ? null
-                                    : '${TranslateQuery.translateProvince(register.provinceOrState!)}');
+                                    : indexL == 0
+                                        ? '${register.provinceOrState},  ${register.districtOrCity}'
+                                        : '${TranslateQuery.translateProvince(register.provinceOrState!)}, ${TranslateQuery.translateProvince(register.districtOrCity!)}');
                           }
 
                           return WidgetTabInfo(
@@ -1005,93 +1010,98 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ).then((context) {
                                   register.getDistrictRepoindex();
                                   register.getProvinceOrStateID();
-                                  register.getProvinceOrState().then((value) {
+                                  register.getProvinceOrState();
+                                  register.getDistrictOrCity();
+                                  register.getDistrictOrCityID().then((value) {
                                     setState(() {
                                       alertprovince =
-                                          register.provinceOrStateID == null;
+                                          register.provinceOrStateID == null ||
+                                              register.districtOrCityID == null;
                                     });
                                   });
                                 });
                               },
                               icon: 'chevron-right ',
-                              header: l.province,
+                              header: l.provincAndDistrict,
                               showField: isEmptyString(register.provinceOrState)
                                   ? null
-                                  : '${TranslateQuery.translateProvince(register.provinceOrState!)}');
+                                  : indexL == 0
+                                      ? '${register.provinceOrState},  ${register.districtOrCity}'
+                                      : '${TranslateQuery.translateProvince(register.provinceOrState!)}, ${TranslateQuery.translateProvince(register.districtOrCity!)}');
                         },
                       ),
-                      Visibility(
-                        visible: register.districtRepoindex != null,
-                        child: Query(
-                          options: QueryOptions(
-                              document: gql(queryInfo.getProvinceDistrict),
-                              variables: <String, dynamic>{}),
-                          builder: (QueryResult result, {refetch, fetchMore}) {
-                            if (result.hasException) {
-                              return Text(result.exception.toString());
-                            }
-                            if (result.isLoading) {
-                              return WidgetTabInfo(
-                                  alertvisible: alertdistrict,
-                                  alertText: l.enterDistrict,
-                                  icon: 'chevron-right ',
-                                  header: l.district,
-                                  showField:
-                                      isEmptyString(register.districtOrCity)
-                                          ? null
-                                          : '${register.districtOrCity}');
-                            }
-                            final repoDistrict = result.data?['getProvinces']
-                                [register.districtRepoindex];
+                      // Visibility(
+                      //   visible: register.districtRepoindex != null,
+                      //   child: Query(
+                      //     options: QueryOptions(
+                      //         document: gql(queryInfo.getProvinceDistrict),
+                      //         variables: <String, dynamic>{}),
+                      //     builder: (QueryResult result, {refetch, fetchMore}) {
+                      //       if (result.hasException) {
+                      //         return Text(result.exception.toString());
+                      //       }
+                      //       if (result.isLoading) {
+                      //         return WidgetTabInfo(
+                      //             alertvisible: alertdistrict,
+                      //             alertText: l.enterDistrict,
+                      //             icon: 'chevron-right ',
+                      //             header: l.district,
+                      //             showField:
+                      //                 isEmptyString(register.districtOrCity)
+                      //                     ? null
+                      //                     : '${register.districtOrCity}');
+                      //       }
+                      //       final repoDistrict = result.data?['getProvinces']
+                      //           [register.districtRepoindex];
 
-                            return WidgetTabInfo(
-                                alertvisible: alertdistrict,
-                                alertText: l.enterDistrict,
-                                onTap: () async {
-                                  if (!currentFocus.hasPrimaryFocus) {
-                                    currentFocus.unfocus();
-                                  }
+                      //       return WidgetTabInfo(
+                      //           alertvisible: alertdistrict,
+                      //           alertText: l.enterDistrict,
+                      //           onTap: () async {
+                      //             if (!currentFocus.hasPrimaryFocus) {
+                      //               currentFocus.unfocus();
+                      //             }
 
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => InputDistrictCity(
-                                            repoDistrict, true)),
-                                  ).then((context) {
-                                    setState(() {
-                                      register.getDistrictOrCity();
-                                      register
-                                          .getDistrictOrCityID()
-                                          .then((value) {
-                                        setState(() {
-                                          alertdistrict =
-                                              register.districtOrCityID == null;
-                                        });
-                                      });
-                                    });
-                                  });
-                                },
-                                icon: 'chevron-right ',
-                                header: l.district,
-                                showField:
-                                    isEmptyString(register.districtOrCity)
-                                        ? null
-                                        : '${register.districtOrCity}');
-                          },
-                        ),
-                      ),
-                      Visibility(
-                        visible: !(register.districtRepoindex != null),
-                        child: WidgetTabInfo(
-                            alertvisible: alertdistrict,
-                            alertText: l.enterDistrict,
-                            color: isEmptyString(register.districtOrCity)
-                                ? AppColors.greyOpacity
-                                : Colors.black,
-                            icon: 'chevron-right ',
-                            header: l.district,
-                            showField: null),
-                      ),
+                      //             Navigator.push(
+                      //               context,
+                      //               MaterialPageRoute(
+                      //                   builder: (context) => InputDistrictCity(
+                      //                       repoDistrict, true)),
+                      //             ).then((context) {
+                      //               setState(() {
+                      //                 register.getDistrictOrCity();
+                      //                 register
+                      //                     .getDistrictOrCityID()
+                      //                     .then((value) {
+                      //                   setState(() {
+                      //                     alertdistrict =
+                      //                         register.districtOrCityID == null;
+                      //                   });
+                      //                 });
+                      //               });
+                      //             });
+                      //           },
+                      //           icon: 'chevron-right ',
+                      //           header: l.district,
+                      //           showField:
+                      //               isEmptyString(register.districtOrCity)
+                      //                   ? null
+                      //                   : '${register.districtOrCity}');
+                      //     },
+                      //   ),
+                      // ),
+                      // Visibility(
+                      //   visible: !(register.districtRepoindex != null),
+                      //   child: WidgetTabInfo(
+                      //       alertvisible: alertdistrict,
+                      //       alertText: l.enterDistrict,
+                      //       color: isEmptyString(register.districtOrCity)
+                      //           ? AppColors.greyOpacity
+                      //           : Colors.black,
+                      //       icon: 'chevron-right ',
+                      //       header: l.district,
+                      //       showField: null),
+                      // ),
                       WidgetTabInfo(
                           alertvisible: alertprofsum,
                           alertText: l.enterProfesum,
@@ -1816,6 +1826,26 @@ class _RegisterPageState extends State<RegisterPage> {
                               Future.delayed(const Duration(seconds: 1))
                                   .then((value) {
                                 Navigator.pop(context);
+                                if (error != null) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertPlainDialog(
+                                        title: 'Problem',
+                                        actions: [
+                                          AlertAction(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
+                                            title: 'Ok',
+                                          )
+                                        ],
+                                        content: error.graphqlErrors[0].message
+                                            .toString(),
+                                      );
+                                    },
+                                  );
+                                }
                               });
                               debugPrint('error' + error.toString());
                             },
@@ -1835,7 +1865,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       !alertmarital! &&
                                       // !alertlicense &&
                                       !alertprovince! &&
-                                      !alertdistrict! &&
+                                      // !alertdistrict! &&
                                       !alertprofile! &&
                                       !alertprofsum! &&
                                       !alertcv! &&
@@ -1874,6 +1904,24 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       image = responseImage.data;
                                     } catch (e) {
+                                      SmartDialog.dismiss();
+                                      uploadError = true;
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertPlainDialog(
+                                              color: AppColors.red,
+                                              title: 'Error',
+                                              content: e.toString(),
+                                              actions: [
+                                                AlertAction(
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          });
                                       debugPrint(e.toString());
                                     }
                                     try {
@@ -1899,6 +1947,24 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       setState(() {});
                                     } catch (e) {
+                                      SmartDialog.dismiss();
+                                      uploadError = true;
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertPlainDialog(
+                                              color: AppColors.red,
+                                              title: 'Error',
+                                              content: e.toString(),
+                                              actions: [
+                                                AlertAction(
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          });
                                       debugPrint(e.toString());
                                     }
                                     // await upLoadDioImage(picture.path,
@@ -1910,74 +1976,81 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                     // resume = value['myFile'];
 
-                                    if (noHaveWorkExp == false) {
-                                      runMutation(
-                                        queryInfo.updateResumeMutationOldUser(
-                                            userID: widget.userID,
-                                            degreeID: register.degreeID,
-                                            districtID:
-                                                register.districtOrCityID,
-                                            dob: stringdob,
-                                            salaryRangID: register.salaryID,
-                                            drivinglicense: register
-                                                            .drivingLicense ==
-                                                        null ||
-                                                    register.drivingLicense ==
-                                                        []
-                                                ? []
-                                                : register.drivingLicense,
-                                            fieldstudyname:
-                                                register.fieldstudyName,
-                                            firstname: register.firstname,
-                                            lastname: register.lastname,
-                                            file: resume,
-                                            keySkill: register.keySkill,
-                                            langLevelID: register.langLevelID,
-                                            langID: register.langNameID,
-                                            latestjob: register.latestJobTitle,
-                                            maritalID: register.maritalStatusID,
-                                            number: register.number,
-                                            logo: image['file'],
-                                            previousEmp:
-                                                register.previousEmployer,
-                                            previousIndID:
-                                                register.previousIndID,
-                                            previousJob:
-                                                register.previousJobTitle,
-                                            profsum: register.profSummary,
-                                            totalWorkingExp:
-                                                register.totalWorkEXP,
-                                            genderID: register.genderID),
-                                      );
+                                    if (uploadError == false) {
+                                      if (noHaveWorkExp == false) {
+                                        runMutation(
+                                          queryInfo.updateResumeMutationOldUser(
+                                              userID: widget.userID,
+                                              degreeID: register.degreeID,
+                                              districtID:
+                                                  register.districtOrCityID,
+                                              dob: stringdob,
+                                              salaryRangID: register.salaryID,
+                                              drivinglicense: register
+                                                              .drivingLicense ==
+                                                          null ||
+                                                      register.drivingLicense ==
+                                                          []
+                                                  ? []
+                                                  : register.drivingLicense,
+                                              fieldstudyname:
+                                                  register.fieldstudyName,
+                                              firstname: register.firstname,
+                                              lastname: register.lastname,
+                                              file: resume,
+                                              keySkill: register.keySkill,
+                                              langLevelID: register.langLevelID,
+                                              langID: register.langNameID,
+                                              latestjob:
+                                                  register.latestJobTitle,
+                                              maritalID:
+                                                  register.maritalStatusID,
+                                              number: register.number,
+                                              logo: image['file'],
+                                              previousEmp:
+                                                  register.previousEmployer,
+                                              previousIndID:
+                                                  register.previousIndID,
+                                              previousJob:
+                                                  register.previousJobTitle,
+                                              profsum: register.profSummary,
+                                              totalWorkingExp:
+                                                  register.totalWorkEXP,
+                                              genderID: register.genderID),
+                                        );
+                                      } else {
+                                        runMutation(
+                                          queryInfo.updateNoExpResumeMutationOldUser(
+                                              userID: widget.userID,
+                                              degreeID: register.degreeID,
+                                              districtID:
+                                                  register.districtOrCityID,
+                                              dob: stringdob,
+                                              drivinglicense: register
+                                                              .drivingLicense ==
+                                                          null ||
+                                                      register.drivingLicense ==
+                                                          []
+                                                  ? []
+                                                  : register.drivingLicense,
+                                              fieldstudyname:
+                                                  register.fieldstudyName,
+                                              firstname: register.firstname,
+                                              lastname: register.lastname,
+                                              file: resume,
+                                              keySkill: register.keySkill,
+                                              langLevelID: register.langLevelID,
+                                              langID: register.langNameID,
+                                              maritalID:
+                                                  register.maritalStatusID,
+                                              number: register.number,
+                                              logo: image['file'],
+                                              profsum: register.profSummary,
+                                              genderID: register.genderID),
+                                        );
+                                      }
                                     } else {
-                                      runMutation(
-                                        queryInfo.updateNoExpResumeMutationOldUser(
-                                            userID: widget.userID,
-                                            degreeID: register.degreeID,
-                                            districtID:
-                                                register.districtOrCityID,
-                                            dob: stringdob,
-                                            drivinglicense: register
-                                                            .drivingLicense ==
-                                                        null ||
-                                                    register.drivingLicense ==
-                                                        []
-                                                ? []
-                                                : register.drivingLicense,
-                                            fieldstudyname:
-                                                register.fieldstudyName,
-                                            firstname: register.firstname,
-                                            lastname: register.lastname,
-                                            file: resume,
-                                            keySkill: register.keySkill,
-                                            langLevelID: register.langLevelID,
-                                            langID: register.langNameID,
-                                            maritalID: register.maritalStatusID,
-                                            number: register.number,
-                                            logo: image['file'],
-                                            profsum: register.profSummary,
-                                            genderID: register.genderID),
-                                      );
+                                      uploadError = true;
                                     }
                                   } else {
                                     showDialog<String>(
@@ -2096,7 +2169,25 @@ class _RegisterPageState extends State<RegisterPage> {
                               }
                             },
                             onError: (error) {
-                              debugPrint(error.toString());
+                              // debugPrint(error.toString());
+                              if (error != null) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertPlainDialog(
+                                        color: AppColors.red,
+                                        title: 'Error',
+                                        content: error.graphqlErrors.toString(),
+                                        actions: [
+                                          AlertAction(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    });
+                              }
                             },
                           ),
                           builder: (RunMutation runMutation, result) {
@@ -2117,7 +2208,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       !alertmarital! &&
                                       // !alertlicense &&
                                       !alertprovince! &&
-                                      !alertdistrict! &&
+                                      // !alertdistrict! &&
                                       !alertprofile! &&
                                       !alertprofsum! &&
                                       !alertcv! &&
@@ -2156,7 +2247,24 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       image = responseImage.data;
                                     } catch (e) {
-                                      debugPrint(e.toString());
+                                      SmartDialog.dismiss();
+                                      uploadError = true;
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertPlainDialog(
+                                              color: AppColors.red,
+                                              title: 'Error',
+                                              content: e.toString(),
+                                              actions: [
+                                                AlertAction(
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          });
                                     }
                                     try {
                                       FormData formData = FormData.fromMap({
@@ -2181,80 +2289,103 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       setState(() {});
                                     } catch (e) {
-                                      debugPrint(e.toString());
+                                      SmartDialog.dismiss();
+                                      uploadError = true;
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertPlainDialog(
+                                              color: AppColors.red,
+                                              title: 'Error',
+                                              content: e.toString(),
+                                              actions: [
+                                                AlertAction(
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          });
                                     }
 
-                                    if (noHaveWorkExp == false) {
-                                      runMutation(
-                                        queryInfo.registerMutationRun(
-                                            degreeID: register.degreeID,
-                                            districtcityID:
-                                                register.districtOrCityID,
-                                            dob: stringdob,
-                                            salaryID: register.salaryID,
-                                            drivinglicense: register
-                                                            .drivingLicense ==
-                                                        null ||
-                                                    register.drivingLicense ==
-                                                        []
-                                                ? []
-                                                : register.drivingLicense,
-                                            email: register.email,
-                                            fieldofstudy:
-                                                register.fieldstudyName,
-                                            firstname: register.firstname,
-                                            lastname: register.lastname,
-                                            cv: resume,
-                                            keyskill: register.keySkill,
-                                            langLevelID: register.langLevelID,
-                                            languageID: register.langNameID,
-                                            latestjob: register.latestJobTitle,
-                                            maritalstatusID:
-                                                register.maritalStatusID,
-                                            mobile: register.number,
-                                            password: register.password,
-                                            picture: image['file'],
-                                            previousEmp:
-                                                register.previousEmployer,
-                                            previousIndusID:
-                                                register.previousIndID,
-                                            previousjob:
-                                                register.previousJobTitle,
-                                            profsum: register.profSummary,
-                                            totalWorkExp: register.totalWorkEXP,
-                                            genderID: register.genderID),
-                                      );
+                                    if (uploadError == false) {
+                                      if (noHaveWorkExp == false) {
+                                        runMutation(
+                                          queryInfo.registerMutationRun(
+                                              degreeID: register.degreeID,
+                                              districtcityID:
+                                                  register.districtOrCityID,
+                                              dob: stringdob,
+                                              salaryID: register.salaryID,
+                                              drivinglicense: register
+                                                              .drivingLicense ==
+                                                          null ||
+                                                      register.drivingLicense ==
+                                                          []
+                                                  ? []
+                                                  : register.drivingLicense,
+                                              email: register.email,
+                                              fieldofstudy:
+                                                  register.fieldstudyName,
+                                              firstname: register.firstname,
+                                              lastname: register.lastname,
+                                              cv: resume,
+                                              keyskill: register.keySkill,
+                                              langLevelID: register.langLevelID,
+                                              languageID: register.langNameID,
+                                              latestjob:
+                                                  register.latestJobTitle,
+                                              maritalstatusID:
+                                                  register.maritalStatusID,
+                                              mobile: register.number,
+                                              password: register.password,
+                                              picture: image['file'],
+                                              previousEmp:
+                                                  register.previousEmployer,
+                                              previousIndusID:
+                                                  register.previousIndID,
+                                              previousjob:
+                                                  register.previousJobTitle,
+                                              profsum: register.profSummary,
+                                              totalWorkExp:
+                                                  register.totalWorkEXP,
+                                              genderID: register.genderID),
+                                        );
+                                      } else {
+                                        runMutation(
+                                          queryInfo.registerNoExpMutationRun(
+                                              degreeID: register.degreeID,
+                                              districtcityID:
+                                                  register.districtOrCityID,
+                                              dob: stringdob,
+                                              drivinglicense: register
+                                                              .drivingLicense ==
+                                                          null ||
+                                                      register.drivingLicense ==
+                                                          []
+                                                  ? []
+                                                  : register.drivingLicense,
+                                              email: register.email,
+                                              fieldofstudy:
+                                                  register.fieldstudyName,
+                                              firstname: register.firstname,
+                                              lastname: register.lastname,
+                                              cv: resume,
+                                              keyskill: register.keySkill,
+                                              langLevelID: register.langLevelID,
+                                              languageID: register.langNameID,
+                                              maritalstatusID:
+                                                  register.maritalStatusID,
+                                              mobile: register.number,
+                                              password: register.password,
+                                              picture: image['file'],
+                                              profsum: register.profSummary,
+                                              genderID: register.genderID),
+                                        );
+                                      }
                                     } else {
-                                      runMutation(
-                                        queryInfo.registerNoExpMutationRun(
-                                            degreeID: register.degreeID,
-                                            districtcityID:
-                                                register.districtOrCityID,
-                                            dob: stringdob,
-                                            drivinglicense: register
-                                                            .drivingLicense ==
-                                                        null ||
-                                                    register.drivingLicense ==
-                                                        []
-                                                ? []
-                                                : register.drivingLicense,
-                                            email: register.email,
-                                            fieldofstudy:
-                                                register.fieldstudyName,
-                                            firstname: register.firstname,
-                                            lastname: register.lastname,
-                                            cv: resume,
-                                            keyskill: register.keySkill,
-                                            langLevelID: register.langLevelID,
-                                            languageID: register.langNameID,
-                                            maritalstatusID:
-                                                register.maritalStatusID,
-                                            mobile: register.number,
-                                            password: register.password,
-                                            picture: image['file'],
-                                            profsum: register.profSummary,
-                                            genderID: register.genderID),
-                                      );
+                                      uploadError = false;
                                     }
                                   } else {
                                     showDialog<String>(

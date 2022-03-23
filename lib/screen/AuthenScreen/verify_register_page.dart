@@ -239,6 +239,25 @@ class _VerifyRegisterPageState extends State<VerifyRegisterPage> {
                 options: MutationOptions(
                   onError: (error) {
                     debugPrint(error?.graphqlErrors.toString());
+                    if (error != null) {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertPlainDialog(
+                            title: 'Problem',
+                            actions: [
+                              AlertAction(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                title: 'Ok',
+                              )
+                            ],
+                            content: error.graphqlErrors[0].message.toString(),
+                          );
+                        },
+                      );
+                    }
                   },
                   document: justverify
                       ? gql(queryInfo.verifyOTP)

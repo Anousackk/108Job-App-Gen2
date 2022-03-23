@@ -18,6 +18,8 @@ import 'package:app/screen/widget/input_text_field.dart';
 
 import 'forgot_password_page.dart';
 import 'register_page.dart';
+// import 'new_register_page.dart';
+// import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

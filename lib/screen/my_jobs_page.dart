@@ -14,6 +14,7 @@ import 'package:app/function/sized.dart';
 import 'AuthenScreen/login_page.dart';
 import 'ControlScreen/bottom_navigation.dart';
 import 'Shimmer/listjobshimmer.dart';
+import 'Widget/alertdialog.dart';
 import 'job_detail_page.dart';
 import 'widget/empty_query.dart';
 import 'widget/job_list_view.dart';
@@ -471,6 +472,27 @@ class _SavedApplyJobTabViewState extends State<SavedApplyJobTabView> {
                                     },
                                     onError: (error) {
                                       debugPrint(error.toString());
+                                      if (error != null) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertPlainDialog(
+                                              title: 'Problem',
+                                              actions: [
+                                                AlertAction(
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  title: 'Ok',
+                                                )
+                                              ],
+                                              content: error
+                                                  .graphqlErrors[0].message
+                                                  .toString(),
+                                            );
+                                          },
+                                        );
+                                      }
                                     },
                                   ),
                                   builder: (runMutation, result) {

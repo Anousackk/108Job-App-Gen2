@@ -468,8 +468,28 @@ class _MyResumePageState extends State<MyResumePage> {
               onError: (error) {
                 setState(() {});
                 isLoading = false;
+
                 debugPrint(error.toString());
                 Navigator.of(context).pop();
+                if (error != null) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertPlainDialog(
+                        title: 'Problem',
+                        actions: [
+                          AlertAction(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            title: 'Ok',
+                          )
+                        ],
+                        content: error.graphqlErrors[0].message.toString(),
+                      );
+                    },
+                  );
+                }
               },
             ),
             builder: (RunMutation runMutation, result) {
@@ -772,6 +792,27 @@ class _MyResumePageState extends State<MyResumePage> {
                                     },
                                     onError: (error) {
                                       debugPrint(error.toString());
+                                      if (error != null) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertPlainDialog(
+                                              title: 'Problem',
+                                              actions: [
+                                                AlertAction(
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  title: 'Ok',
+                                                )
+                                              ],
+                                              content: error
+                                                  .graphqlErrors[0].message
+                                                  .toString(),
+                                            );
+                                          },
+                                        );
+                                      }
                                     },
                                   ),
                                   builder: (runMutationLogo, result) {
@@ -1088,7 +1129,7 @@ class _MyResumePageState extends State<MyResumePage> {
                                         children: [
                                           WidgetTabInfo(
                                             icon: 'chevron-right ',
-                                            header: l.province,
+                                            header: l.provincAndDistrict,
                                             showField:
                                                 '${TranslateQuery.translateProvince(myResume.provinceOrState!)}',
                                           ),
@@ -1143,7 +1184,7 @@ class _MyResumePageState extends State<MyResumePage> {
                                             });
                                           },
                                           icon: 'chevron-right ',
-                                          header: l.province,
+                                          header: l.provincAndDistrict,
                                           showField: myResume.provinceOrState,
                                         ),
                                         WidgetTabInfo(
@@ -1248,6 +1289,27 @@ class _MyResumePageState extends State<MyResumePage> {
                                     },
                                     onError: (error) {
                                       debugPrint(error.toString());
+                                      if (error != null) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertPlainDialog(
+                                              title: 'Problem',
+                                              actions: [
+                                                AlertAction(
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  title: 'Ok',
+                                                )
+                                              ],
+                                              content: error
+                                                  .graphqlErrors[0].message
+                                                  .toString(),
+                                            );
+                                          },
+                                        );
+                                      }
                                     },
                                   ),
                                   builder: (runMutationResume, result) {

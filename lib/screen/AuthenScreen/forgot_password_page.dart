@@ -101,36 +101,59 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 Mutation(
                   options: MutationOptions(
                     onError: (error) {
-                      if (error?.graphqlErrors[0].message.toString() ==
-                          'Mobile does not exist: Undefined location') {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertPlainDialog(
-                              title: 'Problem',
-                              actions: [
-                                AlertAction(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                  title: 'Ok',
-                                )
-                              ],
-                              content: 'Phone number does not exist',
-                            );
-                          },
-                        );
+                      if (error != null) {
+                        debugPrint(error.graphqlErrors[0].message.toString());
+                        SmartDialog.dismiss();
+                        if (error.graphqlErrors[0].message.toString() ==
+                            'Mobile does not exist') {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertPlainDialog(
+                                title: 'Problem',
+                                actions: [
+                                  AlertAction(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    title: 'Ok',
+                                  )
+                                ],
+                                content: 'Phone number does not exist',
+                              );
+                            },
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertPlainDialog(
+                                title: 'Problem',
+                                actions: [
+                                  AlertAction(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    title: 'Ok',
+                                  )
+                                ],
+                                content: error.graphqlErrors.toString(),
+                              );
+                            },
+                          );
+                        }
                       }
                     },
                     document: gql(queryInfo.sendOTP),
                     onCompleted: (data) {
-                      Map<String, dynamic> result = data;
-                      User user = User();
                       SmartDialog.dismiss();
+                      Map<String, dynamic>? result = data;
+                      User user = User();
+
                       Future.delayed(const Duration(milliseconds: 50))
                           .then((value) {
                         if (data != null) {
-                          user.token = result['sendVerificationCode'];
+                          user.token = result?['sendVerificationCode'];
                           user.setToken();
                           Navigator.push(
                               context,

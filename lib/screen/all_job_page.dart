@@ -13,6 +13,7 @@ import 'package:app/screen/widget/job_list_view.dart';
 
 import 'ControlScreen/bottom_navigation.dart';
 import 'Shimmer/listjobshimmer.dart';
+import 'Widget/alertdialog.dart';
 import 'job_detail_page.dart';
 import 'my_jobs_page.dart';
 
@@ -283,6 +284,27 @@ class _JobTabViewState extends State<JobTabView> {
                                     },
                                     onError: (error) {
                                       debugPrint('error ' + error.toString());
+                                      if (error != null) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertPlainDialog(
+                                              title: 'Problem',
+                                              actions: [
+                                                AlertAction(
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  title: 'Ok',
+                                                )
+                                              ],
+                                              content: error
+                                                  .graphqlErrors[0].message
+                                                  .toString(),
+                                            );
+                                          },
+                                        );
+                                      }
                                     },
                                   ),
                                   builder: (runMutationSave, result) {
@@ -306,6 +328,29 @@ class _JobTabViewState extends State<JobTabView> {
                                           onError: (error) {
                                             debugPrint(
                                                 'error ' + error.toString());
+                                            if (error != null) {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertPlainDialog(
+                                                    title: 'Problem',
+                                                    actions: [
+                                                      AlertAction(
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        title: 'Ok',
+                                                      )
+                                                    ],
+                                                    content: error
+                                                        .graphqlErrors[0]
+                                                        .message
+                                                        .toString(),
+                                                  );
+                                                },
+                                              );
+                                            }
                                           },
                                         ),
                                         builder: (runMutationUnSave, result) {
@@ -437,7 +482,9 @@ class _JobTabViewState extends State<JobTabView> {
                         debugPrint(element.toString());
                         isSavejobList?.add(element['isSaved']);
                       });
-                      setState(() {});
+                      if (mounted) {
+                        setState(() {});
+                      }
                     });
 
                     myJobsave = false;
@@ -469,6 +516,26 @@ class _JobTabViewState extends State<JobTabView> {
                             },
                             onError: (error) {
                               debugPrint('error ' + error.toString());
+                              if (error != null) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertPlainDialog(
+                                      title: 'Problem',
+                                      actions: [
+                                        AlertAction(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          title: 'Ok',
+                                        )
+                                      ],
+                                      content: error.graphqlErrors[0].message
+                                          .toString(),
+                                    );
+                                  },
+                                );
+                              }
                             },
                           ),
                           builder: (runMutationSave, result) {
@@ -489,6 +556,27 @@ class _JobTabViewState extends State<JobTabView> {
                                   },
                                   onError: (error) {
                                     debugPrint('error ' + error.toString());
+                                    if (error != null) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertPlainDialog(
+                                            title: 'Problem',
+                                            actions: [
+                                              AlertAction(
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                title: 'Ok',
+                                              )
+                                            ],
+                                            content: error
+                                                .graphqlErrors[0].message
+                                                .toString(),
+                                          );
+                                        },
+                                      );
+                                    }
                                   },
                                 ),
                                 builder: (runMutationUnSave, result) {

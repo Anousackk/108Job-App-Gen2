@@ -397,26 +397,47 @@ class _ChangePhoneNumberPageState extends State<ChangePhoneNumberPage> {
               onError: (error) {
                 Future.delayed(const Duration(seconds: 1)).then((value) {
                   SmartDialog.dismiss();
-                  if (error?.graphqlErrors[0].toString() ==
-                      'This mobile already registered: Undefined location') {
-                    showDialog(
+                  if (error != null) {
+                    if (error.graphqlErrors[0].toString() ==
+                        'This mobile already registered: Undefined location') {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertPlainDialog(
+                              title: l.alert,
+                              // color: AppColors,
+                              content: l.thisNumberAlready,
+                              actions: [
+                                AlertAction(
+                                  title: l.ok,
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    } else {
+                      showDialog(
                         context: context,
                         builder: (context) {
                           return AlertPlainDialog(
-                            title: l.alert,
-                            // color: AppColors,
-                            content: l.thisNumberAlready,
+                            title: 'Problem',
                             actions: [
                               AlertAction(
-                                title: l.ok,
                                 onTap: () {
                                   Navigator.pop(context);
                                 },
+                                title: 'Ok',
                               )
                             ],
+                            content: error.graphqlErrors[0].message.toString(),
                           );
-                        });
+                        },
+                      );
+                    }
                   }
+
                   debugPrint(error.toString());
                 });
               },
@@ -547,6 +568,25 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               document: gql(queryInfo.changepassword),
               onError: (error) {
                 debugPrint(error.toString());
+                if (error != null) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertPlainDialog(
+                        title: 'Problem',
+                        actions: [
+                          AlertAction(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            title: 'Ok',
+                          )
+                        ],
+                        content: error.graphqlErrors[0].message.toString(),
+                      );
+                    },
+                  );
+                }
               },
               onCompleted: (data) {
                 debugPrint(data.toString());
@@ -816,26 +856,47 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
               onError: (error) {
                 Future.delayed(const Duration(seconds: 1)).then((value) {
                   SmartDialog.dismiss();
-                  if (error?.graphqlErrors[0].toString() ==
-                      'This email already registered: Undefined location') {
-                    showDialog(
+                  if (error != null) {
+                    if (error.graphqlErrors[0].toString() ==
+                        'This email already registered: Undefined location') {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertPlainDialog(
+                              title: l.alert,
+                              // color:  AppColors.blue,
+                              content: l.thisEmailAlready,
+                              actions: [
+                                AlertAction(
+                                  title: l.ok,
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    } else {
+                      showDialog(
                         context: context,
                         builder: (context) {
                           return AlertPlainDialog(
-                            title: l.alert,
-                            // color:  AppColors.blue,
-                            content: l.thisEmailAlready,
+                            title: 'Problem',
                             actions: [
                               AlertAction(
-                                title: l.ok,
                                 onTap: () {
                                   Navigator.pop(context);
                                 },
+                                title: 'Ok',
                               )
                             ],
+                            content: error.graphqlErrors[0].message.toString(),
                           );
-                        });
+                        },
+                      );
+                    }
                   }
+
                   debugPrint(error.toString());
                   // loading.hide();
                 });
