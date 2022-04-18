@@ -207,6 +207,7 @@ class _AllCompaniesTabViewState extends State<AllCompaniesTabView> {
           itemBuilder: (context, index) {
             var repository = dataCompany?[index];
             return CompanyListTab(
+                haveJobOpening: false,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -395,6 +396,7 @@ class _HiringNowTabViewState extends State<HiringNowTabView> {
           itemBuilder: (context, index) {
             var repository = dataCompany?[index];
             return CompanyListTab(
+                haveJobOpening: true,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -552,9 +554,11 @@ class CompanyListTab extends StatelessWidget {
       this.industry,
       this.jobOpenAmount,
       this.imageSrc,
-      this.onTap})
+      this.onTap,
+      required this.haveJobOpening})
       : super(key: key);
   final String? companyName;
+  final bool haveJobOpening;
   final String? industry;
   final String? jobOpenAmount;
   final String? imageSrc;
@@ -618,27 +622,30 @@ class CompanyListTab extends StatelessWidget {
                             fontSize: mediaWidthSized(context, 31),
                           ),
                         ),
-                        Row(
-                          children: [
-                            Text(
-                              'Job opening: ',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'PoppinsRegular',
-                                fontSize: mediaWidthSized(context, 31),
+                        Visibility(
+                          visible: haveJobOpening,
+                          child: Row(
+                            children: [
+                              Text(
+                                'Job opening: ',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: 'PoppinsRegular',
+                                  fontSize: mediaWidthSized(context, 31),
+                                ),
                               ),
-                            ),
-                            Text(
-                              jobOpenAmount == 'null'
-                                  ? 'ບໍ່ມີຂໍ້ມູນ'
-                                  : '$jobOpenAmount',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'PoppinsRegular',
-                                fontSize: mediaWidthSized(context, 31),
+                              Text(
+                                jobOpenAmount == 'null'
+                                    ? 'ບໍ່ມີຂໍ້ມູນ'
+                                    : '$jobOpenAmount',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: 'PoppinsRegular',
+                                  fontSize: mediaWidthSized(context, 31),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     )

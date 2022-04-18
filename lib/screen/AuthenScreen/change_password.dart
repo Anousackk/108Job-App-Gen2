@@ -12,7 +12,9 @@ import 'package:app/screen/widget/button.dart';
 import 'package:app/screen/widget/input_text_field.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({Key? key}) : super(key: key);
+  const ChangePasswordPage({Key? key, required this.isFromLogin})
+      : super(key: key);
+  final bool isFromLogin;
 
   @override
   _ChangePasswordPageState createState() => _ChangePasswordPageState();
@@ -144,8 +146,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                   title: 'Ok',
                                   onTap: () {
                                     forgetpassRoute = true;
-                                    Navigator.of(context).popUntil(
-                                        ModalRoute.withName("/login"));
+                                    if (widget.isFromLogin) {
+                                      Navigator.of(context).popUntil(
+                                          ModalRoute.withName("/login"));
+                                    } else {
+                                      Navigator.of(context).popUntil(
+                                          ModalRoute.withName("/account"));
+                                    }
                                   },
                                 )
                               ],

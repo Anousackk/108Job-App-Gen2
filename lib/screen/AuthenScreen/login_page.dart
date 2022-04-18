@@ -213,6 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       VerifyRegisterPage(
+                                                    fromLoginPage: true,
                                                     number:
                                                         numberController.text,
                                                     justverify: true,
@@ -443,7 +444,9 @@ class _LoginPageState extends State<LoginPage> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const ForgetPassword()),
+                                                const ForgetPassword(
+                                                  fromLoginPage: true,
+                                                )),
                                       );
                                     },
                                     child: Text(

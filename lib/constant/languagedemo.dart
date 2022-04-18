@@ -193,6 +193,9 @@ class Languages {
   String language = indexL == 0 ? 'Language' : 'ພາສາ';
   String enterLanguage = indexL == 0 ? 'Enter language' : 'ໃສ່ພາສາ';
   String keySkill = indexL == 0 ? 'Key Skill' : 'ທັກສະ';
+  String attach = indexL == 0
+      ? 'MS Office, Problem Solving, Adaptability, Self Motivation'
+      : 'MS Office, Problem Solving,Adaptability, Self Motivation';
   String enterkeySkill = indexL == 0 ? 'Enter key skill' : 'ໃສ່ທັກສະ';
   String cannotUpload = indexL == 0 ? 'Cannot upload' : 'ບໍ່ສາມາດອັບໂຫຼດ';
   String ok = indexL == 0 ? 'Okay' : 'ຕົກລົງ';

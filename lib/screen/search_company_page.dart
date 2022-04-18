@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:app/api/graphqlapi.dart';
 import 'package:app/constant/colors.dart';
@@ -73,6 +74,7 @@ class _SearchCompanyPageState extends State<SearchCompanyPage> {
                             top: BorderSide(
                                 width: 0.5, color: AppColors.greyOpacity))),
                     child: CompanyListTab(
+                        haveJobOpening: false,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -88,6 +90,7 @@ class _SearchCompanyPageState extends State<SearchCompanyPage> {
                         industry: '${repository['industryId'].join(', ')}'));
               } else {
                 return CompanyListTab(
+                    haveJobOpening: false,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -878,9 +881,15 @@ class _SearchByIndustryState extends State<SearchByIndustry> {
                   child: InkWell(
                     splashColor: AppColors.greyWhite,
                     onTap: () {
-                      industselect.add(repositories[index]['name']);
-                      indusIDselect.add(repositories[index]['_id']);
-
+                      if (indusIDselect.length < 3) {
+                        industselect.add(repositories[index]['name']);
+                        indusIDselect.add(repositories[index]['_id']);
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: 'You cannot pick more',
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 2);
+                      }
                       setState(() {});
                     },
                     child: Container(

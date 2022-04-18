@@ -449,9 +449,9 @@ class _JobDetailPageState extends State<JobDetailPage> {
                                 } catch (e) {
                                   debugPrint(e.toString());
                                 }
-                                debugPrint(data);
+                                debugPrint(data.toString());
                                 if (data.toString() ==
-                                    "{appliedJob: Applied succeed}") {
+                                    "{__typename: Mutation, appliedJob: Applied succeed}") {
                                   return showDialog(
                                     context: context,
                                     builder: (context) {

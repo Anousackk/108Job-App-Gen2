@@ -2588,10 +2588,17 @@ class _InputLanguageState extends State<InputLanguage> {
             listTopselectedfield?[i] = element;
             listBottomselectedfield?[i] = myResume.langLevel?[i];
             langID?[i] = myResume.langNameID?[i];
+
             langlevelID?[i] = myResume.langLevelID?[i];
+
             i = i + 1;
-            setState(() {});
           });
+          if (myResume.langNameID == null || myResume.langNameID!.isEmpty) {
+            addingDropdown();
+          }
+
+          setState(() {});
+          debugPrint(langID?.length.toString());
         } catch (e) {
           debugPrint(e.toString());
         }
@@ -2993,6 +3000,21 @@ class _InputKeySkillState extends State<InputKeySkill> {
                     style: TextStyle(
                         fontFamily: 'PoppinsRegular',
                         fontSize: mediaWidthSized(context, 28)),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    l.attach,
+                    style: TextStyle(
+                        fontFamily: 'PoppinsRegular',
+                        color: AppColors.greyOpacity,
+                        fontSize: mediaWidthSized(context, 34)),
                   ),
                 ),
               ],

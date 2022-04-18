@@ -13,8 +13,9 @@ import 'package:app/screen/widget/button.dart';
 import 'package:app/screen/widget/input_text_field.dart';
 
 class ForgetPassword extends StatefulWidget {
-  const ForgetPassword({Key? key}) : super(key: key);
-
+  const ForgetPassword({Key? key, required this.fromLoginPage})
+      : super(key: key);
+  final bool fromLoginPage;
   @override
   _ForgetPasswordState createState() => _ForgetPasswordState();
 }
@@ -29,8 +30,13 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
     return WillPopScope(
       onWillPop: () async {
-        Navigator.of(context).popUntil(ModalRoute.withName("/login"));
-        return false;
+        if (widget.fromLoginPage) {
+          Navigator.of(context).popUntil(ModalRoute.withName("/login"));
+          return false;
+        } else {
+          Navigator.pop(context);
+          return false;
+        }
       },
       child: Scaffold(
         backgroundColor: AppColors.white,
@@ -159,6 +165,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => VerifyRegisterPage(
+                                  fromLoginPage: widget.fromLoginPage,
                                   number: controller.text,
                                   justverify: false,
                                 ),

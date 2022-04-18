@@ -1,4 +1,5 @@
 import 'package:app/screen/widget/apploading.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -438,7 +439,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           //     EdgeInsets.only(left: 17, right: 17, bottom: 5),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 17),
-                          height: mediaWidthSized(context, 5),
+                          height: mediaWidthSized(context, 4),
                           decoration: const BoxDecoration(
                               // borderRadius:
                               //     BorderRadius.all(Radius.circular(3)),
@@ -514,7 +515,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 },
                               ),
                               const SizedBox(
-                                width: 12,
+                                width: 20,
                               ),
                               Expanded(
                                 child: Column(
@@ -531,13 +532,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                       ),
                                     ),
                                     Flexible(
-                                      child: Text(
+                                      child: AutoSizeText(
                                         l.makeYourProfileSearch,
+                                        maxLines: 2,
                                         style: TextStyle(
                                           fontFamily: 'PoppinsRegular',
                                           fontSize: indexL == 0
-                                              ? mediaWidthSized(context, 33)
-                                              : mediaWidthSized(context, 30),
+                                              ? mediaWidthSized(context, 30)
+                                              : mediaWidthSized(context, 27),
                                         ),
                                       ),
                                     ),
@@ -566,6 +568,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
+                                  settings:
+                                      const RouteSettings(name: "/account"),
                                   builder: (context) => AccountCenterPage(
                                         picture: data['registerSeeker']
                                             ['fileId']['src'],

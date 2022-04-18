@@ -1,7 +1,7 @@
 import 'dart:io';
-
+import 'package:path/path.dart' as path;
 import 'package:dio/dio.dart';
-
+import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -162,6 +162,11 @@ class _MyResumePageState extends State<MyResumePage> {
     double? sizeInMb;
     if (result != null) {
       resumeFile = File(result.files.single.path!);
+      if (Platform.isIOS) {
+        final documentPath = (await getTemporaryDirectory()).path;
+        resumeFile = await resumeFile!
+            .copy('$documentPath/${path.basename(resumeFile!.path)}');
+      }
       int sizeInBytes = resumeFile!.lengthSync();
       sizeInMb = sizeInBytes / (1024 * 1024);
     } else {}
@@ -1333,15 +1338,24 @@ class _MyResumePageState extends State<MyResumePage> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    '$resumename',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontFamily:
-                                                          'PoppinsSemiBold',
-                                                      fontSize: mediaWidthSized(
-                                                          context, 26),
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      launchURL(
+                                                          dataSeeker['resume']
+                                                                  ['fileId']
+                                                              ['src']);
+                                                    },
+                                                    child: Text(
+                                                      '$resumename',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'PoppinsSemiBold',
+                                                        fontSize:
+                                                            mediaWidthSized(
+                                                                context, 26),
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -1830,6 +1844,8 @@ class _MyResumePageState extends State<MyResumePage> {
                                     }
                                     List? repositoriesLanguage =
                                         result.data?["getReuseList"];
+
+                                    debugPrint(repositoriesLanguage.toString());
                                     return Query(
                                       options: QueryOptions(
                                           document: gql(queryInfo.getReuse),

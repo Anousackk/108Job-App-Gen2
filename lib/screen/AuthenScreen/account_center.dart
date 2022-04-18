@@ -18,6 +18,7 @@ import 'package:app/screen/widget/resume_tab.dart';
 import 'package:validators/validators.dart';
 
 import '../my_profile.dart';
+import 'forgot_password_page.dart';
 
 String? newNumber, newEmail;
 
@@ -713,6 +714,39 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 hintText: l.currentpassword,
                 hintIcon: '',
                 controller: currentpass,
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ForgetPassword(
+                                  fromLoginPage: false,
+                                )),
+                      );
+                    },
+                    child: Text(
+                      l.forgotpassword,
+                      style: TextStyle(
+                        color: AppColors.greyOpacity,
+                        decoration: TextDecoration.underline,
+                        fontFamily: 'PoppinsRegular',
+                        fontSize: indexL == 0
+                            ? mediaWidthSized(context, 30)
+                            : mediaWidthSized(context, 27),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  )
+                ],
               ),
               const SizedBox(
                 height: 15,

@@ -50,6 +50,7 @@ dependencies:
   flutter_native_splash: 
   fluttertoast: 
   device_info_plus:
+  auto_size_text:
   # flutter_phoenix: 
   url_launcher: 
   page_transition: 

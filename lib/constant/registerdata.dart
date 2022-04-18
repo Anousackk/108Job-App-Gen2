@@ -69,10 +69,10 @@ class Register {
       fieldstudyName,
       degreeID,
       fieldstudyDegree,
-      langName,
-      langNameID,
-      langLevel,
-      langLevelID,
+      langName = [],
+      langNameID = [],
+      langLevel = [],
+      langLevelID = [],
       keySkill;
 
   Future getAll() async {

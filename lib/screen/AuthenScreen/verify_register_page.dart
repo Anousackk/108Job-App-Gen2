@@ -22,12 +22,18 @@ import 'change_password.dart';
 
 class VerifyRegisterPage extends StatefulWidget {
   const VerifyRegisterPage(
-      {Key? key, this.number, this.justverify, this.email, this.password})
+      {Key? key,
+      this.number,
+      this.justverify,
+      this.email,
+      this.password,
+      required this.fromLoginPage})
       : super(key: key);
   final String? number;
   final bool? justverify;
   final String? email;
   final String? password;
+  final bool fromLoginPage;
   @override
   _VerifyRegisterPageState createState() => _VerifyRegisterPageState();
 }
@@ -489,6 +495,7 @@ class _VerifyRegisterPageState extends State<VerifyRegisterPage> {
                                                   (Route<dynamic> route) =>
                                                       false);
                                               pageIndex = 0;
+
                                               // Phoenix.rebirth(context);
                                             });
                                           }
@@ -526,7 +533,9 @@ class _VerifyRegisterPageState extends State<VerifyRegisterPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const ChangePasswordPage()),
+                              builder: (context) => ChangePasswordPage(
+                                    isFromLogin: widget.fromLoginPage,
+                                  )),
                         );
                       }
                     }

@@ -1,5 +1,6 @@
 // import 'package:app/function/calculated.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:app/api/auth.dart';
 import 'package:app/api/graphqlapi.dart';
@@ -1450,11 +1451,27 @@ class _SearchSortByPageState extends State<SearchSortByPage> {
                           splashColor: AppColors.greyWhite,
                           onTap: () {
                             if (fromJobfunction) {
-                              jobselect.add(repositories?[index]['name']);
-                              jobIDselect.add(repositories?[index]['_id']);
+                              if (jobIDselect.length < 3) {
+                                jobselect.add(repositories?[index]['name']);
+                                jobIDselect.add(repositories?[index]['_id']);
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: 'You cannot pick more',
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 2);
+                              }
                             } else {
-                              provinceselect.add(repositories?[index]['name']);
-                              provinceIDselect.add(repositories?[index]['_id']);
+                              if (provinceIDselect.length < 3) {
+                                provinceselect
+                                    .add(repositories?[index]['name']);
+                                provinceIDselect
+                                    .add(repositories?[index]['_id']);
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: 'You cannot pick more',
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 2);
+                              }
                             }
                             setState(() {});
                           },

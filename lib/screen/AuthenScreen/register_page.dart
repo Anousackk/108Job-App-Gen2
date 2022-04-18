@@ -26,6 +26,8 @@ import 'package:app/screen/widget/dotted_container.dart';
 import 'package:app/screen/widget/input_text_field.dart';
 import 'package:app/screen/widget/resume_tab.dart';
 import 'package:validators/validators.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 import '../my_profile.dart';
 
@@ -66,7 +68,6 @@ class _RegisterPageState extends State<RegisterPage> {
       alertWorkExp = false,
       alertEdu = false,
       alertField = false,
-      alertLang = false,
       alertKey = false;
   dynamic image, resume;
   double? imagePercent = 0;
@@ -133,52 +134,57 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  Future getPictureDevice() async {
-    File? past = picture;
+  // Future getPictureDevice() async {
+  //   File? past = picture;
 
-    var result = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'docx']);
-    if (result != null) {
-      picture = File(result.files.single.path!);
-    } else {}
+  //   var result = await FilePicker.platform
+  //       .pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'docx']);
+  //   if (result != null) {
+  //     picture = File(result.files.single.path!);
+  //   } else {}
 
-    if (picture != null) {
-      int sizeInBytes = picture!.lengthSync();
-      double sizeInMb = sizeInBytes / (1024 * 1024);
-      if (sizeInMb > 15) {
-        picture = past;
-        showDialog<String>(
-            barrierDismissible: false,
-            context: context,
-            builder: (BuildContext context) {
-              return AlertPlainDialog(
-                title: l.cannotUpload,
-                actions: [
-                  AlertAction(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    title: l.ok,
-                  )
-                ],
-                content: l.thisImageSizelarge,
-              );
-            });
-        setState(() {});
-      } else {
-        setState(() {});
-      }
-    } else {
-      picture = past;
-      setState(() {});
-    }
-  }
+  //   if (picture != null) {
+  //     int sizeInBytes = picture!.lengthSync();
+  //     double sizeInMb = sizeInBytes / (1024 * 1024);
+  //     if (sizeInMb > 15) {
+  //       picture = past;
+  //       showDialog<String>(
+  //           barrierDismissible: false,
+  //           context: context,
+  //           builder: (BuildContext context) {
+  //             return AlertPlainDialog(
+  //               title: l.cannotUpload,
+  //               actions: [
+  //                 AlertAction(
+  //                   onTap: () {
+  //                     Navigator.pop(context);
+  //                   },
+  //                   title: l.ok,
+  //                 )
+  //               ],
+  //               content: l.thisImageSizelarge,
+  //             );
+  //           });
+  //       setState(() {});
+  //     } else {
+  //       setState(() {});
+  //     }
+  //   } else {
+  //     picture = past;
+  //     setState(() {});
+  //   }
+  // }
 
   Future getResume() async {
     var result = await FilePicker.platform
         .pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'docx']);
     if (result != null) {
       resumeFile = File(result.files.single.path!);
+      if (Platform.isIOS) {
+        final documentPath = (await getTemporaryDirectory()).path;
+        resumeFile = await resumeFile!
+            .copy('$documentPath/${path.basename(resumeFile!.path)}');
+      }
     } else {}
 
     if (resumeFile != null) {
@@ -270,7 +276,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     register.dob ??= past;
     if (register.dob != null) {
-      stringdob = DateFormat('dd-MM-yyyy').format(register.dob!);
+      stringdob = DateFormat('yyyy-MM-dd').format(register.dob!);
     }
     setState(() {
       if (register.dob == null) {
@@ -291,9 +297,7 @@ class _RegisterPageState extends State<RegisterPage> {
       alertKey = register.keySkill == null ||
           register.keySkill!.contains(null) ||
           register.keySkill!.isEmpty;
-      alertLang = register.langNameID == null ||
-          register.langNameID!.contains(null) ||
-          register.langNameID!.isEmpty;
+
       alertField = register.degreeID == null ||
           register.degreeID!.contains(null) ||
           register.degreeID!.isEmpty;
@@ -341,9 +345,7 @@ class _RegisterPageState extends State<RegisterPage> {
       alertKey = register.keySkill == null ||
           register.keySkill!.contains(null) ||
           register.keySkill!.isEmpty;
-      alertLang = register.langNameID == null ||
-          register.langNameID!.contains(null) ||
-          register.langNameID!.isEmpty;
+
       alertField = register.degreeID == null ||
           register.degreeID!.contains(null) ||
           register.degreeID!.isEmpty;
@@ -1646,7 +1648,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 }
                                 if (result.isLoading) {
                                   return WidgetTabInfo(
-                                      alertvisible: alertLang,
+                                      alertvisible: false,
                                       alertText: l.enterLanguage,
                                       showField: showLang != null
                                           ? '${showLang?.join('\n')}'
@@ -1670,7 +1672,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     }
                                     if (result2.isLoading) {
                                       return WidgetTabInfo(
-                                          alertvisible: alertLang,
+                                          alertvisible: false,
                                           alertText: l.enterLanguage,
                                           showField: showLang != null
                                               ? '${showLang?.join('\n')}'
@@ -1681,7 +1683,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     List repositoriesLangLevel =
                                         result2.data?["getReuseList"];
                                     return WidgetTabInfo(
-                                        alertvisible: alertLang,
+                                        alertvisible: false,
                                         alertText: l.enterLanguage,
                                         onTap: () {
                                           if (!currentFocus.hasPrimaryFocus) {
@@ -1706,13 +1708,10 @@ class _RegisterPageState extends State<RegisterPage> {
                                               register
                                                   .getLangLevelID()
                                                   .then((value) {
-                                                alertLang =
-                                                    register.langNameID ==
-                                                            null ||
-                                                        register.langNameID!
-                                                            .contains(null) ||
-                                                        register.langNameID!
-                                                            .isEmpty;
+                                                register.langNameID!
+                                                        .contains(null) ||
+                                                    register
+                                                        .langNameID!.isEmpty;
                                                 showLang = setShowLang(
                                                     register.langName,
                                                     register.langLevel);
@@ -1879,7 +1878,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                                   !alertTotalExp!) &&
                                               !alertEdu! &&
                                               !alertField! &&
-                                              !alertLang! &&
                                               !alertKey!)) {
                                     isLoading = true;
                                     setState(() {});
@@ -2100,10 +2098,10 @@ class _RegisterPageState extends State<RegisterPage> {
                                 setState(() {});
                               });
 
-                              Map<String, dynamic> result = resultData;
+                              Map<String, dynamic>? result = resultData;
                               User user = User();
 
-                              if (resultData != null) {
+                              if (result != null) {
                                 switch (result['addRegisterseekers']) {
                                   case 'This email already registed':
                                     showDialog<String>(
@@ -2159,6 +2157,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               VerifyRegisterPage(
+                                                fromLoginPage: true,
                                                 number: number!,
                                                 justverify: true,
                                                 email: emailControl.text,
@@ -2222,7 +2221,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                                   !alertTotalExp!) &&
                                               !alertEdu! &&
                                               !alertField! &&
-                                              !alertLang! &&
                                               !alertKey!)) {
                                     isLoading = true;
                                     setState(() {});
