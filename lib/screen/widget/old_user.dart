@@ -8,6 +8,8 @@ import 'package:app/screen/AuthenScreen/register_page.dart';
 import 'package:app/screen/ControlScreen/bottom_navigation.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
+import '../../api/rest_api.dart';
+
 class OlduserToRegister extends StatefulWidget {
   const OlduserToRegister({Key? key, this.userID}) : super(key: key);
   final String? userID;
@@ -129,7 +131,17 @@ class _OlduserToRegisterState extends State<OlduserToRegister> {
                     onTap: () {
                       SmartDialog.showLoading(
                           background: AppColors.white, msg: l.loading);
-                      AuthUtil().removeToken();
+                      AuthUtil().removeToken().then((value) async {
+                        if (deviceID != null) {
+                          await postAPI(logout, {
+                            "notifyToken": [
+                              {"model": deviceID}
+                            ]
+                          }).then((val) {
+                            debugPrint(val.toString());
+                          });
+                        }
+                      });
                       Future.delayed(const Duration(milliseconds: 1000))
                           .then((value) {
                         SmartDialog.dismiss();

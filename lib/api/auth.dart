@@ -10,6 +10,7 @@ import 'firebasenotification.dart';
 
 String? currentToken;
 String? notifyToken;
+String? deviceID;
 bool firebaseRun = false;
 bool isCheckedDevice = false;
 Future<String?> getDeviceID() async {
@@ -27,14 +28,15 @@ Future<String?> getDeviceID() async {
 
 sendNotifyToken() {
   getDeviceID().then((value) {
-    debugPrint(value);
+    deviceID = value.toString();
+    debugPrint(value.toString());
     debugPrint(currentToken);
     debugPrint('will set api: ' +
         (currentToken != null &&
                 notifyToken != null &&
                 isCheckedDevice == false)
             .toString());
-    Future.delayed(const Duration(seconds: 3)).then((value) async {
+    Future.delayed(const Duration(seconds: 3)).then((empty) async {
       if (currentToken != null &&
           notifyToken != null &&
           isCheckedDevice == false) {
@@ -70,11 +72,10 @@ class AuthUtil {
 
   FirebaseNotifcation firebase = FirebaseNotifcation();
   Future handleAsync() async {
+    firebaseRun = true;
     await firebase.initialize();
     notifyToken = await firebase.getToken();
     debugPrint("Firebase token : $notifyToken");
-
-    firebaseRun = true;
   }
 
   Future<String?> buildgetTokenAndLang() async {

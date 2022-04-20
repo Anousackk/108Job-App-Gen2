@@ -8,8 +8,56 @@ import 'package:http_parser/http_parser.dart';
 import 'package:app/constant/colors.dart';
 import 'package:app/constant/languagedemo.dart';
 import 'package:app/function/sized.dart';
+import 'package:new_version/new_version.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../screen/landing_page.dart';
+
+Future getlang() async {
+  try {
+    var reading = await SharedPref().read('indexL');
+    indexL = reading;
+    changLanguage();
+  } catch (e) {
+    indexL = 0;
+    changLanguage();
+  }
+}
+
+Future<void> checkForUpdate(BuildContext context) async {
+  if (isShowedUpdate == false) {
+    var newVersion = NewVersion(
+      androidId: "com.onehundredeightjobs.app",
+      iOSId: "org.cenixoft.OneHundredEightJobs",
+      // dialogText: indexL == 0
+      //     ? "You can update this app for get new feature"
+      //     : 'ເຈົ້າສາມາດອັບເດດແອັບໄດ້ແລ້ວ',
+      // dismissText: indexL == 0 ? 'Dismiss' : 'ພາຍຫຼັງ',
+      // updateText: indexL == 0 ? 'Update' : 'ອັບເດດ',
+      // dialogTitle: indexL == 0 ? 'Update available' : "ອັບເດດແອັບຂອງທ່ານ",
+    );
+    VersionStatus? status = await newVersion.getVersionStatus();
+    try {
+      debugPrint('local version: ' + status!.localVersion);
+      debugPrint('store version: ' + status.storeVersion);
+      if (status.localVersion != status.storeVersion) {
+        newVersion.showUpdateDialog(
+          context: context,
+          versionStatus: status,
+          dialogText: indexL == 0
+              ? "You can update this app for get new feature"
+              : 'ເຈົ້າສາມາດອັບເດດແອັບໄດ້ແລ້ວ',
+          dismissButtonText: indexL == 0 ? 'Dismiss' : 'ພາຍຫຼັງ',
+          updateButtonText: indexL == 0 ? 'Update' : 'ອັບເດດ',
+          dialogTitle: indexL == 0 ? 'Update available' : "ອັບເດດແອັບຂອງທ່ານ",
+        );
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+}
 
 class SharedPref {
   Future read(String key) async {

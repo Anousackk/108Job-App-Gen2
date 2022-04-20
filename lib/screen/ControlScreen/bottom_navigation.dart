@@ -3,6 +3,8 @@ import 'package:app/constant/colors.dart';
 import 'package:app/constant/languagedemo.dart';
 import 'package:app/function/sized.dart';
 
+import '../../api/auth.dart';
+import '../../function/pluginfunction.dart';
 import '../all_job_page.dart';
 import '../companies_page.dart';
 import '../landing_page.dart';
@@ -10,7 +12,8 @@ import '../my_jobs_page.dart';
 import '../my_profile.dart';
 
 class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({Key? key}) : super(key: key);
+  final int? pageIndex;
+  const BottomNavigation({Key? key, this.pageIndex}) : super(key: key);
 
   @override
   _BottomNavigationState createState() => _BottomNavigationState();
@@ -44,6 +47,28 @@ class _BottomNavigationState extends State<BottomNavigation> {
     // Future.delayed(Duration(milliseconds: 200)).then((value) {
     //   setState(() {});
     // });
+  }
+
+  @override
+  void initState() {
+    checkForUpdate(context).then((value) {
+      isShowedUpdate = true;
+    }).then((value) {
+      if (isCheckedDevice == false) {
+        sendNotifyToken();
+      }
+      Future.delayed(const Duration(seconds: 1)).then((value) {
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    });
+    setState(() {
+      if (widget.pageIndex != null) {
+        pageIndex = widget.pageIndex!;
+      }
+    });
+    super.initState();
   }
 
   @override

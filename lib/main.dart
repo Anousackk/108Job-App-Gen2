@@ -14,7 +14,8 @@ void main() {
 }
 
 AuthUtil authUtil = AuthUtil();
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+int? notificationPageChanger;
+GlobalKey<NavigatorState> navState = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -45,14 +46,16 @@ class MyApp extends StatelessWidget {
       child: CacheProvider(
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          navigatorKey: navigatorKey,
+          navigatorKey: navState,
           initialRoute: '/',
           theme: ThemeData(
             primarySwatch: Colors.blue,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           routes: {
-            '/': (context) => const BottomNavigation(),
+            '/': (context) => BottomNavigation(
+                  pageIndex: pageIndex,
+                ),
             '/login': (context) => const LoginPage(),
           },
           // home:   const BottomNavigation(),

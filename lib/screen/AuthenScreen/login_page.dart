@@ -266,17 +266,24 @@ class _LoginPageState extends State<LoginPage> {
                         SharedPref().save('loginemail', emailController.text);
                       }
                       debugPrint(data.toString());
+                      Map<String, dynamic>? result = data;
+                      if (result != null) {
+                        currentToken = result['seekerLogin'];
 
+                        isCheckedDevice = false;
+                        sendNotifyToken();
+                      }
                       Future.delayed(const Duration(milliseconds: 750))
                           .then((value) {
-                        Map<String, dynamic>? result = data;
-
                         if (result != null) {
                           AuthUtil.setToken(result['seekerLogin'])
                               .then((value) {
+                            pageIndex = 0;
+                            pageController =
+                                PageController(initialPage: 0, keepPage: true);
                             Navigator.pushNamedAndRemoveUntil(
                                 context, '/', (Route<dynamic> route) => false);
-                            pageIndex = 0;
+
                             // Phoenix.rebirth(context);
                           });
                         }

@@ -6,7 +6,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:new_version/new_version.dart';
+// import 'package:new_version/new_version.dart';
 import 'package:app/api/auth.dart';
 import 'package:app/api/graphqlapi.dart';
 import 'package:app/constant/animationfade.dart';
@@ -21,6 +21,7 @@ import 'package:app/screen/widget/job_list_view.dart';
 import 'package:shimmer/shimmer.dart';
 
 // import '../main.dart';
+import '../api/rest_api.dart';
 import 'ControlScreen/bottom_navigation.dart';
 import 'Shimmer/listcompanyshimmer.dart';
 import 'Shimmer/listjobshimmer.dart';
@@ -87,17 +88,6 @@ class _LandingPageState extends State<LandingPage> {
 
   // }
 
-  Future getlang() async {
-    try {
-      var reading = await SharedPref().read('indexL');
-      indexL = reading;
-      changLanguage();
-    } catch (e) {
-      indexL = 0;
-      changLanguage();
-    }
-  }
-
   bannerShimmer() {
     return Shimmer.fromColors(
       child: Container(
@@ -109,51 +99,11 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
-  Future<void> checkForUpdate() async {
-    if (isShowedUpdate == false) {
-      var newVersion = NewVersion(
-        androidId: "com.onehundredeightjobs.app",
-        iOSId: "org.cenixoft.OneHundredEightJobs",
-        // dialogText: indexL == 0
-        //     ? "You can update this app for get new feature"
-        //     : 'ເຈົ້າສາມາດອັບເດດແອັບໄດ້ແລ້ວ',
-        // dismissText: indexL == 0 ? 'Dismiss' : 'ພາຍຫຼັງ',
-        // updateText: indexL == 0 ? 'Update' : 'ອັບເດດ',
-        // dialogTitle: indexL == 0 ? 'Update available' : "ອັບເດດແອັບຂອງທ່ານ",
-      );
-      VersionStatus? status = await newVersion.getVersionStatus();
-      try {
-        debugPrint('local version: ' + status!.localVersion);
-        debugPrint('store version: ' + status.storeVersion);
-        if (status.localVersion != status.storeVersion) {
-          newVersion.showUpdateDialog(
-            context: context,
-            versionStatus: status,
-            dialogText: indexL == 0
-                ? "You can update this app for get new feature"
-                : 'ເຈົ້າສາມາດອັບເດດແອັບໄດ້ແລ້ວ',
-            dismissButtonText: indexL == 0 ? 'Dismiss' : 'ພາຍຫຼັງ',
-            updateButtonText: indexL == 0 ? 'Update' : 'ອັບເດດ',
-            dialogTitle: indexL == 0 ? 'Update available' : "ອັບເດດແອັບຂອງທ່ານ",
-          );
-        }
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    }
-  }
-
   @override
   void initState() {
     getlang().then((value) {
       changLanguage();
-      checkForUpdate().then((value) {
-        isShowedUpdate = true;
-      });
-      setState(() {});
     });
-    debugPrint('getDevice:');
-
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
@@ -161,14 +111,7 @@ class _LandingPageState extends State<LandingPage> {
         dosomething();
       }
     });
-    if (isCheckedDevice == false) {
-      sendNotifyToken();
-    }
-    Future.delayed(const Duration(seconds: 1)).then((value) {
-      if (mounted) {
-        setState(() {});
-      }
-    });
+
     // authUtil.getToken().then((value) {
     //   setState(() {});
     // });
@@ -394,7 +337,17 @@ class _LandingPageState extends State<LandingPage> {
                       debugPrint(result.exception?.graphqlErrors[0].toString());
                       if (result.exception?.graphqlErrors[0].toString() ==
                           'Context creation failed: TokenExpiredError: jwt expired: Undefined location') {
-                        AuthUtil().removeToken().then((value) {
+                        AuthUtil().removeToken().then((value) async {
+                          if (deviceID != null) {
+                            await postAPI(logout, {
+                              "notifyToken": [
+                                {"model": deviceID}
+                              ]
+                            }).then((val) {
+                              debugPrint(val.toString());
+                            });
+                          }
+                        }).then((value) {
                           currentToken = null;
                           Navigator.pushNamedAndRemoveUntil(
                               context, '/', (Route<dynamic> route) => false);

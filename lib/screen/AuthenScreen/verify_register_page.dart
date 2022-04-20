@@ -477,18 +477,29 @@ class _VerifyRegisterPageState extends State<VerifyRegisterPage> {
                                           SharedPref()
                                               .save('email', widget.number);
                                         }
+
                                         // debugPrint(data.toString());
                                         Future.delayed(
                                                 const Duration(seconds: 1))
                                             .then((value) {
                                           SmartDialog.dismiss();
                                           Map<String, dynamic>? result = data;
+                                          if (result != null) {
+                                            currentToken =
+                                                result['seekerLogin'];
+
+                                            isCheckedDevice = false;
+                                            sendNotifyToken();
+                                          }
 
                                           if (result != null) {
                                             AuthUtil.setToken(
                                                     result['seekerLogin'])
                                                 .then((value) {
                                               pageIndex = 0;
+                                              pageController = PageController(
+                                                  initialPage: 0,
+                                                  keepPage: true);
                                               Navigator.pushNamedAndRemoveUntil(
                                                   context,
                                                   '/',

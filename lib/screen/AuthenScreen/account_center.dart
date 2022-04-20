@@ -1,3 +1,4 @@
+import 'package:app/api/rest_api.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -305,7 +306,17 @@ class _AccountCenterPageState extends State<AccountCenterPage> {
                       ),
                       onTap: () {
                         showDialogLoading(context);
-                        AuthUtil().removeToken();
+                        AuthUtil().removeToken().then((value) async {
+                          if (deviceID != null) {
+                            await postAPI(logout, {
+                              "notifyToken": [
+                                {"model": deviceID}
+                              ]
+                            }).then((val) {
+                              debugPrint(val.toString());
+                            });
+                          }
+                        });
                         Future.delayed(const Duration(milliseconds: 1000))
                             .then((value) {
                           SmartDialog.dismiss();
