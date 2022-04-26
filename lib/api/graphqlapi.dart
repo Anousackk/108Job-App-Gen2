@@ -463,6 +463,7 @@ mutation(
       {
                               findSeeker {
                                 status
+                                reason
                                 registerSeeker {
                                   fileId{
                                     src

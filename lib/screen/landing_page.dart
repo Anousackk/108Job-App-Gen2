@@ -334,26 +334,32 @@ class _LandingPageState extends State<LandingPage> {
                       variables: <String, dynamic>{"variables": "Top Banner"}),
                   builder: (result, {fetchMore, refetch}) {
                     if (result.hasException) {
-                      debugPrint(result.exception?.graphqlErrors[0].toString());
-                      if (result.exception?.graphqlErrors[0].toString() ==
-                          'Context creation failed: TokenExpiredError: jwt expired: Undefined location') {
-                        AuthUtil().removeToken().then((value) async {
-                          if (deviceID != null) {
-                            await postAPI(logout, {
-                              "notifyToken": [
-                                {"model": deviceID}
-                              ]
-                            }).then((val) {
-                              debugPrint(val.toString());
+                      if (result.exception != null) {
+                        if (result.exception!.graphqlErrors.isEmpty) {
+                        } else {
+                          debugPrint(
+                              result.exception?.graphqlErrors[0].toString());
+                          if (result.exception?.graphqlErrors[0].toString() ==
+                              'Context creation failed: TokenExpiredError: jwt expired: Undefined location') {
+                            AuthUtil().removeToken().then((value) async {
+                              if (deviceID != null) {
+                                await postAPI(logout, {
+                                  "notifyToken": [
+                                    {"model": deviceID}
+                                  ]
+                                }).then((val) {
+                                  debugPrint(val.toString());
+                                });
+                              }
+                            }).then((value) {
+                              currentToken = null;
+                              Navigator.pushNamedAndRemoveUntil(context, '/',
+                                  (Route<dynamic> route) => false);
+                              pageIndex = 0;
+                              // Phoenix.rebirth(context);
                             });
                           }
-                        }).then((value) {
-                          currentToken = null;
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/', (Route<dynamic> route) => false);
-                          pageIndex = 0;
-                          // Phoenix.rebirth(context);
-                        });
+                        }
                       }
                       // AuthUtil().removeToken();
                       // pageIndex = 0;

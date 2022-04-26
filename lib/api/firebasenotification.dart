@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +15,43 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint(message.data.toString());
 }
 
+Map modifyNotiJson(Map<String, dynamic> message) {
+  message['data'] = Map.from(message);
+  message['notification'] = message['aps']['alert'];
+  return message;
+}
+
 class FirebaseNotifcation {
   initialize() async {
-    await Firebase.initializeApp();
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    debugPrint('do init firebase');
 
+    await Firebase.initializeApp();
+
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    try {
+      if (Platform.isIOS) {
+        NotificationSettings settings =
+            await FirebaseMessaging.instance.requestPermission(
+          alert: true,
+          announcement: false,
+          badge: true,
+          carPlay: false,
+          criticalAlert: false,
+          provisional: false,
+          sound: true,
+        );
+        if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+          debugPrint('User granted permission');
+        } else if (settings.authorizationStatus ==
+            AuthorizationStatus.provisional) {
+          debugPrint('User granted provisional permission');
+        } else {
+          debugPrint('User declined or has not accepted permission');
+        }
+      }
+    } catch (e) {
+      debugPrint('eieiekuy' + e.toString());
+    }
     // FirebaseMessaging.onMessageOpenedApp.listen((event) {
 
     // });
@@ -41,6 +75,7 @@ class FirebaseNotifcation {
         }
       }
     });
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {});
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       if (message.data['screen'] == 'Jobpage') {
@@ -52,7 +87,6 @@ class FirebaseNotifcation {
         }
       }
       if (message.data['screen'] == 'CVpage') {
-        debugPrint('kuy2');
         if (navState.currentState != null) {
           pageIndex = 4;
           pageController = PageController(keepPage: true, initialPage: 4);

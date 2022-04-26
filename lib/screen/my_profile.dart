@@ -1,3 +1,4 @@
+// import 'package:app/screen/widget/alertdialog.dart';
 import 'package:app/screen/widget/apploading.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,6 +34,7 @@ dynamic findseeker;
 dynamic registerSeeker;
 dynamic cvStatus;
 String? beforeToken;
+String? rejectReason;
 bool? resumeswitch = false;
 bool? resumefirst = true;
 bool? resumeRead = true;
@@ -68,75 +70,167 @@ class _MyProfilePageState extends State<MyProfilePage> {
     String status = cvStatus;
     switch (status) {
       case 'Approved':
-        return Container(
-          height: mediaWidthSized(context, 15),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
-          child: Row(
-            children: [
-              Text(
-                'check-circle',
-                style: regularIconFreeSizedColor(
-                    context: context, color: AppColors.green, mediasSize: 28),
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: mediaWidthSized(context, 15),
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(15)),
+              child: Row(
+                children: [
+                  Text(
+                    'check-circle',
+                    style: regularIconFreeSizedColor(
+                        context: context,
+                        color: AppColors.green,
+                        mediasSize: 28),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    indexL == 0
+                        ? 'Resume has been verified'
+                        : 'ຊີວະປະຫວັດຖືກກວດສອບແລ້ວ',
+                    style: textStyleRegular(
+                        color: AppColors.grey, context: context, size: 34),
+                  )
+                ],
               ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                indexL == 0
-                    ? 'Resume has been verified'
-                    : 'ຊີວະປະຫວັດຖືກກວດສອບແລ້ວ',
-                style: textStyleRegular(
-                    color: AppColors.grey, context: context, size: 34),
-              )
-            ],
-          ),
+            ),
+          ],
         );
 
       case 'Pending':
-        return Container(
-          height: mediaWidthSized(context, 15),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
-          child: Row(
-            children: [
-              Text(
-                'sync-alt',
-                style: regularIconFreeSizedColor(
-                    context: context, color: AppColors.blueSky, mediasSize: 28),
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: mediaWidthSized(context, 15),
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(15)),
+              child: Row(
+                children: [
+                  Text(
+                    'sync-alt',
+                    style: regularIconFreeSizedColor(
+                        context: context,
+                        color: AppColors.blueSky,
+                        mediasSize: 28),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    indexL == 0 ? 'Processing Resume' : 'ກຳລັງກວດສອບຊີວະປະຫວັດ',
+                    style: textStyleRegular(
+                        color: AppColors.grey, context: context, size: 34),
+                  )
+                ],
               ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                indexL == 0 ? 'Processing Resume' : 'ກຳລັງກວດສອບຊີວະປະຫວັດ',
-                style: textStyleRegular(
-                    color: AppColors.grey, context: context, size: 34),
-              )
-            ],
-          ),
+            ),
+          ],
         );
 
       case 'Rejected':
-        return Container(
-          height: mediaWidthSized(context, 15),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
-          child: Row(
-            children: [
-              Text(
-                'times-circle',
-                style: regularIconFreeSizedColor(
-                    context: context, color: AppColors.yellow, mediasSize: 28),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                indexL == 0 ? 'Resume Rejected' : 'ຊີວະປະຫວັດຖືກປະຕິເສດ',
-                style: textStyleRegular(
-                    color: AppColors.grey, context: context, size: 34),
-              )
-            ],
+        return Column(children: [
+          const SizedBox(
+            height: 10,
           ),
-        );
+          Container(
+            // height: mediaWidthSized(context, 15),
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'times-circle',
+                  style: regularIconFreeSizedColor(
+                      context: context,
+                      color: AppColors.yellow,
+                      mediasSize: 28),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  indexL == 0 ? 'Resume Rejected' : 'ຊີວະປະຫວັດຖືກປະຕິເສດ',
+                  style: textStyleRegular(
+                      color: AppColors.grey, context: context, size: 34),
+                )
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertPlainDialog(
+                      title: 'Note',
+                      actions: [
+                        AlertAction(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          title: l.ok,
+                        )
+                      ],
+                      content: rejectReason ?? '',
+                    );
+                  },
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: AppColors.yellow)),
+                child: Text(
+                  indexL == 0 ? '  View more  ' : '  ເພິ່ມເຕີມ  ',
+                  style: textStyleRegular(
+                      context: context, size: 35, color: AppColors.yellow),
+                ),
+              )),
+          const SizedBox(
+            height: 5,
+          ),
+          // const SizedBox(
+          //   height: 5,
+          // ),
+          // Container(
+          //   margin: const EdgeInsets.only(left: 20, right: 20, bottom: 5),
+          //   // color: AppColors.white,
+          //   decoration: BoxDecoration(
+          //       borderRadius: BorderRadius.circular(3),
+          //       border: Border.all(color: AppColors.yellow)),
+          //   child: Container(
+          //     margin: const EdgeInsets.symmetric(horizontal: 10),
+          //     child: Row(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         Text(
+          //           indexL == 0 ? 'Note: ' : 'ໝາຍເຫດ: ',
+          //           style: textStyleRegular(
+          //               context: context, size: 32, color: AppColors.yellow),
+          //         ),
+          //         Expanded(
+          //           child: Text(
+          //             "ghwuoerghoerngiorehguwrniogbwugeiugbewiugiuwbgirbifebwurbguwr",
+          //             style: textStyleRegular(
+          //                 context: context, size: 32, color: AppColors.grey),
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // )
+        ]);
 
       default:
         return Container();
@@ -206,7 +300,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
           } catch (e) {
             debugPrint(e.toString());
           }
-          debugPrint(cvStatus);
+          try {
+            rejectReason = result.data?['findSeeker']['reason'];
+          } catch (e) {
+            debugPrint(e.toString());
+          }
           try {
             registerSeeker = result.data?['findSeeker']['registerSeeker'];
             beforeToken = result.data?['findSeeker']['authId']['_id'];
@@ -430,7 +528,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           color: AppColors.greyWhite,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [checkStatusWidget(cvStatus)],
+                            children: [
+                              Expanded(child: checkStatusWidget(cvStatus))
+                            ],
                           ),
                         ),
 
