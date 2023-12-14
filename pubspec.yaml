@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 2.6.0+40
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -62,6 +62,10 @@ dependencies:
   firebase_core: 
   sms_autofill:
   flutter_smart_dialog:
+  upgrader:
+  sizer:
+  form_field_validator:
+  get:
 
   new_version:
   # flutter_phoenix: ^1.0.0
@@ -114,27 +118,34 @@ flutter:
   # example:
   # fonts:
   fonts:
-  - family: FontAwesomeBrands
+  - family: FontAwesomeBrands-Regular
     fonts:
-    - asset: assets/font/Font Awesome 5 Brands-Regular-400.otf
-  - family: FontAwesomeProLight
+    - asset: assets/font/FontAwesome6Brands-Regular-400.otf
+  - family: FontAwesomeDuotone-Solid
     fonts:
-    - asset: assets/font/Font-Awesome-5-Pro-Light-300.otf 
-  - family: FontAwesomeProRegular
+    - asset: assets/font/FontAwesome6Duotone-Solid-900.otf
+  - family: FontAwesomePro-Light
     fonts:
-    - asset: assets/font/Font-Awesome-5-Pro-Regular-400.otf 
-  - family: FontAwesomeProSolid
+    - asset: assets/font/FontAwesome6Pro-Light-300.otf
+  - family: FontAwesomePro-Regular
     fonts:
-    - asset: assets/font/Font-Awesome-5-Pro-Solid-900.otf 
-  - family: PoppinsMedium
+    - asset: assets/font/FontAwesome6Pro-Regular-400.otf
+  - family: FontAwesomePro-Solid
     fonts:
-    - asset: assets/font/Poppins-Medium.ttf 
-  - family: PoppinsRegular
+    - asset: assets/font/FontAwesome6Pro-Solid-900.otf
+  - family: FontAwesomePro-Thin
     fonts:
-    - asset: assets/font/Poppins-Regular.ttf
-  - family: PoppinsSemiBold
+    - asset: assets/font/FontAwesome6Pro-Thin-100.otf
+  - family: NotoSansLaoSemiBold
     fonts:
-    - asset: assets/font/Poppins-SemiBold.ttf 
+    - asset: assets/font/NotoSansLao-SemiBold.ttf
+  - family: NotoSansLaoMedium
+    fonts:
+    - asset: assets/font/NotoSansLao-Medium.ttf
+  - family: NotoSansLaoRegular
+    fonts:
+    - asset: assets/font/NotoSansLao-Regular.ttf
+    
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

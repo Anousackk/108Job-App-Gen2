@@ -1,69 +1,111 @@
+// ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace
+import 'dart:async';
+import 'package:app/functions/colors.dart';
+import 'package:app/i18n/i18n.dart';
+import 'package:app/screen/main/main.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'api/auth.dart';
-import 'api/graphqlapi.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'screen/AuthenScreen/login_page.dart';
-import 'screen/ControlScreen/bottom_navigation.dart';
-
-void main() {
+//main()
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  //Lock Portrait Screen
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  // Workmanager().initialize(
+  //   callbackDispatcher,
+  //   isInDebugMode:
+  //       false
+  // );
+
+  // Workmanager().registerPeriodicTask(
+  //   "ExampleTask",
+  //   "ExampleTaskPeriodicTask",
+  //   frequency: Duration(minutes: 15),
+  //   existingWorkPolicy: ExistingWorkPolicy.append,
+  // );
+
+  runApp(MyApp());
 }
 
-AuthUtil authUtil = AuthUtil();
-int? notificationPageChanger;
-GlobalKey<NavigatorState> navState = GlobalKey<NavigatorState>();
-
-class MyApp extends StatelessWidget {
+//MyApp
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    Link authLink;
+  MyAppState createState() => MyAppState();
+}
 
-    authLink = AuthLink(
-      getToken: () async {
-        await authUtil.buildgetTokenAndLang();
-        // debugPrint('start with auth: ${authUtil.token.toString()}');
-        // debugPrint('start with currenttoken: ${currentToken.toString()}');
-        return authUtil.token;
-      },
-    ).concat(HttpLink(QueryInfo().host));
-    final ValueNotifier<GraphQLClient> user = ValueNotifier<GraphQLClient>(
-      GraphQLClient(
-        link: authLink,
-        cache: GraphQLCache(),
-      ),
-    );
-    return GraphQLProvider(
-      client: user,
-      child: CacheProvider(
-        child: MaterialApp(
+class MyAppState extends State<MyApp> {
+  // checkLanguage() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   var getLanguageSharePref = prefs.getString('setLanguage');
+
+  //   if (getLanguageSharePref == 'lo') {
+  //     await Get.updateLocale(Locale('lo', 'LA'));
+  //   } else if (getLanguageSharePref == 'en') {
+  //     await Get.updateLocale(Locale('en', 'US'));
+  //   }
+
+  //   print('getLanguageSharePref: ' + getLanguageSharePref.toString());
+  // }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //Get.deviceLocale
+    print("Main locale: " + '${Get.locale}');
+
+    const primaryColor = Color(0xFF151026);
+    FocusScopeNode currentFocus = FocusScopeNode();
+
+    return Sizer(
+      builder: (context, orientation, deviceType) {
+        return GetMaterialApp(
+          translations: LocalString(),
+          locale: Locale('lo', 'LA'),
+          fallbackLocale: Locale('lo', 'LA'),
           debugShowCheckedModeBanner: false,
-          navigatorKey: navState,
-          initialRoute: '/',
           theme: ThemeData(
-            primarySwatch: Colors.blue,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
+            // scaffoldBackgroundColor: AppColors.dark,
+            fontFamily: 'NotoSansLaoRegular',
+            primaryColor: primaryColor,
+            appBarTheme: AppBarTheme(
+              // color: AppColors.dark,
+              elevation: 0,
+
+              // systemOverlayStyle: SystemUiOverlayStyle.dark,
+              // systemOverlayStyle: SystemUiOverlayStyle(
+              //     statusBarColor: AppColors.white,
+              //     systemNavigationBarColor: AppColors.black),
+            ),
           ),
-          routes: {
-            '/': (context) => BottomNavigation(
-                  pageIndex: pageIndex,
-                ),
-            '/login': (context) => const LoginPage(),
-          },
-          // home:   const BottomNavigation(),
-          builder: (context, Widget? child) {
-            return FlutterSmartDialog(child: child);
-          },
-        ),
-      ),
+          home: Scaffold(
+            appBar: AppBar(
+              toolbarHeight: 0,
+              systemOverlayStyle: SystemUiOverlayStyle.dark,
+              backgroundColor: AppColors.white,
+            ),
+            body: MainBody(),
+          ),
+          localizationsDelegates: [
+            // add your localizations delegates here
+            DefaultMaterialLocalizations.delegate,
+            DefaultWidgetsLocalizations.delegate,
+          ],
+        );
+      },
     );
   }
 }
