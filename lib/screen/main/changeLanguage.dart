@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, unused_field, prefer_final_fields, avoid_print
+// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, unused_field, prefer_final_fields, avoid_print, unused_local_variable
 import 'package:app/functions/alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,17 +14,33 @@ class ChangeLanguage extends StatefulWidget {
 class _ChangeLanguageState extends State<ChangeLanguage> {
   String _isLocaleLanguage = "";
   checkLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    var getLanguageSharePref = prefs.getString('setLanguage');
+
+    // if (getLanguageSharePref == 'lo') {
+    //   setState(() {
+    //     _isLocaleLanguage = 'lo';
+    //   });
+    // } else if (getLanguageSharePref == 'en') {
+    //   setState(() {
+    //     _isLocaleLanguage = 'en';
+    //   });
+    // }
+
     if (Get.locale == Locale('lo', 'LA')) {
-      _isLocaleLanguage = 'lo';
+      setState(() {
+        _isLocaleLanguage = 'lo';
+      });
     } else if (Get.locale == Locale('en', 'US')) {
-      _isLocaleLanguage = 'en';
+      setState(() {
+        _isLocaleLanguage = 'en';
+      });
     }
-    print(_isLocaleLanguage);
+    print("Navbar: " + _isLocaleLanguage);
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     checkLanguage();
   }
@@ -43,8 +59,8 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
                 setLanguage(langEng, 'en');
               },
               child: Container(
-                width: 35,
-                height: 35,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -60,8 +76,8 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
                 setLanguage(langLao, 'lo');
               },
               child: Container(
-                width: 35,
-                height: 35,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(

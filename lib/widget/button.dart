@@ -4,6 +4,7 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 class ButtonDefault extends StatefulWidget {
@@ -13,10 +14,15 @@ class ButtonDefault extends StatefulWidget {
     this.press,
     this.colorButton,
     this.colorText,
+    this.fontWeight,
+    this.buttonBorderColor,
+    this.boxDecBorderRadius,
   }) : super(key: key);
   final String? text;
-  final Color? colorButton;
+  final Color? colorButton, buttonBorderColor;
   final Color? colorText;
+  final FontWeight? fontWeight;
+  final BorderRadiusGeometry? boxDecBorderRadius;
   final Function()? press;
 
   @override
@@ -27,14 +33,23 @@ class _ButtonDefaultState extends State<ButtonDefault> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 12.w,
+      // height: 12.w,
       child: TextButton(
         style: ButtonStyle(
+          side: MaterialStateProperty.resolveWith<BorderSide>(
+            (Set<MaterialState> states) {
+              return BorderSide(
+                color: widget.buttonBorderColor ?? AppColors.borderWhite,
+              ); // Default border color
+            },
+          ),
           padding: MaterialStateProperty.all<EdgeInsets>(
-              EdgeInsets.symmetric(horizontal: 30)),
+            EdgeInsets.symmetric(horizontal: 20),
+          ),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.w),
+              borderRadius:
+                  widget.boxDecBorderRadius ?? BorderRadius.circular(12.w),
             ),
           ),
           backgroundColor: MaterialStateProperty.all(
@@ -46,12 +61,83 @@ class _ButtonDefaultState extends State<ButtonDefault> {
           '${widget.text}',
           style: buttonTextNormal(
             widget.colorText == null ? AppColors.white : widget.colorText,
+            widget.fontWeight,
           ),
-          // style: TextStyle(
-          //   fontSize: 10.sp,
-          //   color:
-          //       widget.colorText == null ? AppColors.white : widget.colorText,
-          // ),
+        ),
+      ),
+    );
+  }
+}
+
+class ButtonWithIconLeft extends StatefulWidget {
+  const ButtonWithIconLeft({
+    Key? key,
+    this.text,
+    this.press,
+    this.colorButton,
+    this.colorText,
+    this.fontWeight,
+    this.widgetIcon,
+    this.borderRadius,
+    this.buttonBorderColor,
+    this.paddingButton,
+  }) : super(key: key);
+  final String? text;
+  final Color? colorButton, buttonBorderColor;
+  final Color? colorText;
+  final FontWeight? fontWeight;
+  final Widget? widgetIcon;
+  final BorderRadiusGeometry? borderRadius;
+  final MaterialStateProperty<EdgeInsetsGeometry?>? paddingButton;
+  final Function()? press;
+
+  @override
+  State<ButtonWithIconLeft> createState() => _ButtonWithIconLeftState();
+}
+
+class _ButtonWithIconLeftState extends State<ButtonWithIconLeft> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // height: 12.w,
+      child: TextButton(
+        style: ButtonStyle(
+          padding: widget.paddingButton ??
+              MaterialStateProperty.all<EdgeInsets>(
+                EdgeInsets.zero,
+              ),
+          side: MaterialStateProperty.resolveWith<BorderSide>(
+            (Set<MaterialState> states) {
+              return BorderSide(
+                color: widget.buttonBorderColor ?? AppColors.borderWhite,
+              ); // Default border color
+            },
+          ),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: widget.borderRadius ?? BorderRadius.circular(12.w),
+            ),
+          ),
+          backgroundColor: MaterialStateProperty.all(
+            widget.colorButton == null ? AppColors.blue : widget.colorButton,
+          ),
+        ),
+        onPressed: widget.press,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(child: widget.widgetIcon),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              '${widget.text}',
+              style: buttonTextNormal(
+                widget.colorText == null ? AppColors.white : widget.colorText,
+                widget.fontWeight,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -65,10 +151,13 @@ class Button extends StatefulWidget {
     this.press,
     this.colorButton,
     this.colorText,
+    this.fontWeight,
+    this.borderColor,
   }) : super(key: key);
   final String? text;
-  final Color? colorButton;
+  final Color? colorButton, borderColor;
   final Color? colorText;
+  final FontWeight? fontWeight;
   final Function()? press;
 
   @override
@@ -97,6 +186,7 @@ class _ButtonState extends State<Button> {
           '${widget.text}',
           style: buttonTextNormal(
             widget.colorText == null ? AppColors.white : widget.colorText,
+            widget.fontWeight,
           ),
           // style: TextStyle(
           //   fontSize: 10.sp,
@@ -118,10 +208,10 @@ class SimpleButton extends StatefulWidget {
     this.colorButton,
     this.colorText,
     this.fontWeight,
+    this.buttonBorderColor,
   }) : super(key: key);
   final String? text;
-  final Color? colorButton;
-  final Color? colorText;
+  final Color? colorText, colorButton, buttonBorderColor;
   final FontWeight? fontWeight;
   final Function()? press;
 
@@ -137,9 +227,17 @@ class _SimpleButtonState extends State<SimpleButton> {
       height: 12.w,
       child: TextButton(
         style: ButtonStyle(
+          side: MaterialStateProperty.resolveWith<BorderSide>(
+            (Set<MaterialState> states) {
+              return BorderSide(
+                color: widget.buttonBorderColor ??
+                    AppColors.borderWhite.withOpacity(0),
+              ); // Default border color
+            },
+          ),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(2.w),
+              borderRadius: BorderRadius.circular(1.5.w),
             ),
           ),
           backgroundColor: MaterialStateProperty.all(
@@ -150,7 +248,7 @@ class _SimpleButtonState extends State<SimpleButton> {
         ),
         onPressed: widget.press,
         child: Text("${widget.text}",
-            style: bodyTextNormal(
+            style: bodyTextMaxNormal(
                 widget.colorText == null
                     ? AppColors.fontWhite
                     : widget.colorText,
@@ -173,18 +271,16 @@ class CustomButtonIconText extends StatefulWidget {
   const CustomButtonIconText({
     Key? key,
     required this.text,
-    required this.colorButton,
+    this.colorButton,
     this.press,
-    required this.icon,
-    this.fontIcon,
     this.colorText,
-    this.colorIcon,
+    required this.widgetFaIcon,
   }) : super(key: key);
   final String text;
-  final Color colorButton;
-  final String icon;
-  final String? fontIcon;
-  final Color? colorText, colorIcon;
+  final Color? colorButton;
+
+  final Color? colorText;
+  final Widget widgetFaIcon;
   final Function()? press;
 
   @override
@@ -204,24 +300,28 @@ class _CustomButtonIconTextState extends State<CustomButtonIconText> {
               borderRadius: BorderRadius.circular(1.5.w),
             ),
           ),
-          backgroundColor: MaterialStateProperty.all(widget.colorButton),
+          backgroundColor: MaterialStateProperty.all(
+              widget.colorButton ?? AppColors.buttonPrimary),
         ),
         onPressed: widget.press,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              "${widget.icon}",
-              style: TextStyle(
-                fontSize: IconSize.xsIcon,
-                color: widget.colorIcon == null
-                    ? AppColors.iconDark
-                    : widget.colorIcon,
-                fontFamily: widget.fontIcon == null
-                    ? "FontAwesomePro-Regular"
-                    : widget.fontIcon,
-              ),
+            Container(
+              child: widget.widgetFaIcon,
             ),
+            // Text(
+            //   "${widget.icon}",
+            //   style: TextStyle(
+            //     fontSize: IconSize.xsIcon,
+            //     color: widget.colorIcon == null
+            //         ? AppColors.iconDark
+            //         : widget.colorIcon,
+            //     fontFamily: widget.fontIcon == null
+            //         ? "FontAwesomePro-Regular"
+            //         : widget.fontIcon,
+            //   ),
+            // ),
             SizedBox(
               width: 10,
             ),

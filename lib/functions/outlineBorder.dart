@@ -1,11 +1,12 @@
-// ignore_for_file: file_names, unused_import
+// ignore_for_file: file_names, unused_import, prefer_if_null_operators
 
+import 'package:app/functions/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 OutlineInputBorder enableOutlineBorder(Color color) {
   return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(2.w),
+    borderRadius: BorderRadius.circular(1.5.w),
     borderSide: BorderSide(
       color: color,
     ),
@@ -14,20 +15,24 @@ OutlineInputBorder enableOutlineBorder(Color color) {
 
 OutlineInputBorder focusOutlineBorder(Color color) {
   return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(2.w),
+    borderRadius: BorderRadius.circular(1.5.w),
     borderSide: BorderSide(
       color: color,
     ),
   );
 }
 
-BoxDecoration boxDecoration(Color? color, Color borderColor) {
+BoxDecoration boxDecoration(
+    BorderRadiusGeometry? borderRadius, Color? color, Color? borderColor) {
   return BoxDecoration(
-    borderRadius: BorderRadius.circular(1.5.w),
+    borderRadius:
+        borderRadius == null ? BorderRadius.circular(1.5.w) : borderRadius,
     border: Border.all(
-      color: borderColor,
+      color: borderColor == null
+          ? AppColors.borderGrey.withOpacity(0)
+          : borderColor,
     ),
-    color: color,
+    color: color == null ? AppColors.greyOpacity : color,
   );
 }
 

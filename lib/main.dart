@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'package:app/functions/colors.dart';
 import 'package:app/i18n/i18n.dart';
+import 'package:app/routes.dart';
 import 'package:app/screen/main/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,23 +44,31 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  // checkLanguage() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   var getLanguageSharePref = prefs.getString('setLanguage');
+  checkLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    var getLanguageSharePref = prefs.getString('setLanguage');
 
-  //   if (getLanguageSharePref == 'lo') {
-  //     await Get.updateLocale(Locale('lo', 'LA'));
-  //   } else if (getLanguageSharePref == 'en') {
-  //     await Get.updateLocale(Locale('en', 'US'));
-  //   }
+    if (getLanguageSharePref == 'lo') {
+      Get.updateLocale(Locale('lo', 'LA'));
+    } else if (getLanguageSharePref == 'en') {
+      Get.updateLocale(Locale('en', 'US'));
+    }
 
-  //   print('getLanguageSharePref: ' + getLanguageSharePref.toString());
-  // }
+    print('getLanguageSharePref: ' + getLanguageSharePref.toString());
+  }
+
+  //error setState() called after dispose(). it can help!!!
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    checkLanguage();
   }
 
   @override
@@ -72,38 +81,47 @@ class MyAppState extends State<MyApp> {
 
     return Sizer(
       builder: (context, orientation, deviceType) {
-        return GetMaterialApp(
-          translations: LocalString(),
-          locale: Locale('lo', 'LA'),
-          fallbackLocale: Locale('lo', 'LA'),
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            // scaffoldBackgroundColor: AppColors.dark,
-            fontFamily: 'NotoSansLaoRegular',
-            primaryColor: primaryColor,
-            appBarTheme: AppBarTheme(
-              // color: AppColors.dark,
-              elevation: 0,
+        return GestureDetector(
+          onTap: () {
+            currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          },
+          child: GetMaterialApp(
+            translations: LocalString(),
+            locale: Locale('lo', 'LA'),
+            fallbackLocale: Locale('lo', 'LA'),
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              // scaffoldBackgroundColor: AppColors.dark,
+              fontFamily: 'NotoSansLaoRegular',
+              primaryColor: primaryColor,
+              appBarTheme: AppBarTheme(
+                // color: AppColors.dark,
+                elevation: 0,
 
-              // systemOverlayStyle: SystemUiOverlayStyle.dark,
-              // systemOverlayStyle: SystemUiOverlayStyle(
-              //     statusBarColor: AppColors.white,
-              //     systemNavigationBarColor: AppColors.black),
+                // systemOverlayStyle: SystemUiOverlayStyle.dark,
+                // systemOverlayStyle: SystemUiOverlayStyle(
+                //     statusBarColor: AppColors.white,
+                //     systemNavigationBarColor: AppColors.black),
+              ),
             ),
-          ),
-          home: Scaffold(
-            appBar: AppBar(
-              toolbarHeight: 0,
-              systemOverlayStyle: SystemUiOverlayStyle.dark,
-              backgroundColor: AppColors.white,
+            home: Scaffold(
+              appBar: AppBar(
+                toolbarHeight: 0,
+                systemOverlayStyle: SystemUiOverlayStyle.dark,
+                backgroundColor: AppColors.white,
+              ),
+              body: MainBody(),
             ),
-            body: MainBody(),
+            localizationsDelegates: [
+              // add your localizations delegates here
+              DefaultMaterialLocalizations.delegate,
+              DefaultWidgetsLocalizations.delegate,
+            ],
+            routes: routes,
           ),
-          localizationsDelegates: [
-            // add your localizations delegates here
-            DefaultMaterialLocalizations.delegate,
-            DefaultWidgetsLocalizations.delegate,
-          ],
         );
       },
     );

@@ -11,16 +11,18 @@ TextStyle appbarTextSmall(Color? textColor) {
   );
 }
 
-TextStyle appbarTextNormal(Color? textColor) {
+TextStyle appbarTextNormal(Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
     color: textColor == null ? AppColors.fontDark : textColor,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     fontSize: 15,
   );
 }
 
-TextStyle appbarTextMedium(Color? textColor) {
+TextStyle appbarTextMedium(Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
     color: textColor == null ? AppColors.fontDark : textColor,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     fontSize: 20,
   );
 }
@@ -106,8 +108,9 @@ TextStyle botderTextNormal(Color? textColor) {
 }
 
 //button
-TextStyle buttonTextNormal(Color? textColor) {
+TextStyle buttonTextNormal(Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 15,
   );

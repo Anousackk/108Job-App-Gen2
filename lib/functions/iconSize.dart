@@ -13,7 +13,7 @@ TextStyle xsIcon(String? fontFamily, Color? textColor) {
 
 TextStyle sIcon(String? fontFamily, Color? textColor) {
   return TextStyle(
-    fontFamily: fontFamily == null ? "FontAwesomePro-Regular" : fontFamily,
+    fontFamily: fontFamily == null ? "FontAwesomePro-Light" : fontFamily,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 20,
   );
@@ -54,8 +54,10 @@ TextStyle xxlIcon(String? fontFamily, Color? textColor) {
 class IconSize {
   static const double xsIcon = 15;
   static const double sIcon = 20;
-  static const double mIcon = 30;
-  static const double lIcon = 40;
-  static const double xlIcon = 50;
-  static const double xxlIcon = 60;
+  static const double mIcon = 25;
+  static const double lIcon = 30;
+  static const double xlIcon = 35;
+  static const double xxlIcon = 40;
+  static const double xxxlIcon = 45;
+  static const double xxxxlIcon = 50;
 }

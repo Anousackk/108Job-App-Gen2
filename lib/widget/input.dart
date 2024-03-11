@@ -1,10 +1,11 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_constructors_in_immutables, avoid_unnecessary_containers, prefer_if_null_operators, unnecessary_null_comparison, unused_local_variable, deprecated_member_use, must_be_immutable
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_constructors_in_immutables, avoid_unnecessary_containers, prefer_if_null_operators, unnecessary_null_comparison, unused_local_variable, deprecated_member_use, must_be_immutable, prefer_const_literals_to_create_immutables
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:sizer/sizer.dart';
 
@@ -36,8 +37,9 @@ class _TextFormFieldTextRightState extends State<TextFormFieldTextRight> {
           borderRadius: BorderRadius.circular(1.w),
         ),
         focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.primary),
-            borderRadius: BorderRadius.circular(1.w)),
+          borderSide: BorderSide(color: AppColors.primary),
+          borderRadius: BorderRadius.circular(1.w),
+        ),
         prefixIcon: Container(
           padding: EdgeInsets.symmetric(horizontal: 15),
           child: Row(
@@ -195,73 +197,78 @@ class _SimpleTextFieldWithIconLeftState
   @override
   Widget build(BuildContext context) {
     var textValidate = "required";
-    return TextFormField(
-      onTap: widget.press,
-      onChanged: widget.changed,
-      controller: widget.textController,
-      enabled: widget.enabled == null ? true : widget.enabled,
-      obscureText: widget.isObscure,
-      toolbarOptions: ToolbarOptions(
-        paste: true,
-        cut: true,
-        copy: true,
-        selectAll: true,
+    return Container(
+      // height: 13.w,
+      child: TextFormField(
+        onTap: widget.press,
+        onChanged: widget.changed,
+        controller: widget.textController,
+        enabled: widget.enabled == null ? true : widget.enabled,
+        obscureText: widget.isObscure,
+        toolbarOptions: ToolbarOptions(
+          paste: true,
+          cut: true,
+          copy: true,
+          selectAll: true,
+        ),
+        textAlign:
+            widget.textAlign == null ? TextAlign.start : widget.textAlign,
+        keyboardType: widget.keyboardType == null
+            ? TextInputType.text
+            : widget.keyboardType,
+        decoration: InputDecoration(
+          //prefixIcon ແບບ flutter icon
+          // prefixIcon: Icon(
+          //   widget.icon,
+          //   color:
+          //       widget.iconColor == null ? AppColors.black : widget.iconColor,
+          //   size: 12.sp,
+          // ),
+
+          //prefixIcon ແບບ String(FontAwesome)
+          prefixIcon: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '${widget.prefixIcon}',
+                style: sIcon(null, null),
+              ),
+            ],
+          ),
+
+          border: OutlineInputBorder(),
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 3.5.w, vertical: 3.5.w),
+          fillColor: AppColors.inputColor,
+          filled: true,
+          enabledBorder: enableOutlineBorder(
+            AppColors.inputColor,
+          ),
+          focusedBorder: focusOutlineBorder(
+            AppColors.borderLightPrimary,
+          ),
+          hintText: "${widget.hintText}",
+          hintStyle: bodyTextNormal(
+            widget.hintStyleColor == null
+                ? AppColors.fontGreyOpacity
+                : widget.hintStyleColor,
+            widget.hintTextFontWeight,
+          ),
+        ),
+
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return "required";
+          }
+          return null;
+        },
+
+        // validator: MultiValidator([
+        //   RequiredValidator(
+        //     errorText: "validate_text".tr,
+        //   ),
+        // ]),
       ),
-      textAlign: widget.textAlign == null ? TextAlign.start : widget.textAlign,
-      keyboardType: widget.keyboardType == null
-          ? TextInputType.text
-          : widget.keyboardType,
-      decoration: InputDecoration(
-        //prefixIcon ແບບ flutter icon
-        // prefixIcon: Icon(
-        //   widget.icon,
-        //   color:
-        //       widget.iconColor == null ? AppColors.black : widget.iconColor,
-        //   size: 12.sp,
-        // ),
-
-        //prefixIcon ແບບ String(FontAwesome)
-        prefixIcon: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '${widget.prefixIcon}',
-              style: sIcon(null, null),
-            ),
-          ],
-        ),
-
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 2.5.w),
-        fillColor: AppColors.inputColor,
-        filled: true,
-        enabledBorder: enableOutlineBorder(
-          AppColors.inputColor,
-        ),
-        focusedBorder: focusOutlineBorder(
-          AppColors.borderLightPrimary,
-        ),
-        hintText: "${widget.hintText}",
-        hintStyle: bodyTextNormal(
-          widget.hintStyleColor == null
-              ? AppColors.fontGreyOpacity
-              : widget.hintStyleColor,
-          widget.hintTextFontWeight,
-        ),
-      ),
-
-      validator: (String? value) {
-        if (value == null || value.isEmpty) {
-          return "required";
-        }
-        return null;
-      },
-
-      // validator: MultiValidator([
-      //   RequiredValidator(
-      //     errorText: "validate_text".tr,
-      //   ),
-      // ]),
     );
   }
 }
@@ -286,7 +293,8 @@ class SimpleTextFieldWithIconRight extends StatefulWidget {
     this.textAlign,
     this.enabled,
     this.hintTextFontWeight,
-    required this.isObscure,
+    this.isObscure,
+    this.inputColor,
   }) : super(key: key);
   final String? hintText, valueValidator;
   // final TextStyle? hintStyleColor;
@@ -294,7 +302,7 @@ class SimpleTextFieldWithIconRight extends StatefulWidget {
   final FontWeight? hintTextFontWeight;
   final TextEditingController? textController;
   final String? fontIcon;
-  final Color? suffixIconColor;
+  final Color? suffixIconColor, inputColor;
   final double? iconFontSize;
   final Function(String)? changed;
   final TextInputType? keyboardType;
@@ -302,7 +310,7 @@ class SimpleTextFieldWithIconRight extends StatefulWidget {
   final bool? enabled;
   final dynamic textAlign;
   final Widget suffixIcon;
-  final bool isObscure;
+  final bool? isObscure;
 
   @override
   State<SimpleTextFieldWithIconRight> createState() =>
@@ -314,88 +322,99 @@ class _SimpleTextFieldWithIconRightState
   @override
   Widget build(BuildContext context) {
     var textValidate = "required";
-    return TextFormField(
-      onTap: widget.press,
-      onChanged: widget.changed,
-      controller: widget.textController,
-      enabled: widget.enabled == null ? true : widget.enabled,
-      obscureText: widget.isObscure,
-      toolbarOptions: ToolbarOptions(
-        paste: true,
-        cut: true,
-        copy: true,
-        selectAll: true,
+    return Container(
+      // height: 12.5.w,
+      child: TextFormField(
+        onTap: widget.press,
+        onChanged: widget.changed,
+        controller: widget.textController,
+        enabled: widget.enabled == null
+            ? true
+            : widget
+                .enabled, //enable = true ສາມາດໃຊ້ປົກກະຕິ / enable = false ບໍ່ສາມາດກົດໄດ້
+        obscureText: widget.isObscure ?? false,
+        textAlign:
+            widget.textAlign == null ? TextAlign.start : widget.textAlign,
+        style: TextStyle(color: AppColors.fontDark),
+        keyboardType: widget.keyboardType == null
+            ? TextInputType.text
+            : widget.keyboardType,
+        toolbarOptions: ToolbarOptions(
+          paste: true,
+          cut: true,
+          copy: true,
+          selectAll: true,
+        ),
+        decoration: InputDecoration(
+          // prefixIcon: Icon(
+          //   widget.icon,
+          //   color:
+          //       widget.iconColor == null ? AppColors.black : widget.iconColor,
+          //   size: 12.sp,
+          // ),
+          // prefixIcon: Column(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     Text(
+          //       '${widget.icon}',
+          //       style: sIcon(null, null),
+          //     ),
+          //   ],
+          // ),
+
+          border: OutlineInputBorder(),
+          contentPadding:
+              EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+          fillColor: widget.inputColor == null
+              ? AppColors.inputLight
+              : widget.inputColor,
+          filled: true,
+          enabledBorder: enableOutlineBorder(
+            AppColors.borderSecondary,
+          ),
+          focusedBorder: focusOutlineBorder(
+            AppColors.borderLightPrimary,
+          ),
+          hintText: "${widget.hintText}",
+          hintStyle: bodyTextNormal(
+            widget.hintStyleColor == null
+                ? AppColors.fontGreyOpacity
+                : widget.hintStyleColor,
+            widget.hintTextFontWeight,
+          ),
+
+          //suffixIcon ແບບ String(FontAwesome)
+          // suffixIcon: Column(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     Text(
+          //       '${widget.suffixIcon}',
+          //       style: sIcon(null, null),
+          //     ),
+          //   ],
+          // ),
+
+          suffixIcon: IconButton(
+            icon: widget.suffixIcon,
+            color: widget.suffixIconColor,
+            iconSize: IconSize.mIcon,
+            onPressed: () {},
+          ),
+        ),
+
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return "required";
+          }
+          return null;
+        },
+
+        // validator: MultiValidator([
+        //   RequiredValidator(
+        //     errorText: "validate_text".tr,
+        //   ),
+        // ]),
       ),
-      textAlign: widget.textAlign == null ? TextAlign.start : widget.textAlign,
-      keyboardType: widget.keyboardType == null
-          ? TextInputType.text
-          : widget.keyboardType,
-      decoration: InputDecoration(
-        // prefixIcon: Icon(
-        //   widget.icon,
-        //   color:
-        //       widget.iconColor == null ? AppColors.black : widget.iconColor,
-        //   size: 12.sp,
-        // ),
-        // prefixIcon: Column(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     Text(
-        //       '${widget.icon}',
-        //       style: sIcon(null, null),
-        //     ),
-        //   ],
-        // ),
-
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 3.w),
-        fillColor: AppColors.inputLight,
-        filled: true,
-        enabledBorder: enableOutlineBorder(
-          AppColors.borderSecondary,
-        ),
-        focusedBorder: focusOutlineBorder(
-          AppColors.borderLightPrimary,
-        ),
-        hintText: "${widget.hintText}",
-        hintStyle: bodyTextNormal(
-          widget.hintStyleColor == null
-              ? AppColors.fontGreyOpacity
-              : widget.hintStyleColor,
-          widget.hintTextFontWeight,
-        ),
-
-        //suffixIcon ແບບ String(FontAwesome)
-        // suffixIcon: Column(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     Text(
-        //       '${widget.suffixIcon}',
-        //       style: sIcon(null, null),
-        //     ),
-        //   ],
-        // ),
-
-        suffixIcon: IconButton(
-          icon: widget.suffixIcon,
-          color: widget.suffixIconColor,
-          iconSize: 20,
-          onPressed: () {},
-        ),
-      ),
-
-      validator: (String? value) {
-        if (value == null || value.isEmpty) {
-          return "required";
-        }
-        return null;
-      },
-
-      // validator: MultiValidator([
-      //   RequiredValidator(
-      //     errorText: "validate_text".tr,
-      //   ),
-      // ]),
     );
   }
 }
@@ -420,12 +439,20 @@ class SimpleTextFieldSingleValidate extends StatefulWidget {
     this.enabled,
     this.textAlign,
     this.inputFormat,
+    this.inputColor,
+    this.heightCon,
+    this.maxLines,
+    this.hintTextFontWeight,
+    this.suffixIcon,
+    this.prefixIcon,
   }) : super(key: key);
   final String? hintText;
   // final TextStyle? hintStyleColor;
+  final double? heightCon;
+  final int? maxLines;
   final Color? hintStyleColor;
   final TextEditingController? codeController;
-  final Color? iconColor;
+  final Color? iconColor, inputColor;
   final Function(String)? changed;
   final Function()? press;
   final TextInputType? keyboardType;
@@ -434,7 +461,9 @@ class SimpleTextFieldSingleValidate extends StatefulWidget {
   final dynamic inputFormat;
   final dynamic textAlign;
   final dynamic validator;
+  final FontWeight? hintTextFontWeight;
   dynamic onSave;
+  final Widget? suffixIcon, prefixIcon;
 
   @override
   State<SimpleTextFieldSingleValidate> createState() =>
@@ -445,54 +474,65 @@ class _SimpleTextFieldSingleValidateState
     extends State<SimpleTextFieldSingleValidate> {
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      inputFormatters: widget.inputFormat,
-      onTap: widget.press,
-      onChanged: widget.changed,
-      controller: widget.codeController,
-      enabled: widget.enabled == null ? true : widget.enabled,
-      toolbarOptions: ToolbarOptions(
-        paste: true,
-        cut: true,
-        copy: true,
-        selectAll: true,
-      ),
-      textAlign: widget.textAlign == null ? TextAlign.start : widget.textAlign,
-      keyboardType: widget.keyboardType == null
-          ? TextInputType.text
-          : widget.keyboardType,
-      maxLength: widget.maxLength,
+    return Container(
+      height: widget.heightCon,
+      child: TextFormField(
+        maxLines: widget.maxLines == null ? 1 : widget.maxLines,
+        inputFormatters: widget.inputFormat,
+        onTap: widget.press,
+        onChanged: widget.changed,
+        controller: widget.codeController,
+        enabled: widget.enabled == null ? true : widget.enabled,
+        toolbarOptions: ToolbarOptions(
+          paste: true,
+          cut: true,
+          copy: true,
+          selectAll: true,
+        ),
+        textAlign:
+            widget.textAlign == null ? TextAlign.start : widget.textAlign,
+        keyboardType: widget.keyboardType == null
+            ? TextInputType.text
+            : widget.keyboardType,
+        maxLength: widget.maxLength,
 
-      // textAlign: TextAlign.center,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 2.5.w),
-        fillColor: AppColors.inputColor,
-        filled: true,
-        enabledBorder: enableOutlineBorder(
-          AppColors.inputColor,
-        ),
-        focusedBorder: focusOutlineBorder(
-          AppColors.inputColor,
-        ),
-        hintText: "${widget.hintText}",
-        hintStyle: TextStyle(
-          color: widget.hintStyleColor == null
-              ? AppColors.fontGreyOpacity
-              : widget.hintStyleColor,
-          fontSize: 10.sp,
-        ),
+        // textAlign: TextAlign.center,
+        decoration: InputDecoration(
+            prefixIcon: widget.prefixIcon,
+            border: OutlineInputBorder(),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+            fillColor: widget.inputColor == null
+                ? AppColors.inputColor
+                : widget.inputColor,
+            filled: true,
+            enabledBorder: enableOutlineBorder(
+              AppColors.borderSecondary,
+            ),
+            focusedBorder: focusOutlineBorder(
+              AppColors.borderLightPrimary,
+            ),
+            hintText: "${widget.hintText}",
+            hintStyle: bodyTextNormal(
+              widget.hintStyleColor == null
+                  ? AppColors.fontGreyOpacity
+                  : widget.hintStyleColor,
+              widget.hintTextFontWeight,
+            ),
+            suffixIcon: widget.suffixIcon
 
-        // helperText: ' ',
+            // helperText: ' ',
+            ),
+
+        validator: widget.validator,
+        onSaved: widget.onSave,
+        // validator: (String? value) {
+        //   if (value == null || value.isEmpty) {
+        //     return "validate_text".tr;
+        //   }
+        //   return null;
+        // },
       ),
-      validator: widget.validator,
-      onSaved: widget.onSave,
-      // validator: (String? value) {
-      //   if (value == null || value.isEmpty) {
-      //     return "validate_text".tr;
-      //   }
-      //   return null;
-      // },
     );
   }
 }
@@ -514,9 +554,10 @@ class TextFieldTextCenter extends StatefulWidget {
     this.textAlign,
     this.keyboardType,
     this.enabled,
+    this.inputColor,
   }) : super(key: key);
   final String? hintText, valueValidator;
-  final Color? hintStyleColor;
+  final Color? hintStyleColor, inputColor;
   final IconButton? iconButton;
   final TextEditingController? textController;
   final Function(String)? changed;
@@ -536,6 +577,7 @@ class _TextFieldTextCenterState extends State<TextFieldTextCenter> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // height: 13.w,
       width: double.infinity,
       child: TextFormField(
         inputFormatters: widget.inputFormat,
@@ -565,7 +607,9 @@ class _TextFieldTextCenterState extends State<TextFieldTextCenter> {
 
           contentPadding:
               EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 3.w),
-          fillColor: AppColors.inputColor,
+          fillColor: widget.inputColor == null
+              ? AppColors.inputColor
+              : widget.inputColor,
           filled: true,
           enabledBorder: enableOutlineBorder(
             AppColors.white,
@@ -617,7 +661,7 @@ class TextFieldPhoneNumber extends StatefulWidget {
     this.preFixColor,
     this.preFixFontWeight,
     this.hintTextFontWeight,
-    required this.isObscure,
+    this.isObscure,
     this.suffixIconColor,
     required this.suffixIcon,
   }) : super(key: key);
@@ -634,7 +678,7 @@ class TextFieldPhoneNumber extends StatefulWidget {
   final bool? enabled;
   final dynamic textAlign;
   final FontWeight? preFixFontWeight, hintTextFontWeight;
-  final bool isObscure;
+  final bool? isObscure;
   final Widget suffixIcon;
 
   @override
@@ -644,78 +688,82 @@ class TextFieldPhoneNumber extends StatefulWidget {
 class _TextFieldPhoneNumberState extends State<TextFieldPhoneNumber> {
   @override
   Widget build(BuildContext context) {
-    var textValidate = "required";
-    return TextFormField(
-      onTap: widget.press,
-      onChanged: widget.changed,
-      controller: widget.textController,
-      enabled: widget.enabled == null ? true : widget.enabled,
-      obscureText: widget.isObscure,
-      toolbarOptions: ToolbarOptions(
-        paste: true,
-        cut: true,
-        copy: true,
-        selectAll: true,
-      ),
-      textAlign: widget.textAlign == null ? TextAlign.start : widget.textAlign,
-      keyboardType: widget.keyboardType == null
-          ? TextInputType.text
-          : widget.keyboardType,
-      decoration: InputDecoration(
-        prefixIcon: Container(
-          padding: EdgeInsets.only(right: 3.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    right: BorderSide(color: AppColors.borderGrey),
+    return Container(
+      // height: 13.w,
+      child: TextFormField(
+        onTap: widget.press,
+        onChanged: widget.changed,
+        controller: widget.textController,
+        enabled: widget.enabled == null ? true : widget.enabled,
+        obscureText: widget.isObscure ?? false,
+        // maxLength: 8,
+        toolbarOptions: ToolbarOptions(
+          paste: true,
+          cut: true,
+          copy: true,
+          selectAll: true,
+        ),
+        textAlign:
+            widget.textAlign == null ? TextAlign.start : widget.textAlign,
+        keyboardType: widget.keyboardType == null
+            ? TextInputType.text
+            : widget.keyboardType,
+        decoration: InputDecoration(
+          prefixIcon: Container(
+            padding: EdgeInsets.only(right: 3.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      right: BorderSide(color: AppColors.borderGrey),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3.w),
+                    child: Text(
+                      '${widget.preFix}',
+                      style: bodyTextNormal(
+                          widget.preFixColor, widget.preFixFontWeight),
+                    ),
                   ),
                 ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 3.w),
-                  child: Text(
-                    '${widget.preFix}',
-                    style: bodyTextNormal(
-                        widget.preFixColor, widget.preFixFontWeight),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
+          ),
+          border: OutlineInputBorder(),
+          contentPadding:
+              EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+          fillColor: AppColors.inputLight,
+          filled: true,
+          enabledBorder: enableOutlineBorder(
+            AppColors.borderSecondary,
+          ),
+          focusedBorder: focusOutlineBorder(
+            AppColors.borderLightPrimary,
+          ),
+          hintText: "${widget.hintText}",
+          hintStyle: bodyTextNormal(
+            widget.hintStyleColor == null
+                ? AppColors.fontGreyOpacity
+                : widget.hintStyleColor,
+            widget.hintTextFontWeight,
+          ),
+          suffixIcon: IconButton(
+            icon: widget.suffixIcon,
+            color: widget.suffixIconColor,
+            iconSize: IconSize.sIcon,
+            onPressed: () {},
           ),
         ),
-
-        // border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 3.w),
-        fillColor: AppColors.inputLight,
-        filled: true,
-        enabledBorder: enableOutlineBorder(
-          AppColors.borderSecondary,
-        ),
-        focusedBorder: focusOutlineBorder(
-          AppColors.borderLightPrimary,
-        ),
-        hintText: "${widget.hintText}",
-        hintStyle: bodyTextNormal(
-          widget.hintStyleColor == null
-              ? AppColors.fontGreyOpacity
-              : widget.hintStyleColor,
-          widget.hintTextFontWeight,
-        ),
-        suffixIcon: IconButton(
-          icon: widget.suffixIcon,
-          color: widget.suffixIconColor,
-          iconSize: 20,
-          onPressed: () {},
-        ),
+        validator: (String? value) {
+          if (value == null || value.isEmpty || value.length != 8) {
+            return "Enter 8 number digits";
+          }
+          return null;
+        },
       ),
-      validator: (String? value) {
-        if (value == null || value.isEmpty) {
-          return "required";
-        }
-        return null;
-      },
     );
   }
 }
@@ -740,7 +788,7 @@ class TextFieldPassword extends StatefulWidget {
   }) : super(key: key);
   final String? hintText;
   final Color? hintStyleColor;
-  final IconButton? suffixIcon, prefixIcon;
+  final Widget? suffixIcon, prefixIcon;
   final TextEditingController? codeController;
   final Function(String)? changed;
   final bool? enabled;
@@ -760,7 +808,7 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      // height: 20.w,
+      // height: 13.w,
       child: TextFormField(
         // inputFormatters: [
         //   UpperCaseTextFormatter(),
@@ -786,7 +834,8 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(1.5.w),
           ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 3.w),
+          contentPadding:
+              EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
           fillColor: AppColors.inputLight,
           filled: true,
           enabledBorder: enableOutlineBorder(
@@ -822,24 +871,37 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
   }
 }
 
-//DropdownMenu
-class DropdownMenuCustome extends StatefulWidget {
-  DropdownMenuCustome({Key? key, this.changed}) : super(key: key);
+//DropdownButtonMenu
+class DropdownButtonMenu extends StatefulWidget {
+  DropdownButtonMenu(
+      {Key? key,
+      this.onChanged,
+      this.items,
+      this.value,
+      this.validator,
+      this.widgetPrefixIcon,
+      this.inputColor,
+      this.hintStyleColor,
+      this.hintTextFontWeight,
+      this.hintText,
+      this.press})
+      : super(key: key);
   // dynamic selectValue;
-  final Function(Object?)? changed;
+  final Function(Object?)? onChanged;
+  final List<DropdownMenuItem<Object>>? items;
+  final dynamic value;
+  final String? Function(Object?)? validator;
+  final Widget? widgetPrefixIcon;
+  final Color? inputColor, hintStyleColor;
+  final FontWeight? hintTextFontWeight;
+  final String? hintText;
+  final Function()? press;
 
   @override
-  State<DropdownMenuCustome> createState() => _DropdownMenuCustomeState();
+  State<DropdownButtonMenu> createState() => _DropdownButtonMenuState();
 }
 
-class _DropdownMenuCustomeState extends State<DropdownMenuCustome> {
-  List items = [
-    {"text": "this_month", "value": ""},
-    {"text": "month_ago", "value": "1"},
-    {"text": "two_month_ago", "value": "2"},
-    {"text": "three_month_ago", "value": "3"},
-  ];
-  dynamic selectValue = "";
+class _DropdownButtonMenuState extends State<DropdownButtonMenu> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
@@ -847,47 +909,63 @@ class _DropdownMenuCustomeState extends State<DropdownMenuCustome> {
       child: Padding(
         padding: const EdgeInsets.only(top: 3),
         child: Container(
-          width: 32.w,
+          // height: 12.5.w,
           child: DropdownButtonFormField(
+            dropdownColor: AppColors
+                .backgroundWhite, //Color ຂອງ dropdown ຫຼັງຈາກກົດເພື່ອເລືອກ item
+            menuMaxHeight: 40.h, //Height ຂອງ dropdown ຫຼັງຈາກກົດເພື່ອເລືອກ item
             decoration: InputDecoration(
-              // enabledBorder: InputBorder.none,
-              // focusedBorder: InputBorder.none,
-              fillColor: AppColors.white,
+              prefixIcon: widget.widgetPrefixIcon,
+              border: OutlineInputBorder(),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+              fillColor: widget.inputColor == null
+                  ? AppColors.inputColor
+                  : widget.inputColor,
               filled: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: 2.5.w),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: AppColors.blue.withOpacity(0.1),
-                ),
+              enabledBorder: enableOutlineBorder(
+                AppColors.borderSecondary,
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: AppColors.blue.withOpacity(0.1),
-                  // color: AppColors.blue.withOpacity(0.3),
-                ),
+              focusedBorder: focusOutlineBorder(
+                AppColors.borderLightPrimary,
               ),
             ),
-            isExpanded: true,
-            onChanged: widget.changed,
-            value: selectValue,
-            items: items
-                .map((i) => DropdownMenuItem(
-                      value: i['value'].toString(),
-                      child: Text(
-                        i['text'],
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: false,
-                        style: headerTextNormal(AppColors.fontPrimary),
-                        // style: TextStyle(
-                        //   fontSize: 3.5.w,
-                        //   color: AppColors.blue,
-                        // ),
-                      ),
-                    ))
-                .toList(),
+            iconEnabledColor:
+                AppColors.iconGrayOpacity, //Color ຂອງ dropdownIcon ເບື້ອງຂວາ
+            icon: FaIcon(FontAwesomeIcons.caretDown,
+                size: IconSize.sIcon), //Icon dropdown
+            hint: Text(
+              "${widget.hintText}",
+              style: bodyTextNormal(
+                widget.hintStyleColor == null
+                    ? AppColors.fontGreyOpacity
+                    : widget.hintStyleColor,
+                widget.hintTextFontWeight,
+              ),
+            ),
+            isExpanded: true, //ໂຕໜັງສືຍາວເກີນ Field ບໍ່ມີປັນຫາ
+            onTap: widget.press,
+            onChanged: widget.onChanged,
+            value: widget.value, //ຄ່າທີ່ຈະໄປເຊັດເຂົ້າ DB
+            items: widget.items, //ເອົາຄ່າທີ່ເປັນ Array ມາ map
+            validator: widget.validator,
+
+            // items
+            //     .map((i) => DropdownMenuItem(
+            //           value: i['value'].toString(),
+            //           child: Text(
+            //             i['text'],
+            //             maxLines: 1,
+            //             overflow: TextOverflow.ellipsis,
+            //             softWrap: false,
+            //             style: headerTextNormal(AppColors.fontPrimary),
+            //             // style: TextStyle(
+            //             //   fontSize: 3.5.w,
+            //             //   color: AppColors.blue,
+            //             // ),
+            //           ),
+            //         ))
+            //     .toList(),
           ),
         ),
       ),
@@ -1091,6 +1169,7 @@ class _SimpleBoxDecorationState extends State<SimpleBoxDecoration> {
         // padding: EdgeInsets.only(left: 1.5.w, right: 1.5.w),
         // padding: EdgeInsets.all(10),
         decoration: boxDecoration(
+          null,
           widget.boxDecorationColor == null
               ? AppColors.white
               : widget.boxDecorationColor!,
@@ -1166,8 +1245,8 @@ class _BoxDecorationImageState extends State<BoxDecorationImage> {
       child: Container(
         width: double.infinity,
         height: 45.w,
-        decoration:
-            boxDecoration(AppColors.inputColor, AppColors.white.withOpacity(0)),
+        decoration: boxDecoration(
+            null, AppColors.inputColor, AppColors.white.withOpacity(0)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1187,6 +1266,7 @@ class _BoxDecorationImageState extends State<BoxDecorationImage> {
   }
 }
 
+//
 //BoxDecorationInput
 class BoxDecorationInput extends StatefulWidget {
   const BoxDecorationInput({
@@ -1194,7 +1274,6 @@ class BoxDecorationInput extends StatefulWidget {
     this.press,
     this.icon,
     this.fontIcon,
-    this.colorIcon,
     this.text,
     this.colorText,
     this.validateValue,
@@ -1202,21 +1281,32 @@ class BoxDecorationInput extends StatefulWidget {
     this.iconActivity,
     this.iconColorActivity,
     this.pressIconActivity,
-    required this.colorBorder,
     required this.validateText,
     this.colorInput,
-    this.fontFamily,
+    this.colorBorder,
+    this.boxDecBorderRadius,
+    this.widgetIconActive,
+    this.widgetFaIcon,
+    this.paddingFaIcon,
+    required this.mainAxisAlignmentTextIcon,
+    this.fontWeight,
   }) : super(key: key);
   final Function()? press, pressIconActivity;
+  final EdgeInsetsGeometry? paddingFaIcon;
   final String? icon, fontIcon;
-  final Color? colorIcon;
-  final Color? colorText;
-  final Color colorBorder;
-  final Color? colorInput;
-  final String? text, iconActivity, fontFamily;
+  final Color? colorText,
+      colorBorder,
+      colorInput,
+      colorValidateValue,
+      iconColorActivity;
+  final String? text;
+  final FontWeight? fontWeight;
+  final MainAxisAlignment mainAxisAlignmentTextIcon;
   final String? validateValue;
-  final Color? colorValidateValue, iconColorActivity;
   final Container validateText;
+  final BorderRadiusGeometry? boxDecBorderRadius;
+  final IconData? iconActivity;
+  final Widget? widgetFaIcon, widgetIconActive;
 
   @override
   State<BoxDecorationInput> createState() => _BoxDecorationInputState();
@@ -1231,8 +1321,9 @@ class _BoxDecorationInputState extends State<BoxDecorationInput> {
           onTap: widget.press,
           child: Container(
             width: double.infinity,
-            height: 12.w,
+            height: 12.5.w,
             decoration: boxDecoration(
+              widget.boxDecBorderRadius,
               widget.colorInput == null
                   ? AppColors.inputColor
                   : widget.colorInput,
@@ -1245,70 +1336,70 @@ class _BoxDecorationInputState extends State<BoxDecorationInput> {
                 Expanded(
                   flex: 9,
                   child: Row(
+                    mainAxisAlignment: widget.mainAxisAlignmentTextIcon,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Text(
-                          "${widget.icon}",
-                          style: sIcon(
-                            null,
-                            widget.colorIcon == null
-                                ? AppColors.black
-                                : widget.colorIcon,
-                          ),
-                          // style: TextStyle(
-                          //   fontFamily: '${widget.fontIcon}',
-                          //   fontSize: 10.sp,
-                          //   color: widget.colorIcon == null
-                          //       ? AppColors.black
-                          //       : widget.colorIcon,
-                          // ),
-                        ),
+                      Container(
+                        padding: widget.paddingFaIcon == null
+                            ? EdgeInsets.symmetric(horizontal: 12)
+                            : widget.paddingFaIcon,
+                        child: widget.widgetFaIcon,
                       ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 15),
+                      //   child: Text(
+                      //     "${widget.icon}",
+                      //     style: sIcon(
+                      //       null,
+                      //       widget.colorIcon == null
+                      //           ? AppColors.black
+                      //           : widget.colorIcon,
+                      //     ),
+                      //     // style: TextStyle(
+                      //     //   fontFamily: '${widget.fontIcon}',
+                      //     //   fontSize: 10.sp,
+                      //     //   color: widget.colorIcon == null
+                      //     //       ? AppColors.black
+                      //     //       : widget.colorIcon,
+                      //     // ),
+                      //   ),
+                      // ),
                       Flexible(
                         child: Text(
                           "${widget.text}",
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
-                          style: inputTextNormal(
-                            widget.colorText == null
-                                ? AppColors.black
-                                : widget.colorText,
-                          ),
-                          // style: TextStyle(
-                          //   fontSize: 10.sp,
-                          //   color: widget.colorText == null
-                          //       ? AppColors.black
-                          //       : widget.colorText,
-                          // ),
-                          // textAlign: TextAlign.center,
+                          style: bodyTextNormal(
+                              widget.colorText == null
+                                  ? AppColors.fontDark
+                                  : widget.colorText,
+                              widget.fontWeight),
                         ),
                       ),
                     ],
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: GestureDetector(
-                    onTap: widget.pressIconActivity,
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 15),
-                        child: Text(
-                          "${widget.iconActivity}" == null
-                              ? ""
-                              : "${widget.iconActivity}",
-                          textAlign: TextAlign.end,
-                          style: sIcon(
-                              widget.fontFamily == null
-                                  ? "FontAwesomePro-Regular"
-                                  : widget.fontFamily,
-                              widget.iconColorActivity == null
-                                  ? AppColors.inputColor
-                                  : widget.iconColorActivity),
+                GestureDetector(
+                  onTap: widget.pressIconActivity,
+                  child: Container(
+                    child: Padding(
+                        padding: EdgeInsets.only(right: 12),
+                        child: widget.widgetIconActive
+
+                        // child: Text(
+                        //   "${widget.iconActivity}" == null
+                        //       ? ""
+                        //       : "${widget.iconActivity}",
+                        //   textAlign: TextAlign.end,
+                        //   style: sIcon(
+                        //     widget.fontFamily == null
+                        //         ? "FontAwesomePro-Regular"
+                        //         : widget.fontFamily,
+                        //     widget.iconColorActivity == null
+                        //         ? AppColors.inputColor
+                        //         : widget.iconColorActivity,
+                        //   ),
+                        // ),
                         ),
-                      ),
-                    ),
                   ),
                 ),
               ],
@@ -1348,8 +1439,8 @@ class BoxDecorationLoading extends StatelessWidget {
       width: width,
       height: heigth,
       // padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      decoration:
-          boxDecoration(AppColors.greyOpacity, AppColors.white.withOpacity(0)),
+      decoration: boxDecoration(
+          null, AppColors.greyOpacity, AppColors.white.withOpacity(0)),
     );
   }
 }

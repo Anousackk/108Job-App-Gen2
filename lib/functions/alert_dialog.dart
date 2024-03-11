@@ -4,8 +4,10 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
@@ -40,8 +42,10 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: AlertDialog(
+        backgroundColor: AppColors.backgroundWhite,
+        // contentPadding: EdgeInsets.zero,
         title: Text(
           '${widget.title}',
           // style: TextStyle(fontSize: 15.sp),
@@ -63,11 +67,6 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
                       ? AppColors.fontGrey
                       : widget.colorTextLeft,
                   null),
-              // style: TextStyle(
-              //     fontSize: 10.sp,
-              //     color: widget.colorTextLeft == null
-              //         ? AppColors.fontGrey
-              //         : widget.colorTextLeft),
             ),
           ),
           TextButton(
@@ -81,11 +80,6 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
                       ? AppColors.primary
                       : widget.colorTextRight,
                   null),
-              // style: TextStyle(
-              //     fontSize: 10.sp,
-              //     color: widget.colorTextRight == null
-              //         ? AppColors.primary
-              //         : widget.colorTextRight),
             ),
           ),
         ],
@@ -94,8 +88,8 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
   }
 }
 
-class AlertDialogOkCancelBetween extends StatefulWidget {
-  const AlertDialogOkCancelBetween({
+class AlertDialogButtonConfirmCancelBetween extends StatefulWidget {
+  const AlertDialogButtonConfirmCancelBetween({
     Key? key,
     this.title,
     this.contentText,
@@ -112,61 +106,106 @@ class AlertDialogOkCancelBetween extends StatefulWidget {
   final String? textRight;
 
   @override
-  State<AlertDialogOkCancelBetween> createState() =>
-      _AlertDialogOkCancelBetweenState();
+  State<AlertDialogButtonConfirmCancelBetween> createState() =>
+      _AlertDialogButtonConfirmCancelBetweenState();
 }
 
-class _AlertDialogOkCancelBetweenState
-    extends State<AlertDialogOkCancelBetween> {
+class _AlertDialogButtonConfirmCancelBetweenState
+    extends State<AlertDialogButtonConfirmCancelBetween> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: AlertDialog(
-        title: Text(
-          '${widget.title}',
-          style: TextStyle(
-              fontSize: 15.sp,
-              color: widget.colorTilte == null
-                  ? AppColors.black
-                  : widget.colorTilte),
-          // textAlign: TextAlign.center,
+        //
+        // titlePadding: EdgeInsets.zero,
+        // contentPadding: EdgeInsets.zero,
+        insetPadding: EdgeInsets.symmetric(horizontal: 20),
+        backgroundColor: AppColors.backgroundWhite,
+        //
+        // contentPadding: EdgeInsets.zero,
+        title: Container(
+          child: Text(
+            '${widget.title}',
+            style: bodyTextMedium(
+                widget.colorTilte == null ? AppColors.black : widget.colorTilte,
+                FontWeight.bold),
+            // textAlign: TextAlign.center,
+          ),
         ),
-        content: Text(
-          '${widget.contentText}',
-          style: TextStyle(fontSize: 10.sp),
-          // textAlign: TextAlign.center,
+        content: Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          width: MediaQuery.of(context).size.width,
+          child: Text(
+            '${widget.contentText}',
+            style: TextStyle(fontSize: 10.sp),
+            // textAlign: TextAlign.center,
+          ),
         ),
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop('Cancel');
-                },
-                child: Text(
-                  '${widget.textLeft}',
-                  style: TextStyle(
-                      fontSize: 10.sp,
-                      color: widget.colorTextLeft == null
-                          ? AppColors.fontGrey
-                          : widget.colorTextLeft),
+              Expanded(
+                flex: 1,
+                child: SimpleButton(
+                  colorButton: AppColors.buttonGreyOpacity,
+                  buttonBorderColor: AppColors.borderGreyOpacity,
+                  press: () {
+                    Navigator.of(context).pop('Cancel');
+                  },
+                  text: '${widget.textLeft}',
+                  fontWeight: FontWeight.bold,
+                  colorText: widget.colorTextLeft == null
+                      ? AppColors.fontGrey
+                      : widget.colorTextLeft,
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop('Ok');
-                },
-                child: Text(
-                  '${widget.textRight}',
-                  style: TextStyle(
-                      fontSize: 10.sp,
-                      color: widget.colorTextRight == null
-                          ? AppColors.primary
-                          : widget.colorTextRight),
+
+              SizedBox(
+                width: 10,
+              ),
+
+              Expanded(
+                flex: 1,
+                child: SimpleButton(
+                  colorButton: AppColors.buttonWhite,
+                  buttonBorderColor: AppColors.borderDanger,
+                  press: () {
+                    Navigator.of(context).pop('Ok');
+                  },
+                  text: '${widget.textRight}',
+                  colorText: widget.colorTextRight == null
+                      ? AppColors.fontDark
+                      : widget.colorTextRight,
                 ),
               ),
+              // TextButton(
+              //   onPressed: () {
+              //     Navigator.of(context).pop('Cancel');
+              //   },
+              //   child: Text(
+              //     '${widget.textLeft}',
+              //     style: TextStyle(
+              //         fontSize: 10.sp,
+              //         color: widget.colorTextLeft == null
+              //             ? AppColors.fontGrey
+              //             : widget.colorTextLeft),
+              //   ),
+              // ),
+              // TextButton(
+              //   onPressed: () {
+              //     Navigator.of(context).pop('Ok');
+              //   },
+              //   child: Text(
+              //     '${widget.textRight}',
+              //     style: TextStyle(
+              //         fontSize: 10.sp,
+              //         color: widget.colorTextRight == null
+              //             ? AppColors.primary
+              //             : widget.colorTextRight),
+              //   ),
+              // ),
             ],
           )
         ],
@@ -202,7 +241,7 @@ class _CupertinoAlertDialogOkCancelState
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: CupertinoAlertDialog(
         title: Text(
           '${widget.title}',
@@ -273,7 +312,7 @@ class _CupertinoAlertDialogOkState extends State<CupertinoAlertDialogOk> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: CupertinoAlertDialog(
         title: Text(
           '${widget.title}',
@@ -338,8 +377,9 @@ class _AlertDialogBoxDecorationState extends State<AlertDialogBoxDecoration> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: AlertDialog(
+        contentPadding: EdgeInsets.zero,
         title: Text(
           '${widget.title}',
           style: TextStyle(
@@ -418,8 +458,9 @@ class _CustomAlertDialogSuccessState extends State<CustomAlertDialogSuccess> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Dialog(
+        backgroundColor: AppColors.backgroundWhite,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(2.5.w),
         ),
@@ -431,7 +472,7 @@ class _CustomAlertDialogSuccessState extends State<CustomAlertDialogSuccess> {
               height: 50.w,
               width: double.infinity,
               child: Padding(
-                padding: EdgeInsets.all(2.5.w),
+                padding: EdgeInsets.all(15),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -444,8 +485,9 @@ class _CustomAlertDialogSuccessState extends State<CustomAlertDialogSuccess> {
                           '${widget.title}',
                           style: bodyTextMedium(
                               AppColors.fontSuccess, FontWeight.bold),
-                          // style:
-                          //     TextStyle(fontSize: 15.sp, color: AppColors.green),
+                        ),
+                        SizedBox(
+                          height: 10,
                         ),
                         Text(
                           '${widget.text}',
@@ -468,12 +510,12 @@ class _CustomAlertDialogSuccessState extends State<CustomAlertDialogSuccess> {
                       onTap: widget.press,
                       child: Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            EdgeInsets.symmetric(horizontal: 40, vertical: 10),
                         decoration: BoxDecoration(
                           color: widget.colorButton == null
                               ? AppColors.buttonPrimary
                               : widget.colorButton,
-                          borderRadius: BorderRadius.circular(10.w),
+                          borderRadius: BorderRadius.circular(1.5.w),
                         ),
                         child: Text(
                           "${widget.textButton}",
@@ -499,13 +541,14 @@ class _CustomAlertDialogSuccessState extends State<CustomAlertDialogSuccess> {
               child: CircleAvatar(
                 backgroundColor: AppColors.green,
                 radius: 12.w,
-                child: Text(
-                  'check',
-                  style: lIcon('FontAwesomePro-Solid', AppColors.fontWhite),
-                  // style: TextStyle(
-                  //     fontFamily: 'FontAwesomePro-Solid',
-                  //     fontSize: 25.sp,
-                  //     color: AppColors.white),
+                // child: Text(
+                //   'check',
+                //   style: lIcon('FontAwesomePro-Solid', AppColors.fontWhite),
+                // ),
+                child: FaIcon(
+                  FontAwesomeIcons.check,
+                  size: IconSize.xlIcon,
+                  color: AppColors.iconLight,
                 ),
               ),
               top: -12.w,
@@ -541,8 +584,9 @@ class _CustomAlertDialogWarningState extends State<CustomAlertDialogWarning> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Dialog(
+        backgroundColor: AppColors.backgroundWhite,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(2.5.w),
         ),
@@ -554,31 +598,26 @@ class _CustomAlertDialogWarningState extends State<CustomAlertDialogWarning> {
               height: 50.w,
               width: double.infinity,
               child: Padding(
-                padding: EdgeInsets.all(2.5.w),
+                padding: EdgeInsets.all(10),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // SizedBox(height: 2.h),
-                    SizedBox(height: MediaQuery.of(context).size.height / 25),
-                    Column(
-                      children: [
-                        Text(
-                          '${widget.title}',
-                          style: bodyTextMedium(
-                              AppColors.fontInfo, FontWeight.bold),
-                          // style: TextStyle(
-                          //     fontSize: 15.sp, color: AppColors.warning),
-                        ),
-                        Text(
-                          '${widget.text}',
-                          style: bodyTextNormal(null, null),
-                          textAlign: TextAlign.center,
-
-                          // style: TextStyle(fontSize: 10.sp),
-                        ),
-                      ],
+                    SizedBox(height: MediaQuery.of(context).size.height / 20),
+                    Text(
+                      '${widget.title}',
+                      style:
+                          bodyTextMedium(AppColors.fontInfo, FontWeight.bold),
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      '${widget.text}',
+                      style: bodyTextNormal(null, null),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height / 20),
                     // SizedBox(
                     //   width: 40.w,
                     //   child: Button(
@@ -586,33 +625,33 @@ class _CustomAlertDialogWarningState extends State<CustomAlertDialogWarning> {
                     //     text: "${widget.textButton}",
                     //   ),
                     // )
-                    GestureDetector(
-                      onTap: widget.press,
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: widget.colorButton == null
-                              ? AppColors.buttonPrimary
-                              : widget.colorButton,
-                          borderRadius: BorderRadius.circular(10.w),
-                        ),
-                        child: Text(
-                          "${widget.textButton}",
-                          style: bodyTextNormal(
-                              widget.colorTextButton == null
-                                  ? AppColors.white
-                                  : widget.colorTextButton,
-                              null),
-                          // style: TextStyle(
-                          //   fontSize: 10.sp,
-                          //   color: widget.colorTextButton == null
-                          //       ? AppColors.white
-                          //       : widget.colorTextButton,
-                          // ),
-                        ),
-                      ),
-                    )
+                    // GestureDetector(
+                    //   onTap: widget.press,
+                    //   child: Container(
+                    //     padding:
+                    //         EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    //     decoration: BoxDecoration(
+                    //       color: widget.colorButton == null
+                    //           ? AppColors.buttonPrimary
+                    //           : widget.colorButton,
+                    //       borderRadius: BorderRadius.circular(10.w),
+                    //     ),
+                    //     child: Text(
+                    //       "${widget.textButton}",
+                    //       style: bodyTextNormal(
+                    //           widget.colorTextButton == null
+                    //               ? AppColors.white
+                    //               : widget.colorTextButton,
+                    //           null),
+                    //       // style: TextStyle(
+                    //       //   fontSize: 10.sp,
+                    //       //   color: widget.colorTextButton == null
+                    //       //       ? AppColors.white
+                    //       //       : widget.colorTextButton,
+                    //       // ),
+                    //     ),
+                    //   ),
+                    // )
                   ],
                 ),
               ),
@@ -621,13 +660,14 @@ class _CustomAlertDialogWarningState extends State<CustomAlertDialogWarning> {
               child: CircleAvatar(
                 backgroundColor: AppColors.warning,
                 radius: 12.w,
-                child: Text(
-                  'exclamation',
-                  style: lIcon('FontAwesomePro-Solid', AppColors.fontWhite),
-                  // style: TextStyle(
-                  //     fontFamily: 'FontAwesomePro-Solid',
-                  //     fontSize: 25.sp,
-                  //     color: AppColors.white),
+                // child: Text(
+                //   'exclamation',
+                //   style: lIcon('FontAwesomePro-Solid', AppColors.fontWhite),
+                // ),
+                child: FaIcon(
+                  FontAwesomeIcons.exclamation,
+                  size: IconSize.xlIcon,
+                  color: AppColors.iconLight,
                 ),
               ),
               top: -12.w,
@@ -651,8 +691,9 @@ class CustomAlertDialogError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Dialog(
+        backgroundColor: AppColors.backgroundWhite,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(2.5.w),
         ),
@@ -672,11 +713,15 @@ class CustomAlertDialogError extends StatelessWidget {
                     SizedBox(height: MediaQuery.of(context).size.height / 20),
                     Text(
                       '$title',
-                      style: TextStyle(fontSize: 6.w, color: AppColors.red),
+                      style:
+                          bodyTextMedium(AppColors.fontDanger, FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                     Text(
                       '$text',
-                      style: TextStyle(fontSize: 3.5.w),
+                      style: bodyTextNormal(null, null),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 20),
@@ -694,14 +739,15 @@ class CustomAlertDialogError extends StatelessWidget {
               child: CircleAvatar(
                 backgroundColor: AppColors.red,
                 radius: 12.w,
-                child: Text(
-                  'xmark',
-                  style: lIcon('FontAwesomePro-Solid', AppColors.fontWhite),
-                  // style: TextStyle(
-                  //     fontFamily: 'FontAwesomePro-Solid',
-                  //     fontSize: 25.sp,
-                  //     color: AppColors.white),
+                child: FaIcon(
+                  FontAwesomeIcons.xmark,
+                  size: IconSize.lIcon,
+                  color: AppColors.iconLight,
                 ),
+                // child: Text(
+                //   'xmark',
+                //   style: lIcon('FontAwesomePro-Solid', AppColors.fontWhite),
+                // ),
               ),
               top: -12.w,
             )
@@ -721,12 +767,13 @@ Future<dynamic> CustomAlertDialogLoading(BuildContext context) {
       //   Navigator.of(context).pop(true);
       // });
       return MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        data:
+            MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
         child: AlertDialog(
           content: Container(
             height: 50.w,
-            decoration:
-                boxDecoration(AppColors.white, AppColors.white.withOpacity(0)),
+            decoration: boxDecoration(
+                null, AppColors.white, AppColors.white.withOpacity(0)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -762,12 +809,15 @@ class _CustomAlertLoadingState extends State<CustomAlertLoading> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: AlertDialog(
+        backgroundColor: AppColors.backgroundWhite,
+        contentPadding: EdgeInsets.zero,
+        // insetPadding: EdgeInsets.zero,
         content: Container(
           height: 25.w,
-          decoration:
-              boxDecoration(AppColors.white, AppColors.white.withOpacity(0)),
+          decoration: boxDecoration(null, AppColors.backgroundWhite,
+              AppColors.borderWhite.withOpacity(0)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,

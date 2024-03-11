@@ -1,4 +1,4 @@
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, use_full_hex_values_for_flutter_colors
 
 import 'package:flutter/material.dart';
 
@@ -7,8 +7,16 @@ class AppColors {
   static const Color backgroundWhite = Color(0xffFFFFFF);
   static const Color backgroundSecond = Color(0xFF2558E8);
   static const Color backgroundAppBar = Color(0xFF2558E8);
+
+  static const Color lightBlue = Color(0xFFE1F5FE);
+  static const Color lightYellow = Color(0xFFFFECB3);
+  static const Color lightPurple = Color(0xFFE1BEE7);
+  static const Color lightGreen = Color(0xFFC8E6C9);
+
   static const Color inputLight = Color(0xffF1F3F6);
   static const Color inputColor = Color(0xffEAEAEA);
+  static const Color inputWhite = Color(0xffFFFFFF);
+  static const Color inputGrey = Color(0xffDDDDDD);
 
   static const Color blue = Color(0xFF2558E8);
   static const Color black = Color(0xFF000000);
@@ -42,6 +50,7 @@ class AppColors {
   static const Color borderLightPrimary =
       Color.fromRGBO(33, 150, 243, 1); //fromRGBO(33, 150, 243, 1);
   static const Color borderDanger = Color(0xFFDD2C00);
+  static const Color borderGreyOpacity = Color(0xffDDDDDD);
 
   //font
   static const Color fontPrimary = Color(0xFF2558E8);
@@ -65,10 +74,15 @@ class AppColors {
   static const Color iconSecondary = Color(0xffCDCDCD);
 
   //button
+  static const Color buttonGreyOpacity = Color(0xffDDDDDD);
+  static const Color buttonLightBlue = Color(0xFFE1F5FE);
   static const Color buttonPrimary = Color(0xFF2558E8);
   static const Color buttonSecondary = Color(0xffADADAD);
   static const Color buttonDanger = Color(0xFFDD2C00);
   static const Color buttonInfo = Color(0xFFFDC527);
+  static const Color buttonGreyWhite = Color(0xffEBEBEB);
+  static const Color buttonGrey = Color(0xffDDDDDD);
+  static const Color buttonWhite = Color(0xffFFFFFF);
 }
 
 class TextSize {
