@@ -258,7 +258,7 @@ class _CompanyState extends State<Company> {
                         ),
                         SizedBox(
                           height: 20,
-                        ),
+                        ), //
 
                         Expanded(
                           child: CustomScrollView(
