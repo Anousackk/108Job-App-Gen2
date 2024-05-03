@@ -35,6 +35,11 @@ class _SetPasswordState extends State<SetPassword> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     FocusScopeNode currentFocus = FocusScopeNode();
 
@@ -50,7 +55,7 @@ class _SetPasswordState extends State<SetPassword> {
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: 'Set Password',
-            fontWeight: FontWeight.bold,
+            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);

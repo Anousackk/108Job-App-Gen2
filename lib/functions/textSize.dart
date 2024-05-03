@@ -139,9 +139,10 @@ TextStyle tabBarTextSmall(Color? textColor) {
   );
 }
 
-TextStyle tabBarTextNormal() {
+TextStyle tabBarTextNormal(FontWeight? fontWeight) {
   return TextStyle(
     fontSize: 15,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
   );
 }
 

@@ -2,24 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CLIENT_ID</key>
-	<string>1012689313058-sb6ljqkt07h0ktu9n73egj35qmouljh8.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1012689313058-sb6ljqkt07h0ktu9n73egj35qmouljh8</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>1012689313058-34og7qeldsedtda589irg49gt2eqglr2.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAnNmW5vCJACbmKKmW1NIES0-iDDo4b2yQ</string>
+	<string>AIzaSyCprpInEeflXlknm3UOXb3OImcKdo4UZdg</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1012689313058</string>
+	<string>166667756465</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>org.cenixoft.OneHundredEightJobs</string>
 	<key>PROJECT_ID</key>
-	<string>jobapp2021</string>
+	<string>jobs---ga4---main</string>
 	<key>STORAGE_BUCKET</key>
-	<string>jobapp2021.appspot.com</string>
+	<string>jobs---ga4---main.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1012689313058:ios:34b9150de52b284d81197b</string>
+	<string>1:166667756465:ios:89984826769e5fa92f9390</string>
 </dict>
 </plist>

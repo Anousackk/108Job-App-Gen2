@@ -14,6 +14,7 @@ import 'package:app/widget/listMultiSelectedAlertDialog.dart';
 import 'package:app/widget/listSingleSelectedAlertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 class WorkPreferences extends StatefulWidget {
@@ -65,6 +66,9 @@ class _WorkPreferencesState extends State<WorkPreferences> {
   String _joblevelName = "";
 
   bool _isValidateValue = false;
+
+  TextEditingController _controller = TextEditingController();
+  String _formattedValue = '';
 
   setValueGetById() {
     setState(() {
@@ -138,6 +142,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _salaryController.addListener(_formatSalary);
 
     getReuseTypeSeeker('EN', 'JobLevel', _listJobLevels);
     getReuseTypeSeeker('EN', 'Province', _listProvinces);
@@ -155,8 +160,28 @@ class _WorkPreferencesState extends State<WorkPreferences> {
     }
 
     _workPositionController.text = _workPosition;
-    _salaryController.text = _salary;
+    // _salaryController.text = _salary;
     _professionalSummaryController.text = _professionalSummary;
+  }
+
+  @override
+  void dispose() {
+    _salaryController.removeListener(_formatSalary);
+    _salaryController.dispose();
+    super.dispose();
+  }
+
+  void _formatSalary() {
+    final value = _salaryController.text.replaceAll(',', ''); // Remove commas
+    final numericRegex = RegExp(r'^\d+(\.\d+)?$');
+    if (numericRegex.hasMatch(value)) {
+      final formattedValue =
+          NumberFormat('#,##0').format(int.tryParse(value) ?? 0);
+      _salaryController.value = TextEditingValue(
+        text: formattedValue,
+        selection: TextSelection.collapsed(offset: formattedValue.length),
+      );
+    }
   }
 
   @override
@@ -233,6 +258,38 @@ class _WorkPreferencesState extends State<WorkPreferences> {
 
                             //
                             //
+                            //
+                            //
+                            // Text(
+                            //   'Formatted Value: $_formattedValue',
+                            //   style: TextStyle(fontSize: 20.0),
+                            // ),
+                            // TextField(
+                            //   controller: _controller,
+                            //   keyboardType: TextInputType.number,
+                            //   decoration: InputDecoration(
+                            //     labelText: 'Enter a number',
+                            //   ),
+                            //   onChanged: (value) {
+                            //     setState(() {
+                            //       // Parse the input value as an integer
+                            //       int inputValue = int.tryParse(value) ?? 0;
+                            //       print(inputValue);
+                            //       // Format the integer value with commas
+                            //       _formattedValue =
+                            //           NumberFormat.decimalPattern()
+                            //               .format(inputValue);
+                            //       print(_formattedValue);
+                            //     });
+                            //   },
+                            // ),
+                            //
+                            //
+                            //
+                            //
+
+                            //
+                            //
                             //Expected Salary
                             Text(
                               "Expected Salary",
@@ -247,6 +304,8 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                 setState(() {
                                   _salary = value;
                                 });
+
+                                print(_salary);
                               },
                               // heightCon: 12.5.w,
                               keyboardType: TextInputType.number,
@@ -905,6 +964,10 @@ class _WorkPreferencesState extends State<WorkPreferences> {
         return CustomAlertLoading();
       },
     );
+
+    int numberWithoutCommas = int.parse(_salary.split(',').join(''));
+    _salary = numberWithoutCommas.toString();
+
     var res = await postData(addWorkPreferenceSeekerApi, {
       "currentJobTitle": _workPosition,
       "currency": _currency.toString(),

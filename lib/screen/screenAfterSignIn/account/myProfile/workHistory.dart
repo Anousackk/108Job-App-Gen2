@@ -42,6 +42,7 @@ class _WorkHistoryState extends State<WorkHistory> {
 
   dynamic _fromMonth;
   dynamic _toMonth;
+
   bool _isValidateValue = false;
   bool _isCurrentJob = false;
 
@@ -102,6 +103,11 @@ class _WorkHistoryState extends State<WorkHistory> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Color getColor(Set<MaterialState> states) {
       const Set<MaterialState> interactiveStates = <MaterialState>{
@@ -127,7 +133,7 @@ class _WorkHistoryState extends State<WorkHistory> {
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: "Work History",
-            fontWeight: FontWeight.bold,
+            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);
@@ -256,7 +262,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                     Text(
                                       "From Month",
                                       style:
-                                          bodyTextNormal(null, FontWeight.bold),
+                                          bodyTextMedium(null, FontWeight.bold),
                                     ),
                                     CupertinoDatePicker(
                                       initialDateTime: _fromMonth == null
@@ -360,7 +366,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                           context,
                                           Text(
                                             "To Month",
-                                            style: bodyTextNormal(
+                                            style: bodyTextMedium(
                                                 null, FontWeight.bold),
                                           ),
                                           CupertinoDatePicker(

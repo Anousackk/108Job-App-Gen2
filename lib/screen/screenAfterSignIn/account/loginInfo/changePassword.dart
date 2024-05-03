@@ -37,6 +37,11 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     FocusScopeNode currentFocus = FocusScopeNode();
 
@@ -52,7 +57,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: 'Change Password',
-            fontWeight: FontWeight.bold,
+            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);
@@ -116,7 +121,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                       child: Text(
                                         "Reset Password",
                                         style: bodyTextNormal(
-                                          AppColors.fontInfo,
+                                          AppColors.fontWaring,
                                           null,
                                         ),
                                       ),

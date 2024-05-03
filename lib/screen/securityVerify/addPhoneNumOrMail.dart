@@ -68,6 +68,11 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     FocusScopeNode currentFocus = FocusScopeNode();
     return MediaQuery(
@@ -84,7 +89,7 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
             textTitle: widget.addPhoneNumOrEmail == 'phoneNumber'
                 ? 'Add Phone Number'
                 : 'Add Email',
-            fontWeight: FontWeight.bold,
+            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);

@@ -29,7 +29,7 @@ class _SecurityVerificationState extends State<SecurityVerification> {
       child: Scaffold(
         appBar: AppBarDefault(
           textTitle: 'Security Verification',
-          fontWeight: FontWeight.bold,
+          // fontWeight: FontWeight.bold,
           leadingIcon: Icon(Icons.arrow_back),
           leadingPress: () {
             Navigator.pop(context);
@@ -87,6 +87,11 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
   void initState() {
     super.initState();
     checkTokenLogin();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

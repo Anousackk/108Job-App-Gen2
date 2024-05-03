@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, unused_local_variable, avoid_unnecessary_containers, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, avoid_print, prefer_final_fields, unused_field
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, unused_local_variable, avoid_unnecessary_containers, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, avoid_print, prefer_final_fields, unused_field, prefer_const_literals_to_create_immutables
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
@@ -35,6 +35,7 @@ class _MainBodyState extends State<MainBody> {
       super.setState(fn);
     }
   }
+  //
 
   checkTokenLogin() async {
     final prefs = await SharedPreferences.getInstance();
@@ -43,9 +44,15 @@ class _MainBodyState extends State<MainBody> {
     var employeeToken = prefs.getString('employeeToken');
 
     if (employeeToken != null) {
+      // _isLoading = false;
       Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(builder: (context) => Home()), (route) => false);
     }
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
 
     setState(() {});
   }
@@ -55,20 +62,47 @@ class _MainBodyState extends State<MainBody> {
     super.initState();
     checkTokenLogin();
 
-    Future.delayed(Duration(seconds: 1), () {
-      setState(() {
-        _isLoading = false;
-      });
-    });
+    // Future.delayed(Duration(seconds: 1), () {
+    //   setState(() {
+    //     _isLoading = false;
+    //   });
+    // });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<String> imageSlideCarousel = [
-      'assets/image/Typeso-black.jpeg',
-      'assets/image/Typeso-green.jpeg',
-      'assets/image/Typeso-white.jpeg',
+    List imageSlideCarousel = [
+      {
+        "title": 'Hide Job',
+        "text":
+            'If you are focusing on relevant experience, you can simply leave off the unrelated job entirely.',
+        "image": 'assets/image/Typeso-black.jpeg',
+      },
+      {
+        "title": 'Save Job',
+        "text":
+            'Provide you with the capability to shortlist this role for your consideration in the future.',
+        "image": 'assets/image/Typeso-green.jpeg',
+      },
+      {
+        "title": 'Job Alert',
+        "text":
+            'Job alerts deliver relevant opportunities directly to your inbox, saving you valuable time and effort.',
+        "image": 'assets/image/Typeso-white.jpeg',
+      },
+      {
+        "title": 'Instant Apply',
+        "text":
+            "Increase your chances of landing an interview by applying instantly to relevant jobs. Instant Apply saves you time and ensures your application is received by the employer promptly.",
+        "image": 'assets/image/Typeso-black.jpeg',
+      }
     ];
+
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: _isLoading
@@ -85,22 +119,22 @@ class _MainBodyState extends State<MainBody> {
                   //
                   //Change Language Lao-Eng
                   Expanded(
-                    flex: 1,
+                    flex: 2,
                     child: ChangeLanguage(),
                   ),
 
                   //
                   //
                   //Logo 108Jobs
-                  Expanded(
-                    flex: 3,
-                    child: Container(
-                      height: 120,
-                      width: 120,
-                      child:
-                          Image(image: AssetImage('assets/image/Logo108.png')),
-                    ),
-                  ),
+                  // Expanded(
+                  //   flex: 3,
+                  //   child: Container(
+                  //     height: 120,
+                  //     width: 120,
+                  //     child:
+                  //         Image(image: AssetImage('assets/image/Logo108.png')),
+                  //   ),
+                  // ),
 
                   //
                   //
@@ -126,22 +160,74 @@ class _MainBodyState extends State<MainBody> {
                                 });
                               },
                             ),
-                            items: imageSlideCarousel.map((String imagePath) {
+                            items: imageSlideCarousel.map((imagePath) {
                               return Builder(
                                 builder: (BuildContext context) {
-                                  return Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Image(
-                                      image: AssetImage(imagePath),
-                                      fit: BoxFit.contain,
-                                    ),
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: Image(
+                                          image: AssetImage(imagePath['image']),
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          // color: AppColors.green,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                imagePath['title'],
+                                                style: bodyTextMedium(
+                                                    null, FontWeight.bold),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                imagePath['text'],
+                                                style: bodyTextMaxNormal(
+                                                    null, null),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                    ],
                                   );
                                 },
                               );
                             }).toList(),
                           ),
+                          // Positioned(
+                          //   bottom: 5,
+                          //   child: Column(
+                          //     children: [
+                          //       Text("Hide Job - ເຊື່ອງວຽກທີ່ບໍ່ມັກ"),
+                          //       Text(
+                          //           "If you are focusing on relevant experience, you can simply leave off the unrelated job entirely."),
+                          //     ],
+                          //   ),
+                          // ),
                           Positioned(
-                            bottom: 30,
+                            bottom: 20,
                             left: 0,
                             right: 0,
                             child: Row(

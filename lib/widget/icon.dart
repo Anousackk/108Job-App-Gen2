@@ -41,7 +41,7 @@ class _NotificationIconState extends State<NotificationIcon> {
                   style: TextStyle(
                       fontFamily: 'FontAwesomePro-Solid',
                       fontSize: 25,
-                      color: AppColors.blue),
+                      color: AppColors.primary),
                 ),
               ),
             ),
@@ -90,8 +90,9 @@ class _SimpleIconState extends State<SimpleIcon> {
             style: TextStyle(
               fontFamily: 'FontAwesomePro-Solid',
               fontSize: widget.fontSizeIcon == null ? 5.w : widget.fontSizeIcon,
-              color:
-                  widget.colorIcon == null ? AppColors.blue : widget.colorIcon,
+              color: widget.colorIcon == null
+                  ? AppColors.primary
+                  : widget.colorIcon,
             ),
           ),
         ],

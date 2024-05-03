@@ -75,21 +75,36 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
       //
       //Convert String to DateTime ປ່ຽນຈາກ "Jan-13-1999" ເພື່ອເຊັດເປັນ 1999-01-13 00:00:00.000
-      DateTime tempDate = new DateFormat("MMM-dd-yyyy").parse(_dateOfBirth);
-      _dateOfBirth = tempDate;
+      if (_dateOfBirth != null) {
+        DateTime tempDate = new DateFormat("MMM-dd-yyyy").parse(_dateOfBirth);
+        _dateOfBirth = tempDate;
+      }
 
-      _selectedGender = i['genderId']['_id'];
-      _genderName = i['genderId']['name'];
-      _selectedMaritalStatus = i['maritalStatusId']['_id'];
-      _maritalStatusName = i['maritalStatusId']['name'];
-      _selectedNationality = i['nationalityId']['_id'];
-      _nationalityName = i['nationalityId']['name'];
-      _selectedCountry = i['currentResidenceId']['_id'];
-      _countryName = i['currentResidenceId']['name'];
-      _selectedDistrict = i['districtId']['_id'];
-      _districtName = i['districtId']['name'];
-      _selectedProvince = i['districtId']['provinceId']['_id'];
-      _provinceName = i['districtId']['provinceId']['name'];
+      _selectedGender = i['genderId'] != null ? i['genderId']['_id'] : "";
+      _genderName = i['genderId'] != null ? i['genderId']['name'] : "";
+      _selectedMaritalStatus =
+          i['maritalStatusId'] != null ? i['maritalStatusId']['_id'] : "";
+      _maritalStatusName =
+          i['maritalStatusId'] != null ? i['maritalStatusId']['name'] : "";
+      _selectedNationality =
+          i['nationalityId'] != null ? i['nationalityId']['_id'] : "";
+      _nationalityName =
+          i['nationalityId'] != null ? i['nationalityId']['name'] : "";
+      _selectedCountry =
+          i['currentResidenceId'] != null ? i['currentResidenceId']['_id'] : "";
+      _countryName = i['currentResidenceId'] != null
+          ? i['currentResidenceId']['name']
+          : "";
+      _selectedDistrict = i['districtId'] != null ? i['districtId']['_id'] : "";
+      _districtName = i['districtId'] != null ? i['districtId']['name'] : "";
+      _selectedProvince =
+          i['districtId'] == null || !i['districtId'].containsKey('provinceId')
+              ? ""
+              : i['districtId']['provinceId']['_id'];
+      _provinceName =
+          i['districtId'] == null || !i['districtId'].containsKey('provinceId')
+              ? ""
+              : i['districtId']['provinceId']['name'];
 
       //
       // ຖ້າມີ ProvinceId and DistrictId ແລ້ວ map ເອົາ ProvincsAndDistricts ວ່າ _province(_id) ກົງກັບ _provinces
@@ -120,6 +135,11 @@ class _PersonalInformationState extends State<PersonalInformation> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     FocusScopeNode currentFocus = FocusScopeNode();
 
@@ -136,7 +156,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: "Personal Information",
-            fontWeight: FontWeight.bold,
+            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);
@@ -837,7 +857,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               context: context,
                               builder: (context) {
                                 return ListSingleSelectedAlertDialog(
-                                  title: "Job Level",
+                                  title: "Province",
                                   listItems: _listProvinces,
                                   selectedListItem: _selectedProvince,
                                 );
@@ -881,7 +901,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                         },
                         text: _selectedProvince != ""
                             ? "${_provinceName}"
-                            : "Select Job Level",
+                            : "Select Province",
                         colorText: _selectedProvince == ""
                             ? AppColors.fontGreyOpacity
                             : AppColors.fontDark,
@@ -982,7 +1002,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               context: context,
                               builder: (context) {
                                 return ListSingleSelectedAlertDialog(
-                                  title: "Job Level",
+                                  title: "District",
                                   listItems: _listDistricts,
                                   selectedListItem: _selectedDistrict,
                                 );
@@ -1008,7 +1028,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                         },
                         text: _selectedDistrict != ""
                             ? "${_districtName}"
-                            : "Select Job Level",
+                            : "Select District",
                         colorText: _selectedDistrict == ""
                             ? AppColors.fontGreyOpacity
                             : AppColors.fontDark,

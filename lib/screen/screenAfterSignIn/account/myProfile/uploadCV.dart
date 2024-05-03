@@ -47,8 +47,9 @@ class _UploadCVState extends State<UploadCV> {
       print("storage isGranted");
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['pdf', 'docx'],
+        allowedExtensions: ['pdf', 'docx', 'doc'],
       );
+      print(result);
       if (result != null && result.files.single.path != null) {
         PlatformFile file = result.files.first;
 
@@ -66,6 +67,8 @@ class _UploadCVState extends State<UploadCV> {
           //
           //Api upload file CV
           var value = await upLoadFile(_strFilePath, uploadFileCVApiSeeker);
+          print(value);
+
           setState(() {
             _fileValue = value['myFile'];
             //
@@ -98,7 +101,7 @@ class _UploadCVState extends State<UploadCV> {
       child: Scaffold(
         appBar: AppBarDefault(
           textTitle: "Upload CV",
-          fontWeight: FontWeight.bold,
+          // fontWeight: FontWeight.bold,
           leadingIcon: Icon(Icons.arrow_back),
           leadingPress: () {
             Navigator.pop(context);
@@ -118,12 +121,12 @@ class _UploadCVState extends State<UploadCV> {
                     //
                     //BoxDecoration Upload CV
                     BoxDecDottedBorderUploadCV(
-                      boxDecColor: AppColors.lightBlue,
+                      boxDecColor: AppColors.lightPrimary,
                       boxDecBorderRadius: BorderRadius.circular(5),
                       widgetFaIcon: FaIcon(
                         _strFileType == "pdf"
                             ? FontAwesomeIcons.filePdf
-                            : (_strFileType == "docx"
+                            : (_strFileType == "docx" || _strFileType == "doc"
                                 ? FontAwesomeIcons.fileWord
                                 : FontAwesomeIcons.fileArrowUp),
                         size: 55,
@@ -132,10 +135,10 @@ class _UploadCVState extends State<UploadCV> {
                       title: "Select file to upload",
                       titleFontWeight: FontWeight.bold,
                       text: _strFileName == "" || _strFileName == null
-                          ? "Supported file format: .PDF, .DOC with maximum\nfile size 5MB"
+                          ? "Supported file format: .PDF, .DOC, .DOCX with maximum file size 5MB"
                           : "${_strFileName}",
                       buttonText: "Select File",
-                      buttonColor: AppColors.lightBlue,
+                      buttonColor: AppColors.lightPrimary,
                       buttonBorderColor: AppColors.borderPrimary,
                       buttonTextColor: AppColors.fontPrimary,
                       pressButton: () {
@@ -243,8 +246,20 @@ class _UploadCVState extends State<UploadCV> {
                 //Button Save
                 Button(
                   text: "Save",
-                  press: () {
-                    uploadOrUpdateCV();
+                  press: () async {
+                    if (_fileValue == null || _fileValue == "") {
+                      await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return CustomAlertDialogWarning(
+                            title: "Warning",
+                            text: "Please select file to upload",
+                          );
+                        },
+                      );
+                    } else {
+                      uploadOrUpdateCV();
+                    }
                   },
                 )
               ],

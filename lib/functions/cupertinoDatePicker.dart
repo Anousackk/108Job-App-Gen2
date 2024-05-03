@@ -12,7 +12,7 @@ showDialogDateTime(
   // Widget buttonClear, Widget buttonOk
 ) {
   showCupertinoModalPopup<void>(
-    // semanticsDismissible: true,
+    semanticsDismissible: true,
     // barrierDismissible: false, //ບໍ່ໃຫ້ສະໄລປິດ ຫຼື ຄິກບ່ອນອື່ນເພື່ອປິດ
     // barrierColor: AppColors.red,
     context: context,

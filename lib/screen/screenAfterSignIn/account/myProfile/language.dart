@@ -71,6 +71,11 @@ class _LanguageState extends State<Language> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     FocusScopeNode currentFocus = FocusScopeNode();
 
@@ -87,7 +92,7 @@ class _LanguageState extends State<Language> {
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: "Language",
-            fontWeight: FontWeight.bold,
+            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);

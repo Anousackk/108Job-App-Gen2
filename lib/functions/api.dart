@@ -1,10 +1,8 @@
 // ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new
 import 'dart:convert';
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 //Url Server
@@ -13,6 +11,7 @@ const String globalURL = 'https://db.dev.108.jobs/application-api';
 //Login with google && facebook
 const apiLoginWithGoogle = globalURL + "/seeker-signup-google-app";
 const apiLoginWithFacebook = globalURL + "/seeker-signup-facebook-app";
+const apiSyncGoogleFacebookAip = globalURL + "/sync-google-facebook-seeker-app";
 
 //Register
 var apiRegisterSeeker = globalURL + '/register-basic-member-seeker-app';
@@ -36,6 +35,32 @@ var resendOTPCodeApiSeeker = globalURL + "/seeker-resend-verification-app";
 //
 //Job Search
 var getJobsSearchSeekerApi = globalURL + "/get-job-search-app";
+var getJobSearchDetailSeekerApi = globalURL + "/get-job-detail-app/";
+var checkNewJobSearchSeekerApi = globalURL + "/save-new-job-app";
+var getReuseFilterJobSearchSeekerApi =
+    globalURL + "/get-reuse-filter-injob-search-app?";
+
+//
+//Company
+var getCompaniesSeekerApi = globalURL + "/get-search-employer-seeker-app";
+var getCompanyDetailSeekerApi = globalURL + '/get-employer-detail-seeker-app/';
+//follow
+var addFollowCompanySeekerApi = globalURL + "/add-seeker-follow-employer-app/";
+var unFollowCompanySeekerApi = globalURL + "/seeker-unfollow-employer-app/";
+//submit
+var submitCVSeekerApi = globalURL + "/seeker-submit-cv-employer-app/";
+var unSubmitCVSeekerApi = globalURL + "/seeker-unsubmit-cv-employer-app/";
+var getSubmitCVSeekerApi = globalURL + "/get-seeker-submit-cv-employer-app";
+
+//
+//Job Search && My Job
+var saveJobSeekerApi = globalURL + "/seeker-save-job-app";
+var hideJobSeekerApi = globalURL + "/seeker-hide-job-app";
+var deleteMyJobSeekerApi = globalURL + "/seeker-delete-my-job-app";
+
+//
+//My Job
+var getMyJobSeekerApi = globalURL + "/seeker-get-my-job-app";
 
 //
 //My Profile
@@ -164,7 +189,7 @@ deleteData(url) async {
 }
 
 upLoadFile(String fileName, String url) async {
-  Dio dio = new Dio();
+  // Dio dio = new Dio();
 
   final prefs = await SharedPreferences.getInstance();
   var employeeToken = prefs.getString("employeeToken");
@@ -177,15 +202,26 @@ upLoadFile(String fileName, String url) async {
     ),
   });
 
-  Response res = await dio.post(
-    url,
-    data: formData,
-    options: Options(
-      headers: <String, String>{
+  print(formData);
+
+  try {
+    Response res = await Dio().post(
+      url,
+      data: formData,
+      options: Options(headers: {
         "content-type": "application/json",
         "authorization": "$employeeToken" == null ? "" : "$employeeToken",
-      },
-    ),
-  );
-  return res.data;
+      }),
+    );
+    if (res.statusCode == 201) {
+      return res.data;
+    } else if (res.statusCode == 200) {
+      return res.data;
+    }
+  } catch (e) {
+    if (e is DioError && e.response != null && e.response?.statusCode == 413) {
+      // Handle 413 error (Payload Too Large)
+      print('File size exceeds the allowed limit');
+    }
+  }
 }

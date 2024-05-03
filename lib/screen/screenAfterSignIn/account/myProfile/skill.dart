@@ -96,7 +96,7 @@ class _SkillState extends State<Skill> {
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: "Skill",
-            fontWeight: FontWeight.bold,
+            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);

@@ -92,7 +92,7 @@ Widget ModalBottomCameraGallery(
                           )
                         : widgetFaIconSecond,
                   ),
-                  textColor: AppColors.blue,
+                  textColor: AppColors.primary,
                 ),
               ),
             ],
@@ -110,9 +110,9 @@ Widget ModalBottomUploadCV(
   dynamic pressSecond,
   Widget? widgetFaIconSecond,
   String secondText,
-  // dynamic pressThird,
-  // Widget? widgetFaIconThird,
-  // String thirdText,
+  dynamic pressThird,
+  Widget? widgetFaIconThird,
+  String thirdText,
 ) {
   return Container(
     // padding: EdgeInsets.only(top: 1.5.h, bottom: 1.5.h),
@@ -126,6 +126,8 @@ Widget ModalBottomUploadCV(
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        //
+        //Line on modal bottom
         Container(
           decoration: BoxDecoration(
             color: AppColors.grey,
@@ -137,6 +139,9 @@ Widget ModalBottomUploadCV(
           ),
           height: 1.w,
         ),
+
+        //
+        //Button
         Container(
           margin: EdgeInsets.all(20),
           padding: EdgeInsets.all(10),
@@ -156,7 +161,7 @@ Widget ModalBottomUploadCV(
                   leading: Container(
                     // padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(20),
                       // color: AppColors.greyWhite,
                     ),
                     child: widgetFaIconFirst == null
@@ -181,7 +186,7 @@ Widget ModalBottomUploadCV(
                   leading: Container(
                     // padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(20),
                       // color: AppColors.greyWhite,
                     ),
                     child: widgetFaIconSecond == null
@@ -192,34 +197,34 @@ Widget ModalBottomUploadCV(
                           )
                         : widgetFaIconSecond,
                   ),
-                  textColor: AppColors.blue,
+                  textColor: AppColors.primary,
                 ),
               ),
-              // Divider(
-              //   color: AppColors.borderBG,
-              //   height: 2,
-              // ),
-              // Container(
-              //   child: ListTile(
-              //     onTap: pressThird,
-              //     title: Text(thirdText),
-              //     leading: Container(
-              //       // padding: EdgeInsets.all(10),
-              //       decoration: BoxDecoration(
-              //         borderRadius: BorderRadius.circular(30),
-              //         // color: AppColors.greyWhite,
-              //       ),
-              //       child: widgetFaIconThird == null
-              //           ? FaIcon(
-              //               FontAwesomeIcons.download,
-              //               size: IconSize.sIcon,
-              //               color: AppColors.iconPrimary,
-              //             )
-              //           : widgetFaIconThird,
-              //     ),
-              //     textColor: AppColors.blue,
-              //   ),
-              // ),
+              Divider(
+                color: AppColors.borderBG,
+                height: 2,
+              ),
+              Container(
+                child: ListTile(
+                  onTap: pressThird,
+                  title: Text(thirdText),
+                  leading: Container(
+                    // padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      // color: AppColors.greyWhite,
+                    ),
+                    child: widgetFaIconThird == null
+                        ? FaIcon(
+                            FontAwesomeIcons.download,
+                            size: IconSize.sIcon,
+                            color: AppColors.iconPrimary,
+                          )
+                        : widgetFaIconThird,
+                  ),
+                  textColor: AppColors.primary,
+                ),
+              ),
             ],
           ),
         )

@@ -1,13 +1,21 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_print, prefer_is_empty, prefer_if_null_operators
 
+import 'dart:async';
+
+import 'package:app/functions/alert_dialog.dart';
+import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/outlineBorder.dart';
+import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
-import 'package:app/widget/button.dart';
+import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:app/widget/input.dart';
+import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 class MyJobs extends StatefulWidget {
@@ -18,10 +26,151 @@ class MyJobs extends StatefulWidget {
 }
 
 class _MyJobsState extends State<MyJobs> {
+  TextEditingController _searchTitleController = TextEditingController();
+
+  List _listMyJobs = [];
+  String _total = "";
+  String _searchTitle = "";
+  String _typeMyJob = "SeekerSaveJob";
+  String _textTotal = " Job you have saved";
+  String _textAlert = "Unsave Job Success";
+
+  String _logo = "";
+  String _jobTitle = "";
+  String _companyName = "";
+  String _workLocation = "";
+  String _views = "";
+
+  dynamic _openDate;
+  dynamic _closeDate;
+
+  Timer? _timer;
+
+  bool _statusShowLoading = false;
+  bool _isLoading = false;
+
+  fetchMyJob(String type) async {
+    //
+    //ສະແດງ AlertDialog Loading
+    if (_statusShowLoading) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return CustomAlertLoading();
+        },
+      );
+    }
+
+    var res = await postData(getMyJobSeekerApi, {
+      "type": type,
+      "search": _searchTitle,
+      "page": 1,
+      "perPage": 1000,
+    });
+
+    _listMyJobs = res['info'];
+    _total = res['totals'].toString();
+
+    if (res['info'] != null && _statusShowLoading) {
+      _statusShowLoading = false;
+      Navigator.pop(context);
+    }
+
+    _isLoading = false;
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  onGoBack(dynamic value) async {
+    print("onGoBack");
+    await fetchMyJob(_typeMyJob);
+  }
+
+  pressTapMyJobType(String val) async {
+    setState(() {
+      _typeMyJob = val;
+
+      if (_typeMyJob == "SeekerSaveJob") {
+        _isLoading = true;
+        _textTotal = " Job you have saved";
+        _textAlert = "Unsave Job Success";
+      } else if (_typeMyJob == "AppliedJob") {
+        _isLoading = true;
+        _textTotal = " Job you have applied";
+      } else if (_typeMyJob == "JobAlert") {
+        _isLoading = true;
+        _textTotal = " Job you have alert";
+      } else if (_typeMyJob == "SeekerHideJob") {
+        _isLoading = true;
+        _textTotal = " Job you have hidded";
+        _textAlert = "UnHide Job Success";
+      }
+    });
+    fetchMyJob(val);
+  }
+
+  deleteMyJob(String id, String type, String title) async {
+    //
+    //ສະແດງ AlertDialog Loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomAlertLoading();
+      },
+    );
+
+    var res = await postData(deleteMyJobSeekerApi, {
+      "_id": id,
+      "type": type,
+    });
+    print(res);
+
+    if (res['message'] == "Delete succeed") {
+      await fetchMyJob(_typeMyJob);
+      Navigator.pop(context);
+    }
+
+    if (res['message'] == "Delete succeed") {
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogSuccess(
+            title: "Success",
+            text: "$title $_textAlert",
+            textButton: "OK",
+            press: () {
+              Navigator.pop(context);
+            },
+          );
+        },
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _isLoading = true;
+    fetchMyJob(_typeMyJob);
+
+    _searchTitleController.text = _searchTitle;
+  }
+
+  @override
+  void dispose() {
+    _searchTitleController.dispose();
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     FocusScopeNode currentFocus = FocusScopeNode();
-
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: GestureDetector(
@@ -37,966 +186,704 @@ class _MyJobsState extends State<MyJobs> {
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 0,
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
-            backgroundColor: AppColors.white,
           ),
           body: SafeArea(
             child: Container(
               color: AppColors.background,
               width: double.infinity,
               height: double.infinity,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  children: [
-                    // SizedBox(
-                    //   height: 20,
-                    // ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: AppColors.borderSecondary),
-                        ),
+              child: Column(
+                children: [
+                  // SizedBox(
+                  //   height: 20,
+                  // ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: AppColors.borderSecondary),
                       ),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            Container(
+                    ),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              pressTapMyJobType('SeekerSaveJob');
+                            },
+                            child: Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 17, vertical: 10),
                               decoration: BoxDecoration(
-                                  color: AppColors.buttonPrimary,
-                                  borderRadius: BorderRadius.circular(10)),
+                                color: _typeMyJob == "SeekerSaveJob"
+                                    ? AppColors.buttonPrimary
+                                    : AppColors.buttonGrey,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                               child: Text(
                                 "Saved Job",
                                 style: bodyTextNormal(
-                                    AppColors.fontWhite, FontWeight.bold),
+                                    _typeMyJob == "SeekerSaveJob"
+                                        ? AppColors.fontWhite
+                                        : AppColors.fontGreyOpacity,
+                                    null),
                               ),
                             ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Container(
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              pressTapMyJobType('AppliedJob');
+                            },
+                            child: Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 17, vertical: 10),
                               decoration: BoxDecoration(
-                                  color: AppColors.buttonGrey,
+                                  color: _typeMyJob == "AppliedJob"
+                                      ? AppColors.buttonPrimary
+                                      : AppColors.buttonGrey,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Text(
                                 "Applied Job",
                                 style: bodyTextNormal(
-                                    AppColors.fontGreyOpacity, FontWeight.bold),
+                                    _typeMyJob == "AppliedJob"
+                                        ? AppColors.fontWhite
+                                        : AppColors.fontGreyOpacity,
+                                    null),
                               ),
                             ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Container(
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              pressTapMyJobType('JobAlert');
+                            },
+                            child: Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 17, vertical: 10),
                               decoration: BoxDecoration(
-                                  color: AppColors.buttonGrey,
+                                  color: _typeMyJob == "JobAlert"
+                                      ? AppColors.buttonPrimary
+                                      : AppColors.buttonGrey,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Text(
                                 "Job Alert",
                                 style: bodyTextNormal(
-                                    AppColors.fontGreyOpacity, FontWeight.bold),
+                                    _typeMyJob == "JobAlert"
+                                        ? AppColors.fontWhite
+                                        : AppColors.fontGreyOpacity,
+                                    null),
                               ),
                             ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Container(
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              pressTapMyJobType('SeekerHideJob');
+                            },
+                            child: Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 17, vertical: 10),
                               decoration: BoxDecoration(
-                                  color: AppColors.buttonGrey,
+                                  color: _typeMyJob == "SeekerHideJob"
+                                      ? AppColors.buttonPrimary
+                                      : AppColors.buttonGrey,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Text(
                                 "Hidded Job",
                                 style: bodyTextNormal(
-                                    AppColors.fontGreyOpacity, FontWeight.bold),
+                                    _typeMyJob == "SeekerHideJob"
+                                        ? AppColors.fontWhite
+                                        : AppColors.fontGreyOpacity,
+                                    null),
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Container(
-                      // color: AppColors.blue,
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          //
-                          //
-                          //Search and Filter
-                          Row(
-                            children: [
-                              //
-                              //
-                              //Search keywords
-                              Expanded(
-                                flex: 8,
-                                child: SimpleTextFieldSingleValidate(
-                                  hintText: 'Search keywords',
-                                  inputColor: AppColors.inputWhite,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              //
-                              //
-                              //BoxDecoration Filter
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  child: BoxDecorationInput(
-                                    boxDecBorderRadius:
-                                        BorderRadius.circular(10),
-                                    colorInput: AppColors.inputGrey,
-                                    widgetFaIcon: FaIcon(
-                                      FontAwesomeIcons.barsStaggered,
-                                      size: 20,
-                                      color: AppColors.iconGray,
-                                    ),
-                                    paddingFaIcon:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    mainAxisAlignmentTextIcon:
-                                        MainAxisAlignment.center,
-                                    text: "Filter",
-                                    colorText: AppColors.fontGrey,
-                                    validateText: Container(),
-                                    press: () async {
-                                      //
-                                      //
-                                      //Alert Dialog Filter
-                                      var result = await showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            titlePadding: EdgeInsets.zero,
-                                            contentPadding: EdgeInsets.zero,
-                                            insetPadding: EdgeInsets.zero,
-                                            actionsPadding: EdgeInsets.zero,
-
-                                            //
-                                            //
-                                            //Title Filter Alert
-                                            title: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 20, vertical: 15),
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      AppColors.backgroundWhite,
-                                                  border: Border(
-                                                    bottom: BorderSide(
-                                                      color: AppColors
-                                                          .borderSecondary,
-                                                    ),
-                                                  )),
-                                              child: Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: FaIcon(
-                                                      FontAwesomeIcons
-                                                          .arrowLeft,
-                                                      size: 20,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Center(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                right: 15),
-                                                        child: Text(
-                                                          "Filter",
-                                                          style: bodyTextMedium(
-                                                              null,
-                                                              FontWeight.bold),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-
-                                            //
-                                            //
-                                            //Content Filter Alert
-                                            content: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 20, vertical: 10),
-                                              color: AppColors.backgroundWhite,
-                                              height: MediaQuery.of(context)
-                                                  .size
-                                                  .height,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              child: SingleChildScrollView(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    //
-                                                    //
-                                                    //Sort By
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical: 10),
-                                                          child: Text(
-                                                            "Sort By",
-                                                            style:
-                                                                bodyTextNormal(
-                                                                    null,
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            //
-                                                            //Post Date Lastest
-                                                            Container(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          15,
-                                                                      vertical:
-                                                                          10),
-                                                              decoration:
-                                                                  boxDecoration(
-                                                                null,
-                                                                AppColors.light,
-                                                                AppColors.light,
-                                                              ),
-                                                              child: Text(
-                                                                "Post Date (Lastest)",
-                                                                style: bodyTextNormal(
-                                                                    null,
-                                                                    FontWeight
-                                                                        .bold),
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            //
-                                                            //Post date Oldest
-                                                            Container(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          15,
-                                                                      vertical:
-                                                                          10),
-                                                              decoration:
-                                                                  boxDecoration(
-                                                                null,
-                                                                AppColors.light,
-                                                                AppColors.light,
-                                                              ),
-                                                              child: Text(
-                                                                "Post Date (Oldest)",
-                                                                style: bodyTextNormal(
-                                                                    null,
-                                                                    FontWeight
-                                                                        .bold),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 5),
-
-                                                    //
-                                                    //
-                                                    //Education Level
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical: 10),
-                                                          child: Text(
-                                                            "Education Level",
-                                                            style:
-                                                                bodyTextNormal(
-                                                                    null,
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            //
-                                                            //High School
-                                                            Container(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          15,
-                                                                      vertical:
-                                                                          10),
-                                                              decoration:
-                                                                  boxDecoration(
-                                                                null,
-                                                                AppColors.light,
-                                                                AppColors.light,
-                                                              ),
-                                                              child: Text(
-                                                                "High School",
-                                                                style: bodyTextNormal(
-                                                                    null,
-                                                                    FontWeight
-                                                                        .bold),
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-
-                                                            //
-                                                            //Higher Diploma
-                                                            Container(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          15,
-                                                                      vertical:
-                                                                          10),
-                                                              decoration:
-                                                                  boxDecoration(
-                                                                null,
-                                                                AppColors.light,
-                                                                AppColors.light,
-                                                              ),
-                                                              child: Text(
-                                                                "Higher Diploma",
-                                                                style: bodyTextNormal(
-                                                                    null,
-                                                                    FontWeight
-                                                                        .bold),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(height: 10),
-                                                        Row(
-                                                          children: [
-                                                            //
-                                                            //Bachelor Degree
-                                                            Container(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          15,
-                                                                      vertical:
-                                                                          10),
-                                                              decoration:
-                                                                  boxDecoration(
-                                                                null,
-                                                                AppColors.light,
-                                                                AppColors.light,
-                                                              ),
-                                                              child: Text(
-                                                                "Bachelor Degree",
-                                                                style: bodyTextNormal(
-                                                                    null,
-                                                                    FontWeight
-                                                                        .bold),
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-
-                                                            //
-                                                            //Master Degree
-                                                            Container(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          15,
-                                                                      vertical:
-                                                                          10),
-                                                              decoration:
-                                                                  boxDecoration(
-                                                                null,
-                                                                AppColors.light,
-                                                                AppColors.light,
-                                                              ),
-                                                              child: Text(
-                                                                "Master Degree",
-                                                                style: bodyTextNormal(
-                                                                    null,
-                                                                    FontWeight
-                                                                        .bold),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(height: 10),
-                                                        Row(
-                                                          children: [
-                                                            //
-                                                            //Not Specific
-                                                            Container(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          15,
-                                                                      vertical:
-                                                                          10),
-                                                              decoration:
-                                                                  boxDecoration(
-                                                                null,
-                                                                AppColors.light,
-                                                                AppColors.light,
-                                                              ),
-                                                              child: Text(
-                                                                "Not Specific",
-                                                                style: bodyTextNormal(
-                                                                    null,
-                                                                    FontWeight
-                                                                        .bold),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 5),
-
-                                                    //
-                                                    //
-                                                    //Job Function
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 10),
-                                                      child: Text(
-                                                        "Job Function",
-                                                        style: bodyTextNormal(
-                                                            null,
-                                                            FontWeight.bold),
-                                                      ),
-                                                    ),
-                                                    BoxDecorationInput(
-                                                      colorInput: AppColors
-                                                          .backgroundWhite,
-                                                      colorBorder: AppColors
-                                                          .borderSecondary,
-                                                      text:
-                                                          "Select Job Function",
-                                                      widgetIconActive: FaIcon(
-                                                        FontAwesomeIcons
-                                                            .caretDown,
-                                                        size: 20,
-                                                        color: AppColors
-                                                            .iconSecondary,
-                                                      ),
-                                                      paddingFaIcon:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 10),
-                                                      mainAxisAlignmentTextIcon:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      press: () {},
-                                                      validateText: Container(),
-                                                    ),
-                                                    SizedBox(height: 5),
-
-                                                    //
-                                                    //
-                                                    //Work Location
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 10),
-                                                      child: Text(
-                                                        "Work Location",
-                                                        style: bodyTextNormal(
-                                                            null,
-                                                            FontWeight.bold),
-                                                      ),
-                                                    ),
-                                                    BoxDecorationInput(
-                                                      colorInput: AppColors
-                                                          .backgroundWhite,
-                                                      colorBorder: AppColors
-                                                          .borderSecondary,
-                                                      text:
-                                                          "Select Work Location",
-                                                      widgetIconActive: FaIcon(
-                                                          FontAwesomeIcons
-                                                              .caretDown,
-                                                          size: 20,
-                                                          color: AppColors
-                                                              .iconSecondary),
-                                                      paddingFaIcon:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 10),
-                                                      mainAxisAlignmentTextIcon:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      press: () {},
-                                                      validateText: Container(),
-                                                    ),
-                                                    SizedBox(height: 5),
-
-                                                    //
-                                                    //
-                                                    //Language
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 10),
-                                                      child: Text(
-                                                        "Language",
-                                                        style: bodyTextNormal(
-                                                            null,
-                                                            FontWeight.bold),
-                                                      ),
-                                                    ),
-                                                    BoxDecorationInput(
-                                                      colorInput: AppColors
-                                                          .backgroundWhite,
-                                                      colorBorder: AppColors
-                                                          .borderSecondary,
-                                                      text: "Select Language",
-                                                      widgetIconActive: FaIcon(
-                                                          FontAwesomeIcons
-                                                              .caretDown,
-                                                          size: 20,
-                                                          color: AppColors
-                                                              .iconSecondary),
-                                                      paddingFaIcon:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 10),
-                                                      mainAxisAlignmentTextIcon:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      press: () {},
-                                                      validateText: Container(),
-                                                    ),
-                                                    SizedBox(height: 5),
-
-                                                    //
-                                                    //
-                                                    //Industry
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 10),
-                                                      child: Text(
-                                                        "Industry",
-                                                        style: bodyTextNormal(
-                                                            null,
-                                                            FontWeight.bold),
-                                                      ),
-                                                    ),
-                                                    BoxDecorationInput(
-                                                      colorInput: AppColors
-                                                          .backgroundWhite,
-                                                      colorBorder: AppColors
-                                                          .borderSecondary,
-                                                      text: "Select Industry",
-                                                      widgetIconActive: FaIcon(
-                                                          FontAwesomeIcons
-                                                              .caretDown,
-                                                          size: 20,
-                                                          color: AppColors
-                                                              .iconSecondary),
-                                                      paddingFaIcon:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 10),
-                                                      mainAxisAlignmentTextIcon:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      press: () {},
-                                                      validateText: Container(),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            actions: [
-                                              Container(
-                                                padding: EdgeInsets.only(
-                                                    left: 20,
-                                                    right: 20,
-                                                    bottom: 20),
-                                                color:
-                                                    AppColors.backgroundWhite,
-                                                child: Button(
-                                                  text: "Apply",
-                                                  press: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-
-                          //
-                          //
-                          //Count Jobs available
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: Row(
-                              children: [
-                                Text(
-                                  "10",
-                                  style: bodyTextNormal(
-                                      AppColors.fontPrimary, FontWeight.bold),
-                                ),
-                                Text(
-                                  " Job you have saved",
-                                  style: bodyTextNormal(null, FontWeight.bold),
-                                ),
-                              ],
                             ),
-                          ),
-                          //
-                          //
-                          //All Jobs available
-                          Container(
-                            height: 250,
-                            padding: EdgeInsets.all(15),
-                            margin: EdgeInsets.only(bottom: 15),
-                            decoration: boxDecoration(
-                                null, AppColors.backgroundWhite, null),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                //
-                                //
-                                //Logo Company and Status
-                                Container(
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      //
-                                      //Logo Company
-                                      Expanded(
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 75,
-                                              height: 75,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color:
-                                                      AppColors.borderSecondary,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                color: AppColors.greyWhite,
-                                              ),
-                                            ),
-                                            SizedBox(width: 25),
-                                            Column(
-                                              children: [
-                                                Text("10 Days ago"),
-                                                Text("3000 Views"),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                      //
-                                      //Status
-                                      Container(
-                                        alignment: Alignment.topCenter,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 3),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primary,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: Text(
-                                          "New",
-                                          style: bodyTextSmall(
-                                              AppColors.fontWhite),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-
-                                //
-                                //Position
-                                Text(
-                                  "Excel Data Management and Database Developer",
-                                  style: bodyTextMedium(null, FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-
-                                //
-                                //Company Name
-                                Row(children: [
-                                  FaIcon(
-                                    FontAwesomeIcons.building,
-                                    size: 15,
-                                    color: AppColors.iconGrayOpacity,
-                                  ),
-                                  Text("  Company Name",
-                                      style: bodyTextSmall(null)),
-                                ]),
-
-                                //
-                                //Work Location
-                                Row(children: [
-                                  FaIcon(
-                                    FontAwesomeIcons.locationDot,
-                                    size: 15,
-                                    color: AppColors.iconGrayOpacity,
-                                  ),
-                                  Text("  Work Location",
-                                      style: bodyTextSmall(null)),
-                                ]),
-
-                                //
-                                //Start Date to End Date
-                                Row(children: [
-                                  FaIcon(
-                                    FontAwesomeIcons.calendarWeek,
-                                    size: 15,
-                                    color: AppColors.iconGrayOpacity,
-                                  ),
-                                  Text('  01 Nov 2023',
-                                      style: bodyTextSmall(null)),
-                                  Text(' - '),
-                                  Text("15 Dec 2023",
-                                      style: bodyTextSmall(null))
-                                ])
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(bottom: 15),
-                            child: Stack(
-                              alignment: AlignmentDirectional.center,
-                              children: [
-                                Container(
-                                  height: 250,
-                                  padding: EdgeInsets.all(15),
-                                  // margin: EdgeInsets.only(bottom: 15),
-                                  decoration: boxDecoration(
-                                      null, AppColors.backgroundWhite, null),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      //
-                                      //
-                                      //Logo Company and Status
-                                      Container(
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            //
-                                            //Logo Company
-                                            Expanded(
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    width: 75,
-                                                    height: 75,
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                        color: AppColors
-                                                            .borderSecondary,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      color:
-                                                          AppColors.greyWhite,
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 25),
-                                                  Column(
-                                                    children: [
-                                                      Text("10 Days ago"),
-                                                      Text("3000 Views"),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-
-                                            //
-                                            //Status
-                                            Container(
-                                              alignment: Alignment.topCenter,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 10, vertical: 3),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.greyOpacity,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                              child: Text(
-                                                "Reead",
-                                                style: bodyTextSmall(
-                                                    AppColors.fontGreyOpacity),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-
-                                      //
-                                      //Position
-                                      Text(
-                                        "Excel Data Management and Database Developer",
-                                        style: bodyTextMedium(
-                                            null, FontWeight.bold),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-
-                                      //
-                                      //Company Name
-                                      Row(children: [
-                                        FaIcon(
-                                          FontAwesomeIcons.building,
-                                          size: 15,
-                                          color: AppColors.iconGrayOpacity,
-                                        ),
-                                        Text("  Company Name",
-                                            style: bodyTextSmall(null)),
-                                      ]),
-
-                                      //
-                                      //Work Location
-                                      Row(children: [
-                                        FaIcon(
-                                          FontAwesomeIcons.locationDot,
-                                          size: 15,
-                                          color: AppColors.iconGrayOpacity,
-                                        ),
-                                        Text("  Work Location",
-                                            style: bodyTextSmall(null)),
-                                      ]),
-
-                                      //
-                                      //Start Date to End Date
-                                      Row(children: [
-                                        FaIcon(
-                                          FontAwesomeIcons.calendarWeek,
-                                          size: 15,
-                                          color: AppColors.iconGrayOpacity,
-                                        ),
-                                        Text('  01 Nov 2023',
-                                            style: bodyTextSmall(null)),
-                                        Text(' - '),
-                                        Text("15 Dec 2023",
-                                            style: bodyTextSmall(null))
-                                      ])
-                                    ],
-                                  ),
-                                ),
-                                Positioned(
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 250,
-                                    decoration: boxDecoration(null,
-                                        AppColors.dark.withOpacity(0.5), null),
-                                  ),
-                                ),
-                                Positioned(
-                                  // bottom: null,
-                                  // right: 50.w,
-                                  // left: 50.w,
-                                  // top: null,
-                                  child: Container(
-                                    width: 50.w,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 10),
-                                    decoration: BoxDecoration(
-                                        color: AppColors.backgroundWhite,
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "This job has expired ",
-                                            ),
-                                            SizedBox(
-                                              width: 5,
-                                            ),
-                                            Text(
-                                              "View",
-                                              style: TextStyle(
-                                                color: AppColors.fontPrimary,
-                                                decoration:
-                                                    TextDecoration.underline,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          )
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    // color: AppColors.blue,
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        //
+                        //
+                        //Search and Filter
+                        Row(
+                          children: [
+                            //
+                            //
+                            //Search keywords
+                            Expanded(
+                              child: SimpleTextFieldSingleValidate(
+                                codeController: _searchTitleController,
+                                contenPadding: EdgeInsets.symmetric(
+                                    vertical: 2.5.w, horizontal: 3.5.w),
+                                enabledBorder: enableOutlineBorder(
+                                  AppColors.borderBG,
+                                ),
+                                changed: (value) {
+                                  setState(() {
+                                    _searchTitle = value;
+                                  });
+
+                                  // Cancel previous timer if it exists
+                                  _timer?.cancel();
+
+                                  // Start a new timer
+                                  _timer = Timer(Duration(seconds: 1), () {
+                                    //
+                                    // Perform API call here
+                                    print('Calling API fetchMyJob');
+                                    setState(() {
+                                      _statusShowLoading = true;
+                                    });
+                                    fetchMyJob(_typeMyJob);
+                                  });
+                                },
+                                hintText: 'Search keywords',
+                                inputColor: AppColors.inputWhite,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        //
+                        //
+                        //Count Jobs available
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: Row(
+                            children: [
+                              Text(
+                                "${_total}",
+                                style: bodyTextNormal(
+                                    AppColors.fontPrimary, FontWeight.bold),
+                              ),
+                              Text(
+                                " ${_textTotal}",
+                                style: bodyTextNormal(null, FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //
+                  //
+                  //All Jobs available
+                  _isLoading
+                      ? Expanded(
+                          child: Container(
+                            color: AppColors.background,
+                            width: double.infinity,
+                            height: double.infinity,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                        )
+                      : Expanded(
+                          child: _listMyJobs.length > 0
+                              ? Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  child: ListView.builder(
+                                      physics: ClampingScrollPhysics(),
+                                      itemCount: _listMyJobs.length,
+                                      itemBuilder: (context, index) {
+                                        dynamic i = _listMyJobs[index];
+
+                                        _logo = i['logo'];
+                                        _jobTitle = i['jobTitle'];
+                                        _companyName = i['companyName'];
+                                        _workLocation = i['workingLocation'];
+                                        _openDate = i['openingDate'];
+                                        _closeDate = i['closingDate'];
+                                        _views = i['isClick'].toString();
+
+                                        //
+                                        //Open Date
+                                        //pars ISO to Flutter DateTime
+                                        parsDateTime(
+                                            value: '',
+                                            currentFormat: '',
+                                            desiredFormat: '');
+                                        DateTime openDate = parsDateTime(
+                                            value: _openDate,
+                                            currentFormat:
+                                                "yyyy-MM-ddTHH:mm:ssZ",
+                                            desiredFormat:
+                                                "yyyy-MM-dd HH:mm:ss");
+                                        //
+                                        //Format to string 13 Feb 2024
+                                        _openDate = DateFormat('dd MMM yyyy')
+                                            .format(openDate);
+
+                                        //
+                                        //Close Date
+                                        //pars ISO to Flutter DateTime
+                                        parsDateTime(
+                                            value: '',
+                                            currentFormat: '',
+                                            desiredFormat: '');
+                                        DateTime closeDate = parsDateTime(
+                                            value: _closeDate,
+                                            currentFormat:
+                                                "yyyy-MM-ddTHH:mm:ssZ",
+                                            desiredFormat:
+                                                "yyyy-MM-dd HH:mm:ss");
+                                        //
+                                        //Format to string 13 Feb 2024
+                                        _closeDate = DateFormat("dd MMM yyyy")
+                                            .format(closeDate);
+                                        return Container(
+                                          margin: EdgeInsets.only(bottom: 15),
+                                          child: Slidable(
+                                            //
+                                            //Specify a key if the Slidable  is dismissible.
+                                            key: UniqueKey(),
+                                            //
+                                            //The end action pane is the one at the right or the bottom side.
+                                            endActionPane: ActionPane(
+                                              motion: ScrollMotion(),
+                                              //
+                                              //A pane can dismiss the Slidable.
+                                              dismissible: DismissiblePane(
+                                                onDismissed: () {
+                                                  Future.delayed(
+                                                      Duration(
+                                                          milliseconds: 300),
+                                                      () {
+                                                    if (_typeMyJob ==
+                                                        "SeekerSaveJob") {
+                                                      print(
+                                                          "unSave the Slidable");
+                                                      deleteMyJob(
+                                                          i['_id'],
+                                                          _typeMyJob,
+                                                          i['jobTitle']);
+                                                    } else if (_typeMyJob ==
+                                                        'SeekerHideJob') {
+                                                      print(
+                                                          "unHide the Slidable");
+                                                      deleteMyJob(
+                                                          i['_id'],
+                                                          _typeMyJob,
+                                                          i['jobTitle']);
+                                                    }
+                                                  });
+                                                },
+                                              ),
+                                              children: [
+                                                if (_typeMyJob ==
+                                                    "SeekerSaveJob")
+                                                  SlidableAction(
+                                                    backgroundColor:
+                                                        AppColors.lightPrimary,
+                                                    foregroundColor:
+                                                        AppColors.primary,
+                                                    icon: FontAwesomeIcons
+                                                        .solidHeart,
+                                                    label: 'Saved',
+                                                    onPressed: (context) {
+                                                      print("press unsave");
+                                                      deleteMyJob(
+                                                          i['_id'],
+                                                          _typeMyJob,
+                                                          i['jobTitle']);
+                                                    },
+                                                  ),
+                                                if (_typeMyJob ==
+                                                    "SeekerHideJob")
+                                                  SlidableAction(
+                                                    backgroundColor:
+                                                        AppColors.buttonDanger,
+                                                    foregroundColor:
+                                                        AppColors.fontWhite,
+                                                    icon: FontAwesomeIcons
+                                                        .rotateLeft,
+                                                    label: 'Unhide',
+                                                    onPressed: (constext) {
+                                                      print("press hidded");
+                                                      deleteMyJob(
+                                                          i['_id'],
+                                                          _typeMyJob,
+                                                          i['jobTitle']);
+                                                    },
+                                                  ),
+                                              ],
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 0),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  if (_typeMyJob !=
+                                                      "SeekerHideJob") {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            JobSearchDetail(
+                                                          jobId: i['jobId'],
+                                                        ),
+                                                      ),
+                                                    ).then((value) {
+                                                      //Success ແມ່ນຄ່າທີ່ໄດ້ຈາກການ Navigator.pop ທີ່ api Save Job or unSave Job ເຮັດວຽກ
+                                                      if (value == 'Success') {
+                                                        setState(() {
+                                                          _statusShowLoading =
+                                                              true;
+                                                        });
+                                                        onGoBack(value);
+                                                      }
+                                                    });
+                                                  }
+                                                },
+                                                child: Container(
+                                                  height: 250,
+                                                  padding: EdgeInsets.all(15),
+                                                  // margin: EdgeInsets.only(bottom: 15),
+                                                  decoration: boxDecoration(
+                                                      null,
+                                                      AppColors.backgroundWhite,
+                                                      null),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      //
+                                                      //
+                                                      //Logo Company and Status
+                                                      Container(
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            //
+                                                            //Logo Company
+                                                            Expanded(
+                                                              child: Row(
+                                                                children: [
+                                                                  Container(
+                                                                    width: 75,
+                                                                    height: 75,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      border:
+                                                                          Border
+                                                                              .all(
+                                                                        color: AppColors
+                                                                            .borderSecondary,
+                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                      color: AppColors
+                                                                          .backgroundWhite,
+                                                                    ),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding:
+                                                                          const EdgeInsets
+                                                                              .all(
+                                                                              5),
+                                                                      child:
+                                                                          ClipRRect(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                        child:
+                                                                            Center(
+                                                                          child: _logo == ""
+                                                                              ? Image.asset(
+                                                                                  'assets/image/no-image-available.png',
+                                                                                  fit: BoxFit.contain,
+                                                                                )
+                                                                              : Image.network(
+                                                                                  "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                                                  fit: BoxFit.contain,
+                                                                                  errorBuilder: (context, error, stackTrace) {
+                                                                                    return Image.asset(
+                                                                                      'assets/image/no-image-available.png',
+                                                                                      fit: BoxFit.contain,
+                                                                                    ); // Display an error message
+                                                                                  },
+                                                                                ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          25),
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Text(
+                                                                          "10 Days ago"),
+                                                                      Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            "${_views}",
+                                                                            style:
+                                                                                bodyTextNormal(AppColors.primary, null),
+                                                                          ),
+                                                                          Text(
+                                                                              " Views")
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+
+                                                            //
+                                                            //Status
+                                                            if (_typeMyJob ==
+                                                                "SeekerHideJob")
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  showModalBottomSheet(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (builder) {
+                                                                      return Container(
+                                                                        padding:
+                                                                            EdgeInsets.symmetric(
+                                                                          vertical:
+                                                                              20,
+                                                                        ),
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                AppColors.background,
+                                                                            borderRadius: BorderRadius.circular(20)),
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.min,
+                                                                          children: [
+                                                                            //
+                                                                            //Line on modal bottom
+                                                                            Container(
+                                                                              decoration: BoxDecoration(
+                                                                                color: AppColors.grey,
+                                                                                borderRadius: BorderRadius.all(Radius.circular(64.0)),
+                                                                              ),
+                                                                              margin: EdgeInsets.only(
+                                                                                left: 40.w,
+                                                                                right: 40.w,
+                                                                              ),
+                                                                              height: 1.w,
+                                                                            ),
+                                                                            //
+                                                                            //Button
+                                                                            Container(
+                                                                              margin: EdgeInsets.all(20),
+                                                                              padding: EdgeInsets.all(10),
+                                                                              // decoration: BoxDecoration(
+                                                                              //   color: AppColors.backgroundWhite,
+                                                                              //   borderRadius: BorderRadius.circular(20),
+                                                                              // ),
+                                                                              child: Column(
+                                                                                children: [
+                                                                                  Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: AppColors.buttonDanger,
+                                                                                      borderRadius: BorderRadius.circular(10),
+                                                                                    ),
+                                                                                    child: ListTile(
+                                                                                      onTap: () {
+                                                                                        print("press hidded");
+                                                                                        Navigator.pop(context);
+                                                                                        deleteMyJob(i['_id'], _typeMyJob, i['jobTitle']);
+                                                                                      },
+                                                                                      title: Container(
+                                                                                        child: Text("Unhide My Job"),
+                                                                                      ),
+                                                                                      leading: Container(
+                                                                                          // padding: EdgeInsets.all(10),
+                                                                                          decoration: BoxDecoration(
+                                                                                              // borderRadius: BorderRadius.circular(10),
+                                                                                              // color: AppColors.greyWhite,
+                                                                                              ),
+                                                                                          child: FaIcon(
+                                                                                            FontAwesomeIcons.rotateLeft,
+                                                                                            size: IconSize.sIcon,
+                                                                                            color: AppColors.iconLight,
+                                                                                          )),
+                                                                                      textColor: AppColors.fontWhite,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 30,
+                                                                            )
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                  );
+                                                                },
+                                                                child: Container(
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .all(
+                                                                                8),
+                                                                    child: FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .ellipsis)),
+                                                              )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+
+                                                      //
+                                                      //Position
+                                                      Text(
+                                                        "${_jobTitle}",
+                                                        style: bodyTextMedium(
+                                                            null,
+                                                            FontWeight.bold),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 2,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+
+                                                      //
+                                                      //Company Name
+                                                      Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .building,
+                                                            size: 15,
+                                                            color: AppColors
+                                                                .iconGrayOpacity,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Expanded(
+                                                            child: Text(
+                                                              "${_companyName}",
+                                                              style:
+                                                                  bodyTextSmall(
+                                                                      null),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              maxLines: 2,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+
+                                                      //
+                                                      //Work Location
+                                                      Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .locationDot,
+                                                            size: 15,
+                                                            color: AppColors
+                                                                .iconGrayOpacity,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Expanded(
+                                                            child: Text(
+                                                              "${_workLocation}",
+                                                              style:
+                                                                  bodyTextSmall(
+                                                                      null),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              maxLines: 1,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+
+                                                      //
+                                                      //Start Date to End Date
+                                                      Row(children: [
+                                                        FaIcon(
+                                                          FontAwesomeIcons
+                                                              .calendarWeek,
+                                                          size: 15,
+                                                          color: AppColors
+                                                              .iconGrayOpacity,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Text('${_openDate}',
+                                                            style:
+                                                                bodyTextSmall(
+                                                                    null)),
+                                                        Text(' - '),
+                                                        Text("${_closeDate}",
+                                                            style:
+                                                                bodyTextSmall(
+                                                                    null))
+                                                      ])
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                )
+                              : ScreenNoData(
+                                  faIcon:
+                                      FontAwesomeIcons.fileCircleExclamation,
+                                  colorIcon: AppColors.primary,
+                                  text: "No have data",
+                                  colorText: AppColors.primary,
+                                ),
+                        )
+                ],
               ),
             ),
           ),

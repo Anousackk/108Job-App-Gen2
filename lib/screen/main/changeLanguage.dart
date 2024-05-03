@@ -46,6 +46,11 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       //

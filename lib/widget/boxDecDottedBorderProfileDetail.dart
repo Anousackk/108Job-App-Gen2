@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
 
+//
+//
+//BoxDecoration DottedBorder Profile Detail
 class BoxDecDottedBorderProfileDetail extends StatefulWidget {
   const BoxDecDottedBorderProfileDetail(
       {Key? key,
@@ -143,6 +146,9 @@ class _BoxDecDottedBorderProfileDetailState
   }
 }
 
+//
+//
+//BoxDecoration Profile Detail Have Value
 class BoxDecProfileDetailHaveValue extends StatefulWidget {
   const BoxDecProfileDetailHaveValue(
       {Key? key,
@@ -238,7 +244,7 @@ class _BoxDecProfileDetailHaveValueState
                 onTap: widget.pressRight,
                 child: Container(
                   padding: EdgeInsets.all(10),
-                  // color: AppColors.blue,
+                  color: AppColors.light,
                   child: Center(
                     child: widget.widgetFaIconRight == null
                         ? FaIcon(
@@ -256,6 +262,9 @@ class _BoxDecProfileDetailHaveValueState
   }
 }
 
+//
+//
+//BoxDecoration Profile Detail Have Value Without Title Text
 class BoxDecProfileDetailHaveValueWithoutTitleText extends StatefulWidget {
   const BoxDecProfileDetailHaveValueWithoutTitleText(
       {Key? key,
@@ -333,6 +342,9 @@ class _BoxDecProfileDetailHaveValueWithoutTitleTextState
   }
 }
 
+//
+//
+//BoxDecoration DottedBorder UploadCV
 class BoxDecDottedBorderUploadCV extends StatefulWidget {
   const BoxDecDottedBorderUploadCV(
       {Key? key,
@@ -442,6 +454,168 @@ class _BoxDecDottedBorderUploadCVState
                   ? AppColors.fontWhite
                   : widget.buttonTextColor,
               press: widget.pressButton,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BoxDecProfileSettingHaveValue extends StatefulWidget {
+  const BoxDecProfileSettingHaveValue(
+      {Key? key,
+      this.boxDecColor,
+      this.titleColor,
+      this.textColor,
+      this.title,
+      this.text,
+      this.titleFontWeight,
+      this.pressActionOnOff,
+      this.actionOnOffBoxDecColor,
+      this.actionOnOffIcon,
+      this.actionOnOffText})
+      : super(key: key);
+
+  final Widget? actionOnOffIcon;
+  final Color? boxDecColor, titleColor, textColor, actionOnOffBoxDecColor;
+  final String? title, text, actionOnOffText;
+  final FontWeight? titleFontWeight;
+  final Function()? pressActionOnOff;
+
+  @override
+  State<BoxDecProfileSettingHaveValue> createState() =>
+      _BoxDecProfileSettingHaveValueState();
+}
+
+class _BoxDecProfileSettingHaveValueState
+    extends State<BoxDecProfileSettingHaveValue> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: widget.boxDecColor == null
+            ? AppColors.backgroundWhite
+            : widget.boxDecColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "${widget.title}",
+              style: bodyTextNormal(
+                widget.titleColor == null
+                    ? AppColors.fontPrimary
+                    : widget.titleColor,
+                widget.titleFontWeight == null
+                    ? FontWeight.normal
+                    : widget.titleFontWeight,
+              ),
+            ),
+            Text(
+              "${widget.text}",
+              style: bodyTextSmall(
+                widget.textColor == null
+                    ? AppColors.fontGreyOpacity
+                    : widget.textColor,
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.inputWhite,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Searchable Profile",
+                    style: bodyTextNormal(null, FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    onTap: widget.pressActionOnOff,
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: widget.actionOnOffBoxDecColor == null
+                            ? AppColors.primary
+                            : widget.actionOnOffBoxDecColor,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            child: widget.actionOnOffIcon,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "${widget.actionOnOffText}",
+                            style: bodyTextNormal(
+                                AppColors.fontWhite, FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              decoration: BoxDecoration(
+                color: AppColors.inputLight,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Hide your profile from these companies",
+                      style: bodyTextNormal(null, FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Container(
+                    height: 40,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 3,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 2),
+                            width: 40,
+                            decoration:
+                                BoxDecoration(color: AppColors.greyOpacity),
+                          );
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              ),
             )
           ],
         ),

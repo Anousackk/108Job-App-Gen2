@@ -27,7 +27,7 @@ class _PhotViewDetailState extends State<PhotViewDetail> {
     if (widget.image != "") {
       splitImage = img.split(",");
     } else {
-      splitImage = ['assets/images/def-profile.png'];
+      splitImage = ['assets/image/def-profile.png'];
     }
     return Scaffold(
       appBar: AppBar(

@@ -51,7 +51,7 @@ class _VerificationCodeState extends State<VerificationCode> {
             textTitle: widget.verifyCode == 'verifyPhoneNum'
                 ? 'Phone Number Verification'
                 : 'Email Verification',
-            fontWeight: FontWeight.bold,
+            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);

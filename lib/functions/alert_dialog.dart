@@ -44,16 +44,33 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: AlertDialog(
-        backgroundColor: AppColors.backgroundWhite,
+        backgroundColor: AppColors.background,
+        // titlePadding: EdgeInsets.zero,
+        // contentPadding: EdgeInsets.zero,
+        // insetPadding: EdgeInsets.zero,
         // contentPadding: EdgeInsets.zero,
         title: Text(
           '${widget.title}',
-          // style: TextStyle(fontSize: 15.sp),
+          style: bodyTextMedium(null, FontWeight.bold),
         ),
-        content: Text(
-          '${widget.contentText}',
-          style: bodyTextNormal(null, null),
-          // style: TextStyle(fontSize: 10.sp),
+        // content: Text(
+        //   '${widget.contentText}',
+        //   style: bodyTextNormal(null, null),
+        // ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Text('This is a custom AlertDialog.'),
+            // SizedBox(height: 10),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              child: Text(
+                '${widget.contentText}',
+                style: bodyTextNormal(null, null),
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -66,7 +83,7 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
                   widget.colorTextLeft == null
                       ? AppColors.fontGrey
                       : widget.colorTextLeft,
-                  null),
+                  FontWeight.bold),
             ),
           ),
           TextButton(
@@ -79,7 +96,7 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
                   widget.colorTextRight == null
                       ? AppColors.primary
                       : widget.colorTextRight,
-                  null),
+                  FontWeight.bold),
             ),
           ),
         ],
@@ -477,8 +494,9 @@ class _CustomAlertDialogSuccessState extends State<CustomAlertDialogSuccess> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // SizedBox(height: 2.h),
-                    SizedBox(height: MediaQuery.of(context).size.height / 25),
+                    SizedBox(height: 20),
+                    // SizedBox(height: MediaQuery.of(context).size.height / 50),
+
                     Column(
                       children: [
                         Text(
@@ -487,7 +505,7 @@ class _CustomAlertDialogSuccessState extends State<CustomAlertDialogSuccess> {
                               AppColors.fontSuccess, FontWeight.bold),
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 5,
                         ),
                         Text(
                           '${widget.text}',
@@ -539,7 +557,7 @@ class _CustomAlertDialogSuccessState extends State<CustomAlertDialogSuccess> {
             ),
             Positioned(
               child: CircleAvatar(
-                backgroundColor: AppColors.green,
+                backgroundColor: AppColors.success,
                 radius: 12.w,
                 // child: Text(
                 //   'check',
@@ -607,7 +625,7 @@ class _CustomAlertDialogWarningState extends State<CustomAlertDialogWarning> {
                     Text(
                       '${widget.title}',
                       style:
-                          bodyTextMedium(AppColors.fontInfo, FontWeight.bold),
+                          bodyTextMedium(AppColors.fontWaring, FontWeight.bold),
                     ),
                     SizedBox(
                       height: 10,

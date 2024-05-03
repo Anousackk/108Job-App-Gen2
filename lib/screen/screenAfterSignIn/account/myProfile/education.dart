@@ -110,6 +110,11 @@ class _EducationState extends State<Education> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     FocusScopeNode currentFocus = FocusScopeNode();
 
@@ -126,7 +131,7 @@ class _EducationState extends State<Education> {
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: "Education",
-            fontWeight: FontWeight.bold,
+            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sized_box_for_whitespace, unused_local_variable, unused_field, prefer_final_fields, avoid_unnecessary_containers, non_constant_identifier_names, unused_import, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sized_box_for_whitespace, unused_local_variable, unused_field, prefer_final_fields, avoid_unnecessary_containers, non_constant_identifier_names, unused_import, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, curly_braces_in_flow_control_structures
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -16,10 +16,12 @@ import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+// import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -77,6 +79,11 @@ class _LoginState extends State<Login> {
 
     _phoneNumberController.text = _phoneNumber;
     _emailController.text = _email;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -439,8 +446,8 @@ class _LoginState extends State<Login> {
                                 BoxDecorationIcon(
                                   padding: EdgeInsets.all(13),
                                   StrImage: 'assets/image/facebook.png',
-                                  press: () {
-                                    GoogleSignIn().signOut();
+                                  press: () async {
+                                    AuthService().loginWithFacebook(context);
                                   },
                                 )
                               ],

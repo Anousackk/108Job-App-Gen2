@@ -4,7 +4,6 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 class ButtonDefault extends StatefulWidget {
@@ -53,7 +52,7 @@ class _ButtonDefaultState extends State<ButtonDefault> {
             ),
           ),
           backgroundColor: MaterialStateProperty.all(
-            widget.colorButton == null ? AppColors.blue : widget.colorButton,
+            widget.colorButton == null ? AppColors.primary : widget.colorButton,
           ),
         ),
         onPressed: widget.press,
@@ -109,7 +108,8 @@ class _ButtonWithIconLeftState extends State<ButtonWithIconLeft> {
           side: MaterialStateProperty.resolveWith<BorderSide>(
             (Set<MaterialState> states) {
               return BorderSide(
-                color: widget.buttonBorderColor ?? AppColors.borderWhite,
+                color: widget.buttonBorderColor ??
+                    AppColors.borderWhite.withOpacity(0),
               ); // Default border color
             },
           ),
@@ -119,7 +119,7 @@ class _ButtonWithIconLeftState extends State<ButtonWithIconLeft> {
             ),
           ),
           backgroundColor: MaterialStateProperty.all(
-            widget.colorButton == null ? AppColors.blue : widget.colorButton,
+            widget.colorButton == null ? AppColors.primary : widget.colorButton,
           ),
         ),
         onPressed: widget.press,
@@ -152,10 +152,10 @@ class Button extends StatefulWidget {
     this.colorButton,
     this.colorText,
     this.fontWeight,
-    this.borderColor,
+    this.buttonBorderColor,
   }) : super(key: key);
   final String? text;
-  final Color? colorButton, borderColor;
+  final Color? colorButton, buttonBorderColor;
   final Color? colorText;
   final FontWeight? fontWeight;
   final Function()? press;
@@ -172,13 +172,21 @@ class _ButtonState extends State<Button> {
       height: 12.w,
       child: TextButton(
         style: ButtonStyle(
+          side: MaterialStateProperty.resolveWith<BorderSide>(
+            (Set<MaterialState> states) {
+              return BorderSide(
+                color: widget.buttonBorderColor ??
+                    AppColors.borderWhite.withOpacity(0),
+              ); // Default border color
+            },
+          ),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.w),
             ),
           ),
           backgroundColor: MaterialStateProperty.all(
-            widget.colorButton == null ? AppColors.blue : widget.colorButton,
+            widget.colorButton == null ? AppColors.primary : widget.colorButton,
           ),
         ),
         onPressed: widget.press,
@@ -188,11 +196,8 @@ class _ButtonState extends State<Button> {
             widget.colorText == null ? AppColors.white : widget.colorText,
             widget.fontWeight,
           ),
-          // style: TextStyle(
-          //   fontSize: 10.sp,
-          //   color:
-          //       widget.colorText == null ? AppColors.white : widget.colorText,
-          // ),
+          overflow: TextOverflow.visible,
+          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -383,8 +388,9 @@ class _ButtonLauncherState extends State<ButtonLauncher> {
       child: Container(
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color:
-              widget.colorButton == null ? AppColors.blue : widget.colorButton,
+          color: widget.colorButton == null
+              ? AppColors.primary
+              : widget.colorButton,
           borderRadius: BorderRadius.circular(1.5.w),
         ),
         child: Row(
@@ -462,7 +468,7 @@ class _SimpleDropdownState extends State<SimpleDropdown> {
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(
               color: AppColors.greyOpacity,
-              // color: AppColors.blue.withOpacity(0.3),
+              // color: AppColors.primary.withOpacity(0.3),
             ),
           ),
         ),
@@ -540,7 +546,7 @@ class _BottomButtonExpandedState extends State<BottomButtonExpanded> {
                   child: SimpleButton(
                     text: widget.textConfirm,
                     colorButton: widget.colorButtonConfirm == null
-                        ? AppColors.blue
+                        ? AppColors.primary
                         : widget.colorButtonConfirm,
                     colorText: widget.colorTextButtonConfirm == null
                         ? AppColors.white
@@ -601,7 +607,7 @@ class _BottomButtonState extends State<BottomButton> {
                   flex: 2,
                   child: SimpleButton(
                     text: widget.textApproved,
-                    colorButton: AppColors.blue,
+                    colorButton: AppColors.primary,
                     colorText: AppColors.white,
                     press: widget.pressApproved,
                   ),
@@ -672,7 +678,7 @@ class _ButtonSpaceBetweenState extends State<ButtonSpaceBetween> {
                   child: SimpleButton(
                     text: widget.textApproved,
                     colorButton: widget.buttonColorApproved == null
-                        ? AppColors.blue
+                        ? AppColors.primary
                         : widget.buttonColorApproved,
                     colorText: widget.colorTextApproved == null
                         ? AppColors.white

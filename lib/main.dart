@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace
 import 'dart:async';
+import 'dart:io';
 import 'package:app/functions/colors.dart';
 import 'package:app/i18n/i18n.dart';
 import 'package:app/routes.dart';
@@ -18,6 +19,14 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+
+  if (Platform.isIOS) {
+    print('Running on iOS. iOS version: ${Platform.operatingSystemVersion}');
+  } else if (Platform.isAndroid) {
+    print('Running on Android. Android version: ${Platform.version}');
+  } else {
+    print('Running on neither iOS nor Android.');
+  }
 
   // Workmanager().initialize(
   //   callbackDispatcher,
@@ -64,6 +73,7 @@ class MyAppState extends State<MyApp> {
       super.setState(fn);
     }
   }
+  //
 
   @override
   void initState() {

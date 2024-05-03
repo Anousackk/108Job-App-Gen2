@@ -1,6 +1,8 @@
-// ignore_for_file: prefer_const_constructors, prefer_final_fields, unused_field, prefer_const_literals_to_create_immutables, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation
+// ignore_for_file: prefer_const_constructors, prefer_final_fields, unused_field, prefer_const_literals_to_create_immutables, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, unused_element
 
+import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/screen/login/login.dart';
 import 'package:app/screen/screenAfterSignIn/account/account.dart';
 import 'package:app/screen/screenAfterSignIn/company/company.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearch.dart';
@@ -8,6 +10,7 @@ import 'package:app/screen/screenAfterSignIn/myJob/myJob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
@@ -18,28 +21,46 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Widget> _screen = <Widget>[
-    MainHome(),
-    JobSearch(),
-    Company(),
-    MyJobs(),
-    Account(),
-  ];
   int _currentIndex = 0;
+
+  SystemUiOverlayStyle _systemOverlayStyle = SystemUiOverlayStyle.dark;
+  Color _backgroundColor = AppColors.backgroundWhite;
+
+  _onTapBottomNav(int index) {
+    // Update the selected tab index when a tab is tapped
+    setState(() {
+      _currentIndex = index;
+      if (_currentIndex == 4) {
+        _systemOverlayStyle = SystemUiOverlayStyle.light;
+        _backgroundColor = AppColors.backgroundAppBar;
+      } else {
+        // Reset the style and color if index is not 4
+        _systemOverlayStyle = SystemUiOverlayStyle.dark;
+        _backgroundColor = AppColors.backgroundWhite;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> _screen = <Widget>[
+      MainHome(),
+      JobSearch(),
+      Company(),
+      MyJobs(),
+      Account(callback: () {
+        setState(() {
+          _currentIndex = 3;
+        });
+      }),
+    ];
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0,
-          systemOverlayStyle: _currentIndex == 4
-              ? SystemUiOverlayStyle.light
-              : SystemUiOverlayStyle.dark,
-          backgroundColor: _currentIndex == 4
-              ? AppColors.backgroundAppBar
-              : AppColors.backgroundWhite,
+          systemOverlayStyle: _systemOverlayStyle,
+          backgroundColor: _backgroundColor,
         ),
         body: SafeArea(
           child: _screen[_currentIndex],
@@ -55,15 +76,10 @@ class _HomeState extends State<Home> {
               true, // Set to true to show labels for selected tabs
           showUnselectedLabels:
               true, // Set to true to show labels for unselected tabs
-          selectedItemColor: AppColors.blue,
+          selectedItemColor: AppColors.primary,
           iconSize: 20,
           currentIndex: _currentIndex,
-          onTap: (int index) {
-            // Update the selected tab index when a tab is tapped
-            setState(() {
-              _currentIndex = index;
-            });
-          },
+          onTap: _onTapBottomNav,
           items: [
             BottomNavigationBarItem(
               icon: Padding(
@@ -151,12 +167,34 @@ class _MainHomeState extends State<MainHome> {
     print("employeeToken: " + "${employeeToken}");
   }
 
+  getProfileSeeker() async {
+    var res = await fetchData(getProfileSeekerApi);
+    // print(res);
+    if (res == null) {
+      removeSharedPreToken();
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  removeSharedPreToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    var removeEmployeeToken = await prefs.remove('employeeToken');
+    await GoogleSignIn().signOut();
+
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => Login()), (route) => false);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
     getTokenSharedPre();
+    getProfileSeeker();
   }
 
   @override

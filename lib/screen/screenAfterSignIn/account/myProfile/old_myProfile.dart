@@ -10,11 +10,11 @@ import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/screen/main/changeLanguage.dart';
 import 'package:app/screen/screenAfterSignIn/account/myProfile/education.dart';
 import 'package:app/screen/screenAfterSignIn/account/myProfile/language.dart';
 import 'package:app/screen/screenAfterSignIn/account/myProfile/personal_Information.dart';
 import 'package:app/screen/screenAfterSignIn/account/myProfile/photoView.dart';
-import 'package:app/screen/screenAfterSignIn/account/myProfile/profileSetting.dart';
 import 'package:app/screen/screenAfterSignIn/account/myProfile/skill.dart';
 import 'package:app/screen/screenAfterSignIn/account/myProfile/uploadCV.dart';
 import 'package:app/screen/screenAfterSignIn/account/myProfile/workHistory.dart';
@@ -27,7 +27,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sizer/sizer.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({Key? key}) : super(key: key);
@@ -39,9 +41,10 @@ class MyProfile extends StatefulWidget {
 class _MyProfileState extends State<MyProfile>
     with SingleTickerProviderStateMixin {
   final ScrollController _controller = ScrollController();
-
+  late TabController _tabController;
   //
   //Upload File
+
   dynamic _fileValue;
   String _strFilePath = "";
 
@@ -63,6 +66,35 @@ class _MyProfileState extends State<MyProfile>
 
   bool _isLoading = true;
   bool _imageLoading = false;
+
+  List<Widget> listTabs = [
+    Tab(
+      child: Container(
+        width: 50.w,
+        // padding: EdgeInsets.only(left: 1.5.w, right: 1.5.w),
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            'Profile Detail',
+            style: tabBarTextNormal(FontWeight.bold),
+          ),
+        ),
+      ),
+    ),
+    Tab(
+      child: Container(
+        width: 50.w,
+        // padding: EdgeInsets.only(left: 1.5.w, right: 1.5.w),
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            'Profile Setting',
+            style: tabBarTextNormal(FontWeight.bold),
+          ),
+        ),
+      ),
+    ),
+  ];
 
   Future pickImageGallery(ImageSource source) async {
     var statusPhotos = await Permission.photos.status;
@@ -212,9 +244,7 @@ class _MyProfileState extends State<MyProfile>
 
   onGoBack(dynamic value) {
     getProfileSeeker();
-    if (mounted) {
-      setState(() {});
-    }
+    setState(() {});
   }
 
   getProfileSeeker() async {
@@ -267,6 +297,8 @@ class _MyProfileState extends State<MyProfile>
   void initState() {
     super.initState();
 
+    _tabController = TabController(length: listTabs.length, vsync: this);
+
     _isLoading = true;
     getProfileSeeker();
   }
@@ -284,22 +316,9 @@ class _MyProfileState extends State<MyProfile>
             Navigator.pop(context);
           },
           action: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileSetting(),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: FaIcon(
-                  FontAwesomeIcons.gear,
-                  color: AppColors.iconLight,
-                ),
-              ),
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: ChangeLanguage(),
             ),
           ],
         ),
@@ -310,11 +329,12 @@ class _MyProfileState extends State<MyProfile>
                 ),
               )
             : SafeArea(
-                child: Container(
-                  color: AppColors.backgroundWhite,
-                  // padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: SingleChildScrollView(
-                    physics: ClampingScrollPhysics(),
+                child: DefaultTabController(
+                  length: listTabs.length,
+                  child: Container(
+                    color: AppColors.backgroundWhite,
+
+                    // padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
                         //
@@ -517,17 +537,54 @@ class _MyProfileState extends State<MyProfile>
 
                         //
                         //
-                        //ProfileDetail
+                        //Tabs
                         Container(
-                          child: ProfileDetail(
-                            profile: _seekerProfile,
-                            workPreferences: _workPreferences,
-                            cv: _cv,
-                            educations: _education,
-                            workHistories: _workHistory,
-                            languageSkills: _languageSkill,
-                            skills: _skills,
-                            onGoBack: onGoBack,
+                          // width: double.infinity,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50.w),
+                            color: AppColors.lightPrimary,
+                          ),
+                          child: TabBar(
+                            // isScrollable: true,
+                            dividerHeight: 0,
+                            controller: _tabController,
+                            labelPadding: EdgeInsets.zero,
+                            padding: EdgeInsets.zero,
+                            unselectedLabelColor: AppColors.fontGreyOpacity,
+                            labelColor: AppColors.fontWhite,
+                            indicator: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50.w),
+                              color: AppColors.primary,
+                            ),
+                            tabs: listTabs,
+                          ),
+                        ),
+                        //
+                        //
+                        //TabBarView
+                        Expanded(
+                          flex: 8,
+                          child: Container(
+                            child: TabBarView(
+                              controller: _tabController,
+                              children: [
+                                ProfileDetail(
+                                  profile: _seekerProfile,
+                                  workPreferences: _workPreferences,
+                                  cv: _cv,
+                                  educations: _education,
+                                  workHistories: _workHistory,
+                                  languageSkills: _languageSkill,
+                                  skills: _skills,
+                                  onGoBack: onGoBack,
+                                ),
+                                ProfileSetting()
+                              ],
+                            ),
                           ),
                         )
                       ],
@@ -595,7 +652,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
   //CV
   dynamic _cvName;
   dynamic _cvUploadDate;
-  String _cvSrc = "";
+  dynamic _cvSrc;
   String _mimeType = "";
 
   //
@@ -628,48 +685,49 @@ class _ProfileDetailState extends State<ProfileDetail> {
   late bool _permissionReady;
   late TargetPlatform? platform;
 
-  // void _requestDownloadsDirectory() {
-  //   setState(() {
-  //     _tempDirectory = getDownloadsDirectory();
-  //     print(_tempDirectory);
-  //   });
-  // }
-  // Future<bool> _checkPermission() async {
-  //   if (platform == TargetPlatform.android) {
-  //     final status = await Permission.storage.status;
-  //     if (status != PermissionStatus.granted) {
-  //       final result = await Permission.storage.request();
-  //       if (result == PermissionStatus.granted) {
-  //         return true;
-  //       }
-  //     } else {
-  //       return true;
-  //     }
-  //   } else {
-  //     return true;
-  //   }
-  //   return false;
-  // }
+  void _requestDownloadsDirectory() {
+    setState(() {
+      _tempDirectory = getDownloadsDirectory();
+      print(_tempDirectory);
+    });
+  }
 
-  // Future<void> _prepareSaveDir() async {
-  //   _localPath = (await _findLocalPath())!;
+  Future<bool> _checkPermission() async {
+    if (platform == TargetPlatform.android) {
+      final status = await Permission.storage.status;
+      if (status != PermissionStatus.granted) {
+        final result = await Permission.storage.request();
+        if (result == PermissionStatus.granted) {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
+    return false;
+  }
 
-  //   print(_localPath);
-  //   final savedDir = Directory(_localPath);
-  //   bool hasExisted = await savedDir.exists();
-  //   if (!hasExisted) {
-  //     savedDir.create();
-  //   }
-  // }
+  Future<void> _prepareSaveDir() async {
+    _localPath = (await _findLocalPath())!;
 
-  // Future<String?> _findLocalPath() async {
-  //   if (platform == TargetPlatform.android) {
-  //     return "/sdcard/download/";
-  //   } else {
-  //     var directory = await getApplicationDocumentsDirectory();
-  //     return directory.path + Platform.pathSeparator + 'Download';
-  //   }
-  // }
+    print(_localPath);
+    final savedDir = Directory(_localPath);
+    bool hasExisted = await savedDir.exists();
+    if (!hasExisted) {
+      savedDir.create();
+    }
+  }
+
+  Future<String?> _findLocalPath() async {
+    if (platform == TargetPlatform.android) {
+      return "/sdcard/download/";
+    } else {
+      var directory = await getApplicationDocumentsDirectory();
+      return directory.path + Platform.pathSeparator + 'Download';
+    }
+  }
 
   @override
   void initState() {
@@ -679,11 +737,6 @@ class _ProfileDetailState extends State<ProfileDetail> {
     } else {
       platform = TargetPlatform.iOS;
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -733,25 +786,12 @@ class _ProfileDetailState extends State<ProfileDetail> {
       _listBenefits = widget.workPreferences['benefitsId'];
       _benefits = _listBenefits.map((b) => b['name']).join(', ');
     }
-
-    // var splitHttps = _cvSrc.split(":");
-    // var splitHost = _cvSrc.split("/");
-    // var splitPath = _cvSrc.split(".com");
-
-    // final Uri toLaunch = Uri(
-    //     scheme: splitHttps[0].toString(),
-    //     host: splitHost[2].toString(),
-    //     path: splitPath[1].toString());
-
-    // print(splitPath);
-
     return Container(
       child: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //
             // Job Seeker Area
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -759,7 +799,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
                   Text(
                     "Job Seeker Area",
@@ -1090,18 +1130,15 @@ class _ProfileDetailState extends State<ProfileDetail> {
 
                                   //
                                   //button preview cv
-                                  () async {
-                                    launchInBrowserView(Uri.parse(_cvSrc));
-                                    // OpenFile.open(_cvSrc);
-                                  },
-                                  null,
-                                  "Preview",
-
-                                  //
-                                  //button download cv
                                   () {
                                     launchInBrowser(Uri.parse(_cvSrc));
                                   },
+                                  null,
+                                  "Preview / Dowload",
+
+                                  //
+                                  //button download cv
+                                  () {},
                                   null,
                                   "Download",
                                 );
@@ -1927,5 +1964,83 @@ class _ProfileDetailState extends State<ProfileDetail> {
         });
       }
     });
+  }
+}
+
+//
+//
+//Profile Setting
+class ProfileSetting extends StatelessWidget {
+  const ProfileSetting({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      width: double.infinity,
+      child: SingleChildScrollView(
+        physics: ClampingScrollPhysics(),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 30,
+            ),
+            //
+            //
+            //BoxDecoration DottedBorder Profile Status
+            // BoxDecDottedBorderProfileDetail(
+            //   boxDecColor: AppColors.lightPrimary,
+            //   title: "Profile Status",
+            //   titleFontWeight: FontWeight.bold,
+            //   text:
+            //       "Get your profile approved or complete: Attached CV, Personal Information and Work Preferences to set the profile status",
+            //   buttonWidth: 140,
+            //   buttonIcon: FontAwesomeIcons.pen,
+            //   buttonText: "Update Profile",
+            //   pressButton: () {},
+            // ),
+            // SizedBox(
+            //   height: 10,
+            // ),
+            //
+            //
+            //BoxDecoration DottedBorder Profile Search
+            BoxDecDottedBorderProfileDetail(
+              boxDecColor: AppColors.lightPrimary,
+              title: "Profile Search",
+              titleFontWeight: FontWeight.bold,
+              text:
+                  "To enable Searchable Profile, level up your profile to Newbie level",
+              buttonIcon: FontAwesomeIcons.pen,
+              buttonWidth: 140,
+              buttonText: "Update Profile",
+              pressButton: () {},
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            BoxDecProfileSettingHaveValue(
+              boxDecColor: AppColors.lightPrimary,
+              title: "Profile Status",
+              titleFontWeight: FontWeight.bold,
+              text:
+                  "Get your profile approved or complete: Attached CV, Personal Information and Work Preferences to set the profile status.",
+              actionOnOffIcon: FaIcon(
+                FontAwesomeIcons.eye,
+                color: AppColors.iconLight,
+                size: 20,
+              ),
+              actionOnOffText: "ON",
+              pressActionOnOff: () {},
+            ),
+            SizedBox(
+              height: 30,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

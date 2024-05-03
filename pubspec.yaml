@@ -15,10 +15,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 2.6.3+43
+version: 2.6.6+4
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0" 
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -37,13 +37,12 @@ dependencies:
   carousel_slider:
   cached_network_image:
   graphql_flutter: 
-  flutter_widget_from_html_core:
+  flutter_widget_from_html_core: ^0.14.11
   shimmer: 
   dotted_border: 
   file_picker: 
   animated_size_and_fade:
   shared_preferences:
-  image_picker: 
   validators: 
   dio: 
   path_provider:
@@ -53,7 +52,7 @@ dependencies:
   device_info_plus:
   auto_size_text:
   # flutter_phoenix: 
-  url_launcher: 
+  url_launcher: ^6.2.6
   page_transition: 
   photo_view: 
   youtube_plyr_iframe: 
@@ -69,12 +68,16 @@ dependencies:
   form_field_validator:
   get:
   font_awesome_flutter:
-  flutter_slidable:
+  flutter_slidable: ^3.1.0
   google_sign_in:
+  flutter_facebook_auth:
+  # flutter_login_facebook:
   permission_handler:
   multi_dropdown:
-
+  flutter_inset_box_shadow:
   new_version:
+  image_picker: ^1.0.7
+  hexcolor: ^3.0.1
   # flutter_phoenix: ^1.0.0
 flutter_native_splash:
   image: assets/image/Logo108.png

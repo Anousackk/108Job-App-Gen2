@@ -118,7 +118,7 @@ class _TextFieldMultiValidateState extends State<TextFieldMultiValidate> {
         fillColor: AppColors.inputColor,
         filled: true,
         enabledBorder: enableOutlineBorder(
-          AppColors.inputColor,
+          AppColors.borderSecondary,
         ),
         focusedBorder: focusOutlineBorder(
           // AppColors.greyOpacity.withOpacity(0.2),
@@ -242,10 +242,10 @@ class _SimpleTextFieldWithIconLeftState
           fillColor: AppColors.inputColor,
           filled: true,
           enabledBorder: enableOutlineBorder(
-            AppColors.inputColor,
+            AppColors.borderSecondary,
           ),
           focusedBorder: focusOutlineBorder(
-            AppColors.borderLightPrimary,
+            AppColors.borderPrimary,
           ),
           hintText: "${widget.hintText}",
           hintStyle: bodyTextNormal(
@@ -373,7 +373,7 @@ class _SimpleTextFieldWithIconRightState
             AppColors.borderSecondary,
           ),
           focusedBorder: focusOutlineBorder(
-            AppColors.borderLightPrimary,
+            AppColors.borderPrimary,
           ),
           hintText: "${widget.hintText}",
           hintStyle: bodyTextNormal(
@@ -445,6 +445,8 @@ class SimpleTextFieldSingleValidate extends StatefulWidget {
     this.hintTextFontWeight,
     this.suffixIcon,
     this.prefixIcon,
+    this.contenPadding,
+    this.enabledBorder,
   }) : super(key: key);
   final String? hintText;
   // final TextStyle? hintStyleColor;
@@ -464,6 +466,8 @@ class SimpleTextFieldSingleValidate extends StatefulWidget {
   final FontWeight? hintTextFontWeight;
   dynamic onSave;
   final Widget? suffixIcon, prefixIcon;
+  final EdgeInsetsGeometry? contenPadding;
+  final InputBorder? enabledBorder;
 
   @override
   State<SimpleTextFieldSingleValidate> createState() =>
@@ -500,17 +504,20 @@ class _SimpleTextFieldSingleValidateState
         decoration: InputDecoration(
             prefixIcon: widget.prefixIcon,
             border: OutlineInputBorder(),
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+            contentPadding: widget.contenPadding == null
+                ? EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w)
+                : widget.contenPadding,
             fillColor: widget.inputColor == null
                 ? AppColors.inputColor
                 : widget.inputColor,
             filled: true,
-            enabledBorder: enableOutlineBorder(
-              AppColors.borderSecondary,
-            ),
+            enabledBorder: widget.enabledBorder == null
+                ? enableOutlineBorder(
+                    AppColors.borderSecondary,
+                  )
+                : widget.enabledBorder,
             focusedBorder: focusOutlineBorder(
-              AppColors.borderLightPrimary,
+              AppColors.borderPrimary,
             ),
             hintText: "${widget.hintText}",
             hintStyle: bodyTextNormal(
@@ -615,7 +622,7 @@ class _TextFieldTextCenterState extends State<TextFieldTextCenter> {
             AppColors.white,
           ),
           focusedBorder: focusOutlineBorder(
-            AppColors.borderLightPrimary,
+            AppColors.borderPrimary,
           ),
           hintText: "${widget.hintText}",
           hintStyle: TextStyle(
@@ -741,7 +748,7 @@ class _TextFieldPhoneNumberState extends State<TextFieldPhoneNumber> {
             AppColors.borderSecondary,
           ),
           focusedBorder: focusOutlineBorder(
-            AppColors.borderLightPrimary,
+            AppColors.borderPrimary,
           ),
           hintText: "${widget.hintText}",
           hintStyle: bodyTextNormal(
@@ -842,7 +849,7 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
             AppColors.borderSecondary,
           ),
           focusedBorder: focusOutlineBorder(
-            AppColors.borderLightPrimary,
+            AppColors.borderPrimary,
             // AppColors.blue.withOpacity(0.3),
           ),
           hintText: "${widget.hintText}",
@@ -927,7 +934,7 @@ class _DropdownButtonMenuState extends State<DropdownButtonMenu> {
                 AppColors.borderSecondary,
               ),
               focusedBorder: focusOutlineBorder(
-                AppColors.borderLightPrimary,
+                AppColors.borderPrimary,
               ),
             ),
             iconEnabledColor:
@@ -1023,13 +1030,13 @@ class _DropdownMenuWithApiState extends State<DropdownMenuWithApi> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(
-                  color: AppColors.blue.withOpacity(0.1),
+                  color: AppColors.primary.withOpacity(0.1),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(
-                  color: AppColors.blue.withOpacity(0.1),
+                  color: AppColors.primary.withOpacity(0.1),
                   // color: AppColors.blue.withOpacity(0.3),
                 ),
               ),
@@ -1290,6 +1297,7 @@ class BoxDecorationInput extends StatefulWidget {
     this.paddingFaIcon,
     required this.mainAxisAlignmentTextIcon,
     this.fontWeight,
+    this.heigth,
   }) : super(key: key);
   final Function()? press, pressIconActivity;
   final EdgeInsetsGeometry? paddingFaIcon;
@@ -1307,6 +1315,7 @@ class BoxDecorationInput extends StatefulWidget {
   final BorderRadiusGeometry? boxDecBorderRadius;
   final IconData? iconActivity;
   final Widget? widgetFaIcon, widgetIconActive;
+  final double? heigth;
 
   @override
   State<BoxDecorationInput> createState() => _BoxDecorationInputState();
@@ -1321,7 +1330,7 @@ class _BoxDecorationInputState extends State<BoxDecorationInput> {
           onTap: widget.press,
           child: Container(
             width: double.infinity,
-            height: 12.5.w,
+            height: widget.heigth == null ? 12.w : widget.heigth,
             decoration: boxDecoration(
               widget.boxDecBorderRadius,
               widget.colorInput == null
