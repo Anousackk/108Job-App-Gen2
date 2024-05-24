@@ -55,12 +55,19 @@ class _EducationState extends State<Education> {
     setState(() {
       dynamic i = widget.education;
 
+      DateTime utcNow = _dateTimeNow.toUtc();
+      dynamic formattedStartDateUtc =
+          DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(utcNow);
+      dynamic formattedEndDateUtc =
+          DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(utcNow);
+
       _subject = i['subject'];
       _collage = i['school'];
       _selectedDegree = i['qualifications']['_id'];
       _degreeName = i['qualifications']['name'];
 
-      _fromYear = i['startYear'];
+      _fromYear =
+          i['startYear'] == null ? formattedStartDateUtc : i['startYear'];
       //
       //pars ISO to Flutter DateTime
       parsDateTime(value: '', currentFormat: '', desiredFormat: '');
@@ -68,13 +75,11 @@ class _EducationState extends State<Education> {
           value: _fromYear,
           currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
           desiredFormat: "yyyy-MM-dd HH:mm:ss");
-      print(_fromYear);
-      print(fromYear);
       //
       //Convert String to be DateTime
       _fromYear = DateFormat("yyyy-MM-dd").parse(fromYear.toString());
 
-      _toYear = i['endYear'];
+      _toYear = i['endYear'] == null ? formattedEndDateUtc : i['endYear'];
       //pars ISO to Flutter DateTime
       parsDateTime(value: '', currentFormat: '', desiredFormat: '');
       DateTime toYear = parsDateTime(
@@ -348,7 +353,8 @@ class _EducationState extends State<Education> {
                                           ? formatDateTimeNow
                                           : _fromYear,
                                       mode: CupertinoDatePickerMode.monthYear,
-                                      // dateOrder: DatePickerDateOrder.dmy,
+                                      dateOrder: DatePickerDateOrder.ymd,
+                                      maximumDate: formatDateTimeNow,
                                       use24hFormat: true,
                                       onDateTimeChanged: (DateTime newDate) {
                                         setState(() {

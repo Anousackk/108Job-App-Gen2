@@ -15,7 +15,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 class Company extends StatefulWidget {
-  const Company({Key? key}) : super(key: key);
+  const Company({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<Company> createState() => _CompanyState();
@@ -38,7 +40,7 @@ class _CompanyState extends State<Company> {
 
   bool _isFollow = false;
   bool _statusShowLoading = false;
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   Timer? _timer;
 
@@ -151,11 +153,15 @@ class _CompanyState extends State<Company> {
     }
   }
 
+  onGoBack(dynamic value) async {
+    print("onGoBack");
+    await fetchCompanies(_searchType);
+  }
+
   @override
   void initState() {
     super.initState();
 
-    _isLoading = true;
     fetchCompanies("AllCompanies");
 
     _searchCompanyNameController.text = _searchCompanyName;
@@ -326,7 +332,14 @@ class _CompanyState extends State<Company> {
                                                       companyId: i['_id'],
                                                     ),
                                                   ),
-                                                );
+                                                ).then((value) {
+                                                  if (value == "Success") {
+                                                    setState(() {
+                                                      _statusShowLoading = true;
+                                                    });
+                                                    onGoBack(value);
+                                                  }
+                                                });
                                               },
                                               child: Container(
                                                 padding: EdgeInsets.symmetric(
@@ -393,17 +406,17 @@ class _CompanyState extends State<Company> {
                                                                         .circular(
                                                                             8),
                                                               ),
-                                                              border: Border(
-                                                                left: BorderSide(
-                                                                    color: AppColors
-                                                                        .borderGreyOpacity),
-                                                                right: BorderSide(
-                                                                    color: AppColors
-                                                                        .borderGreyOpacity),
-                                                                bottom: BorderSide(
-                                                                    color: AppColors
-                                                                        .borderGreyOpacity),
-                                                              ),
+                                                              // border: Border(
+                                                              //   left: BorderSide(
+                                                              //       color: AppColors
+                                                              //           .borderGreyOpacity),
+                                                              //   right: BorderSide(
+                                                              //       color: AppColors
+                                                              //           .borderGreyOpacity),
+                                                              //   bottom: BorderSide(
+                                                              //       color: AppColors
+                                                              //           .borderGreyOpacity),
+                                                              // ),
                                                             ),
                                                             child: Column(
                                                               children: [
@@ -820,7 +833,15 @@ class _CompanyState extends State<Company> {
                                                   companyId: i['_id'],
                                                 ),
                                               ),
-                                            );
+                                            ).then((value) {
+                                              if (value == "Success") {
+                                                setState(() {
+                                                  _statusShowLoading = true;
+                                                });
+                                                onGoBack(value);
+                                              }
+                                            });
+                                            ;
                                           },
                                           child: Container(
                                             margin: EdgeInsets.symmetric(
@@ -830,9 +851,9 @@ class _CompanyState extends State<Company> {
                                               color: AppColors.white,
                                               borderRadius:
                                                   BorderRadius.circular(10),
-                                              border: Border.all(
-                                                  color: AppColors
-                                                      .borderSecondary),
+                                              // border: Border.all(
+                                              //     color: AppColors
+                                              //         .borderSecondary),
                                             ),
                                             child: Row(
                                               children: [
@@ -840,6 +861,9 @@ class _CompanyState extends State<Company> {
                                                   flex: 7,
                                                   child: Row(
                                                     children: [
+                                                      //
+                                                      //
+                                                      //Logo Company
                                                       Container(
                                                         height: 90,
                                                         width: 90,
@@ -892,6 +916,10 @@ class _CompanyState extends State<Company> {
                                                       SizedBox(
                                                         width: 15,
                                                       ),
+
+                                                      //
+                                                      //
+                                                      //Content Company
                                                       Expanded(
                                                         child: Column(
                                                           crossAxisAlignment:
@@ -935,6 +963,10 @@ class _CompanyState extends State<Company> {
                                                 SizedBox(
                                                   width: 10,
                                                 ),
+
+                                                //
+                                                //
+                                                //Button follow / following
                                                 GestureDetector(
                                                   onTap: () {
                                                     followCompany(

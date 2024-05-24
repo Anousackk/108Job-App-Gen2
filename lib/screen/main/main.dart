@@ -47,14 +47,12 @@ class _MainBodyState extends State<MainBody> {
       // _isLoading = false;
       Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(builder: (context) => Home()), (route) => false);
+    } else {
+      _isLoading = false;
     }
-    Future.delayed(Duration(seconds: 1), () {
-      setState(() {
-        _isLoading = false;
-      });
-    });
-
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override

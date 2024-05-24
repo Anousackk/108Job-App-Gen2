@@ -279,7 +279,13 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
                           fontWeight: FontWeight.bold,
                           press: () {
                             if (formkey.currentState!.validate()) {
-                              addPhoneNumEmailPass();
+                              if (_isToken != "") {
+                                print("have token");
+                                addPhoneNumEmailPass();
+                              } else {
+                                print("no have token");
+                                requestOTPCode();
+                              }
                             }
                           },
                         ),
@@ -295,39 +301,39 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
     );
   }
 
-  // requestOTPCode() async {
-  //   var res = await postData(requestOTPCodeApiSeeker, {
-  //     "email": _email,
-  //     "mobile": _phoneNumber,
-  //   });
+  requestOTPCode() async {
+    var res = await postData(requestOTPCodeApiSeeker, {
+      "email": _email,
+      "mobile": _phoneNumber,
+    });
 
-  //   if (res["token"] != null) {
-  //     var token = res["token"];
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => VerificationCode(
-  //           verifyCode: widget.addPhoneNumOrEmail == 'phoneNumber'
-  //               ? 'verifyPhoneNum'
-  //               : 'verifyEmail',
-  //           token: token,
-  //           phoneNumber: _phoneNumber,
-  //           email: _email,
-  //         ),
-  //       ),
-  //     );
-  //   } else if (res['message'] != null) {
-  //     await showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return CustomAlertDialogError(
-  //           title: "Invalid",
-  //           text: res['message'],
-  //         );
-  //       },
-  //     );
-  //   }
-  // }
+    if (res["token"] != null) {
+      var token = res["token"];
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerificationCode(
+            verifyCode: widget.addPhoneNumOrEmail == 'phoneNumber'
+                ? 'verifyPhoneNum'
+                : 'verifyEmail',
+            token: token,
+            phoneNumber: _phoneNumber,
+            email: _email,
+          ),
+        ),
+      );
+    } else if (res['message'] != null) {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogError(
+            title: "Invalid",
+            text: res['message'],
+          );
+        },
+      );
+    }
+  }
 
   addPhoneNumEmailPass() async {
     var res = await postData(addPhoneNumEmailPassApiSeeker, {

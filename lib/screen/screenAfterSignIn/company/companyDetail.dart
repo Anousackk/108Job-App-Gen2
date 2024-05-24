@@ -27,10 +27,13 @@ class _CompanyDetailState extends State<CompanyDetail>
   late TabController _tabController;
   bool isPress = false;
 
+  String _memberLevel = "";
   String _logo = "";
   String _companyName = "";
   String _followerTotals = "";
   String _aboutCompany = "";
+  String _checkStatusFollow = "";
+
   List _jobOnlines = [];
   bool _isFollow = false;
   bool _isSubmit = false;
@@ -59,6 +62,14 @@ class _CompanyDetailState extends State<CompanyDetail>
     if (mounted) {
       setState(() {});
     }
+  }
+
+  checkSeekerInfo() async {
+    var res = await fetchData(informationApiSeeker);
+    _memberLevel = res["info"][
+        'memberLevel']; //['Basic Member', 'Basic Job Seeker', 'Expert Job Seeker']
+
+    setState(() {});
   }
 
   followCompany(String companyName, String companyId) async {
@@ -91,6 +102,9 @@ class _CompanyDetailState extends State<CompanyDetail>
             textButton: "OK",
             press: () {
               Navigator.pop(context);
+              setState(() {
+                _checkStatusFollow = "Success";
+              });
             },
           );
         },
@@ -108,6 +122,9 @@ class _CompanyDetailState extends State<CompanyDetail>
             textButton: "OK",
             press: () {
               Navigator.pop(context);
+              setState(() {
+                _checkStatusFollow = "Success";
+              });
             },
           );
         },
@@ -115,7 +132,7 @@ class _CompanyDetailState extends State<CompanyDetail>
     }
   }
 
-  submitCV(String companyName, String companyId) async {
+  submittedCV(String companyName, String companyId) async {
     //
     //ສະແດງ AlertDialog Loading
     showDialog(
@@ -129,6 +146,8 @@ class _CompanyDetailState extends State<CompanyDetail>
     var res = await postData(submitCVSeekerApi + '${companyId}', {});
     var message = res['message'];
     print(message);
+
+    getDetailCompany(widget.companyId);
 
     if (message == "Submitted successfully") {
       Navigator.pop(context);
@@ -159,6 +178,19 @@ class _CompanyDetailState extends State<CompanyDetail>
           );
         },
       );
+    } else if (message == "Your member level can not Submit CV" &&
+        _memberLevel == "Basic Member") {
+      Navigator.pop(context);
+
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogWarning(
+            title: "Warning",
+            text: "$message",
+          );
+        },
+      );
     }
   }
 
@@ -174,7 +206,7 @@ class _CompanyDetailState extends State<CompanyDetail>
   void initState() {
     super.initState();
 
-    _isLoading = true;
+    checkSeekerInfo();
     getDetailCompany(widget.companyId);
 
     _tabController = TabController(length: 4, vsync: this);
@@ -234,7 +266,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                               left: 20,
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  Navigator.of(context).pop(_checkStatusFollow);
                                 },
                                 child: FaIcon(FontAwesomeIcons.arrowLeft),
                               ),
@@ -562,10 +594,10 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                             FontAwesomeIcons
                                                                 .heart,
                                                             color: AppColors
-                                                                .iconGray,
+                                                                .iconDark,
                                                           ),
                                                           colorText: AppColors
-                                                              .fontGrey,
+                                                              .fontDark,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           text: "Follow",
@@ -631,7 +663,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           press: () {
-                                                            submitCV(
+                                                            submittedCV(
                                                                 _companyName,
                                                                 widget
                                                                     .companyId);
@@ -644,9 +676,9 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           colorButton: AppColors
-                                                              .greyOpacity,
+                                                              .buttonGreyWhite,
                                                           press: () {
-                                                            submitCV(
+                                                            submittedCV(
                                                                 _companyName,
                                                                 widget
                                                                     .companyId);

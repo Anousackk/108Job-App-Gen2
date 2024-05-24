@@ -47,8 +47,8 @@ class _LoginInformationState extends State<LoginInformation> {
     _facebookEmail = res['info']['facebookEmail'] ?? "";
     _isloading = false;
 
-    print(_googleId);
-    print(_facebookId);
+    // print(_googleId);
+    // print(_facebookId);
 
     setState(() {});
   }

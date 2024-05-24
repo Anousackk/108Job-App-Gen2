@@ -5,6 +5,7 @@ import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/cupertinoDatePicker.dart';
 import 'package:app/functions/iconSize.dart';
+import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
@@ -73,11 +74,21 @@ class _PersonalInformationState extends State<PersonalInformation> {
       _lastName = i['lastName'];
       _dateOfBirth = i['dateOfBirth'];
 
-      //
-      //Convert String to DateTime ປ່ຽນຈາກ "Jan-13-1999" ເພື່ອເຊັດເປັນ 1999-01-13 00:00:00.000
       if (_dateOfBirth != null) {
-        DateTime tempDate = new DateFormat("MMM-dd-yyyy").parse(_dateOfBirth);
-        _dateOfBirth = tempDate;
+        //
+        //Convert String to DateTime ປ່ຽນຈາກ "Jan-13-1999" ເພື່ອເຊັດເປັນ 1999-01-13 00:00:00.000
+        // DateTime tempDate = new DateFormat("MMM-dd-yyyy").parse(_dateOfBirth);
+        // _dateOfBirth = tempDate;
+
+        //pars ISO to Flutter DateTime
+        parsDateTime(value: '', currentFormat: '', desiredFormat: '');
+        DateTime parsDateOfBirth = parsDateTime(
+          value: _dateOfBirth,
+          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+          desiredFormat: "yyyy-MM-dd HH:mm:ss",
+        );
+
+        _dateOfBirth = parsDateOfBirth;
       }
 
       _selectedGender = i['genderId'] != null ? i['genderId']['_id'] : "";
@@ -282,6 +293,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                 initialDateTime: _dateOfBirth == null
                                     ? formatDateTimeNow
                                     : _dateOfBirth,
+                                maximumDate: formatDateTimeNow,
                                 mode: CupertinoDatePickerMode.date,
                                 dateOrder: DatePickerDateOrder.dmy,
                                 use24hFormat: true,
@@ -1122,8 +1134,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
         //
         //Check by _id ເພື່ອເອົາຂໍ້ມູນມາອັບເດດ
         if (_id != null && _id != "") {
-          print("id != null");
-          print("${_id}");
+          print("seekerId + ${_id}");
 
           setValueGetById();
         }

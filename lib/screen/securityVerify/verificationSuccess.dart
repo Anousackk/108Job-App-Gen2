@@ -2,8 +2,8 @@
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
-import 'package:app/screen/setPassword.dart/setPassword.dart';
 import 'package:app/screen/login/login.dart';
+import 'package:app/screen/setPassword.dart/setPassword.dart';
 import 'package:app/widget/boxDecorationIcon.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
@@ -69,14 +69,27 @@ class _VerificationSuccessState extends State<VerificationSuccess> {
                 height: 30,
               ),
               ButtonDefault(
-                text: "Close",
+                text: widget.checkFromRegister == "fromRegister"
+                    ? "Close"
+                    : "Set Password",
                 fontWeight: FontWeight.bold,
                 press: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    Login.routeName,
-                    (route) => false,
-                  );
+                  if (widget.checkFromRegister == "fromRegister") {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      Login.routeName,
+                      (route) => false,
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SetPassword(
+                          token: widget.token,
+                        ),
+                      ),
+                    );
+                  }
 
                   // if (widget.checkFromRegister == 'fromSignUp') {
                   //   Navigator.pushNamedAndRemoveUntil(

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_final_fields, sized_box_for_whitespace, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, unnecessary_null_in_if_null_operators, unused_local_variable
+// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_final_fields, sized_box_for_whitespace, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, unnecessary_null_in_if_null_operators, unused_local_variable, unnecessary_string_interpolations
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -33,6 +33,15 @@ class _VerificationCodeState extends State<VerificationCode> {
   List<TextEditingController> _controllers =
       List.generate(4, (_) => TextEditingController());
   dynamic _otpCode;
+  String _token = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _token = widget.token;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +77,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Text("${widget.tokenSignUp}"),
+                        // Text("${_token}"),
                         Text(
                           widget.verifyCode == 'verifyPhoneNum'
                               ? "Verify your Phone Number"
@@ -165,9 +174,14 @@ class _VerificationCodeState extends State<VerificationCode> {
                             Text(widget.verifyCode == 'verifyPhoneNum'
                                 ? "Don't receive OTP?"
                                 : "Don't receive Verification? "),
-                            Text(
-                              "Resend",
-                              style: bodyTextNormal(AppColors.primary, null),
+                            GestureDetector(
+                              onTap: () {
+                                resendOTPCode();
+                              },
+                              child: Text(
+                                "Resend",
+                                style: bodyTextNormal(AppColors.primary, null),
+                              ),
                             )
                           ],
                         ),
@@ -194,9 +208,28 @@ class _VerificationCodeState extends State<VerificationCode> {
   }
 
   resendOTPCode() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomAlertLoading();
+      },
+    );
+
     var res = await postData(resendOTPCodeApiSeeker, {
-      "verifyToken": widget.token,
+      "verifyToken": _token,
     });
+    print(res);
+
+    if (res["token"] != null || res['token'] != "") {
+      Navigator.pop(context);
+
+      if (mounted) {
+        setState(() {
+          _token = res['token'];
+        });
+      }
+    }
   }
 
   verifyCode() async {
@@ -209,7 +242,7 @@ class _VerificationCodeState extends State<VerificationCode> {
     );
 
     var res = await postData(apiVerifyCodeSeeker, {
-      "verifyToken": widget.token,
+      "verifyToken": _token,
       "verifyCode": _otpCode.toString(),
     });
 

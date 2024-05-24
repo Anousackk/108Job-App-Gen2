@@ -5,18 +5,23 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/screen/screenAfterSignIn/account/jobAlert/jobAlert.dart';
 import 'package:app/screen/screenAfterSignIn/account/loginInfo/loginInformation.dart';
 import 'package:app/screen/screenAfterSignIn/account/myProfile/myProfile.dart';
 import 'package:app/widget/input.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 class Account extends StatefulWidget {
-  const Account({Key? key, this.callback}) : super(key: key);
-  final VoidCallback? callback;
+  const Account(
+      {Key? key,
+      this.callBackToMyJobsSavedJob,
+      this.callBackToMyJobsAppliedJob})
+      : super(key: key);
+  final VoidCallback? callBackToMyJobsSavedJob;
+  final Function(dynamic)? callBackToMyJobsAppliedJob;
 
   @override
   State<Account> createState() => _AccountState();
@@ -29,6 +34,10 @@ class _AccountState extends State<Account> {
   String _imageSrc = "";
   String _memberLevel = "";
   String _currentJobTitle = "";
+  int _savedJobs = 0;
+  int _appliedJobs = 0;
+  int _epmSavedSeeker = 0;
+  int _submitedCV = 0;
 
   dynamic _workPreferences;
 
@@ -59,11 +68,25 @@ class _AccountState extends State<Account> {
     }
   }
 
+  getTotalJobSeeker() async {
+    var res = await fetchData(getTotalMyJobSeekerApi);
+
+    _savedJobs = int.parse(res['saveJobTotals'].toString());
+    _appliedJobs = int.parse(res['appliedJobTotals'].toString());
+    _submitedCV = int.parse(res['submittedTotals'].toString());
+    _epmSavedSeeker = int.parse(res['empViewTotals'].toString());
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _isLoading = true;
     getProfileSeeker();
+    getTotalJobSeeker();
   }
 
   @override
@@ -76,11 +99,11 @@ class _AccountState extends State<Account> {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 0,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-          backgroundColor: AppColors.backgroundAppBar,
-        ),
+        // appBar: AppBar(
+        //   toolbarHeight: 0,
+        //   systemOverlayStyle: SystemUiOverlayStyle.light,
+        //   backgroundColor: AppColors.backgroundAppBar,
+        // ),
         body: SafeArea(
           child: _isLoading
               ? Container(
@@ -139,6 +162,7 @@ class _AccountState extends State<Account> {
                                                 fit: BoxFit.cover,
                                               ),
                                       ),
+
                                       // child: CircleAvatar(
                                       //   radius: 90,
                                       //   backgroundImage:
@@ -244,10 +268,10 @@ class _AccountState extends State<Account> {
                                 Expanded(
                                   flex: 1,
                                   child: GestureDetector(
-                                    onTap: widget.callback,
+                                    onTap: widget.callBackToMyJobsSavedJob,
                                     child: StatisicBox(
                                       boxColor: AppColors.lightPrimary,
-                                      amount: "100",
+                                      amount: "${_savedJobs}",
                                       text: "Saved Job",
                                     ),
                                   ),
@@ -257,7 +281,7 @@ class _AccountState extends State<Account> {
                                   flex: 1,
                                   child: StatisicBox(
                                     boxColor: AppColors.lightGrayishCyan,
-                                    amount: "13",
+                                    amount: "${_appliedJobs}",
                                     text: "Company viewed your profile",
                                   ),
                                 )
@@ -270,10 +294,18 @@ class _AccountState extends State<Account> {
                               children: [
                                 Expanded(
                                   flex: 1,
-                                  child: StatisicBox(
-                                    boxColor: AppColors.lightOrange,
-                                    amount: "30",
-                                    text: "Applied Job",
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        widget.callBackToMyJobsAppliedJob!(
+                                            "AppliedJob");
+                                      });
+                                    },
+                                    child: StatisicBox(
+                                      boxColor: AppColors.lightOrange,
+                                      amount: "${_epmSavedSeeker}",
+                                      text: "Applied Job",
+                                    ),
                                   ),
                                 ),
                                 SizedBox(width: 10),
@@ -281,7 +313,7 @@ class _AccountState extends State<Account> {
                                   flex: 1,
                                   child: StatisicBox(
                                     boxColor: AppColors.lightGreen,
-                                    amount: "30",
+                                    amount: "${_submitedCV}",
                                     text: "Submited General CV",
                                   ),
                                 )
@@ -373,7 +405,14 @@ class _AccountState extends State<Account> {
                               // paddingFaIcon: EdgeInsets.only(left: 20, right: 10),
                               mainAxisAlignmentTextIcon:
                                   MainAxisAlignment.start,
-                              press: () {},
+                              press: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => JobAlert(),
+                                  ),
+                                );
+                              },
                               text: "Job Alert",
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.chevronRight,

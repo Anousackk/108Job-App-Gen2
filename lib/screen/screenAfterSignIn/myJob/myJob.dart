@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_print, prefer_is_empty, prefer_if_null_operators
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_print, prefer_is_empty, prefer_if_null_operators, prefer_typing_uninitialized_variables
 
 import 'dart:async';
 
@@ -19,7 +19,8 @@ import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 class MyJobs extends StatefulWidget {
-  const MyJobs({Key? key}) : super(key: key);
+  const MyJobs({Key? key, this.myJobStatus}) : super(key: key);
+  final myJobStatus;
 
   @override
   State<MyJobs> createState() => _MyJobsState();
@@ -47,7 +48,7 @@ class _MyJobsState extends State<MyJobs> {
   Timer? _timer;
 
   bool _statusShowLoading = false;
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   fetchMyJob(String type) async {
     //
@@ -152,11 +153,26 @@ class _MyJobsState extends State<MyJobs> {
     }
   }
 
+  checkTypeMyJobFromHomePage() {
+    if (widget.myJobStatus == "AppliedJob") {
+      setState(() {
+        _typeMyJob = widget.myJobStatus;
+        _textTotal = " Job you have applied";
+
+        fetchMyJob(_typeMyJob);
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _isLoading = true;
-    fetchMyJob(_typeMyJob);
+
+    if (widget.myJobStatus == "AppliedJob") {
+      checkTypeMyJobFromHomePage();
+    } else {
+      fetchMyJob(_typeMyJob);
+    }
 
     _searchTitleController.text = _searchTitle;
   }
@@ -194,6 +210,7 @@ class _MyJobsState extends State<MyJobs> {
               height: double.infinity,
               child: Column(
                 children: [
+                  Text("${_typeMyJob}"),
                   // SizedBox(
                   //   height: 20,
                   // ),

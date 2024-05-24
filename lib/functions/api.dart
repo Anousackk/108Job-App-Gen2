@@ -53,10 +53,18 @@ var unSubmitCVSeekerApi = globalURL + "/seeker-unsubmit-cv-employer-app/";
 var getSubmitCVSeekerApi = globalURL + "/get-seeker-submit-cv-employer-app";
 
 //
+//Home Page
+var getTopBannerEmployee = globalURL + "/get-topbanner-seeker";
+var getSpotLightEmployee = globalURL + "/get-spotlight-seeker";
+var getHiringEmployee = globalURL + "/get-hiring-employer-seeker-app";
+var getTopWorkingLocationEmployee = globalURL + "/get-top-workinglocation-app";
+
+//
 //Job Search && My Job
 var saveJobSeekerApi = globalURL + "/seeker-save-job-app";
 var hideJobSeekerApi = globalURL + "/seeker-hide-job-app";
 var deleteMyJobSeekerApi = globalURL + "/seeker-delete-my-job-app";
+var applyJobSeekerApi = globalURL + "/seeker-apply-job-app";
 
 //
 //My Job
@@ -65,6 +73,11 @@ var getMyJobSeekerApi = globalURL + "/seeker-get-my-job-app";
 //
 //My Profile
 var getProfileSeekerApi = globalURL + "/seeker-profile-app";
+var getTotalMyJobSeekerApi = globalURL + "/seeker-get-totals-myjob-app";
+
+//Job Aert
+var getJobAlertSeekerApi = globalURL + "/seeker-get-job-alert-app";
+var addJobAlertSeekerApi = globalURL + "/seeker-create-job-alert-app";
 
 //Personal Information
 var addProfileApiSeeker = globalURL + "/add-seeker-profile-app";
@@ -122,6 +135,8 @@ fetchData(url) async {
     "authorization": "$employeeToken" == null ? "" : "$employeeToken",
   });
   if (res.statusCode == 200) {
+    return jsonDecode(res.body);
+  } else if (res.statusCode == 201) {
     return jsonDecode(res.body);
   }
 }

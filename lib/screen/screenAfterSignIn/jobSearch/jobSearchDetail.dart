@@ -41,9 +41,11 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
   String _description = "";
   List _allOnlineJob = [];
   bool _isSaved = false;
+  bool _isApplied = false;
   bool _isLoading = false;
 
-  String _checkNewJobFunctioin = "eiei";
+  String _checkNewJobFunctioin = "";
+  String _checkStatusFollow = "";
 
   fetchJobSearchDetail(dynamic jobId) async {
     var res = await fetchData(getJobSearchDetailSeekerApi + jobId);
@@ -89,6 +91,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
 
     _description = _jobDetail['description'];
     _isSaved = _jobDetail['isSaved'];
+    _isApplied = _jobDetail['isApplied'];
     _allOnlineJob = res['allOnlineJob'];
     _isLoading = false;
 
@@ -133,7 +136,10 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
             textButton: "OK",
             press: () {
               Navigator.pop(context);
-              Navigator.of(context).pop('Success');
+              // Navigator.of(context).pop('Success');
+              setState(() {
+                _checkStatusFollow = "Success";
+              });
             },
           );
         },
@@ -149,8 +155,65 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
             textButton: "OK",
             press: () {
               Navigator.pop(context);
-              Navigator.of(context).pop('Success');
+              // Navigator.of(context).pop('Success');
+              setState(() {
+                _checkStatusFollow = "Success";
+              });
             },
+          );
+        },
+      );
+    }
+  }
+
+  applyJob() async {
+    //
+    //ສະແດງ AlertDialog Loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomAlertLoading();
+      },
+    );
+
+    var res = await postData(applyJobSeekerApi, {
+      "JobId": _id,
+      "isCoverLetter": null,
+    });
+    var message = res['message'];
+
+    print(res);
+    if (message == "Applied succeed") {
+      Navigator.pop(context);
+
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogSuccess(
+            title: "Success",
+            text: "$_title Apply Job Success",
+            textButton: "OK",
+            press: () {
+              Navigator.pop(context);
+              // Navigator.of(context).pop('Success');
+              setState(() {
+                _checkStatusFollow = "Success";
+              });
+            },
+          );
+        },
+      );
+    } else if (message == "You have already applied this Job") {
+      Navigator.pop(context);
+
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogWarning(
+            title: "Warning",
+            text: "$message",
           );
         },
       );
@@ -196,7 +259,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
           // fontWeight: FontWeight.bold,
           leadingIcon: Icon(Icons.arrow_back),
           leadingPress: () {
-            Navigator.of(context).pop(_checkNewJobFunctioin);
+            Navigator.of(context).pop(_checkStatusFollow);
           },
         ),
         body: SafeArea(
@@ -549,6 +612,9 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                       text: "Save job",
                                       press: () {
                                         saveAndUnSaveJob();
+                                        setState(() {
+                                          _isSaved = !_isSaved;
+                                        });
                                       },
                                     )
                                   : ButtonWithIconLeft(
@@ -570,6 +636,9 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                       text: "Saved",
                                       press: () {
                                         saveAndUnSaveJob();
+                                        setState(() {
+                                          _isSaved = !_isSaved;
+                                        });
                                       },
                                     ),
                             ),
@@ -578,22 +647,49 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                             ),
                             Expanded(
                               flex: 2,
-                              child: ButtonWithIconLeft(
-                                paddingButton:
-                                    MaterialStateProperty.all<EdgeInsets>(
-                                  EdgeInsets.symmetric(vertical: 15),
-                                ),
-                                borderRadius: BorderRadius.circular(1.5.w),
-                                colorButton: AppColors.buttonWarning,
-                                widgetIcon: FaIcon(
-                                  FontAwesomeIcons.locationArrow,
-                                  color: AppColors.iconLight,
-                                ),
-                                colorText: AppColors.fontWhite,
-                                fontWeight: FontWeight.bold,
-                                text: "Apply job",
-                                press: () {},
-                              ),
+                              child: !_isApplied
+                                  ? ButtonWithIconLeft(
+                                      paddingButton:
+                                          MaterialStateProperty.all<EdgeInsets>(
+                                        EdgeInsets.symmetric(vertical: 15),
+                                      ),
+                                      borderRadius:
+                                          BorderRadius.circular(1.5.w),
+                                      colorButton: AppColors.buttonWarning,
+                                      widgetIcon: FaIcon(
+                                        FontAwesomeIcons.locationArrow,
+                                        color: AppColors.iconLight,
+                                      ),
+                                      colorText: AppColors.fontWhite,
+                                      fontWeight: FontWeight.bold,
+                                      text: "Apply job",
+                                      press: () {
+                                        applyJob();
+                                        setState(() {
+                                          _isApplied = !_isApplied;
+                                        });
+                                      },
+                                    )
+                                  : ButtonWithIconLeft(
+                                      paddingButton:
+                                          MaterialStateProperty.all<EdgeInsets>(
+                                        EdgeInsets.symmetric(vertical: 15),
+                                      ),
+                                      borderRadius:
+                                          BorderRadius.circular(1.5.w),
+                                      buttonBorderColor: AppColors.borderWaring,
+                                      colorButton: AppColors.buttonLightOrange,
+                                      widgetIcon: FaIcon(
+                                        FontAwesomeIcons.locationArrow,
+                                        color: AppColors.iconWarning,
+                                      ),
+                                      colorText: AppColors.fontWaring,
+                                      fontWeight: FontWeight.bold,
+                                      text: "Applied",
+                                      press: () {
+                                        applyJob();
+                                      },
+                                    ),
                             ),
                           ],
                         ),

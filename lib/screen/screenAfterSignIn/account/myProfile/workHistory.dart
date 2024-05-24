@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_in_if_null_operators, avoid_init_to_null
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -40,8 +40,8 @@ class _WorkHistoryState extends State<WorkHistory> {
   String _jobTitle = "";
   String _responsibility = "";
 
-  dynamic _fromMonth;
-  dynamic _toMonth;
+  dynamic _fromMonthYear = null;
+  dynamic _toMonthYear = null;
 
   bool _isValidateValue = false;
   bool _isCurrentJob = false;
@@ -51,37 +51,53 @@ class _WorkHistoryState extends State<WorkHistory> {
   setValueGetById() {
     setState(() {
       dynamic i = widget.workHistory;
+
+      DateTime utcNow = _dateTimeNow.toUtc();
+      dynamic formattedStartMonthYearUtc =
+          DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(utcNow);
+      dynamic formattedToMonthYearUtc =
+          DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(utcNow);
+
       _company = i['company'];
       _jobTitle = i['position'];
       _responsibility = i['responsibility'];
       _isCurrentJob = i['isCurrentJob'] as bool;
 
-      _fromMonth = i['startYear'];
+      _fromMonthYear =
+          i['startYear'] == null ? formattedStartMonthYearUtc : i['startYear'];
       //
       //pars ISO to Flutter DateTime
       parsDateTime(value: '', currentFormat: '', desiredFormat: '');
-      DateTime fromMonth = parsDateTime(
-          value: _fromMonth,
+      DateTime fromMonthYear = parsDateTime(
+          value: _fromMonthYear,
           currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
           desiredFormat: "yyyy-MM-dd HH:mm:ss");
       //
       //Convert String to DateTime
-      _fromMonth = DateFormat("yyyy-MM-dd").parse(fromMonth.toString());
+      _fromMonthYear = DateFormat("yyyy-MM-dd").parse(fromMonthYear.toString());
 
-      _toMonth = i['endYear'];
+      _toMonthYear =
+          i['endYear'] == null ? formattedToMonthYearUtc : i['endYear'];
       //pars ISO to Flutter DateTime
       parsDateTime(value: '', currentFormat: '', desiredFormat: '');
-      DateTime toMonth = parsDateTime(
-          value: _toMonth,
+      DateTime toMonthYear = parsDateTime(
+          value: _toMonthYear,
           currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
           desiredFormat: "yyyy-MM-dd HH:mm:ss");
       //
       //Convert String to DateTime
-      _toMonth = DateFormat("yyyy-MM-dd").parse(toMonth.toString());
+      _toMonthYear = DateFormat("yyyy-MM-dd").parse(toMonthYear.toString());
 
       _companyController.text = _company;
       _jobTitleController.text = _jobTitle;
       _responsibilityController.text = _responsibility;
+    });
+  }
+
+  pressCheckBox() {
+    setState(() {
+      _isCurrentJob = !_isCurrentJob;
+      _toMonthYear = null;
     });
   }
 
@@ -109,14 +125,14 @@ class _WorkHistoryState extends State<WorkHistory> {
 
   @override
   Widget build(BuildContext context) {
-    Color getColor(Set<MaterialState> states) {
-      const Set<MaterialState> interactiveStates = <MaterialState>{
-        MaterialState.pressed,
-        MaterialState.hovered,
-        MaterialState.focused,
-      };
-      return !_isCurrentJob ? AppColors.white : AppColors.primary;
-    }
+    // Color getColor(Set<MaterialState> states) {
+    //   const Set<MaterialState> interactiveStates = <MaterialState>{
+    //     MaterialState.pressed,
+    //     MaterialState.hovered,
+    //     MaterialState.focused,
+    //   };
+    //   return !_isCurrentJob ? AppColors.white : AppColors.primary;
+    // }
 
     FocusScopeNode currentFocus = FocusScopeNode();
 
@@ -215,6 +231,62 @@ class _WorkHistoryState extends State<WorkHistory> {
                               ),
                               suffixIconColor: AppColors.iconGrayOpacity,
                             ),
+
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              // mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                // Checkbox(
+                                //   checkColor: Colors.white,
+                                //   fillColor: MaterialStateProperty.resolveWith(
+                                //       getColor),
+                                //   value: _isCurrentJob,
+                                //   onChanged: (bool? value) {
+                                //     if (mounted) {
+                                //       setState(() {
+                                //         _isCurrentJob = value!;
+
+                                //         print(_isCurrentJob);
+                                //       });
+                                //     }
+                                //   },
+                                // ),
+                                GestureDetector(
+                                  onTap: () {
+                                    pressCheckBox();
+                                  },
+                                  child: Container(
+                                    height: 20,
+                                    width: 20,
+                                    decoration: BoxDecoration(
+                                      color: _isCurrentJob
+                                          ? AppColors.iconPrimary
+                                          : AppColors.iconLight,
+                                      border: Border.all(
+                                          color: AppColors.borderDark),
+                                      borderRadius: BorderRadius.circular(3),
+                                    ),
+                                    child: _isCurrentJob
+                                        ? Align(
+                                            alignment: Alignment.center,
+                                            child: FaIcon(
+                                              FontAwesomeIcons.check,
+                                              size: 15,
+                                              color: AppColors.iconLight,
+                                            ),
+                                          )
+                                        : Container(),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text("This is my current job"),
+                              ],
+                            ),
+
                             SizedBox(
                               height: 20,
                             ),
@@ -223,7 +295,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                             //
                             //From DateTime(Month)
                             Text(
-                              "From Month",
+                              "From Month / Year",
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -233,14 +305,15 @@ class _WorkHistoryState extends State<WorkHistory> {
                               mainAxisAlignmentTextIcon:
                                   MainAxisAlignment.start,
                               colorInput: AppColors.backgroundWhite,
-                              colorBorder:
-                                  _isValidateValue == true && _fromMonth == null
-                                      ? AppColors.borderDanger
-                                      : AppColors.borderSecondary,
+                              colorBorder: _isValidateValue == true &&
+                                      _fromMonthYear == null
+                                  ? AppColors.borderDanger
+                                  : AppColors.borderSecondary,
                               paddingFaIcon:
                                   EdgeInsets.symmetric(horizontal: 1.7.w),
-                              fontWeight:
-                                  _fromMonth == null ? FontWeight.bold : null,
+                              fontWeight: _fromMonthYear == null
+                                  ? FontWeight.bold
+                                  : null,
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.calendar,
                                 color: AppColors.iconGrayOpacity,
@@ -252,33 +325,35 @@ class _WorkHistoryState extends State<WorkHistory> {
                                 var formatDateTimeNow = DateFormat("yyyy-MM-dd")
                                     .parse(_dateTimeNow.toString());
                                 setState(() {
-                                  _fromMonth == null
-                                      ? _fromMonth = formatDateTimeNow
-                                      : _fromMonth;
+                                  _fromMonthYear == null
+                                      ? _fromMonthYear = formatDateTimeNow
+                                      : _fromMonthYear;
                                 });
 
                                 showDialogDateTime(
                                     context,
                                     Text(
-                                      "From Month",
+                                      "From Month / Year",
                                       style:
                                           bodyTextMedium(null, FontWeight.bold),
                                     ),
                                     CupertinoDatePicker(
-                                      initialDateTime: _fromMonth == null
+                                      initialDateTime: _fromMonthYear == null
                                           ? formatDateTimeNow
-                                          : _fromMonth,
+                                          : _fromMonthYear,
                                       mode: CupertinoDatePickerMode.monthYear,
                                       // dateOrder: DatePickerDateOrder.dmy,
+                                      maximumDate: formatDateTimeNow,
                                       use24hFormat: true,
                                       onDateTimeChanged: (DateTime newDate) {
                                         setState(() {
-                                          _fromMonth = newDate;
+                                          _fromMonthYear = newDate;
 
-                                          if (_toMonth != null &&
-                                              _toMonth.isBefore(_fromMonth)) {
+                                          if (_toMonthYear != null &&
+                                              _toMonthYear
+                                                  .isBefore(_fromMonthYear)) {
                                             // If toDate is before fromDate, set toDate to null
-                                            _toMonth = null;
+                                            _toMonthYear = null;
                                           }
                                         });
                                       },
@@ -299,28 +374,28 @@ class _WorkHistoryState extends State<WorkHistory> {
                                     // ),
                                     );
                               },
-                              text: _fromMonth == null
-                                  ? 'From month'
-                                  : "${_fromMonth?.month}-${_fromMonth?.year}",
-                              colorText: _fromMonth == null
+                              text: _fromMonthYear == null
+                                  ? 'From month / Year'
+                                  : "${_fromMonthYear?.month}-${_fromMonthYear?.year}",
+                              colorText: _fromMonthYear == null
                                   ? AppColors.fontGreyOpacity
                                   : AppColors.fontDark,
-                              validateText:
-                                  _isValidateValue == true && _fromMonth == null
-                                      ? Container(
-                                          width: double.infinity,
-                                          padding: EdgeInsets.only(
-                                            left: 15,
-                                            top: 5,
-                                          ),
-                                          child: Text(
-                                            "required",
-                                            style: bodyTextSmall(
-                                              AppColors.fontDanger,
-                                            ),
-                                          ),
-                                        )
-                                      : Container(),
+                              validateText: _isValidateValue == true &&
+                                      _fromMonthYear == null
+                                  ? Container(
+                                      width: double.infinity,
+                                      padding: EdgeInsets.only(
+                                        left: 15,
+                                        top: 5,
+                                      ),
+                                      child: Text(
+                                        "required",
+                                        style: bodyTextSmall(
+                                          AppColors.fontDanger,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
                             ),
                             SizedBox(
                               height: 20,
@@ -329,138 +404,151 @@ class _WorkHistoryState extends State<WorkHistory> {
                             //
                             //
                             //To DateTime(Month)
-                            Text(
-                              "To month",
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            _fromMonth != null
-                                ? BoxDecorationInput(
-                                    mainAxisAlignmentTextIcon:
-                                        MainAxisAlignment.start,
-                                    colorInput: AppColors.backgroundWhite,
-                                    colorBorder: _isValidateValue == true &&
-                                            _toMonth == null
-                                        ? AppColors.borderDanger
-                                        : AppColors.borderSecondary,
-                                    paddingFaIcon:
-                                        EdgeInsets.symmetric(horizontal: 1.7.w),
-                                    fontWeight: _toMonth == null
-                                        ? FontWeight.bold
-                                        : null,
-                                    widgetIconActive: FaIcon(
-                                      FontAwesomeIcons.calendar,
-                                      color: AppColors.iconGrayOpacity,
-                                      size: IconSize.sIcon,
-                                    ),
-                                    press: () {
-                                      setState(() {
-                                        _toMonth == null
-                                            ? _toMonth = _fromMonth
-                                            : _toMonth;
-                                      });
-
-                                      showDialogDateTime(
-                                          context,
-                                          Text(
-                                            "To Month",
-                                            style: bodyTextMedium(
-                                                null, FontWeight.bold),
-                                          ),
-                                          CupertinoDatePicker(
-                                            initialDateTime: _toMonth == null
-                                                ? _fromMonth
-                                                : _toMonth,
-                                            mode: CupertinoDatePickerMode
-                                                .monthYear,
-                                            // dateOrder: DatePickerDateOrder.dmy,
-                                            minimumDate: _fromMonth,
-                                            use24hFormat: true,
-                                            onDateTimeChanged:
-                                                (DateTime newDate) {
-                                              setState(() {
-                                                _toMonth = newDate;
-                                              });
-                                            },
-                                          )
-                                          // SimpleButton(
-                                          //   text: 'Cancel',
-                                          //   colorButton: AppColors.buttonSecondary,
-                                          //   colorText: AppColors.fontWhite,
-                                          //   press: () {
-                                          //     Navigator.of(context).pop();
-                                          //   },
-                                          // ),
-                                          // SimpleButton(
-                                          //   text: 'Confirm',
-                                          //   press: () {
-                                          //     Navigator.of(context).pop();
-                                          //   },
-                                          // ),
-                                          );
-                                    },
-                                    text: _toMonth == null
-                                        ? 'To Month'
-                                        : "${_toMonth?.month}-${_toMonth?.year}",
-                                    colorText: _toMonth == null
-                                        ? AppColors.fontGreyOpacity
-                                        : AppColors.fontDark,
-                                    validateText: _isValidateValue == true &&
-                                            _toMonth == null
-                                        ? Container(
-                                            width: double.infinity,
-                                            padding: EdgeInsets.only(
-                                              left: 10,
-                                              top: 5,
-                                            ),
-                                            child: Text(
-                                              "required",
-                                              style: bodyTextSmall(
-                                                AppColors.fontDanger,
-                                              ),
-                                            ),
-                                          )
-                                        : Container(),
-                                  )
-                                : BoxDecorationInput(
-                                    mainAxisAlignmentTextIcon:
-                                        MainAxisAlignment.start,
-                                    colorBorder: _isValidateValue == true &&
-                                            _toMonth == null
-                                        ? AppColors.borderDanger
-                                        : AppColors.borderSecondary,
-                                    paddingFaIcon:
-                                        EdgeInsets.symmetric(horizontal: 1.7.w),
-                                    fontWeight: FontWeight.bold,
-                                    colorText: AppColors.fontGreyOpacity,
-                                    widgetIconActive: FaIcon(
-                                      FontAwesomeIcons.calendar,
-                                      color: AppColors.iconGrayOpacity,
-                                      size: IconSize.sIcon,
-                                    ),
-                                    text: "To Month",
-                                    validateText: _isValidateValue == true &&
-                                            _toMonth == null
-                                        ? Container(
-                                            width: double.infinity,
-                                            padding: EdgeInsets.only(
-                                              left: 10,
-                                              top: 5,
-                                            ),
-                                            child: Text(
-                                              "required",
-                                              style: bodyTextSmall(
-                                                AppColors.fontDanger,
-                                              ),
-                                            ),
-                                          )
-                                        : Container(),
+                            if (!_isCurrentJob)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "To month / Year",
+                                    style:
+                                        bodyTextNormal(null, FontWeight.bold),
                                   ),
-                            SizedBox(
-                              height: 20,
-                            ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  _fromMonthYear != null
+                                      ? BoxDecorationInput(
+                                          mainAxisAlignmentTextIcon:
+                                              MainAxisAlignment.start,
+                                          colorInput: AppColors.backgroundWhite,
+                                          colorBorder:
+                                              _isValidateValue == true &&
+                                                      _toMonthYear == null
+                                                  ? AppColors.borderDanger
+                                                  : AppColors.borderSecondary,
+                                          paddingFaIcon: EdgeInsets.symmetric(
+                                              horizontal: 1.7.w),
+                                          fontWeight: _toMonthYear == null
+                                              ? FontWeight.bold
+                                              : null,
+                                          widgetIconActive: FaIcon(
+                                            FontAwesomeIcons.calendar,
+                                            color: AppColors.iconGrayOpacity,
+                                            size: IconSize.sIcon,
+                                          ),
+                                          press: () {
+                                            setState(() {
+                                              _toMonthYear == null
+                                                  ? _toMonthYear =
+                                                      _fromMonthYear
+                                                  : _toMonthYear;
+                                            });
+
+                                            showDialogDateTime(
+                                                context,
+                                                Text(
+                                                  "To Month / Year",
+                                                  style: bodyTextMedium(
+                                                      null, FontWeight.bold),
+                                                ),
+                                                CupertinoDatePicker(
+                                                  initialDateTime:
+                                                      _toMonthYear == null
+                                                          ? _fromMonthYear
+                                                          : _toMonthYear,
+                                                  mode: CupertinoDatePickerMode
+                                                      .monthYear,
+                                                  // dateOrder: DatePickerDateOrder.dmy,
+                                                  minimumDate: _fromMonthYear,
+                                                  use24hFormat: true,
+                                                  onDateTimeChanged:
+                                                      (DateTime newDate) {
+                                                    setState(() {
+                                                      _toMonthYear = newDate;
+                                                    });
+                                                  },
+                                                )
+                                                // SimpleButton(
+                                                //   text: 'Cancel',
+                                                //   colorButton: AppColors.buttonSecondary,
+                                                //   colorText: AppColors.fontWhite,
+                                                //   press: () {
+                                                //     Navigator.of(context).pop();
+                                                //   },
+                                                // ),
+                                                // SimpleButton(
+                                                //   text: 'Confirm',
+                                                //   press: () {
+                                                //     Navigator.of(context).pop();
+                                                //   },
+                                                // ),
+                                                );
+                                          },
+                                          text: _toMonthYear == null
+                                              ? 'To Month / Year'
+                                              : "${_toMonthYear?.month}-${_toMonthYear?.year}",
+                                          colorText: _toMonthYear == null
+                                              ? AppColors.fontGreyOpacity
+                                              : AppColors.fontDark,
+                                          validateText:
+                                              _isValidateValue == true &&
+                                                      _toMonthYear == null
+                                                  ? Container(
+                                                      width: double.infinity,
+                                                      padding: EdgeInsets.only(
+                                                        left: 10,
+                                                        top: 5,
+                                                      ),
+                                                      child: Text(
+                                                        "required",
+                                                        style: bodyTextSmall(
+                                                          AppColors.fontDanger,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Container(),
+                                        )
+                                      : BoxDecorationInput(
+                                          mainAxisAlignmentTextIcon:
+                                              MainAxisAlignment.start,
+                                          colorBorder:
+                                              _isValidateValue == true &&
+                                                      _toMonthYear == null
+                                                  ? AppColors.borderDanger
+                                                  : AppColors.borderSecondary,
+                                          paddingFaIcon: EdgeInsets.symmetric(
+                                              horizontal: 1.7.w),
+                                          fontWeight: FontWeight.bold,
+                                          colorText: AppColors.fontGreyOpacity,
+                                          widgetIconActive: FaIcon(
+                                            FontAwesomeIcons.calendar,
+                                            color: AppColors.iconGrayOpacity,
+                                            size: IconSize.sIcon,
+                                          ),
+                                          text: "To Month / Year",
+                                          validateText:
+                                              _isValidateValue == true &&
+                                                      _toMonthYear == null
+                                                  ? Container(
+                                                      width: double.infinity,
+                                                      padding: EdgeInsets.only(
+                                                        left: 10,
+                                                        top: 5,
+                                                      ),
+                                                      child: Text(
+                                                        "required",
+                                                        style: bodyTextSmall(
+                                                          AppColors.fontDanger,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Container(),
+                                        ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                ],
+                              ),
 
                             // Responsibility
                             Text(
@@ -488,30 +576,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                 return null;
                               },
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
 
-                            Row(
-                              children: [
-                                Checkbox(
-                                  checkColor: Colors.white,
-                                  fillColor: MaterialStateProperty.resolveWith(
-                                      getColor),
-                                  value: _isCurrentJob,
-                                  onChanged: (bool? value) {
-                                    if (mounted) {
-                                      setState(() {
-                                        _isCurrentJob = value!;
-
-                                        print(_isCurrentJob);
-                                      });
-                                    }
-                                  },
-                                ),
-                                Text("This is my current job"),
-                              ],
-                            ),
                             SizedBox(
                               height: 30,
                             ),
@@ -565,12 +630,15 @@ class _WorkHistoryState extends State<WorkHistory> {
     var res = await postData(addWorkHistorySeekerApi, {
       "_id": _id,
       "company": _company,
-      "startYear": _fromMonth.toString(),
-      "endYear": _toMonth.toString(),
+      "startYear":
+          _fromMonthYear != null ? _fromMonthYear.toString() : _fromMonthYear,
+      "endYear": _toMonthYear != null ? _toMonthYear.toString() : _toMonthYear,
       "position": _jobTitle,
-      "responsibility": _responsibility.toString(),
+      "responsibility": _responsibility,
       "isCurrentJob": _isCurrentJob
     });
+    print(res);
+
     if (res['workHistory'] != null) {
       Navigator.pop(context);
     }
@@ -592,6 +660,5 @@ class _WorkHistoryState extends State<WorkHistory> {
         },
       );
     }
-    print(res);
   }
 }

@@ -513,7 +513,7 @@ class _SimpleTextFieldSingleValidateState
             filled: true,
             enabledBorder: widget.enabledBorder == null
                 ? enableOutlineBorder(
-                    AppColors.borderSecondary,
+                    AppColors.borderBG,
                   )
                 : widget.enabledBorder,
             focusedBorder: focusOutlineBorder(

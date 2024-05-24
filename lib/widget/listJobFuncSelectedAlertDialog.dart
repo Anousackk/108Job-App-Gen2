@@ -124,7 +124,7 @@ class _ListJobFuncSelectedAlertDialogState
           //
           //Content Selection
           content: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             color: AppColors.backgroundWhite,
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,

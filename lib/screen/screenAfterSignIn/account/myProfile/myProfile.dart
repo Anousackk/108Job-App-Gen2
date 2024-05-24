@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, unused_field, avoid_print, unused_local_variable, prefer_typing_uninitialized_variables, prefer_final_fields, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_is_empty, unused_element, unnecessary_null_in_if_null_operators
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, unused_field, avoid_print, unused_local_variable, prefer_typing_uninitialized_variables, prefer_final_fields, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_is_empty, unused_element, unnecessary_null_in_if_null_operators, prefer_if_null_operators, prefer_adjacent_string_concatenation, unnecessary_null_comparison, avoid_init_to_null
 
 import 'dart:io';
 
@@ -121,9 +121,9 @@ class _MyProfileState extends State<MyProfile>
           context: context,
           builder: (context) {
             return CupertinoAlertDialogOk(
-              title: '“Time Sabai” Would like to Access Your Photos',
+              title: '“108 Jobs” Would like to Access Your Photos',
               contentText:
-                  "Allow “Time Sabai” to access your photos to send image to your manager, to detect your face.",
+                  "Allow “108 Jobs” to access your photos to send image to your manager, to detect your face.",
               text: 'Continue',
             );
           },
@@ -141,7 +141,7 @@ class _MyProfileState extends State<MyProfile>
             return CupertinoAlertDialogOk(
               title: 'Allow Access Photos',
               contentText:
-                  "“Time Sabai” needs to access your photos to send image to your manager, to detect your face. \n Please go to Setting and turn on the permission.",
+                  "“108 Jobs” needs to access your photos to send image to your manager, to detect your face. \n Please go to Setting and turn on the permission.",
               text: 'Continue',
             );
           },
@@ -317,6 +317,25 @@ class _MyProfileState extends State<MyProfile>
                     physics: ClampingScrollPhysics(),
                     child: Column(
                       children: [
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 30),
+                          decoration: BoxDecoration(
+                            color: AppColors.warning.withOpacity(0.2),
+                          ),
+                          child: Column(children: [
+                            Text(
+                              "Your profile is being review",
+                              style: bodyTextNormal(
+                                  AppColors.fontWaring, FontWeight.bold),
+                            ),
+                            Text(
+                              "it may take up to 48Hrs in this proces",
+                              style: bodyTextSmall(AppColors.fontGreyOpacity),
+                            )
+                          ]),
+                        ),
                         //
                         //
                         //Profile Image
@@ -600,8 +619,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
 
   //
   //Work History
-  dynamic _startYearWorkHistory;
-  dynamic _endYearWorkHistory;
+  dynamic _startYearWorkHistory = null;
+  dynamic _endYearWorkHistory = null;
   String _company = "";
   String _position = "";
 
@@ -627,6 +646,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
   late String _localPath;
   late bool _permissionReady;
   late TargetPlatform? platform;
+  String _memberLevel = "";
 
   // void _requestDownloadsDirectory() {
   //   setState(() {
@@ -691,6 +711,15 @@ class _ProfileDetailState extends State<ProfileDetail> {
     if (widget.profile != null) {
       _address = widget.profile["address"];
       _dateOfBirth = widget.profile['dateOfBirth'] ?? "";
+      //pars ISO to Flutter DateTime
+      parsDateTime(value: '', currentFormat: '', desiredFormat: '');
+      DateTime parsDateOfBirth = parsDateTime(
+        value: _dateOfBirth,
+        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+        desiredFormat: "yyyy-MM-dd HH:mm:ss",
+      );
+      _dateOfBirth = formatDate(parsDateOfBirth);
+
       _genDerName = widget.profile['genderId'] != null
           ? widget.profile['genderId']['name']
           : "";
@@ -780,7 +809,11 @@ class _ProfileDetailState extends State<ProfileDetail> {
                         style: bodyTextNormal(null, null),
                       ),
                       Text(
-                        "Job Seeker",
+                        _memberLevel == "Basic Member" || _memberLevel == ""
+                            ? "Basic Job Seeker"
+                            : _memberLevel == "Basic Job Seeker"
+                                ? "Expert Job Seeker"
+                                : "Expert Job Seeker",
                         style: bodyTextNormal(
                             AppColors.fontSuccess, FontWeight.bold),
                       ),
@@ -847,7 +880,9 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 style: bodyTextNormal(null, null),
                               ),
                               Text(
-                                _dateOfBirth + _genDerName + _maritalStatusName,
+                                "$_dateOfBirth " +
+                                    "$_genDerName " +
+                                    "$_maritalStatusName ",
                                 style: bodyTextNormal(null, FontWeight.bold),
                               ),
                               SizedBox(
@@ -1090,9 +1125,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
 
                                   //
                                   //button preview cv
-                                  () async {
-                                    launchInBrowserView(Uri.parse(_cvSrc));
-                                    // OpenFile.open(_cvSrc);
+                                  () {
+                                    launchInWebView(Uri.parse(_cvSrc));
                                   },
                                   null,
                                   "Preview",
@@ -1222,19 +1256,21 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 _startYearWorkHistory =
                                     formatMonthYear(startYear);
 
-                                _endYearWorkEducation = i['endYear'];
-                                //pars ISO to Flutter DateTime
-                                parsDateTime(
-                                    value: '',
-                                    currentFormat: '',
-                                    desiredFormat: '');
-                                DateTime endYear = parsDateTime(
-                                  value: _endYearWorkEducation,
-                                  currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                  desiredFormat: "yyyy-MM-dd HH:mm:ss",
-                                );
-                                _endYearWorkEducation =
-                                    formatMonthYear(endYear);
+                                _endYearWorkHistory = i['endYear'];
+                                if (_endYearWorkHistory != null) {
+                                  //pars ISO to Flutter DateTime
+                                  parsDateTime(
+                                      value: '',
+                                      currentFormat: '',
+                                      desiredFormat: '');
+                                  DateTime endYear = parsDateTime(
+                                    value: _endYearWorkHistory,
+                                    currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+                                    desiredFormat: "yyyy-MM-dd HH:mm:ss",
+                                  );
+                                  _endYearWorkHistory =
+                                      formatMonthYear(endYear);
+                                }
                                 _company = i['company'];
                                 _position = i['position'];
 
@@ -1246,11 +1282,18 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          _startYearWorkHistory +
-                                              " - " +
-                                              _endYearWorkEducation,
-                                          style: bodyTextNormal(null, null),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "${_startYearWorkHistory}",
+                                              style: bodyTextNormal(null, null),
+                                            ),
+                                            Text(" - "),
+                                            Text(
+                                              "${_endYearWorkHistory ?? 'Now'}",
+                                              style: bodyTextNormal(null, null),
+                                            )
+                                          ],
                                         ),
                                         SizedBox(
                                           height: 5,
@@ -1321,7 +1364,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
-                              text: 'Add Education',
+                              text: 'Add Work History',
                               colorText: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
@@ -1391,8 +1434,18 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               itemCount: widget.educations.length,
                               itemBuilder: (context, index) {
                                 dynamic i = widget.educations[index];
+                                DateTime dateTimeNow = DateTime.now();
+                                DateTime utcNow = dateTimeNow.toUtc();
+                                dynamic formattedStartDateUtc =
+                                    DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                                        .format(utcNow);
+                                dynamic formattedEndDateUtc =
+                                    DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                                        .format(utcNow);
 
-                                _startYearEducation = i['startYear'];
+                                _startYearEducation = i['startYear'] == null
+                                    ? formattedStartDateUtc
+                                    : i['startYear'];
                                 //pars ISO to Flutter DateTime
                                 parsDateTime(
                                     value: '',
@@ -1405,7 +1458,9 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 );
                                 _startYearEducation = formatYear(startYear);
 
-                                _endYearWorkEducation = i['endYear'];
+                                _endYearWorkEducation = i['endYear'] == null
+                                    ? formattedEndDateUtc
+                                    : i['endYear'];
                                 //pars ISO to Flutter DateTime
                                 parsDateTime(
                                     value: '',
@@ -1821,10 +1876,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             SizedBox(
                               height: 30,
                             ),
-                            // Divider(
-                            //   height: 2,
-                            //   color: AppColors.borderBG,
-                            // )
+                            Divider(
+                              height: 2,
+                              color: AppColors.borderBG,
+                            )
                           ],
                         )
                       : BoxDecDottedBorderProfileDetail(
@@ -1859,26 +1914,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
             ),
 
             // SizedBox(
-            //   height: 30,
+            //   height: 10,
             // ),
-
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-              decoration: BoxDecoration(
-                color: AppColors.warning.withOpacity(0.2),
-              ),
-              child: Column(children: [
-                Text(
-                  "Your profile is being review",
-                  style: bodyTextNormal(AppColors.fontWaring, FontWeight.bold),
-                ),
-                Text(
-                  "it may take up to 48Hrs in this proces",
-                  style: bodyTextSmall(AppColors.fontGreyOpacity),
-                )
-              ]),
-            )
           ],
         ),
       ),

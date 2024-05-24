@@ -1,11 +1,10 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, unused_field, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_comparison, non_constant_identifier_names, prefer_if_null_operators, prefer_is_empty
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, unused_field, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_comparison, non_constant_identifier_names, prefer_if_null_operators, prefer_is_empty, prefer_typing_uninitialized_variables, unnecessary_null_in_if_null_operators
 
 import 'dart:async';
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
-import 'package:app/functions/cupertinoDatePicker.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/parsDateTime.dart';
@@ -16,7 +15,6 @@ import 'package:app/widget/input.dart';
 import 'package:app/widget/listJobFuncSelectedAlertDialog.dart';
 import 'package:app/widget/listMultiSelectedAlertDialog.dart';
 import 'package:app/widget/screenNoData.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,7 +22,8 @@ import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 class JobSearch extends StatefulWidget {
-  const JobSearch({Key? key}) : super(key: key);
+  const JobSearch({Key? key, this.topWorkLocation}) : super(key: key);
+  final topWorkLocation;
 
   @override
   State<JobSearch> createState() => _JobSearchState();
@@ -71,13 +70,10 @@ class _JobSearchState extends State<JobSearch>
   String _isClick = "";
   String _total = "";
   String _searchTitle = "";
-  String _strPostDateLastest = "";
-  String _strPostDateOldest = "";
 
   dynamic _openDate;
   dynamic _closeDate;
-  dynamic _postDateLastest;
-  dynamic _postDateOldest;
+  int _postDateLastest = -1;
 
   Timer? _timer;
 
@@ -114,10 +110,7 @@ class _JobSearchState extends State<JobSearch>
 
   clearValueFilterAll() async {
     setState(() {
-      _postDateLastest = null;
-      _postDateOldest = null;
-      _strPostDateLastest = "";
-      _strPostDateOldest = "";
+      _postDateLastest = -1;
       _selectedEducationLeavelListItem = [];
       _selectedJobFunctionsItems = [];
       _selectedProvincesListItem = [];
@@ -128,8 +121,7 @@ class _JobSearchState extends State<JobSearch>
   }
 
   filterColor() {
-    if (_strPostDateLastest != "" ||
-        _strPostDateOldest != "" ||
+    if (_postDateLastest != -1 ||
         _selectedEducationLeavelListItem.length > 0 ||
         _selectedJobFunctionsItems.length > 0 ||
         _selectedProvincesListItem.length > 0 ||
@@ -142,6 +134,32 @@ class _JobSearchState extends State<JobSearch>
     } else {
       setState(() {
         _isCheckFilterColor = false;
+      });
+    }
+  }
+
+  pressPostDate(val) {
+    if (val == 1) {
+      setState(() {
+        _postDateLastest = -1;
+      });
+    } else if (val == -1) {
+      setState(() {
+        _postDateLastest = 1;
+      });
+    }
+  }
+
+  checkTopWorkLocationFromHomePage() {
+    dynamic i = widget.topWorkLocation;
+    if (i != null) {
+      setState(() {
+        _selectedProvincesListItem.add(i['_id']);
+
+        _provinceName = [];
+        _provinceName.add(i['name']);
+
+        filterColor();
       });
     }
   }
@@ -166,8 +184,8 @@ class _JobSearchState extends State<JobSearch>
     getReuseFilterJobSearchSeeker(
         'EN', _listEducationsLevels, "educationLevel");
     getReuseFilterJobSearchSeeker('EN', _listJobLevels, "jobLevel");
-
     getJobFunctionsSeeker();
+    checkTopWorkLocationFromHomePage();
 
     _searchTitleController.text = _searchTitle;
 
@@ -182,6 +200,7 @@ class _JobSearchState extends State<JobSearch>
     //Cancel the timer when the widget is disposed
     _searchTitleController.dispose();
     _timer?.cancel();
+
     print('dispose called');
     super.dispose();
   }
@@ -189,7 +208,6 @@ class _JobSearchState extends State<JobSearch>
   @override
   Widget build(BuildContext context) {
     FocusScopeNode currentFocus = FocusScopeNode();
-
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: GestureDetector(
@@ -394,7 +412,8 @@ class _JobSearchState extends State<JobSearch>
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    // Text("${_postDateLastest}"),
+                                                    // Text(
+                                                    //     "${_postDateLastest.toString()}"),
                                                     // Text("${_postDateOldest}"),
 
                                                     //
@@ -418,169 +437,47 @@ class _JobSearchState extends State<JobSearch>
                                                           children: [
                                                             //
                                                             //
-                                                            //Post Date Lastest
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  //
-                                                                  // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
-                                                                  var formatDateTimeNow = DateFormat(
-                                                                          "yyyy-MM-dd")
-                                                                      .parse(_dateTimeNow
-                                                                          .toString());
-                                                                  setState(() {
+                                                            //Post Date Lastest/Oldest
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  pressPostDate(
+                                                                      _postDateLastest);
+                                                                });
+                                                              },
+                                                              child: Container(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            15,
+                                                                        vertical:
+                                                                            10),
+                                                                decoration:
                                                                     _postDateLastest ==
-                                                                            null
-                                                                        ? _postDateLastest =
-                                                                            formatDateTimeNow
-                                                                        : _postDateLastest;
-                                                                  });
-
-                                                                  showDialogDateTime(
-                                                                    context,
-                                                                    Text(
-                                                                      "Post Date (Lastest)",
-                                                                      style: bodyTextMedium(
-                                                                          null,
-                                                                          FontWeight
-                                                                              .bold),
-                                                                    ),
-                                                                    CupertinoDatePicker(
-                                                                      initialDateTime: _postDateLastest ==
-                                                                              null
-                                                                          ? formatDateTimeNow
-                                                                          : _postDateLastest,
-                                                                      mode: CupertinoDatePickerMode
-                                                                          .date,
-                                                                      dateOrder:
-                                                                          DatePickerDateOrder
-                                                                              .dmy,
-                                                                      use24hFormat:
-                                                                          true,
-                                                                      onDateTimeChanged:
-                                                                          (DateTime
-                                                                              newDate) {
-                                                                        setState(
-                                                                            () {
-                                                                          _postDateLastest =
-                                                                              newDate;
-
-                                                                          if (_postDateOldest != null &&
-                                                                              _postDateOldest.isBefore(_postDateLastest)) {
-                                                                            // If toDate is before fromDate, set toDate to null
-                                                                            _postDateOldest =
-                                                                                null;
-                                                                          }
-                                                                        });
-                                                                      },
-                                                                    ),
-                                                                  );
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  padding: EdgeInsets.symmetric(
-                                                                      horizontal:
-                                                                          15,
-                                                                      vertical:
-                                                                          10),
-                                                                  decoration:
-                                                                      boxDecoration(
-                                                                    null,
-                                                                    AppColors
-                                                                        .light,
-                                                                    AppColors
-                                                                        .light,
-                                                                  ),
-                                                                  child: Text(
-                                                                    _postDateLastest ==
-                                                                            null
-                                                                        ? "Post Date (Lastest)"
-                                                                        : "${_postDateLastest?.day}-${_postDateLastest?.month}-${_postDateLastest?.year}",
-                                                                    style: bodyTextNormal(
-                                                                        null,
-                                                                        FontWeight
-                                                                            .bold),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-
-                                                            //
-                                                            //
-                                                            //Post date Oldest
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    _postDateOldest ==
-                                                                            null
-                                                                        ? _postDateOldest =
-                                                                            _postDateLastest
-                                                                        : _postDateOldest;
-                                                                  });
-
-                                                                  showDialogDateTime(
-                                                                      context,
-                                                                      Text(
-                                                                        "Post Date (Oldest)",
-                                                                        style: bodyTextMedium(
+                                                                            -1
+                                                                        ? boxDecoration(
                                                                             null,
-                                                                            FontWeight.bold),
-                                                                      ),
-                                                                      CupertinoDatePicker(
-                                                                        initialDateTime: _postDateOldest ==
-                                                                                null
-                                                                            ? _postDateLastest
-                                                                            : _postDateOldest,
-                                                                        mode: CupertinoDatePickerMode
-                                                                            .date,
-                                                                        dateOrder:
-                                                                            DatePickerDateOrder.dmy,
-                                                                        minimumDate:
-                                                                            _postDateLastest,
-                                                                        use24hFormat:
-                                                                            true,
-                                                                        onDateTimeChanged:
-                                                                            (DateTime
-                                                                                newDate) {
-                                                                          setState(
-                                                                              () {
-                                                                            _postDateOldest =
-                                                                                newDate;
-                                                                          });
-                                                                        },
-                                                                      ));
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  padding: EdgeInsets.symmetric(
-                                                                      horizontal:
-                                                                          15,
-                                                                      vertical:
-                                                                          10),
-                                                                  decoration:
-                                                                      boxDecoration(
-                                                                    null,
-                                                                    AppColors
-                                                                        .light,
-                                                                    AppColors
-                                                                        .light,
-                                                                  ),
-                                                                  child: Text(
-                                                                    _postDateOldest ==
-                                                                            null
-                                                                        ? "Post Date (Oldest)"
-                                                                        : "${_postDateOldest?.day}-${_postDateOldest?.month}-${_postDateOldest?.year}",
-                                                                    style: bodyTextNormal(
-                                                                        null,
-                                                                        FontWeight
-                                                                            .bold),
-                                                                  ),
+                                                                            AppColors.light,
+                                                                            AppColors.light,
+                                                                          )
+                                                                        : boxDecoration(
+                                                                            null,
+                                                                            AppColors.lightPrimary,
+                                                                            AppColors.lightPrimary,
+                                                                          ),
+                                                                child: Text(
+                                                                  _postDateLastest ==
+                                                                          -1
+                                                                      ? "Post Date (Lastest)"
+                                                                      : "Post Date (Oldest)",
+                                                                  style: bodyTextNormal(
+                                                                      _postDateLastest ==
+                                                                              -1
+                                                                          ? null
+                                                                          : AppColors
+                                                                              .fontPrimary,
+                                                                      FontWeight
+                                                                          .bold),
                                                                 ),
                                                               ),
                                                             ),
@@ -836,13 +733,7 @@ class _JobSearchState extends State<JobSearch>
                                                                   .borderSecondary,
                                                       paddingFaIcon:
                                                           EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  1.7.w),
-                                                      fontWeight:
-                                                          _selectedJobFunctionsItems
-                                                                  .isEmpty
-                                                              ? FontWeight.bold
-                                                              : null,
+                                                              horizontal: 10),
                                                       widgetIconActive: FaIcon(
                                                         FontAwesomeIcons
                                                             .caretDown,
@@ -929,13 +820,6 @@ class _JobSearchState extends State<JobSearch>
                                                               .isNotEmpty
                                                           ? "${_jobFunctionItemName.join(', ')}"
                                                           : "Select Job Function",
-                                                      colorText:
-                                                          _selectedJobFunctionsItems
-                                                                  .isEmpty
-                                                              ? AppColors
-                                                                  .fontGreyOpacity
-                                                              : AppColors
-                                                                  .fontDark,
                                                       validateText:
                                                           _isValidateValue ==
                                                                       true &&
@@ -961,7 +845,7 @@ class _JobSearchState extends State<JobSearch>
                                                                 )
                                                               : Container(),
                                                     ),
-                                                    SizedBox(height: 5),
+                                                    SizedBox(height: 10),
 
                                                     //
                                                     //
@@ -993,7 +877,7 @@ class _JobSearchState extends State<JobSearch>
                                                               .caretDown,
                                                           size: IconSize.sIcon,
                                                           color: AppColors
-                                                              .iconSecondary),
+                                                              .iconGrayOpacity),
                                                       press: () async {
                                                         var result =
                                                             await showDialog(
@@ -1054,7 +938,7 @@ class _JobSearchState extends State<JobSearch>
                                                           : "${_provinceName.join(', ')}",
                                                       validateText: Container(),
                                                     ),
-                                                    SizedBox(height: 5),
+                                                    SizedBox(height: 10),
 
                                                     //
                                                     //
@@ -1086,7 +970,7 @@ class _JobSearchState extends State<JobSearch>
                                                               .caretDown,
                                                           size: 20,
                                                           color: AppColors
-                                                              .iconSecondary),
+                                                              .iconGrayOpacity),
                                                       press: () async {
                                                         var result =
                                                             await showDialog(
@@ -1147,6 +1031,7 @@ class _JobSearchState extends State<JobSearch>
                                                           : "${_industryName.join(', ')}",
                                                       validateText: Container(),
                                                     ),
+                                                    SizedBox(height: 10),
 
                                                     //
                                                     //
@@ -1178,7 +1063,7 @@ class _JobSearchState extends State<JobSearch>
                                                               .caretDown,
                                                           size: 20,
                                                           color: AppColors
-                                                              .iconSecondary),
+                                                              .iconGrayOpacity),
                                                       press: () async {
                                                         var result =
                                                             await showDialog(
@@ -1239,6 +1124,7 @@ class _JobSearchState extends State<JobSearch>
                                                           : "${_jobExperienceName.join(', ')}",
                                                       validateText: Container(),
                                                     ),
+                                                    SizedBox(height: 10),
 
                                                     //
                                                     //
@@ -1270,7 +1156,7 @@ class _JobSearchState extends State<JobSearch>
                                                               .caretDown,
                                                           size: 20,
                                                           color: AppColors
-                                                              .iconSecondary),
+                                                              .iconGrayOpacity),
                                                       press: () async {
                                                         var result =
                                                             await showDialog(
@@ -1851,17 +1737,9 @@ class _JobSearchState extends State<JobSearch>
       );
     }
 
-    if (_postDateLastest != null) {
-      _strPostDateLastest = formatYMD(_postDateLastest);
-    }
-    if (_postDateOldest != null) {
-      _strPostDateOldest = formatYMD(_postDateOldest);
-    }
-
     var res = await postData(getJobsSearchSeekerApi, {
       "title": _searchTitle,
-      "postDateLastest": _strPostDateLastest,
-      "postDateOldest": _strPostDateOldest,
+      "postDateLastest": _postDateLastest,
       "jobFunctionIds": _selectedJobFunctionsItems,
       "industryIds": _selectedIndustryListItem,
       "workingLocationIds": _selectedProvincesListItem,

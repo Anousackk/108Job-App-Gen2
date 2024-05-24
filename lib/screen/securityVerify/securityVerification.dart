@@ -62,11 +62,13 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
     //
     //get token from shared preferences.
     var employeeToken = prefs.getString('employeeToken');
+    // print("eiei" + "$employeeToken");
 
     if (employeeToken != null) {
       _isToken = employeeToken;
       checkSeekerInfo();
     }
+
     _isloading = false;
 
     setState(() {});
@@ -89,10 +91,10 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
     checkTokenLogin();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

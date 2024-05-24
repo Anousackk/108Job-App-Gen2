@@ -6,7 +6,7 @@ import 'package:hexcolor/hexcolor.dart';
 class AppColors {
   static Color neumorphismColor = Color(0xFFE7ECEF);
 
-  static Color background = Color(0xffEEEEEE);
+  static Color background = Color(0xf5f5f5f5);
   static Color backgroundWhite = Color(0xffFFFFFF);
   static Color backgroundGreyOpacity = Color(0xffDDDDDD);
   static Color backgroundSecond = HexColor("#0067BC");
@@ -43,8 +43,8 @@ class AppColors {
   static Color orange = HexColor("FF6D00");
 
   //border
-  static Color borderBG = Color(0xffEEEEEE);
-  static Color borderSecondary = Color(0xffCDCDCD);
+  static Color borderBG = Color(0xf5f5f5f5);
+  static Color borderSecondary = Color(0xEBEBEBEB);
   static Color borderGrey = Color(0xff585858);
   static Color borderWhite = Color(0xffFFFFFF);
   static Color borderDark = Color(0xFF000000);
@@ -53,7 +53,7 @@ class AppColors {
   static Color borderDanger = Color(0xFFDD2C00);
   static Color borderGreyOpacity = Color(0xffDDDDDD);
   static Color borderInfo = Color(0xFFFDC527);
-  static Color borderWaring = HexColor("FF6D00");
+  static Color borderWaring = HexColor("#FF6D00");
 
   //font
   static Color fontPrimary = HexColor("#0067BC");
@@ -63,13 +63,13 @@ class AppColors {
   static Color fontWhite = Color(0xffFFFFFF);
   static Color fontDark = Color(0xFF000000);
   static Color fontDanger = Color(0xFFDD2C00);
-  static Color fontWaring = HexColor("FF6D00");
+  static Color fontWaring = HexColor("#FF6D00");
   static Color fontInfo = Color(0xFFFDC527);
 
   static Color fontSuccess = Color(0xff00B147);
 
   //icon
-  static Color iconWarning = HexColor("FF6D00");
+  static Color iconWarning = HexColor("#FF6D00");
   static Color iconInfo = Color(0xFFFDC527);
 
   static Color iconPrimary = HexColor("#0067BC");
@@ -87,9 +87,11 @@ class AppColors {
   static Color buttonSecondary = Color(0xffADADAD);
   static Color buttonDanger = Color(0xFFDD2C00);
   static Color buttonInfo = Color(0xFFFDC527);
-  static Color buttonWarning = HexColor("FF6D00");
+  static Color buttonWarning = HexColor("#FF6D00");
+  static Color buttonLightOrange = HexColor("#FFF0E5");
+
   static Color buttonGreyWhite = Color(0xffEBEBEB);
-  static Color buttonGrey = Color(0xffDDDDDD);
+  static Color buttonGrey = Color(0xEBEBEBEB);
   static Color buttonWhite = Color(0xffFFFFFF);
   static Color buttonBG = Color(0xffEEEEEE);
 }
