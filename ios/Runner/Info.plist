@@ -26,56 +26,6 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>FLTEnableImpeller</key>
-	<false/>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Your reason for accessing the photo library</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Your reason for accessing the camera</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app does not require access to the NSLocation.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app does not require access to the NSLocation.</string>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>fetch</string>
-		<string>remote-notification</string>
-	</array>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UIStatusBarHidden</key>
-	<false/>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-	</array>
-	<key>UISupportsDocumentBrowser</key>
-	<true/>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>io.flutter.embedded_views_preview</key>
-	<false/>
-	<key>GIDClientID</key>
-	<string>1012689313058-sb6ljqkt07h0ktu9n73egj35qmouljh8.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -88,20 +38,66 @@
 			</array>
 		</dict>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FLTEnableImpeller</key>
+	<false/>
 	<key>FacebookAppID</key>
 	<string>729771102607675</string>
 	<key>FacebookClientToken</key>
 	<string>7eef109fb1d30ca724d80ea5db2cb251</string>
 	<key>FacebookDisplayName</key>
-	<string>108 Jobs</string>
+	<string>108 Jobs App</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>GIDClientID</key>
+	<string>1012689313058-sb6ljqkt07h0ktu9n73egj35qmouljh8.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-	    <string>http</string>
-    	<string>https</string>
+		<string>http</string>
+		<string>https</string>
 		<string>fbapi</string>
 		<string>fb-messenger-share-api</string>
 		<string>sms</string>
-  		<string>tel</string>
+		<string>tel</string>
 	</array>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Your reason for accessing the camera</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app does not require access to the NSLocation.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app does not require access to the NSLocation.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Your reason for accessing the photo library</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+		<string>remote-notification</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>UIStatusBarStyle</key>
+	<string></string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>io.flutter.embedded_views_preview</key>
+	<false/>
 </dict>
 </plist>

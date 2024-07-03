@@ -97,7 +97,6 @@ class _EducationState extends State<Education> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     getReuseTypeSeeker('EN', 'Degree');

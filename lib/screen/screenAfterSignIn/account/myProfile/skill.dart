@@ -57,7 +57,6 @@ class _SkillState extends State<Skill> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getReuseTypeSeeker('EN', 'SkillLevel', _listSkillLevel);
 

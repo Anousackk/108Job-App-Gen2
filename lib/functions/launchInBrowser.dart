@@ -11,6 +11,14 @@ Future<void> launchInBrowser(Uri url) async {
   }
 }
 
+Future<void> launchPhoneCall(String phoneNumber) async {
+  final Uri launchUri = Uri(
+    scheme: 'tel',
+    path: phoneNumber,
+  );
+  await launchUrl(launchUri);
+}
+
 Future<void> launchUniversalLinkIOS(Uri url) async {
   final bool nativeAppLaunchSucceeded = await launchUrl(
     url,

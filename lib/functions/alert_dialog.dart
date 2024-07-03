@@ -791,7 +791,7 @@ Future<dynamic> CustomAlertDialogLoading(BuildContext context) {
           content: Container(
             height: 50.w,
             decoration: boxDecoration(
-                null, AppColors.white, AppColors.white.withOpacity(0)),
+                null, AppColors.white, AppColors.white.withOpacity(0), null),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -835,7 +835,7 @@ class _CustomAlertLoadingState extends State<CustomAlertLoading> {
         content: Container(
           height: 25.w,
           decoration: boxDecoration(null, AppColors.backgroundWhite,
-              AppColors.borderWhite.withOpacity(0)),
+              AppColors.borderWhite.withOpacity(0), null),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,

@@ -14,6 +14,7 @@ import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 class Register extends StatefulWidget {
@@ -127,6 +128,7 @@ class _RegisterState extends State<Register> {
                   Expanded(
                     // flex: 15,
                     child: SingleChildScrollView(
+                      physics: ClampingScrollPhysics(),
                       child: Container(
                         // color: AppColors.info,
                         child: Form(
@@ -166,7 +168,7 @@ class _RegisterState extends State<Register> {
                                 ),
                               ),
                               SizedBox(
-                                height: 5.h,
+                                height: 35,
                               ),
 
                               //
@@ -177,7 +179,7 @@ class _RegisterState extends State<Register> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    "Register",
+                                    "register".tr,
                                     style: TextStyle(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold,
@@ -197,7 +199,7 @@ class _RegisterState extends State<Register> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Name",
+                                    "fullname".tr,
                                     style:
                                         bodyTextNormal(null, FontWeight.bold),
                                   ),
@@ -210,7 +212,7 @@ class _RegisterState extends State<Register> {
                                         _name = value;
                                       });
                                     },
-                                    hintText: "Enter your name",
+                                    hintText: "fullname".tr,
                                     hintTextFontWeight: FontWeight.bold,
                                     suffixIcon: Icon(
                                       Icons.keyboard,
@@ -230,7 +232,7 @@ class _RegisterState extends State<Register> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Phone number",
+                                      "phone".tr,
                                       style:
                                           bodyTextNormal(null, FontWeight.bold),
                                     ),
@@ -264,7 +266,7 @@ class _RegisterState extends State<Register> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Email",
+                                      "email".tr,
                                       style:
                                           bodyTextNormal(null, FontWeight.bold),
                                     ),
@@ -277,7 +279,7 @@ class _RegisterState extends State<Register> {
                                           _email = value;
                                         });
                                       },
-                                      hintText: "Email",
+                                      hintText: "email".tr,
                                       suffixIcon: Icon(Icons.email_outlined),
                                     )
                                   ],
@@ -293,7 +295,7 @@ class _RegisterState extends State<Register> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Password",
+                                    "password".tr,
                                     style:
                                         bodyTextNormal(null, FontWeight.bold),
                                   ),
@@ -307,7 +309,7 @@ class _RegisterState extends State<Register> {
                                         _password = value;
                                       });
                                     },
-                                    hintText: 'Password',
+                                    hintText: 'password'.tr,
                                     hintTextFontWeight: FontWeight.bold,
                                     suffixIcon: IconButton(
                                       iconSize: IconSize.sIcon,
@@ -346,7 +348,7 @@ class _RegisterState extends State<Register> {
                               //
                               //Button Register
                               SimpleButton(
-                                text: "Register",
+                                text: "register".tr,
                                 fontWeight: FontWeight.bold,
                                 press: () {
                                   if (formkey.currentState!.validate()) {
@@ -367,8 +369,8 @@ class _RegisterState extends State<Register> {
                                 },
                                 child: Text(
                                   _isCheckTelAndEmail
-                                      ? "Register with Email"
-                                      : "Register with Phone Number",
+                                      ? "register with".tr + " " + "email".tr
+                                      : "register with".tr + " " + "phone".tr,
                                   style: bodyTextNormal(null, FontWeight.bold),
                                 ),
                               ),
@@ -389,7 +391,7 @@ class _RegisterState extends State<Register> {
                                   Flexible(
                                     flex: 1,
                                     child: Text(
-                                      "Or Register with",
+                                      "or".tr + " " + "register with".tr,
                                       style: bodyTextSmall(AppColors.fontGrey),
                                     ),
                                   ),
@@ -431,7 +433,7 @@ class _RegisterState extends State<Register> {
                               ),
 
                               SizedBox(
-                                height: 5.h,
+                                height: 30,
                               ),
 
                               //
@@ -445,7 +447,7 @@ class _RegisterState extends State<Register> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Already have an account? ",
+                                      "already have ac".tr + "? ",
                                       style: bodyTextNormal(null, null),
                                     ),
                                     GestureDetector(
@@ -464,7 +466,7 @@ class _RegisterState extends State<Register> {
                                         }
                                       },
                                       child: Text(
-                                        "Log in",
+                                        "login".tr,
                                         style: bodyTextNormal(
                                             AppColors.fontPrimary,
                                             FontWeight.bold),
@@ -553,7 +555,6 @@ class _RegisterState extends State<Register> {
             return CustomAlertDialogWarning(
               title: "Warning",
               text: value['message'] == null ? "Invalid" : value['message'],
-              textButton: "OK",
               press: () {
                 Navigator.pop(context);
               },

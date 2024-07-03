@@ -22,16 +22,16 @@ OutlineInputBorder focusOutlineBorder(Color color) {
   );
 }
 
-BoxDecoration boxDecoration(
-    BorderRadiusGeometry? borderRadius, Color? color, Color? borderColor) {
+BoxDecoration boxDecoration(BorderRadiusGeometry? borderRadius, Color? color,
+    Color? borderColor, double? borderWidth) {
   return BoxDecoration(
     borderRadius:
         borderRadius == null ? BorderRadius.circular(1.5.w) : borderRadius,
     border: Border.all(
-      color: borderColor == null
-          ? AppColors.borderGrey.withOpacity(0)
-          : borderColor,
-    ),
+        color: borderColor == null
+            ? AppColors.borderGrey.withOpacity(0)
+            : borderColor,
+        width: borderWidth == null ? 1 : borderWidth),
     color: color == null ? AppColors.greyOpacity : color,
   );
 }

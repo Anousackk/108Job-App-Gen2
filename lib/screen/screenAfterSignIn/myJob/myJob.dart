@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_print, prefer_is_empty, prefer_if_null_operators, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_print, prefer_is_empty, prefer_if_null_operators, prefer_typing_uninitialized_variables, unused_element, file_names
 
 import 'dart:async';
 
@@ -15,6 +15,7 @@ import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
@@ -28,14 +29,13 @@ class MyJobs extends StatefulWidget {
 
 class _MyJobsState extends State<MyJobs> {
   TextEditingController _searchTitleController = TextEditingController();
+  ScrollController _scrollController = ScrollController();
 
   List _listMyJobs = [];
-  String _total = "";
   String _searchTitle = "";
   String _typeMyJob = "SeekerSaveJob";
-  String _textTotal = " Job you have saved";
-  String _textAlert = "Unsave Job Success";
-
+  String _textTotal = "job".tr + " " + "have saved".tr;
+  String _textAlert = "unsave job".tr + " " + "successful".tr;
   String _logo = "";
   String _jobTitle = "";
   String _companyName = "";
@@ -49,8 +49,18 @@ class _MyJobsState extends State<MyJobs> {
 
   bool _statusShowLoading = false;
   bool _isLoading = true;
+  bool _isLoadingMoreData = false;
+  bool _hasMoreData = true;
+
+  dynamic page = 1;
+  dynamic perPage = 10;
+  dynamic totals;
+
+  DateTime _dateTimeNow = DateTime.now();
 
   fetchMyJob(String type) async {
+    if (!_hasMoreData) return;
+
     //
     //ສະແດງ AlertDialog Loading
     if (_statusShowLoading) {
@@ -66,19 +76,26 @@ class _MyJobsState extends State<MyJobs> {
     var res = await postData(getMyJobSeekerApi, {
       "type": type,
       "search": _searchTitle,
-      "page": 1,
-      "perPage": 1000,
+      "page": page,
+      "perPage": perPage,
     });
 
-    _listMyJobs = res['info'];
-    _total = res['totals'].toString();
+    List fetchMyJobs = res['info'];
+    // _listMyJobs = res['info'];
+    totals = res['totals'];
+
+    page++;
+    _listMyJobs.addAll(List<Map<String, dynamic>>.from(fetchMyJobs));
+    if (_listMyJobs.length >= totals || fetchMyJobs.length < perPage) {
+      _hasMoreData = false;
+    }
+    _isLoadingMoreData = false;
+    _isLoading = false;
 
     if (res['info'] != null && _statusShowLoading) {
       _statusShowLoading = false;
       Navigator.pop(context);
     }
-
-    _isLoading = false;
 
     if (mounted) {
       setState(() {});
@@ -96,19 +113,23 @@ class _MyJobsState extends State<MyJobs> {
 
       if (_typeMyJob == "SeekerSaveJob") {
         _isLoading = true;
-        _textTotal = " Job you have saved";
-        _textAlert = "Unsave Job Success";
+        _textTotal = "job".tr + " " + "have saved".tr;
+        _textAlert = "unsave job".tr + " " + "successful".tr;
       } else if (_typeMyJob == "AppliedJob") {
         _isLoading = true;
-        _textTotal = " Job you have applied";
+        _textTotal = "job".tr + " " + "have applied".tr;
       } else if (_typeMyJob == "JobAlert") {
         _isLoading = true;
-        _textTotal = " Job you have alert";
+        _textTotal = "job".tr + " " + "have alert".tr;
       } else if (_typeMyJob == "SeekerHideJob") {
         _isLoading = true;
-        _textTotal = " Job you have hidded";
-        _textAlert = "UnHide Job Success";
+        _textTotal = "job".tr + " " + "you have hidded".tr;
+        _textAlert = "unhide job".tr + " " + "successful".tr;
       }
+
+      _listMyJobs.clear();
+      _hasMoreData = true;
+      page = 1;
     });
     fetchMyJob(val);
   }
@@ -131,7 +152,6 @@ class _MyJobsState extends State<MyJobs> {
     print(res);
 
     if (res['message'] == "Delete succeed") {
-      await fetchMyJob(_typeMyJob);
       Navigator.pop(context);
     }
 
@@ -141,9 +161,9 @@ class _MyJobsState extends State<MyJobs> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
+            title: "successful".tr,
             text: "$title $_textAlert",
-            textButton: "OK",
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
             },
@@ -157,10 +177,37 @@ class _MyJobsState extends State<MyJobs> {
     if (widget.myJobStatus == "AppliedJob") {
       setState(() {
         _typeMyJob = widget.myJobStatus;
-        _textTotal = " Job you have applied";
+        _textTotal = "job".tr + " " + "have applied".tr;
 
         fetchMyJob(_typeMyJob);
       });
+    }
+  }
+
+  _removeJobsSearchSeekerLocal(String jobId) {
+    setState(() {
+      _listMyJobs.removeWhere((id) => id['_id'] == jobId);
+      totals = totals - 1;
+    });
+  }
+
+  String getTimeAgo(DateTime dateTimeNow, DateTime openDateTime) {
+    Duration difference = openDateTime.difference(dateTimeNow).abs();
+    // if (difference.inDays > 365) {
+    //   return '${difference.inDays ~/ 365} year${difference.inDays ~/ 365 == 1 ? '' : 's'} ago';
+    // } else
+    if (difference.inDays >= 30) {
+      return '${difference.inDays ~/ 30} ${difference.inDays ~/ 30 == 1 ? 'month'.tr : 'months'.tr}';
+    } else if (difference.inDays >= 7) {
+      return '${difference.inDays ~/ 7} ${difference.inDays ~/ 7 == 1 ? 'week ago'.tr : 'weeks ago'.tr}';
+    } else if (difference.inDays >= 1) {
+      return '${difference.inDays} ${difference.inDays == 1 ? 'day ago'.tr : 'days ago'.tr}';
+    } else if (difference.inHours >= 1) {
+      return '${difference.inHours} ${difference.inHours == 1 ? 'hour ago'.tr : 'hours ago'.tr}';
+    } else if (difference.inMinutes >= 1) {
+      return '${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute ago'.tr : 'minutes ago'.tr}';
+    } else {
+      return "just now".tr;
     }
   }
 
@@ -210,10 +257,20 @@ class _MyJobsState extends State<MyJobs> {
               height: double.infinity,
               child: Column(
                 children: [
-                  Text("${_typeMyJob}"),
+                  // Text("${_typeMyJob}"),
                   // SizedBox(
                   //   height: 20,
                   // ),
+
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //Tap list horizontal
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                     decoration: BoxDecoration(
@@ -239,7 +296,7 @@ class _MyJobsState extends State<MyJobs> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
-                                "Saved Job",
+                                "saved job".tr,
                                 style: bodyTextNormal(
                                     _typeMyJob == "SeekerSaveJob"
                                         ? AppColors.fontWhite
@@ -264,7 +321,7 @@ class _MyJobsState extends State<MyJobs> {
                                       : AppColors.buttonGrey,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Text(
-                                "Applied Job",
+                                "applied job".tr,
                                 style: bodyTextNormal(
                                     _typeMyJob == "AppliedJob"
                                         ? AppColors.fontWhite
@@ -289,7 +346,7 @@ class _MyJobsState extends State<MyJobs> {
                                       : AppColors.buttonGrey,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Text(
-                                "Job Alert",
+                                "my job alert".tr,
                                 style: bodyTextNormal(
                                     _typeMyJob == "JobAlert"
                                         ? AppColors.fontWhite
@@ -314,7 +371,7 @@ class _MyJobsState extends State<MyJobs> {
                                       : AppColors.buttonGrey,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Text(
-                                "Hidded Job",
+                                "hidded".tr,
                                 style: bodyTextNormal(
                                     _typeMyJob == "SeekerHideJob"
                                         ? AppColors.fontWhite
@@ -330,14 +387,22 @@ class _MyJobsState extends State<MyJobs> {
                   SizedBox(
                     height: 15,
                   ),
+
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //Search keywords && Count Jobs available
                   Container(
                     // color: AppColors.blue,
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
-                        //
-                        //
-                        //Search and Filter
                         Row(
                           children: [
                             //
@@ -366,11 +431,14 @@ class _MyJobsState extends State<MyJobs> {
                                     print('Calling API fetchMyJob');
                                     setState(() {
                                       _statusShowLoading = true;
+                                      _listMyJobs.clear();
+                                      _hasMoreData = true;
+                                      page = 1;
                                     });
                                     fetchMyJob(_typeMyJob);
                                   });
                                 },
-                                hintText: 'Search keywords',
+                                hintText: "search".tr + " " + "company name".tr,
                                 inputColor: AppColors.inputWhite,
                               ),
                             ),
@@ -380,28 +448,37 @@ class _MyJobsState extends State<MyJobs> {
                         //
                         //
                         //Count Jobs available
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          child: Row(
-                            children: [
-                              Text(
-                                "${_total}",
-                                style: bodyTextNormal(
-                                    AppColors.fontPrimary, FontWeight.bold),
-                              ),
-                              Text(
-                                " ${_textTotal}",
-                                style: bodyTextNormal(null, FontWeight.bold),
-                              ),
-                            ],
+                        if (!_isLoading)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "${totals}",
+                                  style: bodyTextNormal(
+                                      AppColors.fontPrimary, FontWeight.bold),
+                                ),
+                                Text(
+                                  " ${_textTotal}",
+                                  style: bodyTextNormal(null, FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
+
                   //
                   //
-                  //All Jobs available
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //List My Jobs
                   _isLoading
                       ? Expanded(
                           child: Container(
@@ -418,9 +495,44 @@ class _MyJobsState extends State<MyJobs> {
                               ? Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 20),
                                   child: ListView.builder(
+                                      controller: _scrollController,
                                       physics: ClampingScrollPhysics(),
-                                      itemCount: _listMyJobs.length,
+                                      itemCount: _listMyJobs.length + 1,
                                       itemBuilder: (context, index) {
+                                        if (index == _listMyJobs.length) {
+                                          return _hasMoreData
+                                              ? Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: ElevatedButton(
+                                                    style: ButtonStyle(
+                                                        backgroundColor:
+                                                            MaterialStatePropertyAll(
+                                                                AppColors
+                                                                    .lightPrimary)),
+                                                    onPressed: () => {
+                                                      setState(() {
+                                                        _isLoadingMoreData =
+                                                            true;
+                                                      }),
+                                                      fetchMyJob(_typeMyJob),
+                                                    },
+                                                    child: Text(
+                                                      'view more'.tr,
+                                                      style: TextStyle(
+                                                          color: AppColors
+                                                              .fontPrimary),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Center(
+                                                      child: Text(
+                                                          'no have data'.tr)),
+                                                );
+                                        }
                                         dynamic i = _listMyJobs[index];
 
                                         _logo = i['logo'];
@@ -484,6 +596,8 @@ class _MyJobsState extends State<MyJobs> {
                                                       Duration(
                                                           milliseconds: 300),
                                                       () {
+                                                    _removeJobsSearchSeekerLocal(
+                                                        i['_id']);
                                                     if (_typeMyJob ==
                                                         "SeekerSaveJob") {
                                                       print(
@@ -514,9 +628,11 @@ class _MyJobsState extends State<MyJobs> {
                                                         AppColors.primary,
                                                     icon: FontAwesomeIcons
                                                         .solidHeart,
-                                                    label: 'Saved',
+                                                    label: 'unsave'.tr,
                                                     onPressed: (context) {
                                                       print("press unsave");
+                                                      _removeJobsSearchSeekerLocal(
+                                                          i['_id']);
                                                       deleteMyJob(
                                                           i['_id'],
                                                           _typeMyJob,
@@ -532,9 +648,11 @@ class _MyJobsState extends State<MyJobs> {
                                                         AppColors.fontWhite,
                                                     icon: FontAwesomeIcons
                                                         .rotateLeft,
-                                                    label: 'Unhide',
+                                                    label: 'unhide'.tr,
                                                     onPressed: (constext) {
                                                       print("press hidded");
+                                                      _removeJobsSearchSeekerLocal(
+                                                          i['_id']);
                                                       deleteMyJob(
                                                           i['_id'],
                                                           _typeMyJob,
@@ -560,7 +678,8 @@ class _MyJobsState extends State<MyJobs> {
                                                       ),
                                                     ).then((value) {
                                                       //Success ແມ່ນຄ່າທີ່ໄດ້ຈາກການ Navigator.pop ທີ່ api Save Job or unSave Job ເຮັດວຽກ
-                                                      if (value == 'Success') {
+                                                      if (value[0] ==
+                                                          'Success') {
                                                         setState(() {
                                                           _statusShowLoading =
                                                               true;
@@ -577,6 +696,7 @@ class _MyJobsState extends State<MyJobs> {
                                                   decoration: boxDecoration(
                                                       null,
                                                       AppColors.backgroundWhite,
+                                                      null,
                                                       null),
                                                   child: Column(
                                                     crossAxisAlignment:
@@ -657,16 +777,17 @@ class _MyJobsState extends State<MyJobs> {
                                                                             .start,
                                                                     children: [
                                                                       Text(
-                                                                          "10 Days ago"),
+                                                                        "${getTimeAgo(_dateTimeNow, openDate)}",
+                                                                      ),
                                                                       Row(
                                                                         children: [
                                                                           Text(
-                                                                            "${_views}",
+                                                                            "${_views} ",
                                                                             style:
                                                                                 bodyTextNormal(AppColors.primary, null),
                                                                           ),
-                                                                          Text(
-                                                                              " Views")
+                                                                          Text("view"
+                                                                              .tr)
                                                                         ],
                                                                       ),
                                                                     ],
@@ -737,7 +858,7 @@ class _MyJobsState extends State<MyJobs> {
                                                                                         deleteMyJob(i['_id'], _typeMyJob, i['jobTitle']);
                                                                                       },
                                                                                       title: Container(
-                                                                                        child: Text("Unhide My Job"),
+                                                                                        child: Text("unhide job".tr),
                                                                                       ),
                                                                                       leading: Container(
                                                                                           // padding: EdgeInsets.all(10),
@@ -896,10 +1017,15 @@ class _MyJobsState extends State<MyJobs> {
                                   faIcon:
                                       FontAwesomeIcons.fileCircleExclamation,
                                   colorIcon: AppColors.primary,
-                                  text: "No have data",
+                                  text: "no have data".tr,
                                   colorText: AppColors.primary,
                                 ),
-                        )
+                        ),
+                  if (_isLoadingMoreData)
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
                 ],
               ),
             ),

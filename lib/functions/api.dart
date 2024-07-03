@@ -1,12 +1,15 @@
-// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new
+// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-//Url Server
-const String globalURL = 'https://db.dev.108.jobs/application-api';
+//Url Server Dev
+// const String globalURL = 'https://db.dev.108.jobs/application-api';
+
+//Url Server 108Jobs
+const String globalURL = 'https://db.108.jobs/application-api';
 
 //Login with google && facebook
 const apiLoginWithGoogle = globalURL + "/seeker-signup-google-app";
@@ -20,10 +23,13 @@ var apiVerifyCodeSeeker = globalURL + '/verify-register-code-seeker-app';
 //Set Password
 var setPasswordSeeker = globalURL + "/seeker-reset-password-app";
 
-//Sign In
+//Login
 var apiSigInSeeker = globalURL + "/seeker-login-app";
+var apiAddTokenSeeker = globalURL + "/add-token";
+var apiLogoutSeeker = globalURL + "/logout";
 
-//Login Information
+//Information
+//['Basic Member', 'Basic Job Seeker', 'Expert Job Seeker']
 var informationApiSeeker = globalURL + "/seeker-login-information-app";
 var changePasswordApiSeeker = globalURL + "/seeker-change-password-app";
 var addPhoneNumEmailPassApiSeeker = globalURL + "/seeker-set-mobile-email-app";
@@ -43,6 +49,7 @@ var getReuseFilterJobSearchSeekerApi =
 //
 //Company
 var getCompaniesSeekerApi = globalURL + "/get-search-employer-seeker-app";
+var getCompaniesFeatureApi = globalURL + "/get-employer-feature-seeker-app";
 var getCompanyDetailSeekerApi = globalURL + '/get-employer-detail-seeker-app/';
 //follow
 var addFollowCompanySeekerApi = globalURL + "/add-seeker-follow-employer-app/";
@@ -58,6 +65,8 @@ var getTopBannerEmployee = globalURL + "/get-topbanner-seeker";
 var getSpotLightEmployee = globalURL + "/get-spotlight-seeker";
 var getHiringEmployee = globalURL + "/get-hiring-employer-seeker-app";
 var getTopWorkingLocationEmployee = globalURL + "/get-top-workinglocation-app";
+var groupIndustryWorkingLocationEmployee =
+    globalURL + "/get-grouy-by-industry-workinglocation-app?";
 
 //
 //Job Search && My Job
@@ -71,9 +80,20 @@ var applyJobSeekerApi = globalURL + "/seeker-apply-job-app";
 var getMyJobSeekerApi = globalURL + "/seeker-get-my-job-app";
 
 //
+//Notifications
+var getNotificationsSeeker = globalURL + "/notify-historied-app";
+
+//
 //My Profile
 var getProfileSeekerApi = globalURL + "/seeker-profile-app";
 var getTotalMyJobSeekerApi = globalURL + "/seeker-get-totals-myjob-app";
+
+//Profile Setting
+var searchableProfileSettingSeeker = globalURL + "/issearchable-seeker-app";
+var getCompaniesProfileSetting = globalURL + "/get-employer-list-in-seeker-app";
+var getSeekerSearchableCompaniesProfileSetting =
+    globalURL + "/get-hide-employer-profile-list-app";
+var hideCompanyProfileSetting = globalURL + "/seeker-hide-employer-profile-app";
 
 //Job Aert
 var getJobAlertSeekerApi = globalURL + "/seeker-get-job-alert-app";

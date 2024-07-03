@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, prefer_adjacent_string_concatenation, non_constant_identifier_names, unnecessary_string_interpolations, prefer_final_fields, unused_field, prefer_if_null_operators, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print
+// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, prefer_adjacent_string_concatenation, non_constant_identifier_names, unnecessary_string_interpolations, prefer_final_fields, unused_field, prefer_if_null_operators, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -235,12 +235,10 @@ class _LoginInformationState extends State<LoginInformation> {
                                 onTap: () async {
                                   if (_googleId == "") {
                                     AuthService().loginSyncGoogleFacebook(
-                                        context, "google", (bool success) {
-                                      if (success) {
-                                        print("Google API callback success");
+                                        context, "google", (val) {
+                                      print(val);
+                                      if (val == "Sync successful") {
                                         checkSeekerInfo();
-                                      } else {
-                                        print("Google API callback failed");
                                       }
                                     });
                                   }
@@ -259,12 +257,10 @@ class _LoginInformationState extends State<LoginInformation> {
                                 onTap: () {
                                   if (_facebookId == "") {
                                     AuthService().loginSyncGoogleFacebook(
-                                        context, "facebook", (bool success) {
-                                      if (success) {
-                                        print("Facebook API callback success");
+                                        context, "facebook", (val) {
+                                      print(val);
+                                      if (val == "Sync successful") {
                                         checkSeekerInfo();
-                                      } else {
-                                        print("Facebook API callback failed");
                                       }
                                     });
                                   }

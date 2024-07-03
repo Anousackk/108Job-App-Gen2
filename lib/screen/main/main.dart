@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 //Main Body
 class MainBody extends StatefulWidget {
   const MainBody({Key? key}) : super(key: key);
+  static String routeName = '/MainBody';
 
   @override
   State<MainBody> createState() => _MainBodyState();

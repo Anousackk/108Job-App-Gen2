@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "166667756465",
+    "project_id": "jobs---ga4---main",
+    "storage_bucket": "jobs---ga4---main.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166667756465:android:1356198db3fe8acf2f9390",
+        "android_client_info": {
+          "package_name": "com.onehundredeightjobs.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfT8KBPtNkdHfzpkV4Rq7H8YXRPp-YtAI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

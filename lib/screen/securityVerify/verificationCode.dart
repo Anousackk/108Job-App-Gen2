@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_final_fields, sized_box_for_whitespace, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, unnecessary_null_in_if_null_operators, unused_local_variable, unnecessary_string_interpolations
+// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_final_fields, sized_box_for_whitespace, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, unnecessary_null_in_if_null_operators, unused_local_variable, unnecessary_string_interpolations, file_names
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -9,6 +9,7 @@ import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class VerificationCode extends StatefulWidget {
   const VerificationCode(
@@ -37,7 +38,6 @@ class _VerificationCodeState extends State<VerificationCode> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     _token = widget.token;
@@ -58,8 +58,8 @@ class _VerificationCodeState extends State<VerificationCode> {
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: widget.verifyCode == 'verifyPhoneNum'
-                ? 'Phone Number Verification'
-                : 'Email Verification',
+                ? 'phoneVerification'.tr
+                : 'emailVerification'.tr,
             // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
@@ -80,8 +80,8 @@ class _VerificationCodeState extends State<VerificationCode> {
                         // Text("${_token}"),
                         Text(
                           widget.verifyCode == 'verifyPhoneNum'
-                              ? "Verify your Phone Number"
-                              : "Verify your Email Address",
+                              ? "verify your phone".tr
+                              : "verify your email".tr,
                           style: bodyTextMedium(null, FontWeight.bold),
                         ),
                         SizedBox(
@@ -90,13 +90,12 @@ class _VerificationCodeState extends State<VerificationCode> {
                         if (widget.verifyCode == 'verifyEmail')
                           Column(
                             children: [
-                              Text("Enter the Verification Code sent to"),
-                              Text("${widget.email}"),
+                              Text("code sent to".tr),
+                              Text(" ${widget.email}"),
                             ],
                           ),
                         if (widget.verifyCode == 'verifyPhoneNum')
-                          Text(
-                              "Enter the OTP Code sent to ${widget.phoneNumber}"),
+                          Text("otp sent to".tr + " ${widget.phoneNumber}"),
                         SizedBox(
                           height: 10,
                         ),
@@ -114,7 +113,9 @@ class _VerificationCodeState extends State<VerificationCode> {
                             });
                           },
                           isObscure: false,
-                          hintText: "Enter OTP",
+                          hintText: widget.verifyCode == "verifyPhoneNum"
+                              ? "enter".tr + " " + "otp code".tr
+                              : "enter".tr + " " + "verify code".tr,
                           hintTextFontWeight: FontWeight.bold,
                           suffixIcon: Icon(Icons.keyboard),
                         ),
@@ -171,15 +172,17 @@ class _VerificationCodeState extends State<VerificationCode> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(widget.verifyCode == 'verifyPhoneNum'
-                                ? "Don't receive OTP?"
-                                : "Don't receive Verification? "),
+                            Text(
+                              widget.verifyCode == 'verifyPhoneNum'
+                                  ? "don't receive otp".tr + "? "
+                                  : "don't receive code".tr + "? ",
+                            ),
                             GestureDetector(
                               onTap: () {
                                 resendOTPCode();
                               },
                               child: Text(
-                                "Resend",
+                                "resend".tr,
                                 style: bodyTextNormal(AppColors.primary, null),
                               ),
                             )
@@ -189,7 +192,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                     ),
                   ),
                   Button(
-                    text: 'Verify',
+                    text: 'verify'.tr,
                     fontWeight: FontWeight.bold,
                     press: () {
                       verifyCode();
@@ -269,7 +272,7 @@ class _VerificationCodeState extends State<VerificationCode> {
         context: context,
         builder: (context) {
           return CustomAlertDialogError(
-            title: "Invalid",
+            title: "invalid".tr,
             text: res['message'],
           );
         },
@@ -279,8 +282,8 @@ class _VerificationCodeState extends State<VerificationCode> {
         context: context,
         builder: (context) {
           return CustomAlertDialogWarning(
-            title: "Warning",
-            text: "Invalid!",
+            title: "warning".tr,
+            text: "invalid".tr,
           );
         },
       );

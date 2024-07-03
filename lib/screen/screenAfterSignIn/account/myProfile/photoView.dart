@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, file_names, prefer_typing_uninitialized_variables
 
 import 'package:app/functions/colors.dart';
 import 'package:flutter/material.dart';

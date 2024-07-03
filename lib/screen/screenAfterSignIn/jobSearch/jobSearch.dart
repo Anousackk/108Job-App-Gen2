@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, unused_field, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_comparison, non_constant_identifier_names, prefer_if_null_operators, prefer_is_empty, prefer_typing_uninitialized_variables, unnecessary_null_in_if_null_operators
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, unused_field, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_comparison, non_constant_identifier_names, prefer_if_null_operators, prefer_is_empty, prefer_typing_uninitialized_variables, unnecessary_null_in_if_null_operators, sized_box_for_whitespace, body_might_complete_normally_nullable, unused_element, file_names
 
 import 'dart:async';
 
@@ -18,12 +18,22 @@ import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 class JobSearch extends StatefulWidget {
-  const JobSearch({Key? key, this.topWorkLocation}) : super(key: key);
+  const JobSearch(
+      {Key? key,
+      this.topWorkLocation,
+      this.topIndustry,
+      this.type,
+      this.selectedListItem})
+      : super(key: key);
   final topWorkLocation;
+  final topIndustry;
+  final type;
+  final selectedListItem;
 
   @override
   State<JobSearch> createState() => _JobSearchState();
@@ -33,6 +43,7 @@ class _JobSearchState extends State<JobSearch>
     with SingleTickerProviderStateMixin {
   TextEditingController _searchTitleController = TextEditingController();
   late final slidableController = SlidableController(this);
+  ScrollController _scrollController = ScrollController();
 
   //
   //Get list items all
@@ -68,8 +79,8 @@ class _JobSearchState extends State<JobSearch>
   String _companyName = "";
   String _workingLocations = "";
   String _isClick = "";
-  String _total = "";
   String _searchTitle = "";
+  String _tag = "Highlight";
 
   dynamic _openDate;
   dynamic _closeDate;
@@ -80,8 +91,16 @@ class _JobSearchState extends State<JobSearch>
   bool _statusShowLoading = false;
   bool _isValidateValue = false;
   bool _closeOnScroll = true;
-  bool _isLoading = false;
   bool _isCheckFilterColor = false;
+  bool _isSaved = false;
+  bool _isLoading = false;
+  bool _isLoadingMoreData = false;
+  bool _hasMoreData = true;
+
+  dynamic page = 1;
+  dynamic perPage = 10;
+  dynamic totals;
+  dynamic _disablePeople;
 
   DateTime _dateTimeNow = DateTime.now();
 
@@ -89,22 +108,43 @@ class _JobSearchState extends State<JobSearch>
     print(val);
   }
 
+  // String getTimeAgo(DateTime dateTimeNow, DateTime openDateTime) {
+  //   Duration difference = openDateTime.difference(dateTimeNow).abs();
+  //   if (difference.inDays > 365) {
+  //     return '${difference.inDays ~/ 365} year${difference.inDays ~/ 365 == 1 ? '' : 's'} ago';
+  //   } else
+  //   if (difference.inDays >= 30) {
+  //     return '${difference.inDays ~/ 30} month${difference.inDays ~/ 30 == 1 ? '' : 's'} ago';
+  //   } else if (difference.inDays >= 7) {
+  //     return '${difference.inDays ~/ 7} week${difference.inDays ~/ 7 == 1 ? '' : 's'} ago';
+  //   } else if (difference.inDays >= 1) {
+  //     return '${difference.inDays} day${difference.inDays == 1 ? '' : 's'} ago';
+  //   } else if (difference.inHours >= 1) {
+  //     return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';
+  //   } else if (difference.inMinutes >= 1) {
+  //     return '${difference.inMinutes} minute${difference.inMinutes == 1 ? '' : 's'} ago';
+  //   } else {
+  //     return "just now".tr;
+  //   }
+  // }
+
   String getTimeAgo(DateTime dateTimeNow, DateTime openDateTime) {
     Duration difference = openDateTime.difference(dateTimeNow).abs();
-    if (difference.inDays > 365) {
-      return '${difference.inDays ~/ 365} year${difference.inDays ~/ 365 == 1 ? '' : 's'} ago';
-    } else if (difference.inDays >= 30) {
-      return '${difference.inDays ~/ 30} month${difference.inDays ~/ 30 == 1 ? '' : 's'} ago';
+    // if (difference.inDays > 365) {
+    //   return '${difference.inDays ~/ 365} year${difference.inDays ~/ 365 == 1 ? '' : 's'} ago';
+    // } else
+    if (difference.inDays >= 30) {
+      return '${difference.inDays ~/ 30} ${difference.inDays ~/ 30 == 1 ? 'month'.tr : 'months'.tr}';
     } else if (difference.inDays >= 7) {
-      return '${difference.inDays ~/ 7} week${difference.inDays ~/ 7 == 1 ? '' : 's'} ago';
+      return '${difference.inDays ~/ 7} ${difference.inDays ~/ 7 == 1 ? 'week ago'.tr : 'weeks ago'.tr}';
     } else if (difference.inDays >= 1) {
-      return '${difference.inDays} day${difference.inDays == 1 ? '' : 's'} ago';
+      return '${difference.inDays} ${difference.inDays == 1 ? 'day ago'.tr : 'days ago'.tr}';
     } else if (difference.inHours >= 1) {
-      return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';
+      return '${difference.inHours} ${difference.inHours == 1 ? 'hour ago'.tr : 'hours ago'.tr}';
     } else if (difference.inMinutes >= 1) {
-      return '${difference.inMinutes} minute${difference.inMinutes == 1 ? '' : 's'} ago';
+      return '${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute ago'.tr : 'minutes ago'.tr}';
     } else {
-      return 'Just now';
+      return "just now".tr;
     }
   }
 
@@ -150,7 +190,7 @@ class _JobSearchState extends State<JobSearch>
     }
   }
 
-  checkTopWorkLocationFromHomePage() {
+  checkProvinceFromHomePage() {
     dynamic i = widget.topWorkLocation;
     if (i != null) {
       setState(() {
@@ -161,6 +201,66 @@ class _JobSearchState extends State<JobSearch>
 
         filterColor();
       });
+    }
+  }
+
+  checkTopIndustryFromHomePage() {
+    dynamic i = widget.topIndustry;
+    if (i != null) {
+      setState(() {
+        _selectedIndustryListItem.add(i['_id']);
+
+        _industryName = [];
+        _industryName.add(i['name']);
+
+        filterColor();
+      });
+    }
+  }
+
+  checkSelectedListItemFromHomePage() {
+    dynamic i = widget.selectedListItem;
+    String str = widget.type;
+
+    if (i != null) {
+      if (str == "Industry") {
+        setState(() {
+          _selectedIndustryListItem = i;
+          _industryName =
+              []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+
+          for (var item in _listIndustries) {
+            //
+            //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedIndustryListItem ກົງກັບ _listIndustries ບໍ່
+            if (_selectedIndustryListItem.contains(item['_id'])) {
+              //
+              //add Industry Name ເຂົ້າໃນ _industryName
+
+              _industryName.add(item['name']);
+            }
+          }
+
+          getJobsSearchSeeker();
+          filterColor();
+        });
+      } else if (str == "Province") {
+        _selectedProvincesListItem = i;
+        _provinceName =
+            []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+
+        for (var item in _listProvinces) {
+          //
+          //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedProvincesListItem ກົງກັບ _listProvinces ບໍ່
+          if (_selectedProvincesListItem.contains(item['_id'])) {
+            //
+            //add Provinces Name ເຂົ້າໃນ _provinceName
+
+            _provinceName.add(item['name']);
+          }
+        }
+        getJobsSearchSeeker();
+        filterColor();
+      }
     }
   }
 
@@ -176,7 +276,6 @@ class _JobSearchState extends State<JobSearch>
   void initState() {
     super.initState();
     _isLoading = true;
-    getJobsSearchSeeker();
 
     getReuseFilterJobSearchSeeker('EN', _listIndustries, "industry");
     getReuseFilterJobSearchSeeker('EN', _listProvinces, "workLocation");
@@ -185,7 +284,15 @@ class _JobSearchState extends State<JobSearch>
         'EN', _listEducationsLevels, "educationLevel");
     getReuseFilterJobSearchSeeker('EN', _listJobLevels, "jobLevel");
     getJobFunctionsSeeker();
-    checkTopWorkLocationFromHomePage();
+    if (widget.topWorkLocation != null) {
+      checkProvinceFromHomePage();
+    }
+    if (widget.topIndustry != null) {
+      checkTopIndustryFromHomePage();
+    }
+    if (widget.selectedListItem == null) {
+      getJobsSearchSeeker();
+    }
 
     _searchTitleController.text = _searchTitle;
 
@@ -198,6 +305,7 @@ class _JobSearchState extends State<JobSearch>
   void dispose() {
     //
     //Cancel the timer when the widget is disposed
+    _scrollController.dispose();
     _searchTitleController.dispose();
     _timer?.cancel();
 
@@ -251,6 +359,16 @@ class _JobSearchState extends State<JobSearch>
                           children: [
                             //
                             //
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
                             //Search keywords
                             Expanded(
                               flex: 8,
@@ -276,11 +394,14 @@ class _JobSearchState extends State<JobSearch>
                                     print('Calling API Get JobsSearch');
                                     setState(() {
                                       _statusShowLoading = true;
+                                      _listJobsSearch.clear();
+                                      _hasMoreData = true;
+                                      page = 1;
                                     });
                                     getJobsSearchSeeker();
                                   });
                                 },
-                                hintText: 'Search keywords',
+                                hintText: 'search'.tr,
                                 inputColor: AppColors.inputWhite,
                               ),
                             ),
@@ -288,6 +409,15 @@ class _JobSearchState extends State<JobSearch>
                               width: 10,
                             ),
 
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
                             //
                             //
                             //BoxDecoration Filter
@@ -315,7 +445,7 @@ class _JobSearchState extends State<JobSearch>
                                   paddingFaIcon:
                                       EdgeInsets.symmetric(horizontal: 10),
 
-                                  text: "Filter",
+                                  text: "filter".tr,
                                   // fontWeight: FontWeight.bold,
                                   colorText: _isCheckFilterColor
                                       ? AppColors.fontPrimary
@@ -368,7 +498,7 @@ class _JobSearchState extends State<JobSearch>
                                                   Expanded(
                                                     child: Center(
                                                       child: Text(
-                                                        "Filter",
+                                                        "filter".tr,
                                                         style: bodyTextMedium(
                                                             null,
                                                             FontWeight.bold),
@@ -382,7 +512,7 @@ class _JobSearchState extends State<JobSearch>
                                                       });
                                                     },
                                                     child: Text(
-                                                      "Clear All",
+                                                      "clear all".tr,
                                                       style: bodyTextNormal(
                                                           AppColors.fontPrimary,
                                                           null),
@@ -425,7 +555,7 @@ class _JobSearchState extends State<JobSearch>
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          "Sort By",
+                                                          "sort by".tr,
                                                           style: bodyTextNormal(
                                                               null,
                                                               FontWeight.bold),
@@ -452,24 +582,28 @@ class _JobSearchState extends State<JobSearch>
                                                                             15,
                                                                         vertical:
                                                                             10),
-                                                                decoration:
-                                                                    _postDateLastest ==
-                                                                            -1
-                                                                        ? boxDecoration(
-                                                                            null,
-                                                                            AppColors.light,
-                                                                            AppColors.light,
-                                                                          )
-                                                                        : boxDecoration(
-                                                                            null,
-                                                                            AppColors.lightPrimary,
-                                                                            AppColors.lightPrimary,
-                                                                          ),
+                                                                decoration: _postDateLastest ==
+                                                                        -1
+                                                                    ? boxDecoration(
+                                                                        null,
+                                                                        AppColors
+                                                                            .light,
+                                                                        AppColors
+                                                                            .light,
+                                                                        null)
+                                                                    : boxDecoration(
+                                                                        null,
+                                                                        AppColors
+                                                                            .lightPrimary,
+                                                                        AppColors
+                                                                            .lightPrimary,
+                                                                        null),
                                                                 child: Text(
-                                                                  _postDateLastest ==
-                                                                          -1
-                                                                      ? "Post Date (Lastest)"
-                                                                      : "Post Date (Oldest)",
+                                                                  _postDateLastest == -1
+                                                                      ? "post data latest"
+                                                                          .tr
+                                                                      : "post data oldes"
+                                                                          .tr,
                                                                   style: bodyTextNormal(
                                                                       _postDateLastest ==
                                                                               -1
@@ -496,7 +630,7 @@ class _JobSearchState extends State<JobSearch>
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          "Education Level",
+                                                          "education level".tr,
                                                           style: bodyTextNormal(
                                                               null,
                                                               FontWeight.bold),
@@ -549,23 +683,22 @@ class _JobSearchState extends State<JobSearch>
                                                                           15,
                                                                       vertical:
                                                                           10),
-                                                                  decoration: _selectedEducationLeavelListItem
-                                                                          .contains(
-                                                                              i['_id'])
+                                                                  decoration: _selectedEducationLeavelListItem.contains(i[
+                                                                          '_id'])
                                                                       ? boxDecoration(
                                                                           null,
                                                                           AppColors
                                                                               .buttonLightPrimary,
                                                                           AppColors
                                                                               .buttonLightPrimary,
-                                                                        )
+                                                                          null)
                                                                       : boxDecoration(
                                                                           null,
                                                                           AppColors
                                                                               .light,
                                                                           AppColors
                                                                               .light,
-                                                                        ),
+                                                                          null),
                                                                   child: Text(
                                                                     "${educationLevelName}",
                                                                     style: bodyTextNormal(
@@ -707,7 +840,7 @@ class _JobSearchState extends State<JobSearch>
                                                     //
                                                     //Job Function
                                                     Text(
-                                                      "Job Functions",
+                                                      "job function".tr,
                                                       style: bodyTextNormal(
                                                           null,
                                                           FontWeight.bold),
@@ -752,7 +885,8 @@ class _JobSearchState extends State<JobSearch>
                                                                     (context) {
                                                                   return ListJobFuncSelectedAlertDialog(
                                                                     title:
-                                                                        "Job Functions",
+                                                                        "job function"
+                                                                            .tr,
                                                                     listItems:
                                                                         _listJobFunctions,
                                                                     selectedListItems:
@@ -819,7 +953,8 @@ class _JobSearchState extends State<JobSearch>
                                                       text: _selectedJobFunctionsItems
                                                               .isNotEmpty
                                                           ? "${_jobFunctionItemName.join(', ')}"
-                                                          : "Select Job Function",
+                                                          : "select".tr +
+                                                              "job function".tr,
                                                       validateText:
                                                           _isValidateValue ==
                                                                       true &&
@@ -835,7 +970,8 @@ class _JobSearchState extends State<JobSearch>
                                                                     top: 5,
                                                                   ),
                                                                   child: Text(
-                                                                    "required",
+                                                                    "required"
+                                                                        .tr,
                                                                     style:
                                                                         bodyTextSmall(
                                                                       AppColors
@@ -855,7 +991,7 @@ class _JobSearchState extends State<JobSearch>
                                                           EdgeInsets.symmetric(
                                                               vertical: 10),
                                                       child: Text(
-                                                        "Work Province",
+                                                        "work province".tr,
                                                         style: bodyTextNormal(
                                                             null,
                                                             FontWeight.bold),
@@ -889,7 +1025,8 @@ class _JobSearchState extends State<JobSearch>
                                                                     (context) {
                                                                   return ListMultiSelectedAlertDialog(
                                                                     title:
-                                                                        "Work Province",
+                                                                        "work province"
+                                                                            .tr,
                                                                     listItems:
                                                                         _listProvinces,
                                                                     selectedListItem:
@@ -934,7 +1071,8 @@ class _JobSearchState extends State<JobSearch>
                                                       },
                                                       text: _selectedProvincesListItem
                                                               .isEmpty
-                                                          ? "Select Work Province"
+                                                          ? "select".tr +
+                                                              "work province".tr
                                                           : "${_provinceName.join(', ')}",
                                                       validateText: Container(),
                                                     ),
@@ -948,7 +1086,7 @@ class _JobSearchState extends State<JobSearch>
                                                           EdgeInsets.symmetric(
                                                               vertical: 10),
                                                       child: Text(
-                                                        "Industry",
+                                                        "industry".tr,
                                                         style: bodyTextNormal(
                                                             null,
                                                             FontWeight.bold),
@@ -982,7 +1120,8 @@ class _JobSearchState extends State<JobSearch>
                                                                     (context) {
                                                                   return ListMultiSelectedAlertDialog(
                                                                     title:
-                                                                        "Industry",
+                                                                        "industry"
+                                                                            .tr,
                                                                     listItems:
                                                                         _listIndustries,
                                                                     selectedListItem:
@@ -1027,7 +1166,8 @@ class _JobSearchState extends State<JobSearch>
                                                       },
                                                       text: _selectedIndustryListItem
                                                               .isEmpty
-                                                          ? "Select Industry"
+                                                          ? "select".tr +
+                                                              "industry".tr
                                                           : "${_industryName.join(', ')}",
                                                       validateText: Container(),
                                                     ),
@@ -1041,7 +1181,7 @@ class _JobSearchState extends State<JobSearch>
                                                           EdgeInsets.symmetric(
                                                               vertical: 10),
                                                       child: Text(
-                                                        "Job Experience",
+                                                        "job experience".tr,
                                                         style: bodyTextNormal(
                                                             null,
                                                             FontWeight.bold),
@@ -1075,7 +1215,8 @@ class _JobSearchState extends State<JobSearch>
                                                                     (context) {
                                                                   return ListMultiSelectedAlertDialog(
                                                                     title:
-                                                                        "Job Experience",
+                                                                        "job experience"
+                                                                            .tr,
                                                                     listItems:
                                                                         _ListJobExperiences,
                                                                     selectedListItem:
@@ -1120,7 +1261,9 @@ class _JobSearchState extends State<JobSearch>
                                                       },
                                                       text: _selectedJobExperienceListItem
                                                               .isEmpty
-                                                          ? "Select Job Experience"
+                                                          ? "select".tr +
+                                                              "job experience"
+                                                                  .tr
                                                           : "${_jobExperienceName.join(', ')}",
                                                       validateText: Container(),
                                                     ),
@@ -1134,7 +1277,7 @@ class _JobSearchState extends State<JobSearch>
                                                           EdgeInsets.symmetric(
                                                               vertical: 10),
                                                       child: Text(
-                                                        "Job Level",
+                                                        "job level".tr,
                                                         style: bodyTextNormal(
                                                             null,
                                                             FontWeight.bold),
@@ -1168,7 +1311,8 @@ class _JobSearchState extends State<JobSearch>
                                                                     (context) {
                                                                   return ListMultiSelectedAlertDialog(
                                                                     title:
-                                                                        "Job Level",
+                                                                        "job level"
+                                                                            .tr,
                                                                     listItems:
                                                                         _listJobLevels,
                                                                     selectedListItem:
@@ -1213,7 +1357,8 @@ class _JobSearchState extends State<JobSearch>
                                                       },
                                                       text: _selectedJobLevelListItem
                                                               .isEmpty
-                                                          ? "Select Industry"
+                                                          ? "select".tr +
+                                                              "job level".tr
                                                           : "${_jobLevelName.join(', ')}",
                                                       validateText: Container(),
                                                     ),
@@ -1233,7 +1378,7 @@ class _JobSearchState extends State<JobSearch>
                                                 color:
                                                     AppColors.backgroundWhite,
                                                 child: Button(
-                                                  text: "Apply",
+                                                  text: "confirm".tr,
                                                   press: () {
                                                     Navigator.pop(context);
 
@@ -1242,6 +1387,9 @@ class _JobSearchState extends State<JobSearch>
                                                         'Calling API Get JobsSearch After Press Button Apply');
                                                     setState(() {
                                                       _statusShowLoading = true;
+                                                      _listJobsSearch.clear();
+                                                      _hasMoreData = true;
+                                                      page = 1;
                                                     });
                                                     getJobsSearchSeeker();
                                                     filterColor();
@@ -1262,34 +1410,90 @@ class _JobSearchState extends State<JobSearch>
 
                         //
                         //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
                         //Count Jobs available
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: Row(
                             children: [
                               Text(
-                                "${_total}",
+                                "${totals} ",
                                 style: bodyTextNormal(
                                     AppColors.fontPrimary, FontWeight.bold),
                               ),
                               Text(
-                                " Jobs available",
+                                "job available".tr,
                                 style: bodyTextNormal(null, null),
                               ),
                             ],
                           ),
                         ),
+
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
                         //
                         //
                         //List Jobs Search
                         Expanded(
                           child: _listJobsSearch.length > 0
                               ? ListView.builder(
+                                  controller:
+                                      _scrollController, // Use the scroll controller
                                   physics: ClampingScrollPhysics(),
-                                  itemCount: _listJobsSearch.length,
+                                  itemCount: _listJobsSearch.length + 1,
                                   itemBuilder: (context, index) {
-                                    dynamic i = _listJobsSearch[index];
-
+                                    if (index == _listJobsSearch.length) {
+                                      return _hasMoreData
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: ElevatedButton(
+                                                style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStatePropertyAll(
+                                                            AppColors
+                                                                .lightPrimary)),
+                                                onPressed: () => {
+                                                  setState(() {
+                                                    _isLoadingMoreData = true;
+                                                  }),
+                                                  getJobsSearchSeeker(),
+                                                },
+                                                child: Text(
+                                                  'view more'.tr,
+                                                  style: TextStyle(
+                                                      color: AppColors
+                                                          .fontPrimary),
+                                                ),
+                                              ),
+                                            )
+                                          : Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Center(
+                                                  child:
+                                                      Text('no have data'.tr)),
+                                            );
+                                    }
+                                    var i = _listJobsSearch[index];
                                     _title = i['title'];
                                     _logo = i['logo'];
                                     _companyName = i['companyName'];
@@ -1297,6 +1501,9 @@ class _JobSearchState extends State<JobSearch>
                                     _openDate = i['openingDate'];
                                     _closeDate = i['closingDate'];
                                     _isClick = i['isClick'].toString();
+                                    _tag = i['tag'];
+                                    _disablePeople = i['disabledPeople'];
+                                    _isSaved = i['isSaved'];
 
                                     //
                                     //Open Date
@@ -1348,26 +1555,32 @@ class _JobSearchState extends State<JobSearch>
                                             onDismissed: () {
                                               print(
                                                   "hide dismiss the Slidable");
+                                              _removeJobsSearchSeekerLocal(
+                                                  i['jobId']);
                                               hideJob(i['jobId'], i['title']);
                                             },
                                           ),
                                           children: [
-                                            if (!i['isSaved'])
+                                            if (!_isSaved)
                                               SlidableAction(
                                                 backgroundColor:
                                                     AppColors.buttonPrimary,
                                                 foregroundColor:
                                                     AppColors.fontWhite,
                                                 icon: FontAwesomeIcons.heart,
-                                                label: 'Save',
+                                                label: 'save'.tr,
                                                 onPressed: (context) {
                                                   print("press to save");
+                                                  setState(() {
+                                                    i['isSaved'] =
+                                                        !i['isSaved'];
+                                                  });
                                                   saveAndUnSaveJob(
                                                       i['jobId'], i['title']);
                                                   slidableController.close();
                                                 },
                                               ),
-                                            if (i['isSaved'])
+                                            if (_isSaved)
                                               SlidableAction(
                                                 backgroundColor:
                                                     AppColors.lightPrimary,
@@ -1375,9 +1588,13 @@ class _JobSearchState extends State<JobSearch>
                                                     AppColors.primary,
                                                 icon:
                                                     FontAwesomeIcons.solidHeart,
-                                                label: 'Saved',
+                                                label: 'saved'.tr,
                                                 onPressed: (context) {
                                                   print("press to unsave");
+                                                  setState(() {
+                                                    i['isSaved'] =
+                                                        !i['isSaved'];
+                                                  });
                                                   saveAndUnSaveJob(
                                                       i['jobId'], i['title']);
 
@@ -1390,15 +1607,20 @@ class _JobSearchState extends State<JobSearch>
                                               foregroundColor:
                                                   AppColors.fontWhite,
                                               icon: FontAwesomeIcons.ban,
-                                              label: 'Hide',
+                                              label: 'hide'.tr,
                                               onPressed: (constext) {
                                                 print("press to hide");
+                                                _removeJobsSearchSeekerLocal(
+                                                    i['jobId']);
                                                 hideJob(i['jobId'], i['title']);
                                               },
                                             ),
                                           ],
                                         ),
 
+                                        //
+                                        //
+                                        //Card Job Search
                                         child: GestureDetector(
                                           onTap: () {
                                             Navigator.push(
@@ -1411,272 +1633,577 @@ class _JobSearchState extends State<JobSearch>
                                               ),
                                             ).then((value) {
                                               //Success ແມ່ນຄ່າທີ່ໄດ້ຈາກການ Navigator.pop ທີ່ api Save Job or unSave Job ເຮັດວຽກ
-                                              if (value == 'Success') {
+                                              // if (value[0] == 'Success') {
+                                              //   setState(() {
+                                              //     _statusShowLoading = true;
+                                              //   });
+                                              //   onGoBack(value);
+                                              // }
+
+                                              if (value[1] != "") {
                                                 setState(() {
-                                                  _statusShowLoading = true;
+                                                  dynamic job = _listJobsSearch
+                                                      .firstWhere((e) =>
+                                                          e['jobId'] ==
+                                                          value[1]);
+
+                                                  job["isSaved"] = value[2];
                                                 });
-                                                onGoBack(value);
                                               }
                                             });
                                           },
                                           child: Container(
-                                            height: 250,
-                                            padding: EdgeInsets.all(15),
-                                            // margin: EdgeInsets.only(bottom: 15),
                                             decoration: boxDecoration(
-                                              null,
-                                              AppColors.backgroundWhite,
-                                              null,
-                                            ),
+                                                null,
+                                                _tag == "Highlight"
+                                                    ? AppColors.lightOrange
+                                                    : AppColors.backgroundWhite,
+                                                _tag == "Highlight"
+                                                    ? AppColors.borderWaring
+                                                    : null,
+                                                3),
                                             child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
                                               children: [
-                                                //
-                                                //
-                                                //Logo Company and Status
                                                 Container(
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                                  // height: 220,
+                                                  // padding: EdgeInsets.symmetric(
+                                                  //     horizontal: 15,
+                                                  //     vertical: 15),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: [
                                                       //
-                                                      //Logo Company
-                                                      Expanded(
+                                                      //
+                                                      //Logo Company and Status
+                                                      Container(
                                                         child: Row(
+                                                          // crossAxisAlignment:
+                                                          //     CrossAxisAlignment
+                                                          //         .start,
                                                           children: [
-                                                            Container(
-                                                              width: 75,
-                                                              height: 75,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                border:
-                                                                    Border.all(
-                                                                  color: AppColors
-                                                                      .borderSecondary,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                                color: AppColors
-                                                                    .backgroundWhite,
-                                                              ),
-                                                              child: Padding(
+                                                            //
+                                                            //
+                                                            //Company Logo/Name
+                                                            Expanded(
+                                                              child: Container(
                                                                 padding:
-                                                                    const EdgeInsets
-                                                                        .all(5),
-                                                                child:
-                                                                    ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                  child: Center(
-                                                                    child: _logo ==
-                                                                            ""
-                                                                        ? Image
-                                                                            .asset(
-                                                                            'assets/image/no-image-available.png',
-                                                                            fit:
-                                                                                BoxFit.contain,
-                                                                          )
-                                                                        : Image
-                                                                            .network(
-                                                                            "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
-                                                                            fit:
-                                                                                BoxFit.contain,
-                                                                            errorBuilder: (context,
-                                                                                error,
-                                                                                stackTrace) {
-                                                                              return Image.asset(
-                                                                                'assets/image/no-image-available.png',
-                                                                                fit: BoxFit.contain,
-                                                                              ); // Display an error message
-                                                                            },
+                                                                    EdgeInsets
+                                                                        .only(
+                                                                  top: 15,
+                                                                  left: 15,
+                                                                  right: 15,
+                                                                ),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Container(
+                                                                      width: 75,
+                                                                      height:
+                                                                          75,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        border:
+                                                                            Border.all(
+                                                                          color:
+                                                                              AppColors.borderSecondary,
+                                                                        ),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10),
+                                                                        color: AppColors
+                                                                            .backgroundWhite,
+                                                                      ),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            5),
+                                                                        child:
+                                                                            ClipRRect(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8),
+                                                                          child:
+                                                                              Center(
+                                                                            child: _logo == ""
+                                                                                ? Image.asset(
+                                                                                    'assets/image/no-image-available.png',
+                                                                                    fit: BoxFit.contain,
+                                                                                  )
+                                                                                : Image.network(
+                                                                                    "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                                                    fit: BoxFit.contain,
+                                                                                    errorBuilder: (context, error, stackTrace) {
+                                                                                      return Image.asset(
+                                                                                        'assets/image/no-image-available.png',
+                                                                                        fit: BoxFit.contain,
+                                                                                      ); // Display an error message
+                                                                                    },
+                                                                                  ),
                                                                           ),
-                                                                  ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            15),
+                                                                    Expanded(
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Text(
+                                                                            "${_companyName}",
+                                                                            style:
+                                                                                bodyTextNormal(null, FontWeight.bold),
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                          ),
+                                                                          Text(
+                                                                            "${getTimeAgo(_dateTimeNow, openDate)}",
+                                                                          ),
+
+                                                                          // Row(
+                                                                          //   children: [
+                                                                          //     Text(
+                                                                          //       "${_isClick}",
+                                                                          //       style: bodyTextNormal(
+                                                                          //           AppColors
+                                                                          //               .primary,
+                                                                          //           null),
+                                                                          //     ),
+                                                                          //     Text(
+                                                                          //         " Views")
+                                                                          //   ],
+                                                                          // ),
+                                                                        ],
+                                                                      ),
+                                                                    )
+                                                                  ],
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(width: 15),
+
+                                                            //
+                                                            //
+                                                            //Jobs Seach check newJob
                                                             Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
                                                               children: [
-                                                                Text(
-                                                                  "${getTimeAgo(_dateTimeNow, openDate)}",
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    Text(
-                                                                      "${_isClick}",
-                                                                      style: bodyTextNormal(
-                                                                          AppColors
-                                                                              .primary,
-                                                                          null),
+                                                                //
+                                                                //
+                                                                //Status HOT
+                                                                // if (_tag ==
+                                                                //     "Highlight")
+                                                                //   Align(
+                                                                //     alignment:
+                                                                //         Alignment
+                                                                //             .centerRight,
+                                                                //     child:
+                                                                //         Container(
+                                                                //       decoration:
+                                                                //           BoxDecoration(
+                                                                //         color: AppColors
+                                                                //             .danger,
+                                                                //         borderRadius:
+                                                                //             BorderRadius.only(
+                                                                //           topRight:
+                                                                //               Radius.circular(5),
+                                                                //           bottomLeft:
+                                                                //               Radius.circular(10),
+                                                                //         ),
+                                                                //       ),
+                                                                //       padding: EdgeInsets.symmetric(
+                                                                //           horizontal:
+                                                                //               10,
+                                                                //           vertical:
+                                                                //               5),
+                                                                //       child:
+                                                                //           Text(
+                                                                //         "HOT",
+                                                                //         style: bodyTextNormal(
+                                                                //             AppColors.fontWhite,
+                                                                //             null),
+                                                                //       ),
+                                                                //     ),
+                                                                //   ),
+
+                                                                //
+                                                                //
+                                                                //Disable People
+                                                                if (_disablePeople)
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        right:
+                                                                            15,
+                                                                        bottom:
+                                                                            15),
+                                                                    child:
+                                                                        Container(
+                                                                      padding:
+                                                                          EdgeInsets.all(
+                                                                              10),
+                                                                      // margin: EdgeInsets
+                                                                      //     .only(
+                                                                      //   top: _tag ==
+                                                                      //           "Highlight"
+                                                                      //       ? 5
+                                                                      //       : 15,
+                                                                      //   right:
+                                                                      //       15,
+                                                                      // ),
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: AppColors
+                                                                            .warning,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(5),
+                                                                      ),
+                                                                      child:
+                                                                          FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .wheelchair,
+                                                                        color: AppColors
+                                                                            .iconLight,
+                                                                      ),
                                                                     ),
-                                                                    Text(
-                                                                        " Views")
-                                                                  ],
-                                                                ),
+                                                                  ),
+
+                                                                //
+                                                                //
+                                                                //Status Job New/Saved
+                                                                // if (i['newJob'] ||
+                                                                //     i['isSaved'])
+                                                                //   Container(
+                                                                //     alignment:
+                                                                //         Alignment
+                                                                //             .topCenter,
+                                                                //     padding:
+                                                                //         EdgeInsets
+                                                                //             .symmetric(
+                                                                //       horizontal:
+                                                                //           10,
+                                                                //       vertical:
+                                                                //           5,
+                                                                //     ),
+                                                                //     margin:
+                                                                //         EdgeInsets
+                                                                //             .only(
+                                                                //       top: _tag ==
+                                                                //               "hot"
+                                                                //           ? 5
+                                                                //           : 15,
+                                                                //       right: 15,
+                                                                //     ),
+                                                                //     decoration:
+                                                                //         BoxDecoration(
+                                                                //       // color: !i['newJob'] &&
+                                                                //       //         !i[
+                                                                //       //             'isSaved']
+                                                                //       //     ? AppColors
+                                                                //       //         .greyOpacity
+                                                                //       //     : AppColors
+                                                                //       //         .primary,
+                                                                //       color: AppColors
+                                                                //           .primary,
+
+                                                                //       borderRadius:
+                                                                //           BorderRadius.circular(
+                                                                //               5),
+                                                                //     ),
+                                                                //     child: Text(
+                                                                //       // i['newJob'] &&
+                                                                //       //         !i['isSaved']
+                                                                //       //     ? "New"
+                                                                //       //     : !i['newJob'] && i['isSaved']
+                                                                //       //         ? "Saved"
+                                                                //       //         : "Viewed",
+                                                                //       i['newJob'] &&
+                                                                //               !i['isSaved']
+                                                                //           ? "New"
+                                                                //           : !i['newJob'] && i['isSaved']
+                                                                //               ? "Saved"
+                                                                //               : "",
+                                                                //       style:
+                                                                //           bodyTextSmall(
+                                                                //         !i['newJob'] &&
+                                                                //                 !i['isSaved']
+                                                                //             ? AppColors.fontDark
+                                                                //             : AppColors.fontWhite,
+                                                                //       ),
+                                                                //     ),
+                                                                //   ),
                                                               ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+
+                                                      //
+                                                      //
+                                                      //Position
+                                                      Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 15,
+                                                        ),
+                                                        child: Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Text(
+                                                                "${_title}",
+                                                                style: bodyTextMedium(
+                                                                    _tag == "Highlight"
+                                                                        ? AppColors
+                                                                            .fontWaring
+                                                                        : null,
+                                                                    FontWeight
+                                                                        .bold),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+
+                                                      //
+                                                      //
+                                                      //Company Name
+                                                      // Row(
+                                                      //   crossAxisAlignment:
+                                                      //       CrossAxisAlignment.start,
+                                                      //   children: [
+                                                      //     FaIcon(
+                                                      //       FontAwesomeIcons.building,
+                                                      //       size: 15,
+                                                      //       color: AppColors
+                                                      //           .iconGrayOpacity,
+                                                      //     ),
+                                                      //     SizedBox(
+                                                      //       width: 5,
+                                                      //     ),
+                                                      //     Expanded(
+                                                      //       child: Text(
+                                                      //         "${_companyName}",
+                                                      //         style:
+                                                      //             bodyTextSmall(null),
+                                                      //         overflow: TextOverflow
+                                                      //             .ellipsis,
+                                                      //         maxLines: 2,
+                                                      //       ),
+                                                      //     ),
+                                                      //   ],
+                                                      // ),
+
+                                                      //
+                                                      //
+                                                      //Work Location
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 15,
+                                                          right: 15,
+                                                        ),
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .mapLocation,
+                                                              size: 15,
+                                                              color: AppColors
+                                                                  .iconGrayOpacity,
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Expanded(
+                                                              child: Text(
+                                                                "${_workingLocations}",
+                                                                style:
+                                                                    bodyTextSmall(
+                                                                        null),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+
+                                                      //
+                                                      //
+                                                      //Start Date to End Date
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 15,
+                                                          right: 15,
+                                                        ),
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .calendarDays,
+                                                              size: 15,
+                                                              color: AppColors
+                                                                  .iconGrayOpacity,
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Text(
+                                                              '${_openDate}',
+                                                              style:
+                                                                  bodyTextSmall(
+                                                                      null),
+                                                            ),
+                                                            Text(' - '),
+                                                            Text(
+                                                              "${_closeDate}",
+                                                              style:
+                                                                  bodyTextSmall(
+                                                                      null),
                                                             )
                                                           ],
                                                         ),
                                                       ),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
 
-                                                      //
-                                                      //Jobs Seach check newJob
-                                                      Container(
-                                                        alignment:
-                                                            Alignment.topCenter,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 5),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: !i['newJob'] &&
-                                                                  !i['isSaved']
-                                                              ? AppColors
-                                                                  .greyOpacity
-                                                              : AppColors
-                                                                  .primary,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5),
-                                                        ),
-                                                        child: Text(
-                                                          i['newJob'] &&
-                                                                  !i['isSaved']
-                                                              ? "New"
-                                                              : !i['newJob'] &&
-                                                                      i['isSaved']
-                                                                  ? "Saved"
-                                                                  : "Viewed",
-                                                          style: bodyTextSmall(
-                                                            !i['newJob'] &&
-                                                                    !i[
-                                                                        'isSaved']
-                                                                ? AppColors
-                                                                    .fontDark
-                                                                : AppColors
-                                                                    .fontWhite,
-                                                          ),
+                                                      Divider(
+                                                        height: 1,
+                                                        color: AppColors
+                                                            .borderGreyOpacity,
+                                                      ),
+
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(15),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            GestureDetector(
+                                                              onTap: () async {
+                                                                var result =
+                                                                    await showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (context) {
+                                                                          return AlertDialogButtonConfirmCancelBetween(
+                                                                            title:
+                                                                                "hide".tr + "${i['title']}",
+                                                                            contentText: "do u want".tr +
+                                                                                "hide".tr +
+                                                                                "${i['title']}",
+                                                                            textLeft:
+                                                                                'cancel'.tr,
+                                                                            textRight:
+                                                                                'hide'.tr,
+                                                                            colorTextRight:
+                                                                                AppColors.fontDanger,
+                                                                          );
+                                                                        });
+                                                                if (result ==
+                                                                    'Ok') {
+                                                                  _removeJobsSearchSeekerLocal(
+                                                                      i['jobId']);
+                                                                  hideJob(
+                                                                      i['jobId'],
+                                                                      i['title']);
+                                                                }
+                                                              },
+                                                              child: Row(
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .ban,
+                                                                    size: IconSize
+                                                                        .xsIcon,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 5,
+                                                                  ),
+                                                                  Text(
+                                                                    "hide".tr,
+                                                                    style: bodyTextNormal(
+                                                                        null,
+                                                                        null),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  i['isSaved'] =
+                                                                      !i['isSaved'];
+                                                                });
+                                                                saveAndUnSaveJob(
+                                                                    i['jobId'],
+                                                                    i['title']);
+                                                              },
+                                                              child: Row(
+                                                                children: [
+                                                                  _isSaved
+                                                                      ? FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .solidHeart,
+                                                                          size:
+                                                                              IconSize.xsIcon,
+                                                                          color:
+                                                                              AppColors.iconPrimary,
+                                                                        )
+                                                                      : FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .heart,
+                                                                          size:
+                                                                              IconSize.xsIcon,
+                                                                        ),
+                                                                  SizedBox(
+                                                                    width: 5,
+                                                                  ),
+                                                                  Text(
+                                                                    _isSaved
+                                                                        ? "saved"
+                                                                            .tr
+                                                                        : "save"
+                                                                            .tr,
+                                                                    style: bodyTextNormal(
+                                                                        null,
+                                                                        null),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  height: 5,
-                                                ),
-
-                                                //
-                                                //Position
-                                                Text(
-                                                  "${_title}",
-                                                  style: bodyTextMedium(
-                                                      null, FontWeight.bold),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 2,
-                                                ),
-                                                SizedBox(
-                                                  height: 5,
-                                                ),
-
-                                                //
-                                                //Company Name
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    FaIcon(
-                                                      FontAwesomeIcons.building,
-                                                      size: 15,
-                                                      color: AppColors
-                                                          .iconGrayOpacity,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        "${_companyName}",
-                                                        style:
-                                                            bodyTextSmall(null),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 2,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                //
-                                                //Work Location
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    FaIcon(
-                                                      FontAwesomeIcons
-                                                          .locationDot,
-                                                      size: 15,
-                                                      color: AppColors
-                                                          .iconGrayOpacity,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        "${_workingLocations}",
-                                                        style:
-                                                            bodyTextSmall(null),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                //
-                                                //Start Date to End Date
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    FaIcon(
-                                                      FontAwesomeIcons
-                                                          .calendarWeek,
-                                                      size: 15,
-                                                      color: AppColors
-                                                          .iconGrayOpacity,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Text(
-                                                      '${_openDate}',
-                                                      style:
-                                                          bodyTextSmall(null),
-                                                    ),
-                                                    Text(' - '),
-                                                    Text(
-                                                      "${_closeDate}",
-                                                      style:
-                                                          bodyTextSmall(null),
-                                                    )
-                                                  ],
                                                 )
                                               ],
                                             ),
@@ -1690,10 +2217,15 @@ class _JobSearchState extends State<JobSearch>
                                   faIcon:
                                       FontAwesomeIcons.fileCircleExclamation,
                                   colorIcon: AppColors.primary,
-                                  text: "No have data",
+                                  text: "no have data".tr,
                                   colorText: AppColors.primary,
                                 ),
                         ),
+                        if (_isLoadingMoreData)
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
                       ],
                     ),
                   ),
@@ -1708,9 +2240,19 @@ class _JobSearchState extends State<JobSearch>
     await getJobsSearchSeeker();
   }
 
+  _removeJobsSearchSeekerLocal(String jobId) {
+    setState(() {
+      _listJobsSearch.removeWhere((id) => id['jobId'] == jobId);
+    });
+  }
+
   getReuseFilterJobSearchSeeker(
       String lang, List listValue, String resValue) async {
     var res = await fetchData(getReuseFilterJobSearchSeekerApi + "lang${lang}");
+
+    if (widget.selectedListItem != null) {
+      checkSelectedListItemFromHomePage();
+    }
 
     setState(() {
       listValue.clear(); // Clear the existing list
@@ -1725,6 +2267,13 @@ class _JobSearchState extends State<JobSearch>
   }
 
   getJobsSearchSeeker() async {
+    // if (_isLoadingMoreData || !_hasMoreData) return;
+    if (!_hasMoreData) return;
+
+    // setState(() {
+    //   _isLoadingMoreData = true;
+    // });
+
     //
     //ສະແດງ AlertDialog Loading
     if (_statusShowLoading) {
@@ -1737,6 +2286,7 @@ class _JobSearchState extends State<JobSearch>
       );
     }
 
+    // Fetch data from API
     var res = await postData(getJobsSearchSeekerApi, {
       "title": _searchTitle,
       "postDateLastest": _postDateLastest,
@@ -1746,16 +2296,26 @@ class _JobSearchState extends State<JobSearch>
       "jobExperienceId": _selectedJobExperienceListItem,
       "jobEducationLevelId": _selectedEducationLeavelListItem,
       "jobLevelId": _selectedJobLevelListItem,
-      "page": 1,
-      "perPage": 1000
+      "page": page,
+      "perPage": perPage
     });
-    _listJobsSearch = res['jobList'];
-    _total = res['totals'].toString();
+
+    List fetchedData = res['jobList'];
+    // _listJobsSearch = res['jobList'];
+    totals = res['totals'];
+
+    page++;
+    _listJobsSearch.addAll(List<Map<String, dynamic>>.from(fetchedData));
+    if (_listJobsSearch.length >= totals || fetchedData.length < perPage) {
+      _hasMoreData = false;
+    }
+    _isLoadingMoreData = false;
+    _isLoading = false;
+
     if (res['jobList'] != null && _statusShowLoading) {
       _statusShowLoading = false;
       Navigator.pop(context);
     }
-    _isLoading = false;
 
     if (mounted) {
       setState(() {});
@@ -1780,7 +2340,6 @@ class _JobSearchState extends State<JobSearch>
     print(res);
 
     if (res['message'] == "Saved" || res['message'] == "Unsaved") {
-      await getJobsSearchSeeker();
       Navigator.pop(context);
     }
 
@@ -1790,9 +2349,9 @@ class _JobSearchState extends State<JobSearch>
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "$jobTitle Save Job Success",
-            textButton: "OK",
+            title: "successful".tr,
+            text: "$jobTitle " + "save job".tr + "successful".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
             },
@@ -1805,9 +2364,9 @@ class _JobSearchState extends State<JobSearch>
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "$jobTitle Unsave Job Success",
-            textButton: "OK",
+            title: "successful".tr,
+            text: "$jobTitle " + "unsave job".tr + "successful".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
             },
@@ -1836,7 +2395,6 @@ class _JobSearchState extends State<JobSearch>
     //Hide succeed
     //UnHide succeed
     if (res['message'] == "Hide succeed") {
-      await getJobsSearchSeeker();
       Navigator.pop(context);
     }
 
@@ -1846,9 +2404,9 @@ class _JobSearchState extends State<JobSearch>
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "$jobTitle Hide Job Success",
-            textButton: "OK",
+            title: "successful".tr,
+            text: "$jobTitle " + "hide job".tr + "successful".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
             },

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, unused_local_variable, unused_import, prefer_final_fields, unused_field, avoid_print, avoid_unnecessary_containers
+// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, unused_local_variable, unused_import, prefer_final_fields, unused_field, avoid_print, avoid_unnecessary_containers, file_names, unnecessary_brace_in_string_interps
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -8,6 +8,7 @@ import 'package:app/screen/securityVerify/verificationCode.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddPhoneNumberOrEmail extends StatefulWidget {
@@ -87,8 +88,8 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: widget.addPhoneNumOrEmail == 'phoneNumber'
-                ? 'Add Phone Number'
-                : 'Add Email',
+                ? "add".tr + " " + "phone".tr
+                : "add".tr + " " + "email".tr,
             // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
@@ -121,8 +122,8 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
                                 ),
                                 Text(
                                   widget.addPhoneNumOrEmail == 'phoneNumber'
-                                      ? "Enter your phone number"
-                                      : "Enter your email address",
+                                      ? "enter your".tr + " " + "phone".tr
+                                      : "enter your".tr + " " + "email".tr,
                                   style: bodyTextNormal(null, FontWeight.bold),
                                 ),
                                 SizedBox(
@@ -158,13 +159,13 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
                                                     true, // set label to bottom
                                                 prefix: Text("020 "),
                                                 labelText:
-                                                    "Mobile Number 12345678",
+                                                    "phone".tr + " 12345678",
                                               ),
                                               validator: (String? value) {
                                                 if (value == null ||
                                                     value.isEmpty ||
                                                     value.length != 8) {
-                                                  return "Enter 8 number digits";
+                                                  return "enter8number".tr;
                                                 }
                                                 return null;
                                               },
@@ -183,12 +184,12 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
                                               decoration: InputDecoration(
                                                 alignLabelWithHint:
                                                     true, // set label to bottom
-                                                labelText: "Email address",
+                                                labelText: "email".tr,
                                               ),
                                               validator: (String? value) {
                                                 if (value == null ||
                                                     value.isEmpty) {
-                                                  return "required";
+                                                  return "required".tr;
                                                 }
                                                 return null;
                                               },
@@ -199,8 +200,10 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
                                       Text(
                                         widget.addPhoneNumOrEmail ==
                                                 'phoneNumber'
-                                            ? "Mobile number exclude enter 020"
-                                            : "Enter an email address",
+                                            ? "excludePhone".tr
+                                            : "enter your".tr +
+                                                " " +
+                                                "email".tr,
                                         style: bodyTextNormal(null, null),
                                       ),
 
@@ -224,12 +227,12 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
                                                 alignLabelWithHint:
                                                     true, // set label to bottom
 
-                                                labelText: "Password",
+                                                labelText: "password".tr,
                                               ),
                                               validator: (String? value) {
                                                 if (value == null ||
                                                     value.isEmpty) {
-                                                  return "required";
+                                                  return "required".tr;
                                                 }
                                                 return null;
                                               },
@@ -238,7 +241,9 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
                                               height: 10,
                                             ),
                                             Text(
-                                              "Enter a password",
+                                              "enter your".tr +
+                                                  " " +
+                                                  "password".tr,
                                               style: bodyTextNormal(null, null),
                                             ),
                                           ],
@@ -254,14 +259,12 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
                                             SizedBox(
                                               height: 70,
                                             ),
-                                            Text("Registering email lets you:"),
+                                            Text("textAddEmail".tr),
                                             SizedBox(
                                               height: 10,
                                             ),
-                                            Text(
-                                                "- Login to 108Jobs Application."),
-                                            Text(
-                                                "- Let employer contact you using this email.")
+                                            Text("- " + "firstTextAddEmail".tr),
+                                            Text("- " + "secondTextAddEmail".tr)
                                           ],
                                         ),
                                       SizedBox(
@@ -275,7 +278,7 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
                           ),
                         ),
                         Button(
-                          text: "Next",
+                          text: "next".tr,
                           fontWeight: FontWeight.bold,
                           press: () {
                             if (formkey.currentState!.validate()) {
@@ -327,7 +330,7 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
         context: context,
         builder: (context) {
           return CustomAlertDialogError(
-            title: "Invalid",
+            title: "invalid".tr,
             text: res['message'],
           );
         },
@@ -364,7 +367,7 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
         context: context,
         builder: (context) {
           return CustomAlertDialogError(
-            title: "Invalid",
+            title: "invalid".tr,
             text: "${res["message"]}",
           );
         },

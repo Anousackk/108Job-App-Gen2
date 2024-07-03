@@ -47,7 +47,7 @@ TextStyle headerTextMediuml(Color? textColor, FontWeight? fontWeight) {
 TextStyle bodyTextSmall(Color? textColor) {
   return TextStyle(
     color: textColor == null ? AppColors.fontDark : textColor,
-    fontSize: 13,
+    fontSize: 12,
   );
 }
 

@@ -1,26 +1,60 @@
 {
   "project_info": {
-    "project_number": "166667756465",
-    "project_id": "jobs---ga4---main",
-    "storage_bucket": "jobs---ga4---main.appspot.com"
+    "project_number": "1012689313058",
+    "project_id": "jobapp2021",
+    "storage_bucket": "jobapp2021.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:166667756465:android:1356198db3fe8acf2f9390",
+        "mobilesdk_app_id": "1:1012689313058:android:d4aae83dee1b5c2981197b",
         "android_client_info": {
           "package_name": "com.onehundredeightjobs.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1012689313058-34og7qeldsedtda589irg49gt2eqglr2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.onehundredeightjobs.app",
+            "certificate_hash": "45a664074a3d75fa3cb506cc1888adba4c9ef3a4"
+          }
+        },
+        {
+          "client_id": "1012689313058-4hk1l0q9tbfsb0ffn59t7q672vh0cmnm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.onehundredeightjobs.app",
+            "certificate_hash": "61fb2a9feb10d6e2ccc985002d0bf82051360cbc"
+          }
+        },
+        {
+          "client_id": "1012689313058-7vo3j0dq6im7sfrvnlog8ttgpvv7f37i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDfT8KBPtNkdHfzpkV4Rq7H8YXRPp-YtAI"
+          "current_key": "AIzaSyCpTijuhp-mAgMT9wJYz48X9wKo-6ma8R0"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012689313058-7vo3j0dq6im7sfrvnlog8ttgpvv7f37i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1012689313058-sb6ljqkt07h0ktu9n73egj35qmouljh8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.cenixoft.OneHundredEightJobs",
+                "app_store_id": "1169598302"
+              }
+            }
+          ]
         }
       }
     }

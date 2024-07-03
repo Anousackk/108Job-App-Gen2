@@ -7,6 +7,7 @@ import 'package:app/functions/textSize.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 //
@@ -404,7 +405,7 @@ class _SimpleTextFieldWithIconRightState
 
         validator: (String? value) {
           if (value == null || value.isEmpty) {
-            return "required";
+            return "required".tr;
           }
           return null;
         },
@@ -766,7 +767,7 @@ class _TextFieldPhoneNumberState extends State<TextFieldPhoneNumber> {
         ),
         validator: (String? value) {
           if (value == null || value.isEmpty || value.length != 8) {
-            return "Enter 8 number digits";
+            return "enter8number".tr;
           }
           return null;
         },
@@ -866,9 +867,8 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
         ),
 
         validator: MultiValidator([
-          RequiredValidator(errorText: 'required'),
-          // MinLengthValidator(6,
-          //     errorText: "Password should be atleast 6 characters"),
+          RequiredValidator(errorText: 'required'.tr),
+          MinLengthValidator(8, errorText: "enter8password".tr),
           // MaxLengthValidator(30,
           //     errorText: "Password should not be greater than 30 characters")
         ]),
@@ -1176,14 +1176,14 @@ class _SimpleBoxDecorationState extends State<SimpleBoxDecoration> {
         // padding: EdgeInsets.only(left: 1.5.w, right: 1.5.w),
         // padding: EdgeInsets.all(10),
         decoration: boxDecoration(
-          null,
-          widget.boxDecorationColor == null
-              ? AppColors.white
-              : widget.boxDecorationColor!,
-          widget.borderColor == null
-              ? AppColors.white.withOpacity(0)
-              : widget.borderColor!,
-        ),
+            null,
+            widget.boxDecorationColor == null
+                ? AppColors.white
+                : widget.boxDecorationColor!,
+            widget.borderColor == null
+                ? AppColors.white.withOpacity(0)
+                : widget.borderColor!,
+            null),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: widget.mainAxisAlignments == null
@@ -1253,7 +1253,7 @@ class _BoxDecorationImageState extends State<BoxDecorationImage> {
         width: double.infinity,
         height: 45.w,
         decoration: boxDecoration(
-            null, AppColors.inputColor, AppColors.white.withOpacity(0)),
+            null, AppColors.inputColor, AppColors.white.withOpacity(0), null),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1332,12 +1332,12 @@ class _BoxDecorationInputState extends State<BoxDecorationInput> {
             width: double.infinity,
             height: widget.heigth == null ? 12.w : widget.heigth,
             decoration: boxDecoration(
-              widget.boxDecBorderRadius,
-              widget.colorInput == null
-                  ? AppColors.inputColor
-                  : widget.colorInput,
-              widget.colorBorder,
-            ),
+                widget.boxDecBorderRadius,
+                widget.colorInput == null
+                    ? AppColors.inputColor
+                    : widget.colorInput,
+                widget.colorBorder,
+                null),
             child: Row(
               // crossAxisAlignment: CrossAxisAlignment.center,
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1449,7 +1449,7 @@ class BoxDecorationLoading extends StatelessWidget {
       height: heigth,
       // padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       decoration: boxDecoration(
-          null, AppColors.greyOpacity, AppColors.white.withOpacity(0)),
+          null, AppColors.greyOpacity, AppColors.white.withOpacity(0), null),
     );
   }
 }

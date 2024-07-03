@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, unused_local_variable, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print, unused_field, unnecessary_string_interpolations
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, unused_local_variable, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print, unused_field, unnecessary_string_interpolations, file_names
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -189,7 +189,6 @@ class _JobAlertState extends State<JobAlert> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getJobAlert();
     getReuseTypeSeeker('EN', 'JobLevel', _listJobLevels);

@@ -11,8 +11,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   loginWithFacebook(BuildContext context) async {
-    FacebookAuth.instance
-        .login(permissions: ["public_profile", "email"]).then((value) {
+    print("press facebook");
+    // FacebookAuth.instance.login();
+    FacebookAuth.instance.login().then((value) {
       print(value);
 
       if (value.status == LoginStatus.success) {
@@ -54,6 +55,9 @@ class AuthService {
         );
       } else if (value.status == LoginStatus.cancelled) {
         print("LoginStatus.cancelled");
+      } else {
+        print(value.status);
+        print(value.message);
       }
     });
   }
@@ -122,12 +126,23 @@ class AuthService {
     }
   }
 
-  loginSyncGoogleFacebook(BuildContext context, String type,
-      Function(bool success) callback) async {
+  loginSyncGoogleFacebook(
+      BuildContext context, String type, Function(String val) callBack) async {
     //
     //
     //Type Facebook
     if (type == "facebook") {
+      print("sync facebook");
+
+      //Alert dialog loading
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return CustomAlertLoading();
+        },
+      );
+
       FacebookAuth.instance
           .login(permissions: ["public_profile", "email"]).then((value) {
         print(value);
@@ -151,26 +166,69 @@ class AuthService {
                 "email": fSignInEmail,
                 "type": "facebook",
               });
+              callBack(res['message']);
+
+              //close alert dialog loading
+              if (res != null) {
+                Navigator.pop(context);
+              }
 
               if (res["message"] == "Sync successful") {
-                callback(true);
+                await showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return CustomAlertDialogSuccess(
+                      title: "Success",
+                      text: res["message"],
+                      textButton: "OK",
+                      press: () {
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                );
               } else {
-                callback(false);
+                await showDialog(
+                  context: context,
+                  builder: (context) {
+                    return CustomAlertDialogWarning(
+                      title: "Warning",
+                      text: res["message"],
+                      textButton: "OK",
+                      press: () {
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                );
               }
             },
           );
         } else if (value.status == LoginStatus.cancelled) {
+          Navigator.pop(context);
           print("LoginStatus.cancelled");
         }
       });
-      //
-      //
-      //Type Google
-    } else if (type == "google") {
+    }
+    //
+    //
+    //Type Google
+    else if (type == "google") {
+      print("sync google");
+
+      //Alert dialog loading
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return CustomAlertLoading();
+        },
+      );
+
       //Google Sign in
       final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
 
-      print("Display GoogleSignInAccount");
       print(gUser);
       print(gUser?.id);
       print(gUser?.displayName);
@@ -185,7 +243,7 @@ class AuthService {
           idToken: gAuth.idToken,
           accessToken: gAuth.accessToken,
         );
-        print("Display GoogleAuthProvider");
+        print("Display Sync GoogleAuthProvider");
         print(credential);
 
         var gSignInId = gUser.id;
@@ -197,13 +255,47 @@ class AuthService {
           "email": gSignInEmail,
           "type": "google",
         });
+        callBack(res['message']);
+
+        //close alert dialog loading
+        if (res != null) {
+          Navigator.pop(context);
+        }
 
         if (res["message"] == "Sync successful") {
-          callback(true);
+          await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return CustomAlertDialogSuccess(
+                title: "Success",
+                text: res["message"],
+                textButton: "OK",
+                press: () {
+                  Navigator.pop(context);
+                },
+              );
+            },
+          );
         } else {
-          callback(false);
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return CustomAlertDialogWarning(
+                title: "Warning",
+                text: res["message"],
+                press: () {
+                  Navigator.pop(context);
+                },
+              );
+            },
+          );
         }
+      } else {
+        Navigator.pop(context);
       }
     }
   }
 }
+
+//"Sync successful"

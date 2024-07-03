@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_local_variable, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_function_declarations_over_variables, prefer_typing_uninitialized_variables, prefer_final_fields, unused_field, avoid_print
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_local_variable, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_function_declarations_over_variables, prefer_typing_uninitialized_variables, prefer_final_fields, unused_field, avoid_print, file_names
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -10,6 +10,7 @@ import 'package:app/widget/boxDecorationIcon.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 class SetPassword extends StatefulWidget {
   const SetPassword({Key? key, this.token}) : super(key: key);
@@ -28,7 +29,6 @@ class _SetPasswordState extends State<SetPassword> {
   String _confirmPassword = "";
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _passwordController.text = _password;
     _confirmPasswordController.text = _confirmPassword;
@@ -54,7 +54,7 @@ class _SetPasswordState extends State<SetPassword> {
         },
         child: Scaffold(
           appBar: AppBarDefault(
-            textTitle: 'Set Password',
+            textTitle: 'set pass'.tr,
             // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
@@ -99,11 +99,11 @@ class _SetPasswordState extends State<SetPassword> {
                                 color: AppColors.fontGreyOpacity,
                                 fontWeight: FontWeight.bold,
                               ),
-                              labelText: "Password",
+                              labelText: "password".tr,
                             ),
                             validator: (String? value) {
                               if (value == null || value.isEmpty) {
-                                return "required";
+                                return "required".tr;
                               }
                               return null;
                             },
@@ -137,11 +137,11 @@ class _SetPasswordState extends State<SetPassword> {
                                 color: AppColors.fontGreyOpacity,
                                 fontWeight: FontWeight.bold,
                               ),
-                              labelText: "Confirm password",
+                              labelText: "confirm".tr + " " + "password".tr,
                             ),
                             validator: (String? value) {
                               if (value == null || value.isEmpty) {
-                                return "required";
+                                return "required".tr;
                               }
                               return null;
                             },
@@ -158,7 +158,7 @@ class _SetPasswordState extends State<SetPassword> {
                   //
                   //Button Save Password
                   Button(
-                    text: "Change Password",
+                    text: "confirm".tr,
                     fontWeight: FontWeight.bold,
                     press: () async {
                       if (formkey.currentState!.validate()) {
@@ -192,6 +192,7 @@ class _SetPasswordState extends State<SetPassword> {
         //Show dialog success after save password
         var result = await showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (context) {
             return AlertDialog(
               titlePadding: EdgeInsets.zero,
@@ -215,14 +216,14 @@ class _SetPasswordState extends State<SetPassword> {
                       height: 20,
                     ),
                     Text(
-                      "Set Passwod Successful",
+                      "set pass".tr + " " + "successful".tr,
                       style: bodyTextMedium(null, FontWeight.bold),
                     ),
                     SizedBox(
                       height: 30,
                     ),
                     ButtonDefault(
-                      text: 'Close',
+                      text: 'close'.tr,
                       fontWeight: FontWeight.bold,
                       press: () {
                         // Create a Predicate to check if a route has the specified name
@@ -253,7 +254,7 @@ class _SetPasswordState extends State<SetPassword> {
           context: context,
           builder: (context) {
             return CustomAlertDialogError(
-              title: "Invalid",
+              title: "invalid".tr,
               text: value['message'],
             );
           },

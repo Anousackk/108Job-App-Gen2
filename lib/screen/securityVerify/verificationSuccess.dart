@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, prefer_typing_uninitialized_variables, file_names
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
@@ -9,6 +9,7 @@ import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 class VerificationSuccess extends StatefulWidget {
   const VerificationSuccess(
@@ -54,15 +55,15 @@ class _VerificationSuccessState extends State<VerificationSuccess> {
               ),
               Text(
                 widget.verifySuccess == 'verifyPhoneNum'
-                    ? "Phone Number"
-                    : "Email Address",
+                    ? "phone".tr
+                    : "email".tr,
                 style: bodyTextMedium(null, FontWeight.bold),
               ),
               SizedBox(
                 height: 10,
               ),
               Text(
-                "Verification Successful",
+                "verify".tr + " " + "successful".tr,
                 style: bodyTextMedium(null, FontWeight.bold),
               ),
               SizedBox(
@@ -70,8 +71,8 @@ class _VerificationSuccessState extends State<VerificationSuccess> {
               ),
               ButtonDefault(
                 text: widget.checkFromRegister == "fromRegister"
-                    ? "Close"
-                    : "Set Password",
+                    ? "close".tr
+                    : "set pass".tr,
                 fontWeight: FontWeight.bold,
                 press: () {
                   if (widget.checkFromRegister == "fromRegister") {

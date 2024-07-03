@@ -128,7 +128,7 @@ class _ButtonWithIconLeftState extends State<ButtonWithIconLeft> {
           children: [
             Container(child: widget.widgetIcon),
             SizedBox(
-              width: 10,
+              width: 8,
             ),
             Text(
               '${widget.text}',
@@ -153,11 +153,16 @@ class Button extends StatefulWidget {
     this.colorText,
     this.fontWeight,
     this.buttonBorderColor,
+    this.height,
+    this.paddingButton,
   }) : super(key: key);
   final String? text;
   final Color? colorButton, buttonBorderColor;
   final Color? colorText;
   final FontWeight? fontWeight;
+  final double? height;
+  final MaterialStateProperty<EdgeInsetsGeometry?>? paddingButton;
+
   final Function()? press;
 
   @override
@@ -169,9 +174,13 @@ class _ButtonState extends State<Button> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 12.w,
+      height: widget.height,
       child: TextButton(
         style: ButtonStyle(
+          padding: widget.paddingButton ??
+              MaterialStateProperty.all<EdgeInsets>(
+                EdgeInsets.zero,
+              ),
           side: MaterialStateProperty.resolveWith<BorderSide>(
             (Set<MaterialState> states) {
               return BorderSide(

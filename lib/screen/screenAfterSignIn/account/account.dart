@@ -12,6 +12,7 @@ import 'package:app/widget/input.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 class Account extends StatefulWidget {
@@ -41,7 +42,7 @@ class _AccountState extends State<Account> {
 
   dynamic _workPreferences;
 
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   getProfileSeeker() async {
     var res = await fetchData(getProfileSeekerApi);
@@ -84,7 +85,6 @@ class _AccountState extends State<Account> {
   @override
   void initState() {
     super.initState();
-    _isLoading = true;
     getProfileSeeker();
     getTotalJobSeeker();
   }
@@ -148,20 +148,41 @@ class _AccountState extends State<Account> {
                                     child: Container(
                                       width: 150,
                                       height: 150,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: AppColors.greyOpacity,
-                                        image: _imageSrc == ""
-                                            ? DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/image/def-profile.png'),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        child: _imageSrc == ""
+                                            ? Image.asset(
+                                                'assets/image/no-image-available.png',
                                                 fit: BoxFit.cover,
                                               )
-                                            : DecorationImage(
-                                                image: NetworkImage(_imageSrc),
+                                            : Image.network(
+                                                "${_imageSrc}",
                                                 fit: BoxFit.cover,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Image.asset(
+                                                    'assets/image/no-image-available.png',
+                                                    fit: BoxFit.cover,
+                                                  ); // Display an error message
+                                                },
                                               ),
                                       ),
+
+                                      // decoration: BoxDecoration(
+                                      //   shape: BoxShape.circle,
+                                      //   color: AppColors.greyOpacity,
+                                      //   image: _imageSrc == ""
+                                      //       ? DecorationImage(
+                                      //           image: AssetImage(
+                                      //               'assets/image/def-profile.png'),
+                                      //           fit: BoxFit.cover,
+                                      //         )
+                                      //       : DecorationImage(
+                                      //           image: NetworkImage(_imageSrc),
+                                      //           fit: BoxFit.cover,
+                                      //         ),
+                                      // ),
 
                                       // child: CircleAvatar(
                                       //   radius: 90,
@@ -259,7 +280,7 @@ class _AccountState extends State<Account> {
                             //
                             //Profile Statisics
                             Text(
-                              "Profile Statisics",
+                              "profile".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(height: 10),
@@ -272,7 +293,7 @@ class _AccountState extends State<Account> {
                                     child: StatisicBox(
                                       boxColor: AppColors.lightPrimary,
                                       amount: "${_savedJobs}",
-                                      text: "Saved Job",
+                                      text: "saved job".tr,
                                     ),
                                   ),
                                 ),
@@ -282,7 +303,7 @@ class _AccountState extends State<Account> {
                                   child: StatisicBox(
                                     boxColor: AppColors.lightGrayishCyan,
                                     amount: "${_appliedJobs}",
-                                    text: "Company viewed your profile",
+                                    text: "company view profile".tr,
                                   ),
                                 )
                               ],
@@ -304,7 +325,7 @@ class _AccountState extends State<Account> {
                                     child: StatisicBox(
                                       boxColor: AppColors.lightOrange,
                                       amount: "${_epmSavedSeeker}",
-                                      text: "Applied Job",
+                                      text: "applied job".tr,
                                     ),
                                   ),
                                 ),
@@ -314,7 +335,7 @@ class _AccountState extends State<Account> {
                                   child: StatisicBox(
                                     boxColor: AppColors.lightGreen,
                                     amount: "${_submitedCV}",
-                                    text: "Submited General CV",
+                                    text: "submitted cv".tr,
                                   ),
                                 )
                               ],
@@ -325,7 +346,7 @@ class _AccountState extends State<Account> {
                             //
                             //Account Setting
                             Text(
-                              "Account Setting",
+                              "account setting".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(height: 10),
@@ -343,7 +364,7 @@ class _AccountState extends State<Account> {
                               // paddingFaIcon: EdgeInsets.only(left: 20, right: 10),
                               mainAxisAlignmentTextIcon:
                                   MainAxisAlignment.start,
-                              text: "Login Information",
+                              text: "login info".tr,
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.chevronRight,
                                 color: AppColors.iconGrayOpacity,
@@ -374,7 +395,7 @@ class _AccountState extends State<Account> {
                               // paddingFaIcon: EdgeInsets.only(left: 20, right: 10),
                               mainAxisAlignmentTextIcon:
                                   MainAxisAlignment.start,
-                              text: "My Profile",
+                              text: "my profile".tr,
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.chevronRight,
                                 color: AppColors.iconGrayOpacity,
@@ -386,7 +407,11 @@ class _AccountState extends State<Account> {
                                   MaterialPageRoute(
                                     builder: (context) => MyProfile(),
                                   ),
-                                );
+                                ).then((value) {
+                                  if (value == "Success") {
+                                    getProfileSeeker();
+                                  }
+                                });
                               },
                               validateText: Container(),
                             ),
@@ -413,7 +438,7 @@ class _AccountState extends State<Account> {
                                   ),
                                 );
                               },
-                              text: "Job Alert",
+                              text: "job alert".tr,
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.chevronRight,
                                 color: AppColors.iconGrayOpacity,
@@ -455,7 +480,7 @@ class StatisicBox extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(10),
       decoration: boxDecoration(BorderRadius.circular(2.w),
-          boxColor == null ? AppColors.lightPrimary : boxColor, null),
+          boxColor == null ? AppColors.lightPrimary : boxColor, null, null),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,

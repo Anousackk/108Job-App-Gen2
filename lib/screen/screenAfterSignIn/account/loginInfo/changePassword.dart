@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_field, prefer_final_fields, prefer_function_declarations_over_variables, unused_local_variable, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, unused_field, prefer_final_fields, prefer_function_declarations_over_variables, unused_local_variable, prefer_const_literals_to_create_immutables, file_names, empty_statements
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -28,7 +28,6 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     _currentPasswordController.text = _currentPassword;

@@ -1,5 +1,4 @@
-//ເລືອກຮູບແແບບອັບໂຫຼດຮູບ
-// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, non_constant_identifier_names, prefer_if_null_operators
+// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, non_constant_identifier_names, prefer_if_null_operators, file_names
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';

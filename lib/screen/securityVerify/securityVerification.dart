@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, prefer_final_fields, unused_field, unused_local_variable, unnecessary_string_interpolations, unnecessary_brace_in_string_interps
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, prefer_final_fields, unused_field, unused_local_variable, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, file_names
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -10,6 +10,7 @@ import 'package:app/widget/appbar.dart';
 import 'package:app/widget/boxDecorationIcon.dart';
 import 'package:app/widget/input.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -28,7 +29,7 @@ class _SecurityVerificationState extends State<SecurityVerification> {
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBarDefault(
-          textTitle: 'Security Verification',
+          textTitle: 'security verification'.tr,
           // fontWeight: FontWeight.bold,
           leadingIcon: Icon(Icons.arrow_back),
           leadingPress: () {
@@ -131,14 +132,14 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
                   height: 20,
                 ),
                 Text(
-                  "Account Protection",
+                  "account protection".tr,
                   style: bodyTextMedium(null, FontWeight.bold),
                 ),
                 SizedBox(
                   height: 10,
                 ),
                 Text(
-                  "To protect you account security, we need to\n verify your identity\n Please choose a way to verify",
+                  "textSecurityVerify".tr,
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(
@@ -172,7 +173,7 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
                                 ),
                               );
                             },
-                            text: "Email",
+                            text: "email".tr,
                             validateText: Container(),
                           ),
 
@@ -201,7 +202,7 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
                                 ),
                               );
                             },
-                            text: "Mobile Number",
+                            text: "phone".tr,
                             validateText: Container(),
                           ),
                         ],
@@ -231,7 +232,7 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
                                 "verifyEmail",
                               );
                             },
-                            text: "Email",
+                            text: "email".tr,
                             widgetIconActive: Text("${_email}"),
                             validateText: Container(),
                           ),
@@ -259,7 +260,7 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
                                 "verifyPhoneNum",
                               );
                             },
-                            text: "Mobile Number",
+                            text: "phone".tr,
                             widgetIconActive: Text("020 ${_phoneNumber}"),
                             validateText: Container(),
                           ),
@@ -298,7 +299,7 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
         context: context,
         builder: (context) {
           return CustomAlertDialogError(
-            title: "Invalid",
+            title: "invalid".tr,
             text: res['message'],
           );
         },

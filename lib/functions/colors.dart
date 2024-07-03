@@ -93,7 +93,7 @@ class AppColors {
   static Color buttonGreyWhite = Color(0xffEBEBEB);
   static Color buttonGrey = Color(0xEBEBEBEB);
   static Color buttonWhite = Color(0xffFFFFFF);
-  static Color buttonBG = Color(0xffEEEEEE);
+  static Color buttonBG = Color(0xf5f5f5f5);
 }
 
 class TextSize {

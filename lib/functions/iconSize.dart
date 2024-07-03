@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_if_null_operators
+// ignore_for_file: prefer_if_null_operators, file_names
 
 import 'package:app/functions/colors.dart';
 import 'package:flutter/material.dart';

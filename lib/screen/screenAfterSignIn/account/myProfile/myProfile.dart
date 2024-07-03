@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, unused_field, avoid_print, unused_local_variable, prefer_typing_uninitialized_variables, prefer_final_fields, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_is_empty, unused_element, unnecessary_null_in_if_null_operators, prefer_if_null_operators, prefer_adjacent_string_concatenation, unnecessary_null_comparison, avoid_init_to_null
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, unused_field, avoid_print, unused_local_variable, prefer_typing_uninitialized_variables, prefer_final_fields, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_is_empty, unused_element, unnecessary_null_in_if_null_operators, prefer_if_null_operators, prefer_adjacent_string_concatenation, unnecessary_null_comparison, avoid_init_to_null, file_names
 
 import 'dart:io';
 
@@ -58,11 +58,14 @@ class _MyProfileState extends State<MyProfile>
   List _languageSkill = [];
   List _skills = [];
   String _memberLevel = "";
+  String _status = "";
   String _currentJobTitle = "";
+  String _statusUploadImage = "";
   File? _image;
 
   bool _isLoading = true;
   bool _imageLoading = false;
+  bool _isSearchable = false;
 
   Future pickImageGallery(ImageSource source) async {
     var statusPhotos = await Permission.photos.status;
@@ -108,6 +111,7 @@ class _MyProfileState extends State<MyProfile>
                 //api upload or update profile image seeker
                 uploadOrUpdateProfileImageSeeker();
                 _imageLoading = false;
+                _statusUploadImage = "Success";
               }
             });
           }
@@ -182,6 +186,7 @@ class _MyProfileState extends State<MyProfile>
               //api upload or update profile image seeker
               uploadOrUpdateProfileImageSeeker();
               _imageLoading = false;
+              _statusUploadImage = "Success";
             }
           });
         }
@@ -224,6 +229,8 @@ class _MyProfileState extends State<MyProfile>
     _firstName = _seekerProfile['firstName'];
     _lastName = _seekerProfile['lastName'];
     _memberLevel = _seekerProfile['memberLevel'];
+    _status = _seekerProfile['status'];
+    _isSearchable = _seekerProfile['isSearchable'] as bool;
     if (_seekerProfile['file'] != "") {
       _imageSrc = !_seekerProfile['file'].containsKey("src") ||
               _seekerProfile['file']["src"] == null
@@ -243,11 +250,7 @@ class _MyProfileState extends State<MyProfile>
     }
 
     if (res != null) {
-      Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          _isLoading = false;
-        });
-      });
+      _isLoading = false;
     }
 
     if (mounted) {
@@ -267,7 +270,6 @@ class _MyProfileState extends State<MyProfile>
   void initState() {
     super.initState();
 
-    _isLoading = true;
     getProfileSeeker();
   }
 
@@ -281,26 +283,29 @@ class _MyProfileState extends State<MyProfile>
           // fontWeight: FontWeight.bold,
           leadingIcon: Icon(Icons.arrow_back),
           leadingPress: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop(_statusUploadImage);
           },
           action: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileSetting(),
+            if (_status == "Approved" && _memberLevel != "Basic Member")
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileSetting(
+                        isSearchable: _isSearchable,
+                      ),
+                    ),
+                  ).then((value) => onGoBack(value));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: FaIcon(
+                    FontAwesomeIcons.gear,
+                    color: AppColors.iconLight,
                   ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: FaIcon(
-                  FontAwesomeIcons.gear,
-                  color: AppColors.iconLight,
                 ),
               ),
-            ),
           ],
         ),
         body: _isLoading
@@ -414,7 +419,8 @@ class _MyProfileState extends State<MyProfile>
                                                 height: 150,
                                                 decoration: BoxDecoration(
                                                   shape: BoxShape.circle,
-                                                  color: AppColors.greyOpacity,
+                                                  color:
+                                                      AppColors.backgroundWhite,
                                                 ),
                                                 child: Center(
                                                   child: Text("Uploading..."),
@@ -423,33 +429,71 @@ class _MyProfileState extends State<MyProfile>
                                             : Container(
                                                 width: 150,
                                                 height: 150,
-                                                decoration: _image != null
-                                                    ? BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: AppColors
-                                                            .greyOpacity,
-                                                        image: DecorationImage(
-                                                          image: FileImage(
-                                                              _image!),
+                                                // decoration: _image != null
+                                                //     ? BoxDecoration(
+                                                //         shape: BoxShape.circle,
+                                                //         color: AppColors
+                                                //             .greyOpacity,
+                                                //         image: DecorationImage(
+                                                //           image: FileImage(
+                                                //               _image!),
+                                                //           fit: BoxFit.cover,
+                                                //         ),
+                                                //       )
+                                                //     : BoxDecoration(
+                                                //         shape: BoxShape.circle,
+                                                //         color: AppColors
+                                                //             .greyOpacity,
+                                                //         image: _imageSrc == ""
+                                                //             ? DecorationImage(
+                                                //                 image: AssetImage(
+                                                //                     'assets/image/def-profile.png'),
+                                                //                 fit: BoxFit
+                                                //                     .cover,
+                                                //               )
+                                                //             : DecorationImage(
+                                                //                 image: NetworkImage(
+                                                //                     _imageSrc),
+                                                //                 fit: BoxFit
+                                                //                     .cover,
+                                                //               ),
+                                                //       ),
+                                                child: _image != null
+                                                    ? ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(100),
+                                                        child: Image.file(
+                                                          _image!,
                                                           fit: BoxFit.cover,
                                                         ),
                                                       )
-                                                    : BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: AppColors
-                                                            .greyOpacity,
-                                                        image: _imageSrc == ""
-                                                            ? DecorationImage(
-                                                                image: AssetImage(
-                                                                    'assets/image/def-profile.png'),
+                                                    : ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(100),
+                                                        child: _imageSrc == ""
+                                                            ? Image.asset(
+                                                                'assets/image/no-image-available.png',
                                                                 fit: BoxFit
                                                                     .cover,
                                                               )
-                                                            : DecorationImage(
-                                                                image: NetworkImage(
-                                                                    _imageSrc),
+                                                            : Image.network(
+                                                                "${_imageSrc}",
                                                                 fit: BoxFit
                                                                     .cover,
+                                                                errorBuilder:
+                                                                    (context,
+                                                                        error,
+                                                                        stackTrace) {
+                                                                  print(error);
+                                                                  return Image
+                                                                      .asset(
+                                                                    'assets/image/no-image-available.png',
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                  ); // Display an error message
+                                                                },
                                                               ),
                                                       ),
                                               ),
@@ -710,15 +754,20 @@ class _ProfileDetailState extends State<ProfileDetail> {
   Widget build(BuildContext context) {
     if (widget.profile != null) {
       _address = widget.profile["address"];
-      _dateOfBirth = widget.profile['dateOfBirth'] ?? "";
-      //pars ISO to Flutter DateTime
-      parsDateTime(value: '', currentFormat: '', desiredFormat: '');
-      DateTime parsDateOfBirth = parsDateTime(
-        value: _dateOfBirth,
-        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-        desiredFormat: "yyyy-MM-dd HH:mm:ss",
-      );
-      _dateOfBirth = formatDate(parsDateOfBirth);
+      _dateOfBirth = !widget.profile.containsKey('dateOfBirth')
+          ? ""
+          : widget.profile['dateOfBirth'];
+
+      if (_dateOfBirth != "") {
+        //pars ISO to Flutter DateTime
+        parsDateTime(value: '', currentFormat: '', desiredFormat: '');
+        DateTime parsDateOfBirth = parsDateTime(
+          value: _dateOfBirth,
+          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+          desiredFormat: "yyyy-MM-dd HH:mm:ss",
+        );
+        _dateOfBirth = formatDate(parsDateOfBirth);
+      }
 
       _genDerName = widget.profile['genderId'] != null
           ? widget.profile['genderId']['name']
@@ -791,7 +840,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                     height: 10,
                   ),
                   Text(
-                    "Job Seeker Area",
+                    "Basic Job Seeker",
                     style: bodyTextMaxNormal(null, FontWeight.bold),
                   ),
                   SizedBox(
@@ -819,21 +868,21 @@ class _ProfileDetailState extends State<ProfileDetail> {
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "what is profile level ",
-                        style: bodyTextSmall(null),
-                      ),
-                      Text(
-                        "Learn more",
-                        style: bodyTextSmall(AppColors.fontPrimary),
-                      )
-                    ],
-                  ),
+                  // SizedBox(
+                  //   height: 5,
+                  // ),
+                  // Row(
+                  //   children: [
+                  //     Text(
+                  //       "what is profile level ",
+                  //       style: bodyTextSmall(null),
+                  //     ),
+                  //     Text(
+                  //       "Learn more",
+                  //       style: bodyTextSmall(AppColors.fontPrimary),
+                  //     )
+                  //   ],
+                  // ),
                   SizedBox(
                     height: 20,
                   ),
@@ -1223,7 +1272,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             ),
                             Text(
                               "Work History",
-                              style: bodyTextNormal(
+                              style: bodyTextMedium(
                                   AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
@@ -1275,7 +1324,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 _position = i['position'];
 
                                 return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
+                                  padding: const EdgeInsets.only(bottom: 5),
                                   child:
                                       BoxDecProfileDetailHaveValueWithoutTitleText(
                                     widgetColumn: Column(
@@ -1416,7 +1465,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             ),
                             Text(
                               "Education",
-                              style: bodyTextNormal(
+                              style: bodyTextMedium(
                                   AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
@@ -1478,7 +1527,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     i['qualifications']['name'];
 
                                 return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
+                                  padding: const EdgeInsets.only(bottom: 5),
                                   child:
                                       BoxDecProfileDetailHaveValueWithoutTitleText(
                                     widgetColumn: Column(
@@ -1621,7 +1670,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             ),
                             Text(
                               "Language",
-                              style: bodyTextNormal(
+                              style: bodyTextMedium(
                                   AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
@@ -1645,7 +1694,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     i['LanguageLevelId']['name'];
 
                                 return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
+                                  padding: const EdgeInsets.only(bottom: 5),
                                   child:
                                       BoxDecProfileDetailHaveValueWithoutTitleText(
                                     widgetColumn: Column(
@@ -1769,7 +1818,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             ),
                             Text(
                               "Skill",
-                              style: bodyTextNormal(
+                              style: bodyTextMedium(
                                   AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
@@ -1791,7 +1840,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 _skillLevelName = i['skillLevelId']['name'];
 
                                 return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
+                                  padding: const EdgeInsets.only(bottom: 5),
                                   child:
                                       BoxDecProfileDetailHaveValueWithoutTitleText(
                                     widgetColumn: Column(

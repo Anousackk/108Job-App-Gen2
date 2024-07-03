@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 2.6.6+5
+version: 3.1.2+3
 
 environment:
   sdk: ">=2.12.0 <3.0.0" 
@@ -61,12 +61,14 @@ dependencies:
   firebase_messaging: 
   firebase_core: 
   firebase_auth:
+  flutter_local_notifications:
   sms_autofill:
   flutter_smart_dialog:
   upgrader:
   sizer:
   form_field_validator:
   get:
+  apple_product_name:
   font_awesome_flutter:
   flutter_slidable: ^3.1.0
   google_sign_in:
@@ -78,6 +80,7 @@ dependencies:
   new_version:
   image_picker: ^1.0.7
   hexcolor: ^3.0.1
+  # flutter_quill:
   # flutter_phoenix: ^1.0.0
 flutter_native_splash:
   image: assets/image/Logo108.png
@@ -128,24 +131,12 @@ flutter:
   # example:
   # fonts:
   fonts:
-  - family: FontAwesomeBrands-Regular
+  - family: FontAwesome-Regular
     fonts:
-    - asset: assets/font/FontAwesome6Brands-Regular-400.otf
-  - family: FontAwesomeDuotone-Solid
+    - asset: assets/font/fa-regular-400.ttf
+  - family: FontAwesome-Solid
     fonts:
-    - asset: assets/font/FontAwesome6Duotone-Solid-900.otf
-  - family: FontAwesomePro-Light
-    fonts:
-    - asset: assets/font/FontAwesome6Pro-Light-300.otf
-  - family: FontAwesomePro-Regular
-    fonts:
-    - asset: assets/font/FontAwesome6Pro-Regular-400.otf
-  - family: FontAwesomePro-Solid
-    fonts:
-    - asset: assets/font/FontAwesome6Pro-Solid-900.otf
-  - family: FontAwesomePro-Thin
-    fonts:
-    - asset: assets/font/FontAwesome6Pro-Thin-100.otf
+    - asset: assets/font/fa-solid-900.ttf
   - family: PoppinsMedium
     fonts:
     - asset: assets/font/Poppins-Medium.ttf 

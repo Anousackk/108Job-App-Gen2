@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, prefer_if_null_operators
+// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, prefer_if_null_operators, file_names
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
@@ -191,7 +191,7 @@ class _BoxDecProfileDetailHaveValueState
         ),
         Text(
           "${widget.title}",
-          style: bodyTextNormal(
+          style: bodyTextMedium(
             widget.titleColor == null
                 ? AppColors.fontPrimary
                 : widget.titleColor,
@@ -213,7 +213,7 @@ class _BoxDecProfileDetailHaveValueState
         ),
         Container(
           padding: EdgeInsets.all(15),
-          decoration: boxDecoration(null, AppColors.light, null),
+          decoration: boxDecoration(null, AppColors.light, null, null),
           child: Row(children: [
             Container(
               child: widget.widgetFaIcon,
@@ -296,7 +296,7 @@ class _BoxDecProfileDetailHaveValueWithoutTitleTextState
       children: [
         Container(
           padding: EdgeInsets.all(15),
-          decoration: boxDecoration(null, AppColors.light, null),
+          decoration: boxDecoration(null, AppColors.light, null, null),
           child: Row(children: [
             Container(
               child: widget.widgetFaIcon,

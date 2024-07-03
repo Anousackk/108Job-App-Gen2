@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, sized_box_for_whitespace, avoid_print, unused_local_variable, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, unused_element, prefer_is_empty
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, sized_box_for_whitespace, avoid_print, unused_local_variable, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, unused_element, prefer_is_empty, empty_statements, prefer_typing_uninitialized_variables
 
 import 'dart:async';
 
@@ -9,15 +9,19 @@ import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/screenAfterSignIn/company/companyDetail.dart';
 import 'package:app/widget/input.dart';
+import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 class Company extends StatefulWidget {
   const Company({
     Key? key,
+    this.companyType,
   }) : super(key: key);
+  final companyType;
 
   @override
   State<Company> createState() => _CompanyState();
@@ -25,6 +29,7 @@ class Company extends StatefulWidget {
 
 class _CompanyState extends State<Company> {
   TextEditingController _searchCompanyNameController = TextEditingController();
+  ScrollController _scrollController = ScrollController();
 
   List _companies = [];
   List _companiesFeatured = [];
@@ -41,10 +46,18 @@ class _CompanyState extends State<Company> {
   bool _isFollow = false;
   bool _statusShowLoading = false;
   bool _isLoading = true;
+  bool _isLoadingMoreData = false;
+  bool _hasMoreData = true;
+
+  dynamic page = 1;
+  dynamic perPage = 10;
+  dynamic totals;
 
   Timer? _timer;
 
   fetchCompanies(String searchType) async {
+    if (!_hasMoreData) return;
+
     if (_statusShowLoading) {
       showDialog(
         context: context,
@@ -57,24 +70,22 @@ class _CompanyState extends State<Company> {
     var res = await postData(getCompaniesSeekerApi, {
       "companyName": _searchCompanyName,
       "industryId": _selectedIndustryListItem,
-      "page": 1,
-      "perPage": 1000,
+      "page": page,
+      "perPage": perPage,
       "searchType": searchType
     });
-    //
-    //fetch for companies type featured
-    var featured = await postData(getCompaniesSeekerApi, {
-      "companyName": _searchCompanyName,
-      "industryId": _selectedIndustryListItem,
-      "page": 1,
-      "perPage": 1000,
-      "searchType": "AllCompanies"
-    });
-    _companies = res['employerList'];
-    _companiesFeatured = featured['employerList'];
-    _companiesFeatured =
-        _companiesFeatured.where((obj) => obj['isFeature'] == true).toList();
 
+    List fetchedCompanies = res['employerList'];
+    totals = res['totals'];
+
+    // _companies = res['employerList'];
+
+    page++;
+    _companies.addAll(List<Map<String, dynamic>>.from(fetchedCompanies));
+    if (_companies.length >= totals || fetchedCompanies.length < perPage) {
+      _hasMoreData = false;
+    }
+    _isLoadingMoreData = false;
     _isLoading = false;
 
     if (res['employerList'] != null && _statusShowLoading) {
@@ -87,8 +98,18 @@ class _CompanyState extends State<Company> {
     }
   }
 
+  fetchCompanyFeature() async {
+    var res = await postData(getCompaniesFeatureApi, {});
+    _companiesFeatured = res['employerList'];
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   pressTapMyJobType(String val) async {
     setState(() {
+      _statusShowLoading = true;
       _searchType = val;
 
       if (_searchType == "AllCompanies") {
@@ -96,7 +117,21 @@ class _CompanyState extends State<Company> {
       } else if (_searchType == "Following") {
       } else if (_searchType == "SubmittedCV") {}
     });
+    _companies.clear();
+    page = 1;
+    _hasMoreData = true;
     fetchCompanies(val);
+  }
+
+  checkTypeMyJobFromHomePage() {
+    if (widget.companyType == "Hiring") {
+      setState(() {
+        _searchType = widget.companyType;
+
+        fetchCompanies(_searchType);
+        fetchCompanyFeature();
+      });
+    }
   }
 
   followCompany(String companyName, String companyId) async {
@@ -114,7 +149,8 @@ class _CompanyState extends State<Company> {
     var message = res['message'];
     print(message);
 
-    fetchCompanies(_searchType);
+    // await fetchCompanies(_searchType);
+    // await fetchCompanyFeature();
 
     if (message == "Followed") {
       Navigator.pop(context);
@@ -124,9 +160,9 @@ class _CompanyState extends State<Company> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "$companyName Followed",
-            textButton: "OK",
+            title: "successful".tr,
+            text: "$companyName " + "followed".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
             },
@@ -141,9 +177,9 @@ class _CompanyState extends State<Company> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "$companyName Unfollowed",
-            textButton: "OK",
+            title: "successful".tr,
+            text: "$companyName " + "unfollowed".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
             },
@@ -156,19 +192,34 @@ class _CompanyState extends State<Company> {
   onGoBack(dynamic value) async {
     print("onGoBack");
     await fetchCompanies(_searchType);
+    await fetchCompanyFeature();
+  }
+
+  //error setState() called after dispose(). it can help!!!
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 
   @override
   void initState() {
     super.initState();
 
-    fetchCompanies("AllCompanies");
+    if (widget.companyType == "Hiring") {
+      checkTypeMyJobFromHomePage();
+    } else {
+      fetchCompanies("AllCompanies");
+      fetchCompanyFeature();
+    }
 
     _searchCompanyNameController.text = _searchCompanyName;
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _searchCompanyNameController.dispose();
     _timer?.cancel();
     super.dispose();
@@ -217,6 +268,14 @@ class _CompanyState extends State<Company> {
 
                         //
                         //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
                         //Search and Filter
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -251,11 +310,16 @@ class _CompanyState extends State<Company> {
                                       print('Calling API Get JobsSearch');
                                       setState(() {
                                         _statusShowLoading = true;
+                                        _companies.clear();
+                                        _hasMoreData = true;
+                                        page = 1;
                                       });
                                       fetchCompanies(_searchType);
+                                      // fetchCompanyFeature();
                                     });
                                   },
-                                  hintText: 'Search Company Name',
+                                  hintText:
+                                      "search".tr + " " + "company name".tr,
                                   inputColor: AppColors.inputWhite,
                                 ),
                               ),
@@ -268,12 +332,21 @@ class _CompanyState extends State<Company> {
 
                         Expanded(
                           child: CustomScrollView(
+                            controller: _scrollController,
                             shrinkWrap: true,
                             physics: ClampingScrollPhysics(),
                             slivers: <Widget>[
                               //
                               //
-                              //SliverToBoxAdapter
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //SliverToBoxAdapter Companies Feature
                               if (_companiesFeatured.length > 0)
                                 SliverToBoxAdapter(
                                   child: Column(
@@ -287,7 +360,7 @@ class _CompanyState extends State<Company> {
                                         child: Row(
                                           children: [
                                             Text(
-                                              "FEATURED",
+                                              "Sponsored companies",
                                               style: bodyTextMedium(
                                                   null, FontWeight.bold),
                                             ),
@@ -433,41 +506,50 @@ class _CompanyState extends State<Company> {
                                                                         style: bodyTextMaxNormal(
                                                                             null,
                                                                             FontWeight.bold),
+                                                                        textAlign:
+                                                                            TextAlign.center,
                                                                         maxLines:
                                                                             2,
                                                                         overflow:
                                                                             TextOverflow.ellipsis,
                                                                       ),
-                                                                      SizedBox(
-                                                                        height:
-                                                                            8,
-                                                                      ),
-
-                                                                      //
-                                                                      //Industry
-                                                                      Text(
-                                                                        "${_industry}",
-                                                                        style: bodyTextSmall(
-                                                                            null),
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height:
-                                                                            5,
-                                                                      ),
-
-                                                                      //
-                                                                      //Address
-                                                                      Text(
-                                                                        "${_address}",
-                                                                        style: bodyTextSmall(
-                                                                            null),
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                      ),
                                                                     ],
                                                                   ),
+                                                                ),
+
+                                                                Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    //
+                                                                    //Industry
+                                                                    Text(
+                                                                      "${_industry}",
+                                                                      style: bodyTextSmall(
+                                                                          null),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+
+                                                                    //
+                                                                    //Address
+                                                                    Text(
+                                                                      "${_address}",
+                                                                      style: bodyTextSmall(
+                                                                          null),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 10,
                                                                 ),
 
                                                                 //
@@ -483,12 +565,13 @@ class _CompanyState extends State<Company> {
                                                                     Row(
                                                                       children: [
                                                                         Text(
-                                                                          "${_followerTotals}",
+                                                                          "${_followerTotals} ",
                                                                           style:
                                                                               bodyTextSmall(null),
                                                                         ),
                                                                         Text(
-                                                                          " Followers",
+                                                                          "follower"
+                                                                              .tr,
                                                                           style:
                                                                               bodyTextSmall(null),
                                                                         ),
@@ -500,15 +583,15 @@ class _CompanyState extends State<Company> {
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () {
+                                                                        setState(
+                                                                            () {
+                                                                          i['follow'] =
+                                                                              !i['follow'];
+                                                                        });
                                                                         followCompany(
                                                                           i['companyName'],
                                                                           i['_id'],
                                                                         );
-                                                                        setState(
-                                                                            () {
-                                                                          _isFollow =
-                                                                              !_isFollow;
-                                                                        });
                                                                       },
                                                                       child: _isFollow
                                                                           ? Container(
@@ -516,7 +599,7 @@ class _CompanyState extends State<Company> {
                                                                               decoration: BoxDecoration(
                                                                                 color: AppColors.buttonPrimary,
                                                                                 borderRadius: BorderRadius.circular(8),
-                                                                                border: Border.all(color: AppColors.borderGreyOpacity),
+                                                                                // border: Border.all(color: AppColors.borderGreyOpacity),
                                                                               ),
                                                                               child: Row(
                                                                                 children: [
@@ -529,7 +612,7 @@ class _CompanyState extends State<Company> {
                                                                                     width: 8,
                                                                                   ),
                                                                                   Text(
-                                                                                    "Following",
+                                                                                    "following".tr,
                                                                                     style: bodyTextSmall(AppColors.fontWhite),
                                                                                   ),
                                                                                 ],
@@ -553,7 +636,7 @@ class _CompanyState extends State<Company> {
                                                                                     width: 8,
                                                                                   ),
                                                                                   Text(
-                                                                                    "Follow",
+                                                                                    "follow".tr,
                                                                                     style: bodyTextSmall(null),
                                                                                   ),
                                                                                 ],
@@ -644,6 +727,15 @@ class _CompanyState extends State<Company> {
                               //
                               //
                               //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
                               //List Tap All Companies, Hiring Now, Following, Applied
                               SliverPersistentHeader(
                                 pinned: true,
@@ -652,12 +744,13 @@ class _CompanyState extends State<Company> {
                                     children: [
                                       Container(
                                         color: AppColors.background,
-                                        height: 70,
+                                        height: 50,
                                         margin: EdgeInsets.symmetric(
                                             horizontal: 20),
                                         width: double.infinity,
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
+                                          physics: ClampingScrollPhysics(),
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -682,7 +775,7 @@ class _CompanyState extends State<Company> {
                                                             10),
                                                   ),
                                                   child: Text(
-                                                    "All Companies",
+                                                    "all company".tr,
                                                     style: bodyTextNormal(
                                                         _searchType ==
                                                                 "AllCompanies"
@@ -716,7 +809,7 @@ class _CompanyState extends State<Company> {
                                                             10),
                                                   ),
                                                   child: Text(
-                                                    "Hiring Now",
+                                                    "hiring now".tr,
                                                     style: bodyTextNormal(
                                                         _searchType == "Hiring"
                                                             ? AppColors
@@ -750,7 +843,7 @@ class _CompanyState extends State<Company> {
                                                             10),
                                                   ),
                                                   child: Text(
-                                                    "Following",
+                                                    "following".tr,
                                                     style: bodyTextNormal(
                                                         _searchType ==
                                                                 "Following"
@@ -785,7 +878,7 @@ class _CompanyState extends State<Company> {
                                                             10),
                                                   ),
                                                   child: Text(
-                                                    "Applied",
+                                                    "applied".tr,
                                                     style: bodyTextNormal(
                                                         _searchType ==
                                                                 "SubmittedCV"
@@ -808,268 +901,355 @@ class _CompanyState extends State<Company> {
 
                               //
                               //
-                              //List Company of SliverList
-                              SliverList(
-                                delegate: SliverChildBuilderDelegate(
-                                  (BuildContext context, int index) {
-                                    dynamic i = _companies[index];
-                                    _companyName = i['companyName'];
-                                    _industry = i['industry'];
-                                    _address = i['address'];
-                                    _logo = i['logo'];
-                                    _followerTotals =
-                                        i['followerTotals'].toString();
-                                    _isFollow = i['follow'];
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
 
-                                    return Column(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CompanyDetail(
-                                                  companyId: i['_id'],
-                                                ),
-                                              ),
-                                            ).then((value) {
-                                              if (value == "Success") {
-                                                setState(() {
-                                                  _statusShowLoading = true;
-                                                });
-                                                onGoBack(value);
-                                              }
-                                            });
-                                            ;
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.symmetric(
-                                                horizontal: 20),
-                                            padding: EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              // border: Border.all(
-                                              //     color: AppColors
-                                              //         .borderSecondary),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  flex: 7,
+                              //SliverList of company
+                              _companies.length > 0
+                                  ? SliverList(
+                                      delegate: SliverChildBuilderDelegate(
+                                        (BuildContext context, int index) {
+                                          if (index == _companies.length) {
+                                            return _hasMoreData
+                                                ? Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 20,
+                                                        vertical: 8),
+                                                    child: ElevatedButton(
+                                                      style: ButtonStyle(
+                                                          backgroundColor:
+                                                              MaterialStatePropertyAll(
+                                                                  AppColors
+                                                                      .lightPrimary)),
+                                                      onPressed: () => {
+                                                        setState(() {
+                                                          _isLoadingMoreData =
+                                                              true;
+                                                        }),
+                                                        fetchCompanies(
+                                                            _searchType),
+                                                      },
+                                                      child: Text(
+                                                        'view more'.tr,
+                                                        style: TextStyle(
+                                                            color: AppColors
+                                                                .fontPrimary),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Center(
+                                                        child: Text(
+                                                            'no have data'.tr)),
+                                                  );
+                                          }
+
+                                          dynamic i = _companies[index];
+                                          _companyName = i['companyName'];
+                                          _industry = i['industry'];
+                                          _address = i['address'];
+                                          _logo = i['logo'];
+                                          _followerTotals =
+                                              i['followerTotals'].toString();
+                                          _isFollow = i['follow'];
+
+                                          return Column(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          CompanyDetail(
+                                                        companyId: i['_id'],
+                                                      ),
+                                                    ),
+                                                  ).then((value) {
+                                                    // if (value == "Success") {
+                                                    //   setState(() {
+                                                    //     _statusShowLoading =
+                                                    //         true;
+                                                    //   });
+                                                    //   onGoBack(value);
+                                                    // }
+                                                    if (value[1] != "") {
+                                                      setState(() {
+                                                        dynamic company =
+                                                            _companies.firstWhere(
+                                                                (e) =>
+                                                                    e['_id'] ==
+                                                                    value[1]);
+
+                                                        company['follow'] =
+                                                            value[2];
+                                                      });
+                                                    }
+                                                  });
+                                                },
+                                                child: Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                                  padding: EdgeInsets.all(12),
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    // border: Border.all(
+                                                    //     color: AppColors
+                                                    //         .borderSecondary),
+                                                  ),
                                                   child: Row(
                                                     children: [
-                                                      //
-                                                      //
-                                                      //Logo Company
-                                                      Container(
-                                                        height: 90,
-                                                        width: 90,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          border: Border.all(
-                                                            color: AppColors
-                                                                .borderSecondary,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                          color: AppColors
-                                                              .backgroundWhite,
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(5),
-                                                          child: ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                            child: _logo == ""
-                                                                ? Image.asset(
-                                                                    'assets/image/no-image-available.png',
-                                                                    fit: BoxFit
-                                                                        .contain,
-                                                                  )
-                                                                : Image.network(
-                                                                    "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
-                                                                    fit: BoxFit
-                                                                        .contain,
-                                                                    errorBuilder:
-                                                                        (context,
-                                                                            error,
-                                                                            stackTrace) {
-                                                                      return Image
+                                                      Expanded(
+                                                        flex: 7,
+                                                        child: Row(
+                                                          children: [
+                                                            //
+                                                            //
+                                                            //Logo Company
+                                                            Container(
+                                                              height: 90,
+                                                              width: 90,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                border:
+                                                                    Border.all(
+                                                                  color: AppColors
+                                                                      .borderSecondary,
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                color: AppColors
+                                                                    .backgroundWhite,
+                                                              ),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(5),
+                                                                child:
+                                                                    ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                  child: _logo ==
+                                                                          ""
+                                                                      ? Image
                                                                           .asset(
-                                                                        'assets/image/no-image-available.png',
-                                                                        fit: BoxFit
-                                                                            .contain,
-                                                                      ); // Display an error message
-                                                                    },
-                                                                  ),
-                                                          ),
+                                                                          'assets/image/no-image-available.png',
+                                                                          fit: BoxFit
+                                                                              .contain,
+                                                                        )
+                                                                      : Image
+                                                                          .network(
+                                                                          "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                                          fit: BoxFit
+                                                                              .contain,
+                                                                          errorBuilder: (context,
+                                                                              error,
+                                                                              stackTrace) {
+                                                                            return Image.asset(
+                                                                              'assets/image/no-image-available.png',
+                                                                              fit: BoxFit.contain,
+                                                                            ); // Display an error message
+                                                                          },
+                                                                        ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 15,
+                                                            ),
+
+                                                            //
+                                                            //
+                                                            //Content Company
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                      "${_companyName}",
+                                                                      style: bodyTextNormal(
+                                                                          null,
+                                                                          FontWeight
+                                                                              .bold),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis),
+                                                                  Text(
+                                                                      "${_industry}",
+                                                                      style: bodyTextSmall(
+                                                                          null),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis),
+                                                                  Text(
+                                                                      "${_address}",
+                                                                      style: bodyTextSmall(
+                                                                          null),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis),
+                                                                  Text(
+                                                                      "${_followerTotals} " +
+                                                                          "follower"
+                                                                              .tr,
+                                                                      style: bodyTextSmall(
+                                                                          null))
+                                                                ],
+                                                              ),
+                                                            )
+                                                          ],
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                        width: 15,
+                                                        width: 10,
                                                       ),
 
                                                       //
                                                       //
-                                                      //Content Company
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
-                                                                "${_companyName}",
-                                                                style: bodyTextNormal(
-                                                                    null,
-                                                                    FontWeight
-                                                                        .bold),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis),
-                                                            Text("${_industry}",
-                                                                style:
-                                                                    bodyTextSmall(
-                                                                        null),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis),
-                                                            Text("${_address}",
-                                                                style:
-                                                                    bodyTextSmall(
-                                                                        null),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis),
-                                                            Text(
-                                                                "${_followerTotals} Followers",
-                                                                style:
-                                                                    bodyTextSmall(
-                                                                        null))
-                                                          ],
-                                                        ),
+                                                      //Button follow / following
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            i['follow'] =
+                                                                !i['follow'];
+                                                          });
+                                                          followCompany(
+                                                            i['companyName'],
+                                                            i['_id'],
+                                                          );
+                                                        },
+                                                        child: _isFollow
+                                                            ? Container(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                  8,
+                                                                ),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: AppColors
+                                                                      .buttonPrimary,
+                                                                  // border: Border.all(
+                                                                  //   color: AppColors
+                                                                  //       .borderGreyOpacity,
+                                                                  // ),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child: Row(
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .heart,
+                                                                      size: 13,
+                                                                      color: AppColors
+                                                                          .iconLight,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 8,
+                                                                    ),
+                                                                    Text(
+                                                                        "following"
+                                                                            .tr,
+                                                                        style: bodyTextSmall(
+                                                                            AppColors.fontWhite)),
+                                                                  ],
+                                                                ),
+                                                              )
+                                                            : Container(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                  8,
+                                                                ),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  border: Border
+                                                                      .all(
+                                                                    color: AppColors
+                                                                        .borderSecondary,
+                                                                  ),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child: Row(
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .heart,
+                                                                      size: 13,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 8,
+                                                                    ),
+                                                                    Text(
+                                                                        "follow"
+                                                                            .tr,
+                                                                        style: bodyTextSmall(
+                                                                            null)),
+                                                                  ],
+                                                                ),
+                                                              ),
                                                       )
                                                     ],
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-
-                                                //
-                                                //
-                                                //Button follow / following
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    followCompany(
-                                                      i['companyName'],
-                                                      i['_id'],
-                                                    );
-                                                    setState(() {
-                                                      _isFollow = !_isFollow;
-                                                    });
-                                                  },
-                                                  child: _isFollow
-                                                      ? Container(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                            8,
-                                                          ),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: AppColors
-                                                                .buttonPrimary,
-                                                            border: Border.all(
-                                                              color: AppColors
-                                                                  .borderGreyOpacity,
-                                                            ),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                          ),
-                                                          child: Row(
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .heart,
-                                                                size: 13,
-                                                                color: AppColors
-                                                                    .iconLight,
-                                                              ),
-                                                              SizedBox(
-                                                                width: 8,
-                                                              ),
-                                                              Text("Following",
-                                                                  style: bodyTextSmall(
-                                                                      AppColors
-                                                                          .fontWhite)),
-                                                            ],
-                                                          ),
-                                                        )
-                                                      : Container(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                            8,
-                                                          ),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            border: Border.all(
-                                                              color: AppColors
-                                                                  .borderSecondary,
-                                                            ),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                          ),
-                                                          child: Row(
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .heart,
-                                                                size: 13,
-                                                              ),
-                                                              SizedBox(
-                                                                width: 8,
-                                                              ),
-                                                              Text("Follow",
-                                                                  style:
-                                                                      bodyTextSmall(
-                                                                          null)),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                  childCount: _companies.length,
-                                ),
-                              ),
-                              SliverToBoxAdapter(
-                                child: SizedBox(
-                                  height: 30,
-                                ),
-                              ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                        childCount: _companies.length + 1,
+                                      ),
+                                    )
+                                  : SliverToBoxAdapter(
+                                      child: ScreenNoData(
+                                        faIcon: FontAwesomeIcons
+                                            .fileCircleExclamation,
+                                        colorIcon: AppColors.primary,
+                                        text: "no have data".tr,
+                                        colorText: AppColors.primary,
+                                      ),
+                                    ),
                             ],
                           ),
-                        )
+                        ),
+                        if (_isLoadingMoreData)
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
                       ],
                     ),
                   ),

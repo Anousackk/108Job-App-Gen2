@@ -34,7 +34,7 @@ class _NotificationIconState extends State<NotificationIcon> {
               child: Container(
                 padding: EdgeInsets.only(right: 10, top: 8),
                 decoration: boxDecoration(null, AppColors.greyOpacity,
-                    AppColors.white.withOpacity(0)),
+                    AppColors.white.withOpacity(0), null),
                 child: Text(
                   ' ${widget.icon} ',
                   textAlign: TextAlign.center,

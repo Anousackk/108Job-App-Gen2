@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_if_null_operators, non_constant_identifier_names, unnecessary_string_interpolations
+// ignore_for_file: prefer_const_constructors, prefer_if_null_operators, non_constant_identifier_names, unnecessary_string_interpolations, file_names
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';

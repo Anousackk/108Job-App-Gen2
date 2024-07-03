@@ -27,9 +27,9 @@ if (keystorePropertiesFile.exists()) {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 34
@@ -52,8 +52,8 @@ android {
         applicationId "com.onehundredeightjobs.app"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 40
-        versionName "2.7.0"
+        versionCode 43
+        versionName "2.7.3"
         multiDexEnabled true
     }
     signingConfigs {

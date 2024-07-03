@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_is_empty
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_is_empty, unused_element, file_names
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -15,6 +15,7 @@ import 'package:app/widget/listSingleSelectedAlertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class WorkPreferences extends StatefulWidget {
@@ -64,6 +65,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
   List _industryName = [];
   List _benefitName = [];
   String _joblevelName = "";
+  String _localeLanguageApi = "EN";
 
   bool _isValidateValue = false;
 
@@ -140,15 +142,14 @@ class _WorkPreferencesState extends State<WorkPreferences> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
     _salaryController.addListener(_formatSalary);
+    getReuseTypeSeeker(_localeLanguageApi, 'JobLevel', _listJobLevels);
+    getReuseTypeSeeker(_localeLanguageApi, 'Province', _listProvinces);
+    getReuseTypeSeeker(_localeLanguageApi, 'Industry', _listIndustries);
 
-    getReuseTypeSeeker('EN', 'JobLevel', _listJobLevels);
-    getReuseTypeSeeker('EN', 'Province', _listProvinces);
-    getReuseTypeSeeker('EN', 'Industry', _listIndustries);
-
-    getBenefitsSeeker('EN');
+    getBenefitsSeeker(_localeLanguageApi);
     getJobFunctionsSeeker();
 
     _id = widget.id ?? "";
@@ -606,28 +607,32 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                       );
                                     }).then(
                                   (value) {
-                                    print(value);
-                                    //value = []
-                                    //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                    if (value.length > 0) {
-                                      _selectedProvincesListItem = value;
-                                      _provinceName =
-                                          []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+                                    setState(() {
+                                      print("01: ${value}");
 
-                                      for (var item in _listProvinces) {
-                                        //
-                                        //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedProvincesListItem ກົງກັບ _listProvinces ບໍ່
-                                        if (_selectedProvincesListItem
-                                            .contains(item['_id'])) {
+                                      //value = []
+                                      //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                      if (value.length > 0) {
+                                        print("02: ${value}");
+                                        _selectedProvincesListItem = value;
+                                        _provinceName =
+                                            []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+
+                                        for (var item in _listProvinces) {
                                           //
-                                          //add Provinces Name ເຂົ້າໃນ _provinceName
-                                          setState(() {
-                                            _provinceName.add(item['name']);
-                                          });
+                                          //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedProvincesListItem ກົງກັບ _listProvinces ບໍ່
+                                          if (_selectedProvincesListItem
+                                              .contains(item['_id'])) {
+                                            //
+                                            //add Provinces Name ເຂົ້າໃນ _provinceName
+                                            setState(() {
+                                              _provinceName.add(item['name']);
+                                            });
+                                          }
                                         }
+                                        print(_provinceName);
                                       }
-                                      print(_provinceName);
-                                    }
+                                    });
                                   },
                                 );
                               },
@@ -700,27 +705,29 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                       );
                                     }).then(
                                   (value) {
-                                    //value = []
-                                    //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                    if (value.length > 0) {
-                                      _selectedIndustriesListItem = value;
-                                      _industryName =
-                                          []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+                                    setState(() {
+                                      //value = []
+                                      //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                      if (value.length > 0) {
+                                        _selectedIndustriesListItem = value;
+                                        _industryName =
+                                            []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
 
-                                      for (var item in _listIndustries) {
-                                        //
-                                        //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedIndustriesListItem ກົງກັບ _listIndustries ບໍ່
-                                        if (_selectedIndustriesListItem
-                                            .contains(item['_id'])) {
+                                        for (var item in _listIndustries) {
                                           //
-                                          //add Provinces Name ເຂົ້າໃນ _industryName
-                                          setState(() {
-                                            _industryName.add(item['name']);
-                                          });
+                                          //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedIndustriesListItem ກົງກັບ _listIndustries ບໍ່
+                                          if (_selectedIndustriesListItem
+                                              .contains(item['_id'])) {
+                                            //
+                                            //add Provinces Name ເຂົ້າໃນ _industryName
+                                            setState(() {
+                                              _industryName.add(item['name']);
+                                            });
+                                          }
                                         }
+                                        print(_industryName);
                                       }
-                                      print(_industryName);
-                                    }
+                                    });
                                   },
                                 );
                               },
@@ -932,7 +939,21 @@ class _WorkPreferencesState extends State<WorkPreferences> {
     );
   }
 
+  getSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    var getLanguageSharePref = prefs.getString('setLanguage');
+    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    print("eeeee" + getLanguageSharePref.toString());
+    print("api" + getLanguageApiSharePref.toString());
+
+    setState(() {
+      _localeLanguageApi = getLanguageApiSharePref.toString();
+    });
+  }
+
   getReuseTypeSeeker(String lang, String type, List listValue) async {
+    print("lll");
+
     var res =
         await fetchData(getReuseTypeApiSeeker + "lang=${lang}&type=${type}");
     setState(() {
