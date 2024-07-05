@@ -48,6 +48,7 @@ class _WorkHistoryState extends State<WorkHistory> {
   bool _isCurrentJob = false;
 
   DateTime _dateTimeNow = DateTime.now();
+  //
 
   setValueGetById() {
     setState(() {
