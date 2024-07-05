@@ -14,6 +14,7 @@ import 'package:app/widget/listMultiSelectedAlertDialog.dart';
 import 'package:app/widget/listSingleSelectedAlertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -65,7 +66,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
   List _industryName = [];
   List _benefitName = [];
   String _joblevelName = "";
-  String _localeLanguageApi = "EN";
+  String _localeLanguageApi = "";
 
   bool _isValidateValue = false;
 
@@ -140,16 +141,30 @@ class _WorkPreferencesState extends State<WorkPreferences> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
+  getSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    var getLanguageSharePref = prefs.getString('setLanguage');
+    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // print("local " + getLanguageSharePref.toString());
+    // print("api " + getLanguageApiSharePref.toString());
 
-    _salaryController.addListener(_formatSalary);
+    setState(() {
+      _localeLanguageApi = getLanguageApiSharePref.toString();
+    });
+
     getReuseTypeSeeker(_localeLanguageApi, 'JobLevel', _listJobLevels);
     getReuseTypeSeeker(_localeLanguageApi, 'Province', _listProvinces);
     getReuseTypeSeeker(_localeLanguageApi, 'Industry', _listIndustries);
 
     getBenefitsSeeker(_localeLanguageApi);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _salaryController.addListener(_formatSalary);
+    getSharedPreferences();
     getJobFunctionsSeeker();
 
     _id = widget.id ?? "";
@@ -201,7 +216,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
             MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
         child: Scaffold(
           appBar: AppBarDefault(
-            textTitle: "Work Preferences",
+            textTitle: "work preferences".tr,
             fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
@@ -230,9 +245,12 @@ class _WorkPreferencesState extends State<WorkPreferences> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //Expected Work Position
                             Text(
-                              "Expected Work Position",
+                              "position".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -246,7 +264,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                 });
                               },
                               inputColor: AppColors.inputWhite,
-                              hintText: "Enter Work Position",
+                              hintText: "enter".tr + " " + "position".tr,
                               hintTextFontWeight: FontWeight.bold,
                               suffixIcon: Icon(
                                 Icons.keyboard,
@@ -291,9 +309,12 @@ class _WorkPreferencesState extends State<WorkPreferences> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //Expected Salary
                             Text(
-                              "Expected Salary",
+                              "salary".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -339,12 +360,12 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                         children: [
                                           if (_currency == r"$")
                                             Text(
-                                              "USD/Month",
+                                              "usd".tr + "/" + "month".tr,
                                               style: bodyTextNormal(null, null),
                                             ),
                                           if (_currency == "₭")
                                             Text(
-                                              "Kip/Month",
+                                              "kip".tr + "/" + "month".tr,
                                               style: bodyTextNormal(null, null),
                                             ),
                                           SizedBox(
@@ -362,7 +383,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                               ),
                               validator: (value) {
                                 if (value == null || value == "") {
-                                  return "required";
+                                  return "required".tr;
                                 }
                                 return null;
                               },
@@ -373,9 +394,12 @@ class _WorkPreferencesState extends State<WorkPreferences> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //Job Level
                             Text(
-                              "Job Level",
+                              "job level".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -406,7 +430,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                     context: context,
                                     builder: (context) {
                                       return ListSingleSelectedAlertDialog(
-                                        title: "Job Level",
+                                        title: "job level".tr,
                                         listItems: _listJobLevels,
                                         selectedListItem: _selectedJobLevel,
                                       );
@@ -431,7 +455,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                               },
                               text: _selectedJobLevel != ""
                                   ? "${_joblevelName}"
-                                  : "Select Job Level",
+                                  : "select".tr + "job level".tr,
                               colorText: _selectedJobLevel == ""
                                   ? AppColors.fontGreyOpacity
                                   : AppColors.fontDark,
@@ -444,7 +468,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                         top: 5,
                                       ),
                                       child: Text(
-                                        "required",
+                                        "required".tr,
                                         style: bodyTextSmall(
                                           AppColors.fontDanger,
                                         ),
@@ -458,9 +482,12 @@ class _WorkPreferencesState extends State<WorkPreferences> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //Job Function
                             Text(
-                              "Job Functions",
+                              "job function".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -491,7 +518,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                     context: context,
                                     builder: (context) {
                                       return ListJobFuncSelectedAlertDialog(
-                                        title: "Job Functions",
+                                        title: "job function".tr,
                                         listItems: _listJobFunctions,
                                         selectedListItems:
                                             _selectedJobFunctionsItems,
@@ -541,7 +568,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                               },
                               text: _selectedJobFunctionsItems.isNotEmpty
                                   ? "${_jobFunctionItemName.join(', ')}"
-                                  : "Select Job Function",
+                                  : "select".tr + " " + "job function".tr,
                               colorText: _selectedJobFunctionsItems.isEmpty
                                   ? AppColors.fontGreyOpacity
                                   : AppColors.fontDark,
@@ -554,7 +581,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                         top: 5,
                                       ),
                                       child: Text(
-                                        "required",
+                                        "required".tr,
                                         style: bodyTextSmall(
                                           AppColors.fontDanger,
                                         ),
@@ -568,9 +595,12 @@ class _WorkPreferencesState extends State<WorkPreferences> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //Expected Work Provinces
                             Text(
-                              "Expected Work Provinces",
+                              "province".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -600,7 +630,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                     context: context,
                                     builder: (context) {
                                       return ListMultiSelectedAlertDialog(
-                                        title: "Work Province",
+                                        title: "province".tr,
                                         listItems: _listProvinces,
                                         selectedListItem:
                                             _selectedProvincesListItem,
@@ -637,7 +667,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                 );
                               },
                               text: _selectedProvincesListItem.isEmpty
-                                  ? "Work Province"
+                                  ? "province".tr
                                   : "${_provinceName.join(', ')}",
                               colorText: _selectedProvincesListItem.isEmpty
                                   ? AppColors.fontGreyOpacity
@@ -651,7 +681,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                         top: 5,
                                       ),
                                       child: Text(
-                                        "required",
+                                        "required".tr,
                                         style: bodyTextSmall(
                                           AppColors.fontDanger,
                                         ),
@@ -665,9 +695,12 @@ class _WorkPreferencesState extends State<WorkPreferences> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //Expected Work Industry
                             Text(
-                              "Expected Work Industry",
+                              "industry".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -698,7 +731,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                     context: context,
                                     builder: (context) {
                                       return ListMultiSelectedAlertDialog(
-                                        title: "Industry",
+                                        title: "industry".tr,
                                         listItems: _listIndustries,
                                         selectedListItem:
                                             _selectedIndustriesListItem,
@@ -732,7 +765,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                 );
                               },
                               text: _selectedIndustriesListItem.isEmpty
-                                  ? "Select Industry"
+                                  ? "select".tr + " " + "industry".tr
                                   : "${_industryName.join(', ')}",
                               colorText: _selectedIndustriesListItem.isEmpty
                                   ? AppColors.fontGreyOpacity
@@ -746,7 +779,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                         top: 5,
                                       ),
                                       child: Text(
-                                        "required",
+                                        "required".tr,
                                         style: bodyTextSmall(
                                           AppColors.fontDanger,
                                         ),
@@ -762,7 +795,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                             //
                             //Expected Benefits
                             Text(
-                              "Expected Benefits",
+                              "benefit".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -792,7 +825,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                     context: context,
                                     builder: (context) {
                                       return BoxIconMultiSelectedAlertDialog(
-                                        title: "Benefit",
+                                        title: "benefit".tr,
                                         listItems: _listBenefits,
                                         selectedListItem:
                                             _selectedBenefitsListItem,
@@ -824,7 +857,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                 );
                               },
                               text: _selectedBenefitsListItem.isEmpty
-                                  ? "Select Benefit"
+                                  ? "select".tr + " " + "benefit".tr
                                   : "${_benefitName.join(', ')}",
                               colorText: _selectedBenefitsListItem.isEmpty
                                   ? AppColors.fontGreyOpacity
@@ -838,7 +871,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                         top: 5,
                                       ),
                                       child: Text(
-                                        "required",
+                                        "required".tr,
                                         style: bodyTextSmall(
                                           AppColors.fontDanger,
                                         ),
@@ -854,7 +887,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                             //
                             //Professional Summary
                             Text(
-                              "Professional Summary",
+                              "professional summary".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -870,11 +903,11 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                   _professionalSummary = value;
                                 });
                               },
-                              hintText: "Tell us more about you",
+                              hintText: "tell about you".tr,
                               hintTextFontWeight: FontWeight.bold,
                               validator: (value) {
                                 if (value == null || value == "") {
-                                  return "required";
+                                  return "required".tr;
                                 }
                                 return null;
                               },
@@ -894,7 +927,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                     //
                     //Button Save
                     Button(
-                      text: "Save",
+                      text: "save".tr,
                       fontWeight: FontWeight.bold,
                       press: () {
                         if (formkey.currentState!.validate()) {
@@ -939,21 +972,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
     );
   }
 
-  getSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    var getLanguageSharePref = prefs.getString('setLanguage');
-    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
-    print("eeeee" + getLanguageSharePref.toString());
-    print("api" + getLanguageApiSharePref.toString());
-
-    setState(() {
-      _localeLanguageApi = getLanguageApiSharePref.toString();
-    });
-  }
-
   getReuseTypeSeeker(String lang, String type, List listValue) async {
-    print("lll");
-
     var res =
         await fetchData(getReuseTypeApiSeeker + "lang=${lang}&type=${type}");
     setState(() {
@@ -1012,9 +1031,9 @@ class _WorkPreferencesState extends State<WorkPreferences> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "Save Job Level Success",
-            textButton: "OK",
+            title: "successful".tr,
+            text: "save".tr + " " + "job level".tr + " " + "successful".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
               Navigator.pop(context);

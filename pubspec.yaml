@@ -80,6 +80,7 @@ dependencies:
   new_version:
   image_picker: ^1.0.7
   hexcolor: ^3.0.1
+  # flutter_quill: ^9.5.3
   # flutter_quill:
   # flutter_phoenix: ^1.0.0
 flutter_native_splash:

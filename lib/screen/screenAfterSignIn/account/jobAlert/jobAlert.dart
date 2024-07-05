@@ -12,6 +12,8 @@ import 'package:app/widget/listJobFuncSelectedAlertDialog.dart';
 import 'package:app/widget/listMultiSelectedAlertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class JobAlert extends StatefulWidget {
   const JobAlert({Key? key}) : super(key: key);
@@ -50,6 +52,7 @@ class _JobAlertState extends State<JobAlert> {
   String _jobLevelJobAlert = "";
   String _workLocationJobAlert = "";
   String _industryJobAlert = "";
+  String _localeLanguageApi = "";
   Map<String, dynamic> res = {};
 
   getReuseTypeSeeker(String lang, String type, List listValue) async {
@@ -118,9 +121,9 @@ class _JobAlertState extends State<JobAlert> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "Save Job Alert Success",
-            textButton: "OK",
+            title: "successful".tr,
+            text: "save".tr + " " + "job alert".tr + " " + "successful".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
               Navigator.pop(context);
@@ -187,13 +190,27 @@ class _JobAlertState extends State<JobAlert> {
     });
   }
 
+  getSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    var getLanguageSharePref = prefs.getString('setLanguage');
+    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // print("local " + getLanguageSharePref.toString());
+    // print("api " + getLanguageApiSharePref.toString());
+
+    setState(() {
+      _localeLanguageApi = getLanguageApiSharePref.toString();
+    });
+
+    getReuseTypeSeeker(_localeLanguageApi, 'JobLevel', _listJobLevels);
+    getReuseTypeSeeker(_localeLanguageApi, 'Province', _listProvinces);
+    getReuseTypeSeeker(_localeLanguageApi, 'Industry', _listIndustries);
+  }
+
   @override
   void initState() {
     super.initState();
     getJobAlert();
-    getReuseTypeSeeker('EN', 'JobLevel', _listJobLevels);
-    getReuseTypeSeeker('EN', 'Province', _listProvinces);
-    getReuseTypeSeeker('EN', 'Industry', _listIndustries);
+    getSharedPreferences();
     getJobFunctionsSeeker();
   }
 
@@ -203,7 +220,7 @@ class _JobAlertState extends State<JobAlert> {
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBarDefault(
-          textTitle: "Job Alert",
+          textTitle: "job alert".tr,
           // fontWeight: FontWeight.bold,
           leadingIcon: Icon(Icons.arrow_back),
           leadingPress: () {
@@ -245,7 +262,7 @@ class _JobAlertState extends State<JobAlert> {
                                       //
                                       //Job Function
                                       Text(
-                                        "Job Function",
+                                        "job function".tr,
                                         style: bodyTextNormal(null, null),
                                       ),
                                       SizedBox(
@@ -261,9 +278,9 @@ class _JobAlertState extends State<JobAlert> {
                                       ),
 
                                       //
-                                      //Working Location
+                                      //Working Province
                                       Text(
-                                        "Working Location",
+                                        "work province".tr,
                                         style: bodyTextNormal(null, null),
                                       ),
                                       SizedBox(
@@ -281,7 +298,7 @@ class _JobAlertState extends State<JobAlert> {
                                       //
                                       //Industry
                                       Text(
-                                        "Industry",
+                                        "industry".tr,
                                         style: bodyTextNormal(null, null),
                                       ),
                                       SizedBox(
@@ -299,7 +316,7 @@ class _JobAlertState extends State<JobAlert> {
                                       //
                                       //Job level
                                       Text(
-                                        "Job Level",
+                                        "job level".tr,
                                         style: bodyTextNormal(null, null),
                                       ),
                                       SizedBox(
@@ -321,7 +338,7 @@ class _JobAlertState extends State<JobAlert> {
                           height: 20,
                         ),
                         Button(
-                          text: res.isNotEmpty ? "Edit" : "Add",
+                          text: res.isNotEmpty ? "edit".tr : "add".tr,
                           fontWeight: FontWeight.bold,
                           press: () async {
                             if (res.isNotEmpty) {
@@ -371,7 +388,7 @@ class _JobAlertState extends State<JobAlert> {
                                           Expanded(
                                             child: Center(
                                               child: Text(
-                                                "Job Alert",
+                                                "job alert".tr,
                                                 style: bodyTextMedium(
                                                     null, FontWeight.bold),
                                               ),
@@ -404,7 +421,7 @@ class _JobAlertState extends State<JobAlert> {
                                             //
                                             //Job Function
                                             Text(
-                                              "Job Functions",
+                                              "job function".tr,
                                               style: bodyTextNormal(
                                                   null, FontWeight.bold),
                                             ),
@@ -440,7 +457,8 @@ class _JobAlertState extends State<JobAlert> {
                                                     context: context,
                                                     builder: (context) {
                                                       return ListJobFuncSelectedAlertDialog(
-                                                        title: "Job Functions",
+                                                        title:
+                                                            "job function".tr,
                                                         listItems:
                                                             _listJobFunctions,
                                                         selectedListItems:
@@ -503,7 +521,9 @@ class _JobAlertState extends State<JobAlert> {
                                               text: _selectedJobFunctionsItems
                                                       .isNotEmpty
                                                   ? "${_jobFunctionItemName.join(', ')}"
-                                                  : "Select Job Function",
+                                                  : "select".tr +
+                                                      " " +
+                                                      "job function".tr,
                                               validateText: _isValidateValue ==
                                                           true &&
                                                       _selectedJobFunctionsItems
@@ -515,7 +535,7 @@ class _JobAlertState extends State<JobAlert> {
                                                         top: 5,
                                                       ),
                                                       child: Text(
-                                                        "required",
+                                                        "required".tr,
                                                         style: bodyTextSmall(
                                                           AppColors.fontDanger,
                                                         ),
@@ -532,7 +552,7 @@ class _JobAlertState extends State<JobAlert> {
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 10),
                                               child: Text(
-                                                "Work Province",
+                                                "work province".tr,
                                                 style: bodyTextNormal(
                                                     null, FontWeight.bold),
                                               ),
@@ -558,7 +578,8 @@ class _JobAlertState extends State<JobAlert> {
                                                     context: context,
                                                     builder: (context) {
                                                       return ListMultiSelectedAlertDialog(
-                                                        title: "Work Province",
+                                                        title:
+                                                            "work province".tr,
                                                         listItems:
                                                             _listProvinces,
                                                         selectedListItem:
@@ -598,7 +619,9 @@ class _JobAlertState extends State<JobAlert> {
                                               },
                                               text: _selectedProvincesListItem
                                                       .isEmpty
-                                                  ? "Select Work Province"
+                                                  ? "select".tr +
+                                                      " " +
+                                                      "work province".tr
                                                   : "${_provinceName.join(', ')}",
                                               validateText: Container(),
                                             ),
@@ -611,7 +634,7 @@ class _JobAlertState extends State<JobAlert> {
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 10),
                                               child: Text(
-                                                "Industry",
+                                                "industry".tr,
                                                 style: bodyTextNormal(
                                                     null, FontWeight.bold),
                                               ),
@@ -637,7 +660,7 @@ class _JobAlertState extends State<JobAlert> {
                                                     context: context,
                                                     builder: (context) {
                                                       return ListMultiSelectedAlertDialog(
-                                                        title: "Industry",
+                                                        title: "industry".tr,
                                                         listItems:
                                                             _listIndustries,
                                                         selectedListItem:
@@ -677,7 +700,9 @@ class _JobAlertState extends State<JobAlert> {
                                               },
                                               text: _selectedIndustryListItem
                                                       .isEmpty
-                                                  ? "Select Industry"
+                                                  ? "select".tr +
+                                                      " " +
+                                                      "industry".tr
                                                   : "${_industryName.join(', ')}",
                                               validateText: Container(),
                                             ),
@@ -692,7 +717,7 @@ class _JobAlertState extends State<JobAlert> {
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 10),
                                               child: Text(
-                                                "Job Level",
+                                                "job level".tr,
                                                 style: bodyTextNormal(
                                                     null, FontWeight.bold),
                                               ),
@@ -718,7 +743,7 @@ class _JobAlertState extends State<JobAlert> {
                                                     context: context,
                                                     builder: (context) {
                                                       return ListMultiSelectedAlertDialog(
-                                                        title: "Job Level",
+                                                        title: "job level".tr,
                                                         listItems:
                                                             _listJobLevels,
                                                         selectedListItem:
@@ -758,7 +783,9 @@ class _JobAlertState extends State<JobAlert> {
                                               },
                                               text: _selectedJobLevelListItem
                                                       .isEmpty
-                                                  ? "Select Industry"
+                                                  ? "select".tr +
+                                                      " " +
+                                                      "job level".tr
                                                   : "${_jobLevelName.join(', ')}",
                                               validateText: Container(),
                                             ),
@@ -776,7 +803,7 @@ class _JobAlertState extends State<JobAlert> {
                                             left: 20, right: 20, bottom: 30),
                                         color: AppColors.backgroundWhite,
                                         child: Button(
-                                          text: "Save",
+                                          text: "save".tr,
                                           press: () {
                                             addJobAlert();
                                           },

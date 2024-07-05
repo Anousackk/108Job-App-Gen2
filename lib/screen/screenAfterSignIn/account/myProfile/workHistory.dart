@@ -13,6 +13,7 @@ import 'package:app/widget/input.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
@@ -47,6 +48,7 @@ class _WorkHistoryState extends State<WorkHistory> {
   bool _isCurrentJob = false;
 
   DateTime _dateTimeNow = DateTime.now();
+  //
 
   setValueGetById() {
     setState(() {
@@ -147,7 +149,7 @@ class _WorkHistoryState extends State<WorkHistory> {
             MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
         child: Scaffold(
           appBar: AppBarDefault(
-            textTitle: "Work History",
+            textTitle: "work history".tr,
             // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
@@ -180,7 +182,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                             //
                             //Company
                             Text(
-                              "Company",
+                              "company".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -194,7 +196,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                 });
                               },
                               inputColor: AppColors.inputWhite,
-                              hintText: "Enter company name",
+                              hintText: "enter".tr + " " + "company name".tr,
                               hintTextFontWeight: FontWeight.bold,
                               suffixIcon: Icon(
                                 Icons.business,
@@ -209,7 +211,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                             //
                             //Job Title
                             Text(
-                              "Job Title",
+                              "job title".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -223,7 +225,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                 });
                               },
                               inputColor: AppColors.inputWhite,
-                              hintText: "Enter job title",
+                              hintText: "enter".tr + " " + "job title".tr,
                               hintTextFontWeight: FontWeight.bold,
                               suffixIcon: Icon(
                                 Icons.work,
@@ -282,7 +284,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                 SizedBox(
                                   width: 10,
                                 ),
-                                Text("This is my current job"),
+                                Text("my current job".tr),
                               ],
                             ),
 
@@ -294,7 +296,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                             //
                             //From DateTime(Month)
                             Text(
-                              "From Month / Year",
+                              "from".tr + " " + "month".tr + "/" + "year".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -332,7 +334,11 @@ class _WorkHistoryState extends State<WorkHistory> {
                                 showDialogDateTime(
                                     context,
                                     Text(
-                                      "From Month / Year",
+                                      "from".tr +
+                                          " " +
+                                          "month".tr +
+                                          "/" +
+                                          "year".tr,
                                       style:
                                           bodyTextMedium(null, FontWeight.bold),
                                     ),
@@ -374,7 +380,11 @@ class _WorkHistoryState extends State<WorkHistory> {
                                     );
                               },
                               text: _fromMonthYear == null
-                                  ? 'From month / Year'
+                                  ? "from".tr +
+                                      " " +
+                                      "month".tr +
+                                      "/" +
+                                      "year".tr
                                   : "${_fromMonthYear?.month}-${_fromMonthYear?.year}",
                               colorText: _fromMonthYear == null
                                   ? AppColors.fontGreyOpacity
@@ -388,7 +398,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                         top: 5,
                                       ),
                                       child: Text(
-                                        "required",
+                                        "required".tr,
                                         style: bodyTextSmall(
                                           AppColors.fontDanger,
                                         ),
@@ -408,7 +418,11 @@ class _WorkHistoryState extends State<WorkHistory> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "To month / Year",
+                                    "to".tr +
+                                        " " +
+                                        "month".tr +
+                                        "/" +
+                                        "year".tr,
                                     style:
                                         bodyTextNormal(null, FontWeight.bold),
                                   ),
@@ -446,7 +460,11 @@ class _WorkHistoryState extends State<WorkHistory> {
                                             showDialogDateTime(
                                                 context,
                                                 Text(
-                                                  "To Month / Year",
+                                                  "to".tr +
+                                                      " " +
+                                                      "month".tr +
+                                                      "/" +
+                                                      "year".tr,
                                                   style: bodyTextMedium(
                                                       null, FontWeight.bold),
                                                 ),
@@ -484,7 +502,11 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                 );
                                           },
                                           text: _toMonthYear == null
-                                              ? 'To Month / Year'
+                                              ? "to".tr +
+                                                  " " +
+                                                  "month".tr +
+                                                  "/" +
+                                                  "year".tr
                                               : "${_toMonthYear?.month}-${_toMonthYear?.year}",
                                           colorText: _toMonthYear == null
                                               ? AppColors.fontGreyOpacity
@@ -499,7 +521,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                         top: 5,
                                                       ),
                                                       child: Text(
-                                                        "required",
+                                                        "required".tr,
                                                         style: bodyTextSmall(
                                                           AppColors.fontDanger,
                                                         ),
@@ -524,7 +546,11 @@ class _WorkHistoryState extends State<WorkHistory> {
                                             color: AppColors.iconGrayOpacity,
                                             size: IconSize.sIcon,
                                           ),
-                                          text: "To Month / Year",
+                                          text: "to".tr +
+                                              " " +
+                                              "month".tr +
+                                              "/" +
+                                              "year".tr,
                                           validateText:
                                               _isValidateValue == true &&
                                                       _toMonthYear == null
@@ -535,7 +561,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                         top: 5,
                                                       ),
                                                       child: Text(
-                                                        "required",
+                                                        "required".tr,
                                                         style: bodyTextSmall(
                                                           AppColors.fontDanger,
                                                         ),
@@ -551,7 +577,7 @@ class _WorkHistoryState extends State<WorkHistory> {
 
                             // Responsibility
                             Text(
-                              "Responsibility",
+                              "responsibility".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -570,7 +596,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                               hintText: "",
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return "required";
+                                  return "required".tr;
                                 }
                                 return null;
                               },
@@ -587,7 +613,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                       height: 10,
                     ),
                     Button(
-                      text: "Save",
+                      text: "save".tr,
                       fontWeight: FontWeight.bold,
                       press: () {
                         if (formkey.currentState!.validate()) {
@@ -648,9 +674,9 @@ class _WorkHistoryState extends State<WorkHistory> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "Save Work History Success",
-            textButton: "OK",
+            title: "successful".tr,
+            text: "save".tr + "work history".tr + "successful".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
               Navigator.pop(context);

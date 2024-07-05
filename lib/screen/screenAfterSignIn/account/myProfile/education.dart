@@ -14,7 +14,9 @@ import 'package:app/widget/listSingleSelectedAlertDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class Education extends StatefulWidget {
@@ -41,6 +43,7 @@ class _EducationState extends State<Education> {
   String _subject = "";
   String _collage = "";
   String _selectedDegree = "";
+  String _localeLanguageApi = "";
   dynamic _fromYear;
   dynamic _toYear;
   bool _isValidateValue = false;
@@ -95,11 +98,23 @@ class _EducationState extends State<Education> {
     });
   }
 
+  getSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    var getLanguageSharePref = prefs.getString('setLanguage');
+    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // print("local " + getLanguageSharePref.toString());
+    // print("api " + getLanguageApiSharePref.toString());
+
+    setState(() {
+      _localeLanguageApi = getLanguageApiSharePref.toString();
+    });
+    getReuseTypeSeeker(_localeLanguageApi, 'Degree');
+  }
+
   @override
   void initState() {
     super.initState();
-
-    getReuseTypeSeeker('EN', 'Degree');
+    getSharedPreferences();
 
     _subjectController.text = _subject;
     _collageController.text = _collage;
@@ -134,7 +149,7 @@ class _EducationState extends State<Education> {
             MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
         child: Scaffold(
           appBar: AppBarDefault(
-            textTitle: "Education",
+            textTitle: "education".tr,
             // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
@@ -165,9 +180,12 @@ class _EducationState extends State<Education> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //Subject
                             Text(
-                              "Subject",
+                              "subject".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -181,7 +199,7 @@ class _EducationState extends State<Education> {
                                 });
                               },
                               inputColor: AppColors.inputWhite,
-                              hintText: "Enter subject",
+                              hintText: "enter".tr + " " + "subject".tr,
                               hintTextFontWeight: FontWeight.bold,
                               suffixIcon: Icon(
                                 Icons.keyboard,
@@ -194,9 +212,12 @@ class _EducationState extends State<Education> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //School/Collage
                             Text(
-                              "School/Collage",
+                              "collage".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -210,7 +231,7 @@ class _EducationState extends State<Education> {
                                 });
                               },
                               inputColor: AppColors.inputWhite,
-                              hintText: "Enter School/Collage",
+                              hintText: "enter".tr + " " + "collage".tr,
                               hintTextFontWeight: FontWeight.bold,
                               suffixIcon: Icon(
                                 Icons.school,
@@ -223,9 +244,12 @@ class _EducationState extends State<Education> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //Qualifications
                             Text(
-                              "Qualifications",
+                              "qualifications".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -254,7 +278,7 @@ class _EducationState extends State<Education> {
                                     context: context,
                                     builder: (context) {
                                       return ListSingleSelectedAlertDialog(
-                                        title: "Qualifications",
+                                        title: "qualifications".tr,
                                         listItems: _listDegrees,
                                         selectedListItem: _selectedDegree,
                                       );
@@ -279,7 +303,7 @@ class _EducationState extends State<Education> {
                               },
                               text: _selectedDegree != ""
                                   ? "${_degreeName}"
-                                  : "Select Qualifications",
+                                  : "select".tr + " " + "qualifications".tr,
                               colorText: _selectedDegree == ""
                                   ? AppColors.fontGreyOpacity
                                   : AppColors.fontDark,
@@ -292,7 +316,7 @@ class _EducationState extends State<Education> {
                                         top: 5,
                                       ),
                                       child: Text(
-                                        "required",
+                                        "required".tr,
                                         style: bodyTextSmall(
                                           AppColors.fontDanger,
                                         ),
@@ -308,7 +332,7 @@ class _EducationState extends State<Education> {
                             //
                             //From DateTime(Year)
                             Text(
-                              "From Year",
+                              "from".tr + " " + "year".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -343,7 +367,7 @@ class _EducationState extends State<Education> {
                                 showDialogDateTime(
                                     context,
                                     Text(
-                                      "From Year",
+                                      "from".tr + " " + "year".tr,
                                       style:
                                           bodyTextNormal(null, FontWeight.bold),
                                     ),
@@ -384,7 +408,7 @@ class _EducationState extends State<Education> {
                                     );
                               },
                               text: _fromYear == null
-                                  ? 'From Year'
+                                  ? "from".tr + " " + "year".tr
                                   : "${_fromYear?.year}",
                               colorText: _fromYear == null
                                   ? AppColors.fontGreyOpacity
@@ -398,7 +422,7 @@ class _EducationState extends State<Education> {
                                             top: 5,
                                           ),
                                           child: Text(
-                                            "required",
+                                            "required".tr,
                                             style: bodyTextSmall(
                                               AppColors.fontDanger,
                                             ),
@@ -414,7 +438,7 @@ class _EducationState extends State<Education> {
                             //
                             //To DateTime(Month)
                             Text(
-                              "To Year",
+                              "to".tr + " " + "year".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -449,7 +473,7 @@ class _EducationState extends State<Education> {
                                       showDialogDateTime(
                                           context,
                                           Text(
-                                            "To Year",
+                                            "to".tr + " " + "year".tr,
                                             style: bodyTextNormal(
                                                 null, FontWeight.bold),
                                           ),
@@ -486,7 +510,7 @@ class _EducationState extends State<Education> {
                                           );
                                     },
                                     text: _toYear == null
-                                        ? 'To Year'
+                                        ? "to".tr + " " + "year".tr
                                         : "${_toYear?.year}",
                                     colorText: _toYear == null
                                         ? AppColors.fontGreyOpacity
@@ -500,7 +524,7 @@ class _EducationState extends State<Education> {
                                               top: 5,
                                             ),
                                             child: Text(
-                                              "required",
+                                              "required".tr,
                                               style: bodyTextSmall(
                                                 AppColors.fontDanger,
                                               ),
@@ -524,7 +548,7 @@ class _EducationState extends State<Education> {
                                       color: AppColors.iconGrayOpacity,
                                       size: IconSize.sIcon,
                                     ),
-                                    text: "To Year",
+                                    text: "to".tr + " " + "year".tr,
                                     validateText: _isValidateValue == true &&
                                             _toYear == null
                                         ? Container(
@@ -534,7 +558,7 @@ class _EducationState extends State<Education> {
                                               top: 5,
                                             ),
                                             child: Text(
-                                              "required",
+                                              "required".tr,
                                               style: bodyTextSmall(
                                                 AppColors.fontDanger,
                                               ),
@@ -553,7 +577,7 @@ class _EducationState extends State<Education> {
                       height: 10,
                     ),
                     Button(
-                      text: "Save",
+                      text: "save".tr,
                       fontWeight: FontWeight.bold,
                       press: () {
                         if (formkey.currentState!.validate()) {
@@ -631,9 +655,9 @@ class _EducationState extends State<Education> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "Save Education Success",
-            textButton: "OK",
+            title: "successful".tr,
+            text: "save".tr + " " + "education".tr + " " + "successful".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
               Navigator.pop(context);

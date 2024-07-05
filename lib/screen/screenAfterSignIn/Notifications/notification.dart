@@ -12,8 +12,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class Notifications extends StatefulWidget {
-  const Notifications({Key? key, this.callbackTotalNoti}) : super(key: key);
+  const Notifications({Key? key, this.callbackTotalNoti, this.statusFromScreen})
+      : super(key: key);
   final Function(String)? callbackTotalNoti;
+  final statusFromScreen;
 
   @override
   State<Notifications> createState() => _NotificationsState();
@@ -96,239 +98,270 @@ class _NotificationsState extends State<Notifications> {
                   child: Center(child: CircularProgressIndicator()),
                 )
               : Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
                   color: AppColors.background,
                   height: double.infinity,
                   width: double.infinity,
-                  child: _listNotifications.length > 0
-                      ? Column(
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(20),
+                        color: AppColors.background,
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        child: Row(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              child: Text(
-                                "notification".tr,
-                                style: bodyTextMedium(null, FontWeight.bold),
+                            if (widget.statusFromScreen == "HomeScreen")
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: FaIcon(
+                                  FontAwesomeIcons.arrowLeft,
+                                  size: 20,
+                                ),
+                              ),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "notification".tr,
+                                  style: bodyTextMedium(null, FontWeight.bold),
+                                ),
                               ),
                             ),
-                            Container(
-                              child: ListView.builder(
-                                controller: _scrollController,
-                                shrinkWrap: true,
-                                physics: ClampingScrollPhysics(),
-                                itemCount: _listNotifications.length + 1,
-                                itemBuilder: (context, index) {
-                                  if (index == _listNotifications.length) {
-                                    return _hasMoreData
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: ElevatedButton(
-                                              style: ButtonStyle(
-                                                  backgroundColor:
-                                                      MaterialStatePropertyAll(
-                                                          AppColors
-                                                              .lightPrimary)),
-                                              onPressed: () => {
-                                                setState(() {
-                                                  _isLoadingMoreData = true;
-                                                }),
-                                                fetchNotifications(),
-                                              },
-                                              child: Text(
-                                                'view more'.tr,
-                                                style: TextStyle(
-                                                    color:
-                                                        AppColors.fontPrimary),
-                                              ),
-                                            ),
-                                          )
-                                        : Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Center(
-                                                child: Text('no have data'.tr)),
-                                          );
-                                  }
-                                  dynamic i = _listNotifications[index];
-                                  _title = i['title'];
-                                  _openingDate = i['openingDate'];
-                                  _closingDate = i['closingDate'];
-                                  _status = i['status'];
-                                  // _status = true;
-
-                                  //
-                                  //Open Date
-                                  //pars ISO to Flutter DateTime
-                                  parsDateTime(
-                                      value: '',
-                                      currentFormat: '',
-                                      desiredFormat: '');
-                                  DateTime openDate = parsDateTime(
-                                      value: _openingDate,
-                                      currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                      desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                  //
-                                  //Format to string 13-03-2024
-                                  _openingDate =
-                                      DateFormat('dd-MM-yyyy').format(openDate);
-
-                                  //pars ISO to Flutter DateTime
-                                  parsDateTime(
-                                      value: '',
-                                      currentFormat: '',
-                                      desiredFormat: '');
-                                  DateTime closeDate = parsDateTime(
-                                      value: _closingDate,
-                                      currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                      desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                  //
-                                  //Format to string 13-03-2024
-                                  _closingDate = DateFormat('dd-MM-yyyy')
-                                      .format(closeDate);
-                                  return Column(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  JobSearchDetail(
-                                                      jobId: i['jobId'],
-                                                      statusFromScreen:
-                                                          "NotificationScreen"),
-                                            ),
-                                          ).then((value) async {
-                                            if (value[1] != "") {
-                                              await fetchApiCheckTotalNotiUnRead();
-
-                                              setState(() {
-                                                dynamic job = _listNotifications
-                                                    .firstWhere((e) =>
-                                                        e['jobId'] == value[1]);
-                                                job["status"] = false;
-
-                                                Future.delayed(
-                                                    Duration(milliseconds: 200),
-                                                    () {
-                                                  widget.callbackTotalNoti!(
-                                                      totalNotiUnRead
-                                                          .toString());
-                                                });
-                                              });
-                                            }
-                                          });
-                                        },
-                                        child: Container(
-                                          width: double.infinity,
-                                          padding: EdgeInsets.all(15),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.backgroundWhite,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: _status
-                                                ? Border.all(
-                                                    color:
-                                                        AppColors.borderPrimary,
-                                                    width: 2)
-                                                : Border.all(
-                                                    color:
-                                                        AppColors.borderWhite,
-                                                    width: 2),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              // Container(
-                                              //   padding: EdgeInsets.symmetric(horizontal: 10),
-                                              //   child: FaIcon(
-                                              //     FontAwesomeIcons.envelope,
-                                              //     size: 30,
-                                              //   ),
-                                              // ),
-                                              // SizedBox(
-                                              //   width: 10,
-                                              // ),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "${_title}",
-                                                      style: bodyTextMaxNormal(
-                                                          _status
-                                                              ? null
-                                                              : AppColors
-                                                                  .fontGreyOpacity,
-                                                          null),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          "opening date".tr +
-                                                              ": ",
-                                                          style: bodyTextSmall(
-                                                              AppColors
-                                                                  .fontGreyOpacity),
-                                                        ),
-                                                        Text(
-                                                          "${_openingDate}",
-                                                          style: bodyTextSmall(
-                                                              AppColors
-                                                                  .fontGreyOpacity),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          "closing date".tr +
-                                                              ": ",
-                                                          style: bodyTextSmall(
-                                                              AppColors
-                                                                  .fontGreyOpacity),
-                                                        ),
-                                                        Text(
-                                                          "${_closingDate}",
-                                                          style: bodyTextSmall(
-                                                              AppColors
-                                                                  .fontGreyOpacity),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  ],
+                          ],
+                        ),
+                      ),
+                      _listNotifications.length > 0
+                          ? Expanded(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child: ListView.builder(
+                                  controller: _scrollController,
+                                  shrinkWrap: true,
+                                  physics: ClampingScrollPhysics(),
+                                  itemCount: _listNotifications.length + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index == _listNotifications.length) {
+                                      return _hasMoreData
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: ElevatedButton(
+                                                style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStatePropertyAll(
+                                                            AppColors
+                                                                .lightPrimary)),
+                                                onPressed: () => {
+                                                  setState(() {
+                                                    _isLoadingMoreData = true;
+                                                  }),
+                                                  fetchNotifications(),
+                                                },
+                                                child: Text(
+                                                  'view more'.tr,
+                                                  style: TextStyle(
+                                                      color: AppColors
+                                                          .fontPrimary),
                                                 ),
                                               ),
-                                            ],
+                                            )
+                                          : Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Center(
+                                                  child:
+                                                      Text('no have data'.tr)),
+                                            );
+                                    }
+                                    dynamic i = _listNotifications[index];
+                                    _title = i['title'];
+                                    _openingDate = i['openingDate'];
+                                    _closingDate = i['closingDate'];
+                                    _status = i['status'];
+                                    // _status = true;
+
+                                    //
+                                    //Open Date
+                                    //pars ISO to Flutter DateTime
+                                    parsDateTime(
+                                        value: '',
+                                        currentFormat: '',
+                                        desiredFormat: '');
+                                    DateTime openDate = parsDateTime(
+                                        value: _openingDate,
+                                        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+                                        desiredFormat: "yyyy-MM-dd HH:mm:ss");
+                                    //
+                                    //Format to string 13-03-2024
+                                    _openingDate = DateFormat('dd-MM-yyyy')
+                                        .format(openDate);
+
+                                    //pars ISO to Flutter DateTime
+                                    parsDateTime(
+                                        value: '',
+                                        currentFormat: '',
+                                        desiredFormat: '');
+                                    DateTime closeDate = parsDateTime(
+                                        value: _closingDate,
+                                        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+                                        desiredFormat: "yyyy-MM-dd HH:mm:ss");
+                                    //
+                                    //Format to string 13-03-2024
+                                    _closingDate = DateFormat('dd-MM-yyyy')
+                                        .format(closeDate);
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    JobSearchDetail(
+                                                        jobId: i['jobId'],
+                                                        statusFromScreen:
+                                                            "NotificationScreen"),
+                                              ),
+                                            ).then((value) async {
+                                              if (value[1] != "") {
+                                                await fetchApiCheckTotalNotiUnRead();
+
+                                                setState(() {
+                                                  dynamic job =
+                                                      _listNotifications
+                                                          .firstWhere((e) =>
+                                                              e['jobId'] ==
+                                                              value[1]);
+                                                  job["status"] = false;
+
+                                                  Future.delayed(
+                                                      Duration(
+                                                          milliseconds: 200),
+                                                      () {
+                                                    widget.callbackTotalNoti!(
+                                                        totalNotiUnRead
+                                                            .toString());
+                                                  });
+                                                });
+                                              }
+                                            });
+                                          },
+                                          child: Container(
+                                            width: double.infinity,
+                                            padding: EdgeInsets.all(15),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.backgroundWhite,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: _status
+                                                  ? Border.all(
+                                                      color: AppColors
+                                                          .borderPrimary,
+                                                      width: 2)
+                                                  : Border.all(
+                                                      color:
+                                                          AppColors.borderWhite,
+                                                      width: 2),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                // Container(
+                                                //   padding: EdgeInsets.symmetric(horizontal: 10),
+                                                //   child: FaIcon(
+                                                //     FontAwesomeIcons.envelope,
+                                                //     size: 30,
+                                                //   ),
+                                                // ),
+                                                // SizedBox(
+                                                //   width: 10,
+                                                // ),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        "${_title}",
+                                                        style: bodyTextMaxNormal(
+                                                            _status
+                                                                ? null
+                                                                : AppColors
+                                                                    .fontGreyOpacity,
+                                                            null),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            "opening date".tr +
+                                                                ": ",
+                                                            style: bodyTextSmall(
+                                                                AppColors
+                                                                    .fontGreyOpacity),
+                                                          ),
+                                                          Text(
+                                                            "${_openingDate}",
+                                                            style: bodyTextSmall(
+                                                                AppColors
+                                                                    .fontGreyOpacity),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            "closing date".tr +
+                                                                ": ",
+                                                            style: bodyTextSmall(
+                                                                AppColors
+                                                                    .fontGreyOpacity),
+                                                          ),
+                                                          Text(
+                                                            "${_closingDate}",
+                                                            style: bodyTextSmall(
+                                                                AppColors
+                                                                    .fontGreyOpacity),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      )
-                                    ],
-                                  );
-                                },
+                                        SizedBox(
+                                          height: 10,
+                                        )
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                          : Expanded(
+                              child: ScreenNoData(
+                                faIcon: FontAwesomeIcons.fileCircleExclamation,
+                                colorIcon: AppColors.primary,
+                                text: "no have data".tr,
+                                colorText: AppColors.primary,
                               ),
                             ),
-                            if (_isLoadingMoreData)
-                              Padding(
-                                padding: const EdgeInsets.all(10),
-                                child:
-                                    Center(child: CircularProgressIndicator()),
-                              ),
-                          ],
-                        )
-                      : ScreenNoData(
-                          faIcon: FontAwesomeIcons.fileCircleExclamation,
-                          colorIcon: AppColors.primary,
-                          text: "no have data".tr,
-                          colorText: AppColors.primary,
+                      if (_isLoadingMoreData)
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Center(child: CircularProgressIndicator()),
                         ),
-                ),
+                    ],
+                  )),
         ),
       ),
     );

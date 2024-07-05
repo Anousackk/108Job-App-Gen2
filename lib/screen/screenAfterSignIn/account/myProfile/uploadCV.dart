@@ -14,6 +14,7 @@ import 'package:app/widget/input.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class UploadCV extends StatefulWidget {
@@ -100,7 +101,7 @@ class _UploadCVState extends State<UploadCV> {
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBarDefault(
-          textTitle: "Upload CV",
+          textTitle: "upload cvL".tr,
           // fontWeight: FontWeight.bold,
           leadingIcon: Icon(Icons.arrow_back),
           leadingPress: () {
@@ -132,12 +133,12 @@ class _UploadCVState extends State<UploadCV> {
                         size: 55,
                         color: AppColors.iconGray,
                       ),
-                      title: "Select file to upload",
+                      title: "select file to upload".tr,
                       titleFontWeight: FontWeight.bold,
                       text: _strFileName == "" || _strFileName == null
-                          ? "Supported file format: .PDF, .DOC, .DOCX with maximum file size 5MB"
+                          ? "support file".tr
                           : "${_strFileName}",
-                      buttonText: "Select File",
+                      buttonText: "select file to upload".tr,
                       buttonColor: AppColors.lightPrimary,
                       buttonBorderColor: AppColors.borderPrimary,
                       buttonTextColor: AppColors.fontPrimary,
@@ -153,14 +154,18 @@ class _UploadCVState extends State<UploadCV> {
                     //
                     //Trips
                     Text(
-                      "Tips",
+                      "tips".tr,
                       style: bodyTextNormal(null, FontWeight.bold),
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Text("1. Upload only CV file(exclude other document)"),
-                    Text("2. PDF file format is recommended"),
+                    Text(
+                      "1. " + "upload only cv".tr,
+                    ),
+                    Text(
+                      "2. " + "pdf file recommend".tr,
+                    ),
                     SizedBox(
                       height: 30,
                     ),
@@ -169,7 +174,7 @@ class _UploadCVState extends State<UploadCV> {
                     //
                     //Question ask?
                     Text(
-                      "Question you my ask",
+                      "question you my ask".tr,
                       style: bodyTextNormal(null, FontWeight.bold),
                     ),
                     SizedBox(
@@ -184,7 +189,7 @@ class _UploadCVState extends State<UploadCV> {
                       colorInput: AppColors.greyWhite,
                       paddingFaIcon: EdgeInsets.only(left: 15),
                       mainAxisAlignmentTextIcon: MainAxisAlignment.start,
-                      text: "1. What is CV?",
+                      text: "1. " + "what is cv".tr,
                       colorText: AppColors.fontPrimary,
                       widgetIconActive: FaIcon(
                         FontAwesomeIcons.chevronRight,
@@ -206,7 +211,7 @@ class _UploadCVState extends State<UploadCV> {
                       colorInput: AppColors.greyWhite,
                       paddingFaIcon: EdgeInsets.only(left: 15),
                       mainAxisAlignmentTextIcon: MainAxisAlignment.start,
-                      text: "2. I don't have CV?",
+                      text: "2. " + "i don't have cv".tr,
                       colorText: AppColors.fontPrimary,
                       widgetIconActive: FaIcon(
                         FontAwesomeIcons.chevronRight,
@@ -228,7 +233,7 @@ class _UploadCVState extends State<UploadCV> {
                       colorInput: AppColors.greyWhite,
                       paddingFaIcon: EdgeInsets.only(left: 15),
                       mainAxisAlignmentTextIcon: MainAxisAlignment.start,
-                      text: "3. Why should i upload CV?",
+                      text: "3. " + "why should upload cv".tr,
                       colorText: AppColors.fontPrimary,
                       widgetIconActive: FaIcon(
                         FontAwesomeIcons.chevronRight,
@@ -245,15 +250,15 @@ class _UploadCVState extends State<UploadCV> {
                 //
                 //Button Save
                 Button(
-                  text: "Save",
+                  text: "save".tr,
                   press: () async {
                     if (_fileValue == null || _fileValue == "") {
                       await showDialog(
                         context: context,
                         builder: (context) {
                           return CustomAlertDialogWarning(
-                            title: "Warning",
-                            text: "Please select file to upload",
+                            title: "warning".tr,
+                            text: "plz select".tr,
                           );
                         },
                       );
@@ -299,9 +304,9 @@ class _UploadCVState extends State<UploadCV> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
+            title: "sccessful".tr,
             text: res['message'],
-            textButton: "OK",
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
               Navigator.pop(context);
@@ -314,7 +319,7 @@ class _UploadCVState extends State<UploadCV> {
         context: context,
         builder: (context) {
           return CustomAlertDialogError(
-            title: "Invalid",
+            title: "invalid".tr,
             text: res['message'],
           );
         },

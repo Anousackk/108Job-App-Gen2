@@ -11,6 +11,7 @@ import 'package:app/widget/button.dart';
 import 'package:app/widget/listMultiSelectedAlertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 class ProfileSetting extends StatefulWidget {
   const ProfileSetting({
@@ -135,7 +136,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBarDefault(
-          textTitle: "Profile Setting",
+          textTitle: "profile setting".tr,
           // fontWeight: FontWeight.bold,
           leadingIcon: Icon(Icons.arrow_back),
           leadingPress: () {
@@ -223,14 +224,14 @@ class _ProfileSettingState extends State<ProfileSetting> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Profile Status",
+                                  "profile status".tr,
                                   style: bodyTextNormal(
                                     AppColors.fontPrimary,
                                     FontWeight.bold,
                                   ),
                                 ),
                                 Text(
-                                  "Get your profile approved or complete: Attached CV, Personal Information and Work Preferences to set the profile status.",
+                                  "how to set profile status".tr,
                                   style: bodyTextSmall(
                                     AppColors.fontGreyOpacity,
                                   ),
@@ -250,7 +251,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "Searchable Profile",
+                                        "searchable profile".tr,
                                         style: bodyTextNormal(
                                             null, FontWeight.bold),
                                       ),
@@ -282,7 +283,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                                       width: 10,
                                                     ),
                                                     Text(
-                                                      "ON",
+                                                      "on".tr,
                                                       style: bodyTextNormal(
                                                           AppColors.fontWhite,
                                                           FontWeight.bold),
@@ -314,7 +315,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                                       width: 10,
                                                     ),
                                                     Text(
-                                                      "OFF",
+                                                      "off".tr,
                                                       style: bodyTextNormal(
                                                           AppColors.fontPrimary,
                                                           FontWeight.bold),
@@ -336,7 +337,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                         context: context,
                                         builder: (context) {
                                           return ListMultiSelectedAlertDialog(
-                                            title: "Companies",
+                                            title: "company".tr,
                                             listItems: _listCompanies,
                                             selectedListItem:
                                                 _selectedCompaniesListItem,
@@ -396,7 +397,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                         Expanded(
                                           flex: 3,
                                           child: Text(
-                                            "Hide your profile from these companies",
+                                            "hide profile from companies".tr,
                                             style: bodyTextNormal(
                                                 null, FontWeight.bold),
                                           ),
@@ -411,7 +412,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                                   padding:
                                                       EdgeInsets.only(left: 10),
                                                   child: SimpleButton(
-                                                    text: "Hide",
+                                                    text: "hide".tr,
                                                   ),
                                                 ))
                                             : Expanded(
