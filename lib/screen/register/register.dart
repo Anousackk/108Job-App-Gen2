@@ -224,6 +224,8 @@ class _RegisterState extends State<Register> {
                                 height: 5.w, //20
                               ),
 
+                              // Text("${_phoneNumber}"),
+
                               //
                               //
                               //Input Phone Number
@@ -544,9 +546,27 @@ class _RegisterState extends State<Register> {
       "mobile": _phoneNumber.toString(),
       "password": _password
     }).then((value) async {
+      print(value);
       Navigator.pop(context);
 
-      if (value == value['message']) {
+      if (value['token'] != null) {
+        String token = value['token'].toString();
+        print("register token " + value['token'].toString());
+
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VerificationCode(
+              verifyCode:
+                  _isCheckTelAndEmail ? 'verifyPhoneNum' : 'verifyEmail',
+              fromRegister: 'fromRegister',
+              token: token,
+              phoneNumber: _phoneNumber,
+              email: _email,
+            ),
+          ),
+        );
+      } else {
         print("message: ${value['message']}");
 
         await showDialog(
@@ -560,23 +580,6 @@ class _RegisterState extends State<Register> {
               },
             );
           },
-        );
-      } else if (value['token'] != null || value['token'] != "") {
-        var token = value['token'];
-        print(value['token']);
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VerificationCode(
-              verifyCode:
-                  _isCheckTelAndEmail ? 'verifyPhoneNum' : 'verifyEmail',
-              fromRegister: 'fromRegister',
-              token: token,
-              phoneNumber: _phoneNumber,
-              email: _email,
-            ),
-          ),
         );
       }
     });

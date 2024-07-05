@@ -13,6 +13,8 @@ import 'package:app/widget/input.dart';
 import 'package:app/widget/listSingleSelectedAlertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class Skill extends StatefulWidget {
@@ -39,6 +41,7 @@ class _SkillState extends State<Skill> {
 
   //value display(ສະເພາະສະແດງ)
   String _skillLevelName = "";
+  String _localeLanguageApi = "";
 
   bool _isValidateValue = false;
   Timer? _timer;
@@ -55,10 +58,24 @@ class _SkillState extends State<Skill> {
     });
   }
 
+  getSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    var getLanguageSharePref = prefs.getString('setLanguage');
+    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // print("local " + getLanguageSharePref.toString());
+    // print("api " + getLanguageApiSharePref.toString());
+
+    setState(() {
+      _localeLanguageApi = getLanguageApiSharePref.toString();
+    });
+
+    getReuseTypeSeeker(_localeLanguageApi, 'SkillLevel', _listSkillLevel);
+  }
+
   @override
   void initState() {
     super.initState();
-    getReuseTypeSeeker('EN', 'SkillLevel', _listSkillLevel);
+    getSharedPreferences();
 
     _id = widget.id ?? "";
     if (_id != null && _id != "") {
@@ -94,7 +111,7 @@ class _SkillState extends State<Skill> {
             MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
         child: Scaffold(
           appBar: AppBarDefault(
-            textTitle: "Skill",
+            textTitle: "skill".tr,
             // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
@@ -125,7 +142,7 @@ class _SkillState extends State<Skill> {
                             //
                             //Skill
                             Text(
-                              "Skill",
+                              "skill".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -149,7 +166,7 @@ class _SkillState extends State<Skill> {
                                 });
                               },
                               inputColor: AppColors.inputWhite,
-                              hintText: "Enter your skill",
+                              hintText: "enter".tr + " " + "skill".tr,
                               hintTextFontWeight: FontWeight.bold,
                               suffixIcon: Icon(
                                 Icons.keyboard,
@@ -203,7 +220,7 @@ class _SkillState extends State<Skill> {
                             //
                             //Proficiency Skill / Skill level
                             Text(
-                              "Proficiency",
+                              "proficiency".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -233,7 +250,7 @@ class _SkillState extends State<Skill> {
                                     context: context,
                                     builder: (context) {
                                       return ListSingleSelectedAlertDialog(
-                                        title: "Proficiency",
+                                        title: "proficiency".tr,
                                         listItems: _listSkillLevel,
                                         selectedListItem: _selectedSkillLevel,
                                       );
@@ -259,7 +276,7 @@ class _SkillState extends State<Skill> {
                               },
                               text: _selectedSkillLevel != ""
                                   ? "${_skillLevelName}"
-                                  : "Select proficiency",
+                                  : "select".tr + " " + "proficiency".tr,
                               colorText: _selectedSkillLevel == ""
                                   ? AppColors.fontGreyOpacity
                                   : AppColors.fontDark,
@@ -272,7 +289,7 @@ class _SkillState extends State<Skill> {
                                         top: 5,
                                       ),
                                       child: Text(
-                                        "required",
+                                        "required".tr,
                                         style: bodyTextSmall(
                                           AppColors.fontDanger,
                                         ),
@@ -288,7 +305,7 @@ class _SkillState extends State<Skill> {
                       height: 10,
                     ),
                     Button(
-                      text: "Save",
+                      text: "save".tr,
                       fontWeight: FontWeight.bold,
                       press: () {
                         if (formkey.currentState!.validate()) {
@@ -377,9 +394,9 @@ class _SkillState extends State<Skill> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "Save Skill Success",
-            textButton: "OK",
+            title: "successful",
+            text: "save".tr + " " + "skill".tr + "successful".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
               Navigator.pop(context);

@@ -8,6 +8,7 @@ import 'package:app/screen/securityVerify/securityVerification.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({Key? key}) : super(key: key);
@@ -55,7 +56,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         },
         child: Scaffold(
           appBar: AppBarDefault(
-            textTitle: 'Change Password',
+            textTitle: 'change password'.tr,
             // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
@@ -103,7 +104,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   fontWeight: FontWeight.bold,
                                 ),
                                 alignLabelWithHint: true, // set label to bottom
-                                labelText: "Current Password",
+                                labelText: "current password".tr,
                                 suffixIcon: Column(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
@@ -118,7 +119,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                         );
                                       },
                                       child: Text(
-                                        "Reset Password",
+                                        "reset pass".tr,
                                         style: bodyTextNormal(
                                           AppColors.fontWaring,
                                           null,
@@ -130,7 +131,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               ),
                               validator: (String? value) {
                                 if (value == null || value.isEmpty) {
-                                  return "required";
+                                  return "required".tr;
                                 }
                                 return null;
                               },
@@ -164,11 +165,11 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 ),
                                 alignLabelWithHint: true, // set label to bottom
 
-                                labelText: "Password",
+                                labelText: "password".tr,
                               ),
                               validator: (String? value) {
                                 if (value == null || value.isEmpty) {
-                                  return "required";
+                                  return "required".tr;
                                 }
                                 return null;
                               },
@@ -204,11 +205,11 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 ),
                                 alignLabelWithHint: true, // set label to bottom
 
-                                labelText: "Confirm password",
+                                labelText: "confirm password".tr,
                               ),
                               validator: (String? value) {
                                 if (value == null || value.isEmpty) {
-                                  return "required";
+                                  return "required".tr;
                                 }
                                 return null;
                               },
@@ -227,7 +228,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   //
                   //Button Save Password
                   Button(
-                    text: "Change Password",
+                    text: "change password".tr,
                     fontWeight: FontWeight.bold,
                     press: () async {
                       if (formkey.currentState!.validate()) {
@@ -317,9 +318,9 @@ class _ChangePasswordState extends State<ChangePassword> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
+            title: "successful".tr,
             text: res['message'],
-            textButton: "OK",
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
             },
@@ -332,7 +333,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         context: context,
         builder: (context) {
           return CustomAlertDialogError(
-            title: "Invalid",
+            title: "invalid".tr,
             text: res['message'],
           );
         },

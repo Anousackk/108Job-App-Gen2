@@ -14,7 +14,9 @@ import 'package:app/widget/listSingleSelectedAlertDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class PersonalInformation extends StatefulWidget {
@@ -62,6 +64,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
   String _districtName = "";
   String _genderName = "";
   String _maritalStatusName = "";
+  String _localeLanguageApi = "";
 
   bool _isValidateValue = false;
   DateTime _dateTimeNow = DateTime.now();
@@ -130,15 +133,29 @@ class _PersonalInformationState extends State<PersonalInformation> {
     });
   }
 
+  getSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    var getLanguageSharePref = prefs.getString('setLanguage');
+    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // print("local " + getLanguageSharePref.toString());
+    // print("api " + getLanguageApiSharePref.toString());
+
+    setState(() {
+      _localeLanguageApi = getLanguageApiSharePref.toString();
+    });
+
+    getReuseTypeSeeker(_localeLanguageApi, 'Nationality', _listNationality);
+    getReuseTypeSeeker(_localeLanguageApi, 'CurrentResidence', _listCountry);
+    getReuseTypeSeeker(_localeLanguageApi, 'Gender', _listGender);
+    getReuseTypeSeeker(_localeLanguageApi, 'MaritalStatus', _listMaritalStatus);
+    getProvinceAndDistrict(_localeLanguageApi);
+  }
+
   @override
   void initState() {
     super.initState();
 
-    getReuseTypeSeeker('EN', 'Nationality', _listNationality);
-    getReuseTypeSeeker('EN', 'CurrentResidence', _listCountry);
-    getReuseTypeSeeker('EN', 'Gender', _listGender);
-    getReuseTypeSeeker('EN', 'MaritalStatus', _listMaritalStatus);
-    getProvinceAndDistrict('EN');
+    getSharedPreferences();
 
     //
     //Check by _id ເພື່ອເອົາຂໍ້ມູນມາອັບເດດ
@@ -166,7 +183,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
             MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
         child: Scaffold(
           appBar: AppBarDefault(
-            textTitle: "Personal Information",
+            textTitle: "personal information".tr,
             // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
@@ -193,7 +210,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                       //
                       //Name
                       Text(
-                        "First name",
+                        "first name".tr,
                         style: bodyTextNormal(null, FontWeight.bold),
                       ),
                       SizedBox(
@@ -207,7 +224,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           });
                         },
                         inputColor: AppColors.inputWhite,
-                        hintText: "Enter your first name",
+                        hintText: "enter your".tr + " " + "first name".tr,
                         hintTextFontWeight: FontWeight.bold,
                         suffixIcon: Icon(
                           Icons.keyboard,
@@ -222,7 +239,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                       //
                       //LastName
                       Text(
-                        "Last name",
+                        "last name".tr,
                         style: bodyTextNormal(null, FontWeight.bold),
                       ),
                       SizedBox(
@@ -236,7 +253,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           });
                         },
                         inputColor: AppColors.inputWhite,
-                        hintText: "Enter your last name",
+                        hintText: "enter your".tr + " " + "last name".tr,
                         hintTextFontWeight: FontWeight.bold,
                         suffixIcon: Icon(
                           Icons.keyboard,
@@ -251,7 +268,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                       //
                       //Date of birth
                       Text(
-                        "Date of birth",
+                        "date of birth".tr,
                         style: bodyTextNormal(null, FontWeight.bold),
                       ),
                       SizedBox(
@@ -286,7 +303,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           showDialogDateTime(
                               context,
                               Text(
-                                "Date Of Birth",
+                                "date of birth".tr,
                                 style: bodyTextNormal(null, FontWeight.bold),
                               ),
                               CupertinoDatePicker(
@@ -320,7 +337,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               );
                         },
                         text: _dateOfBirth == null
-                            ? 'Date of birth'
+                            ? "date of birth".tr
                             : "${_dateOfBirth?.day}-${_dateOfBirth?.month}-${_dateOfBirth?.year}",
                         colorText: _dateOfBirth == null
                             ? AppColors.fontGreyOpacity
@@ -350,7 +367,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                       //
                       //Gender
                       Text(
-                        "Gender",
+                        "gender".tr,
                         style: bodyTextNormal(null, FontWeight.bold),
                       ),
                       SizedBox(
@@ -376,7 +393,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               context: context,
                               builder: (context) {
                                 return ListSingleSelectedAlertDialog(
-                                  title: "Gender",
+                                  title: "gender".tr,
                                   listItems: _listGender,
                                   selectedListItem: _selectedGender,
                                 );
@@ -402,7 +419,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                         },
                         text: _selectedGender != ""
                             ? "${_genderName}"
-                            : "Select gender",
+                            : "select".tr + " " + "gender".tr,
                         colorText: _selectedGender == ""
                             ? AppColors.fontGreyOpacity
                             : AppColors.fontDark,
@@ -415,7 +432,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                       top: 5,
                                     ),
                                     child: Text(
-                                      "required",
+                                      "required".tr,
                                       style: bodyTextSmall(
                                         AppColors.fontDanger,
                                       ),
@@ -532,7 +549,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                       //
                       //Marital Status
                       Text(
-                        "Marital Status",
+                        "marital status".tr,
                         style: bodyTextNormal(null, FontWeight.bold),
                       ),
                       SizedBox(
@@ -558,7 +575,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               context: context,
                               builder: (context) {
                                 return ListSingleSelectedAlertDialog(
-                                  title: "Marital Status",
+                                  title: "marital status".tr,
                                   listItems: _listMaritalStatus,
                                   selectedListItem: _selectedMaritalStatus,
                                 );
@@ -584,7 +601,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                         },
                         text: _selectedMaritalStatus != ""
                             ? "${_maritalStatusName}"
-                            : "Select marital status",
+                            : "select".tr + " " + "marital status".tr,
                         colorText: _selectedMaritalStatus == ""
                             ? AppColors.fontGreyOpacity
                             : AppColors.fontDark,
@@ -597,7 +614,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                   top: 5,
                                 ),
                                 child: Text(
-                                  "required",
+                                  "required".tr,
                                   style: bodyTextSmall(
                                     AppColors.fontDanger,
                                   ),
@@ -680,7 +697,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                       //
                       //Nationality
                       Text(
-                        "Nationality",
+                        "nationality".tr,
                         style: bodyTextNormal(null, FontWeight.bold),
                       ),
                       SizedBox(
@@ -706,7 +723,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               context: context,
                               builder: (context) {
                                 return ListSingleSelectedAlertDialog(
-                                  title: "Nationality",
+                                  title: "nationality".tr,
                                   listItems: _listNationality,
                                   selectedListItem: _selectedNationality,
                                 );
@@ -732,7 +749,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                         },
                         text: _selectedNationality != ""
                             ? "${_nationalityName}"
-                            : "Select nationality",
+                            : "select".tr + " " + "nationality".tr,
                         colorText: _selectedNationality == ""
                             ? AppColors.fontGreyOpacity
                             : AppColors.fontDark,
@@ -745,7 +762,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                   top: 5,
                                 ),
                                 child: Text(
-                                  "required",
+                                  "required".tr,
                                   style: bodyTextSmall(
                                     AppColors.fontDanger,
                                   ),
@@ -761,7 +778,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                       //
                       //Country
                       Text(
-                        "Country",
+                        "country".tr,
                         style: bodyTextNormal(null, FontWeight.bold),
                       ),
                       SizedBox(
@@ -787,7 +804,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               context: context,
                               builder: (context) {
                                 return ListSingleSelectedAlertDialog(
-                                  title: "Country",
+                                  title: "country".tr,
                                   listItems: _listCountry,
                                   selectedListItem: _selectedCountry,
                                 );
@@ -813,7 +830,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                         },
                         text: _selectedCountry != ""
                             ? "${_countryName}"
-                            : "Select country",
+                            : "select".tr + " " + "country".tr,
                         colorText: _selectedCountry == ""
                             ? AppColors.fontGreyOpacity
                             : AppColors.fontDark,
@@ -826,7 +843,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                       top: 5,
                                     ),
                                     child: Text(
-                                      "required",
+                                      "required".tr,
                                       style: bodyTextSmall(
                                         AppColors.fontDanger,
                                       ),
@@ -842,7 +859,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                       //
                       //Province
                       Text(
-                        "Province",
+                        "province".tr,
                         style: bodyTextNormal(null, FontWeight.bold),
                       ),
                       SizedBox(
@@ -869,7 +886,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               context: context,
                               builder: (context) {
                                 return ListSingleSelectedAlertDialog(
-                                  title: "Province",
+                                  title: "province".tr,
                                   listItems: _listProvinces,
                                   selectedListItem: _selectedProvince,
                                 );
@@ -913,7 +930,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                         },
                         text: _selectedProvince != ""
                             ? "${_provinceName}"
-                            : "Select Province",
+                            : "select".tr + " " + "province".tr,
                         colorText: _selectedProvince == ""
                             ? AppColors.fontGreyOpacity
                             : AppColors.fontDark,
@@ -926,7 +943,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                       top: 5,
                                     ),
                                     child: Text(
-                                      "required",
+                                      "required".tr,
                                       style: bodyTextSmall(
                                         AppColors.fontDanger,
                                       ),
@@ -988,7 +1005,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                       //
                       //District
                       Text(
-                        "District",
+                        "district".tr,
                         style: bodyTextNormal(null, FontWeight.bold),
                       ),
                       SizedBox(
@@ -1014,7 +1031,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               context: context,
                               builder: (context) {
                                 return ListSingleSelectedAlertDialog(
-                                  title: "District",
+                                  title: "district".tr,
                                   listItems: _listDistricts,
                                   selectedListItem: _selectedDistrict,
                                 );
@@ -1040,7 +1057,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                         },
                         text: _selectedDistrict != ""
                             ? "${_districtName}"
-                            : "Select District",
+                            : "select".tr + " " + "district".tr,
                         colorText: _selectedDistrict == ""
                             ? AppColors.fontGreyOpacity
                             : AppColors.fontDark,
@@ -1053,7 +1070,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                       top: 5,
                                     ),
                                     child: Text(
-                                      "required",
+                                      "required".tr,
                                       style: bodyTextSmall(
                                         AppColors.fontDanger,
                                       ),
@@ -1066,7 +1083,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                       ),
 
                       Button(
-                        text: "Save",
+                        text: "save".tr,
                         fontWeight: FontWeight.bold,
                         press: () {
                           if (formkey.currentState!.validate()) {
@@ -1126,7 +1143,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
   }
 
   getProvinceAndDistrict(String lang) async {
-    var res = await fetchData(getProvinceAndDistrictApiSeeker + "lang${lang}");
+    var res = await fetchData(getProvinceAndDistrictApiSeeker + "lang=${lang}");
     setState(() {
       _listProvinces = res['provinces'];
 
@@ -1177,9 +1194,13 @@ class _PersonalInformationState extends State<PersonalInformation> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "Save Personal Information Success",
-            textButton: "OK",
+            title: "successful".tr,
+            text: "save".tr +
+                " " +
+                "personal information".tr +
+                " " +
+                "successful".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
               Navigator.pop(context);
@@ -1192,8 +1213,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
         context: context,
         builder: (context) {
           return CustomAlertDialogError(
-            title: "Invalid",
-            text: "invalue",
+            title: "invalid".tr,
+            text: "invalid".tr,
           );
         },
       );

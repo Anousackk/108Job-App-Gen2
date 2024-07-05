@@ -12,6 +12,7 @@ import 'package:app/widget/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -80,7 +81,7 @@ class _LoginInformationState extends State<LoginInformation> {
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBarDefault(
-          textTitle: "Login Information",
+          textTitle: "login info".tr,
           leadingPress: () {
             Navigator.pop(context);
           },
@@ -116,7 +117,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                 padding: EdgeInsets.only(
                                     left: 20, right: 20, bottom: 10),
                                 child: Text(
-                                  "General Infomation",
+                                  "general info".tr,
                                   style: bodyTextNormal(null, FontWeight.bold),
                                 ),
                               ),
@@ -131,8 +132,8 @@ class _LoginInformationState extends State<LoginInformation> {
                               //Phone Number ຖ້າບໍ່ທັນມີ
                               _phoneNumber == ""
                                   ? AddGeneralInformation(
-                                      title: "Phone Number",
-                                      text: "Add mobile phone",
+                                      title: "phone".tr,
+                                      text: "add".tr + "phone".tr,
                                       iconLeft: FaIcon(
                                         FontAwesomeIcons.chevronRight,
                                         size: 13,
@@ -151,7 +152,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                       },
                                     )
                                   : AddGeneralInformation(
-                                      title: "Phone Number",
+                                      title: "phone".tr,
                                       text: "020 ${_phoneNumber}",
                                       textColor: AppColors.fontDark,
                                     ),
@@ -162,8 +163,8 @@ class _LoginInformationState extends State<LoginInformation> {
                               //Email ຖ້າບໍ່ທັນມີ
                               _email == ""
                                   ? AddGeneralInformation(
-                                      title: "Email",
-                                      text: "Add email",
+                                      title: "email".tr,
+                                      text: "add".tr + "email".tr,
                                       iconLeft: FaIcon(
                                         FontAwesomeIcons.chevronRight,
                                         size: 13,
@@ -182,7 +183,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                       },
                                     )
                                   : AddGeneralInformation(
-                                      title: "Email",
+                                      title: "email".tr,
                                       text: _email,
                                       textColor: AppColors.fontDark,
                                     ),
@@ -192,8 +193,8 @@ class _LoginInformationState extends State<LoginInformation> {
                               //Password
                               if (_phoneNumber != "" || _email != "")
                                 AddGeneralInformation(
-                                  title: "Password",
-                                  text: "Change Password",
+                                  title: "password".tr,
+                                  text: "change password".tr,
                                   iconLeft: FaIcon(
                                     FontAwesomeIcons.chevronRight,
                                     size: 13,
@@ -219,7 +220,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                 padding: EdgeInsets.only(
                                     left: 20, right: 20, bottom: 10),
                                 child: Text(
-                                  "Connect other Platforms",
+                                  "connect platforms".tr,
                                   style: bodyTextNormal(null, FontWeight.bold),
                                 ),
                               ),
@@ -246,7 +247,9 @@ class _LoginInformationState extends State<LoginInformation> {
                                 child: ConnectOtherPlatform(
                                   title: "Google",
                                   strImage: 'assets/image/google.png',
-                                  text: _googleId != "" ? _googleEmail : "Link",
+                                  text: _googleId != ""
+                                      ? _googleEmail
+                                      : "link".tr,
                                 ),
                               ),
 
@@ -270,7 +273,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                   strImage: 'assets/image/facebook.png',
                                   text: _facebookId != ""
                                       ? _facebookEmail
-                                      : "Link",
+                                      : "link".tr,
                                 ),
                               ),
                             ],
@@ -286,10 +289,10 @@ class _LoginInformationState extends State<LoginInformation> {
                                 context: context,
                                 builder: (context) {
                                   return SimpleAlertDialog(
-                                    title: "Log Out",
-                                    contentText: "Are you sure to log out?",
-                                    textLeft: "Cancel",
-                                    textRight: 'Confirm',
+                                    title: "logout".tr,
+                                    contentText: "are u sure logout".tr,
+                                    textLeft: "cancel".tr,
+                                    textRight: 'confirm'.tr,
                                   );
                                 });
                             if (result == 'Ok') {
@@ -307,7 +310,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                   width: 10,
                                 ),
                                 Text(
-                                  "Log Out",
+                                  "logout".tr,
                                   style: bodyTextNormal(null, FontWeight.bold),
                                 ),
                               ],

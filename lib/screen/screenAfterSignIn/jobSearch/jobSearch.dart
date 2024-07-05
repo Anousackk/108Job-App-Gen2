@@ -20,6 +20,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class JobSearch extends StatefulWidget {
@@ -81,6 +82,7 @@ class _JobSearchState extends State<JobSearch>
   String _isClick = "";
   String _searchTitle = "";
   String _tag = "Highlight";
+  String _localeLanguageApi = "";
 
   dynamic _openDate;
   dynamic _closeDate;
@@ -272,17 +274,36 @@ class _JobSearchState extends State<JobSearch>
     }
   }
 
+  getSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    var getLanguageSharePref = prefs.getString('setLanguage');
+    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // print("local " + getLanguageSharePref.toString());
+    // print("api " + getLanguageApiSharePref.toString());
+
+    setState(() {
+      _localeLanguageApi = getLanguageApiSharePref.toString();
+    });
+
+    getReuseFilterJobSearchSeeker(
+        _localeLanguageApi, _listIndustries, "industry");
+    getReuseFilterJobSearchSeeker(
+        _localeLanguageApi, _listProvinces, "workLocation");
+    getReuseFilterJobSearchSeeker(
+        _localeLanguageApi, _ListJobExperiences, "jobExperience");
+    getReuseFilterJobSearchSeeker(
+        _localeLanguageApi, _listEducationsLevels, "educationLevel");
+    getReuseFilterJobSearchSeeker(
+        _localeLanguageApi, _listJobLevels, "jobLevel");
+  }
+
   @override
   void initState() {
     super.initState();
     _isLoading = true;
 
-    getReuseFilterJobSearchSeeker('EN', _listIndustries, "industry");
-    getReuseFilterJobSearchSeeker('EN', _listProvinces, "workLocation");
-    getReuseFilterJobSearchSeeker('EN', _ListJobExperiences, "jobExperience");
-    getReuseFilterJobSearchSeeker(
-        'EN', _listEducationsLevels, "educationLevel");
-    getReuseFilterJobSearchSeeker('EN', _listJobLevels, "jobLevel");
+    getSharedPreferences();
+
     getJobFunctionsSeeker();
     if (widget.topWorkLocation != null) {
       checkProvinceFromHomePage();
@@ -600,9 +621,9 @@ class _JobSearchState extends State<JobSearch>
                                                                         null),
                                                                 child: Text(
                                                                   _postDateLastest == -1
-                                                                      ? "post data latest"
+                                                                      ? "post date latest"
                                                                           .tr
-                                                                      : "post data oldes"
+                                                                      : "post date oldest"
                                                                           .tr,
                                                                   style: bodyTextNormal(
                                                                       _postDateLastest ==
@@ -2248,7 +2269,8 @@ class _JobSearchState extends State<JobSearch>
 
   getReuseFilterJobSearchSeeker(
       String lang, List listValue, String resValue) async {
-    var res = await fetchData(getReuseFilterJobSearchSeekerApi + "lang${lang}");
+    var res =
+        await fetchData(getReuseFilterJobSearchSeekerApi + "lang=${lang}");
 
     if (widget.selectedListItem != null) {
       checkSelectedListItemFromHomePage();

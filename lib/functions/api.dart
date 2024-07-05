@@ -158,6 +158,10 @@ fetchData(url) async {
     return jsonDecode(res.body);
   } else if (res.statusCode == 201) {
     return jsonDecode(res.body);
+  } else if (res.statusCode == 409) {
+    return jsonDecode(res.body);
+  } else {
+    return jsonDecode(res.body);
   }
 }
 
@@ -173,7 +177,15 @@ postData(url, bodyJsonDecode) async {
     },
     body: jsonEncode(bodyJsonDecode),
   );
-  return jsonDecode(res.body);
+  if (res.statusCode == 200) {
+    return jsonDecode(res.body);
+  } else if (res.statusCode == 201) {
+    return jsonDecode(res.body);
+  } else if (res.statusCode == 409) {
+    return jsonDecode(res.body);
+  } else {
+    return jsonDecode(res.body);
+  }
 }
 
 // postData(url, bodyJsonDecode) async {
@@ -204,7 +216,15 @@ putData(url, bodyJsonDecode) async {
     },
     body: jsonEncode(bodyJsonDecode),
   );
-  return jsonDecode(res.body);
+  if (res.statusCode == 200) {
+    return jsonDecode(res.body);
+  } else if (res.statusCode == 201) {
+    return jsonDecode(res.body);
+  } else if (res.statusCode == 409) {
+    return jsonDecode(res.body);
+  } else {
+    return jsonDecode(res.body);
+  }
 }
 
 deleteData(url) async {
@@ -218,7 +238,13 @@ deleteData(url) async {
       "authorization": "$employeeToken" == null ? "" : "$employeeToken",
     },
   );
-  if (res.statusCode == 201) {
+  if (res.statusCode == 200) {
+    return jsonDecode(res.body);
+  } else if (res.statusCode == 201) {
+    return jsonDecode(res.body);
+  } else if (res.statusCode == 409) {
+    return jsonDecode(res.body);
+  } else {
     return jsonDecode(res.body);
   }
 }
@@ -252,6 +278,10 @@ upLoadFile(String fileName, String url) async {
       return res.data;
     } else if (res.statusCode == 200) {
       return res.data;
+    } else if (res.statusCode == 409) {
+      return jsonDecode(res.data);
+    } else {
+      return jsonDecode(res.data);
     }
   } catch (e) {
     if (e is DioError && e.response != null && e.response?.statusCode == 413) {

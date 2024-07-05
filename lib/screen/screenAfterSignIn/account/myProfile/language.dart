@@ -11,6 +11,8 @@ import 'package:app/widget/input.dart';
 import 'package:app/widget/listSingleSelectedAlertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class Language extends StatefulWidget {
@@ -40,6 +42,7 @@ class _LanguageState extends State<Language> {
   String _languageName = "";
   String _proficiencyName = "";
 
+  String _localeLanguageApi = "";
   bool _isValidateValue = false;
 
   setValueGetById() {
@@ -53,12 +56,25 @@ class _LanguageState extends State<Language> {
     });
   }
 
+  getSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    var getLanguageSharePref = prefs.getString('setLanguage');
+    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // print("local " + getLanguageSharePref.toString());
+    // print("api " + getLanguageApiSharePref.toString());
+
+    setState(() {
+      _localeLanguageApi = getLanguageApiSharePref.toString();
+    });
+
+    getReuseTypeSeeker(_localeLanguageApi, 'LanguageLevel', _listLanguageLevel);
+    getReuseTypeSeeker(_localeLanguageApi, 'Language', _listLanguage);
+  }
+
   @override
   void initState() {
     super.initState();
-
-    getReuseTypeSeeker('EN', 'LanguageLevel', _listLanguageLevel);
-    getReuseTypeSeeker('EN', 'Language', _listLanguage);
+    getSharedPreferences();
 
     _id = widget.id ?? "";
     if (_id != null && _id != "") {
@@ -90,7 +106,7 @@ class _LanguageState extends State<Language> {
             MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
         child: Scaffold(
           appBar: AppBarDefault(
-            textTitle: "Language",
+            textTitle: "language".tr,
             // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
@@ -121,7 +137,7 @@ class _LanguageState extends State<Language> {
                             //
                             //Language
                             Text(
-                              "Language",
+                              "language".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -150,7 +166,7 @@ class _LanguageState extends State<Language> {
                                     context: context,
                                     builder: (context) {
                                       return ListSingleSelectedAlertDialog(
-                                        title: "Language",
+                                        title: "language".tr,
                                         listItems: _listLanguage,
                                         selectedListItem: _selectedLanguage,
                                       );
@@ -176,7 +192,7 @@ class _LanguageState extends State<Language> {
                               },
                               text: _selectedLanguage != ""
                                   ? "${_languageName}"
-                                  : "Select language",
+                                  : "select".tr + " " + "language".tr,
                               colorText: _selectedLanguage == ""
                                   ? AppColors.fontGreyOpacity
                                   : AppColors.fontDark,
@@ -189,7 +205,7 @@ class _LanguageState extends State<Language> {
                                         top: 5,
                                       ),
                                       child: Text(
-                                        "required",
+                                        "required".tr,
                                         style: bodyTextSmall(
                                           AppColors.fontDanger,
                                         ),
@@ -205,7 +221,7 @@ class _LanguageState extends State<Language> {
                             //
                             //Proficiency Language / Language level
                             Text(
-                              "Proficiency",
+                              "proficiency".tr,
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
@@ -233,7 +249,7 @@ class _LanguageState extends State<Language> {
                                     context: context,
                                     builder: (context) {
                                       return ListSingleSelectedAlertDialog(
-                                        title: "Proficiency",
+                                        title: "proficiency".tr,
                                         listItems: _listLanguageLevel,
                                         selectedListItem: _selectedProficiency,
                                       );
@@ -259,7 +275,7 @@ class _LanguageState extends State<Language> {
                               },
                               text: _selectedProficiency != ""
                                   ? "${_proficiencyName}"
-                                  : "Select proficiency",
+                                  : "select".tr + " " + "proficiency".tr,
                               colorText: _selectedProficiency == ""
                                   ? AppColors.fontGreyOpacity
                                   : AppColors.fontDark,
@@ -272,7 +288,7 @@ class _LanguageState extends State<Language> {
                                         top: 5,
                                       ),
                                       child: Text(
-                                        "required",
+                                        "required".tr,
                                         style: bodyTextSmall(
                                           AppColors.fontDanger,
                                         ),
@@ -288,7 +304,7 @@ class _LanguageState extends State<Language> {
                       height: 10,
                     ),
                     Button(
-                      text: "Save",
+                      text: "save".tr,
                       fontWeight: FontWeight.bold,
                       press: () {
                         if (formkey.currentState!.validate()) {
@@ -361,9 +377,9 @@ class _LanguageState extends State<Language> {
         context: context,
         builder: (context) {
           return CustomAlertDialogSuccess(
-            title: "Success",
-            text: "Save language success",
-            textButton: "OK",
+            title: "successful".tr,
+            text: "save".tr + " " + "language".tr + "successful".tr,
+            textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
               Navigator.pop(context);

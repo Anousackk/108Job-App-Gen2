@@ -25,6 +25,7 @@ import 'package:app/widget/button.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -279,7 +280,7 @@ class _MyProfileState extends State<MyProfile>
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBarAddAction(
-          textTitle: 'My Profile',
+          textTitle: 'my profile'.tr,
           // fontWeight: FontWeight.bold,
           leadingIcon: Icon(Icons.arrow_back),
           leadingPress: () {
@@ -331,12 +332,12 @@ class _MyProfileState extends State<MyProfile>
                           ),
                           child: Column(children: [
                             Text(
-                              "Your profile is being review",
+                              "your profile is review".tr,
                               style: bodyTextNormal(
                                   AppColors.fontWaring, FontWeight.bold),
                             ),
                             Text(
-                              "it may take up to 48Hrs in this proces",
+                              "it takeup to process".tr,
                               style: bodyTextSmall(AppColors.fontGreyOpacity),
                             )
                           ]),
@@ -382,7 +383,7 @@ class _MyProfileState extends State<MyProfile>
                                             size: IconSize.sIcon,
                                             color: AppColors.iconPrimary,
                                           ),
-                                          "View",
+                                          "view".tr,
                                           () {
                                             pickImageGallery(
                                                 ImageSource.gallery);
@@ -393,7 +394,7 @@ class _MyProfileState extends State<MyProfile>
                                             size: IconSize.sIcon,
                                             color: AppColors.iconPrimary,
                                           ),
-                                          "Gallery",
+                                          "photo gallery".tr,
                                         );
                                       });
                                 },
@@ -423,7 +424,7 @@ class _MyProfileState extends State<MyProfile>
                                                       AppColors.backgroundWhite,
                                                 ),
                                                 child: Center(
-                                                  child: Text("Uploading..."),
+                                                  child: Text("uploading".tr),
                                                 ),
                                               )
                                             : Container(
@@ -847,14 +848,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                     height: 5,
                   ),
                   Text(
-                    "Complete the sections below to take your profile",
+                    "complete section your profile".tr,
                     style: bodyTextNormal(null, null),
                     overflow: TextOverflow.fade,
                   ),
                   Row(
                     children: [
                       Text(
-                        "to the next level: ",
+                        "to the next level".tr + ": ",
                         style: bodyTextNormal(null, null),
                       ),
                       Text(
@@ -893,10 +894,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
                   widget.profile == null || widget.profile == ""
                       ? BoxDecDottedBorderProfileDetail(
                           boxDecColor: AppColors.lightPrimary,
-                          title: "Personal Information",
+                          title: "personal information".tr,
                           titleFontWeight: FontWeight.bold,
-                          text: "Let us know more about you",
-                          buttonText: "Add",
+                          text: "let us know".tr,
+                          buttonText: "add".tr,
                           pressButton: () {
                             Navigator.push(
                               context,
@@ -907,14 +908,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                           },
                         )
                       : BoxDecProfileDetailHaveValue(
-                          title: "Personal Information",
+                          title: "personal information".tr,
                           titleFontWeight: FontWeight.bold,
-                          text: "Let us know more about you",
+                          text: "let us know".tr,
                           widgetColumn: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Address:",
+                                "address".tr + ":",
                                 style: bodyTextNormal(null, null),
                               ),
                               Text(
@@ -925,7 +926,12 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 height: 8,
                               ),
                               Text(
-                                "Birth, Gender, Marital Status:",
+                                "birth".tr +
+                                    ", " +
+                                    "gender".tr +
+                                    ", " +
+                                    "marital status".tr +
+                                    ":",
                                 style: bodyTextNormal(null, null),
                               ),
                               Text(
@@ -938,7 +944,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 height: 8,
                               ),
                               Text(
-                                "Email:",
+                                "email".tr + ":",
                                 style: bodyTextNormal(null, null),
                               ),
                               Text(
@@ -949,7 +955,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 height: 8,
                               ),
                               Text(
-                                "Mobile:",
+                                "phone".tr + ":",
                                 style: bodyTextNormal(null, null),
                               ),
                               Text(
@@ -985,10 +991,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
                   widget.workPreferences == null || widget.workPreferences == ""
                       ? BoxDecDottedBorderProfileDetail(
                           boxDecColor: AppColors.lightPrimary,
-                          title: "Work Preferences",
+                          title: "work preferences".tr,
                           titleFontWeight: FontWeight.bold,
-                          text: "Add you work preferences",
-                          buttonText: "Add",
+                          text: "add".tr + " " + "work preferences".tr,
+                          buttonText: "add".tr,
                           pressButton: () {
                             Navigator.push(
                               context,
@@ -999,14 +1005,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                           },
                         )
                       : BoxDecProfileDetailHaveValue(
-                          title: "Work Preferences",
+                          title: "work preferences".tr,
                           titleFontWeight: FontWeight.bold,
-                          text: "Add you work preferences",
+                          text: "add".tr + " " + "work preferences".tr,
                           widgetColumn: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Expected Salary:",
+                                "salary".tr + ":",
                                 style: bodyTextNormal(null, null),
                               ),
                               Text(
@@ -1017,7 +1023,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 height: 8,
                               ),
                               Text(
-                                "Current Job Title:",
+                                "job title".tr + ":",
                                 style: bodyTextNormal(null, null),
                               ),
                               Text(
@@ -1028,7 +1034,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 height: 8,
                               ),
                               Text(
-                                "Expected Job Function:",
+                                "job function".tr + ":",
                                 style: bodyTextNormal(null, null),
                               ),
                               Text(
@@ -1039,7 +1045,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 height: 8,
                               ),
                               Text(
-                                "Expected Work Location:",
+                                "work province".tr,
                                 style: bodyTextNormal(null, null),
                               ),
                               Text(
@@ -1050,7 +1056,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 height: 8,
                               ),
                               Text(
-                                "Expected Job Level:",
+                                "job level".tr + ":",
                                 style: bodyTextNormal(null, null),
                               ),
                               Text(
@@ -1061,7 +1067,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 height: 8,
                               ),
                               Text(
-                                "Expected Benefit:",
+                                "benefit".tr + ":",
                                 style: bodyTextNormal(null, null),
                               ),
                               Text(
@@ -1096,11 +1102,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
                   widget.cv == null
                       ? BoxDecDottedBorderProfileDetail(
                           boxDecColor: AppColors.lightPrimary,
-                          title: "Upload CV",
+                          title: "upload cv".tr,
                           titleFontWeight: FontWeight.bold,
-                          text:
-                              "Supported file type .docx .pdf\nwith maximum size 5mb",
-                          buttonText: "Add",
+                          text: "support file".tr,
+                          buttonText: "add".tr,
                           pressButton: () {
                             Navigator.push(
                               context,
@@ -1111,10 +1116,9 @@ class _ProfileDetailState extends State<ProfileDetail> {
                           },
                         )
                       : BoxDecProfileDetailHaveValue(
-                          title: "Upload CV",
+                          title: "upload cv".tr,
                           titleFontWeight: FontWeight.bold,
-                          text:
-                              "Supported file type .pdf .doc .docx \nwith maximum size 5mb",
+                          text: "support file".tr,
                           widgetFaIcon: Expanded(
                             flex: 2,
                             child: Container(
@@ -1137,7 +1141,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
-                                "Uploaded: ${_cvUploadDate}",
+                                "uploaded".tr + " ${_cvUploadDate}",
                                 style: bodyTextNormal(null, null),
                               ),
                             ],
@@ -1170,7 +1174,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     ).then(widget.onGoBack);
                                   },
                                   null,
-                                  "Upload a new resume",
+                                  "upload new CV".tr,
 
                                   //
                                   //button preview cv
@@ -1178,7 +1182,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     launchInWebView(Uri.parse(_cvSrc));
                                   },
                                   null,
-                                  "Preview",
+                                  "view".tr,
 
                                   //
                                   //button download cv
@@ -1186,7 +1190,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     launchInBrowser(Uri.parse(_cvSrc));
                                   },
                                   null,
-                                  "Download",
+                                  "download".tr,
                                 );
                               },
                             );
@@ -1232,21 +1236,21 @@ class _ProfileDetailState extends State<ProfileDetail> {
                     height: 20,
                   ),
                   Text(
-                    "Expert Job Seeker Area",
+                    "Expert Job Seeker",
                     style: bodyTextMaxNormal(null, FontWeight.bold),
                   ),
                   SizedBox(
                     height: 5,
                   ),
                   Text(
-                    "Complete the sections below to take your profile",
+                    "complete section your profile".tr,
                     style: bodyTextNormal(null, null),
                     overflow: TextOverflow.fade,
                   ),
                   Row(
                     children: [
                       Text(
-                        "to the next level: ",
+                        "to the next level".tr + ": ",
                         style: bodyTextNormal(null, null),
                       ),
                       Text(
@@ -1271,12 +1275,12 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               height: 10,
                             ),
                             Text(
-                              "Work History",
+                              "work history".tr,
                               style: bodyTextMedium(
                                   AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
-                              "Input details of your employment history",
+                              "details employment history".tr,
                               style: bodyTextSmall(
                                 AppColors.fontGreyOpacity,
                               ),
@@ -1389,11 +1393,15 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                           context: context,
                                           builder: (context) {
                                             return AlertDialogButtonConfirmCancelBetween(
-                                              title: 'Delete Work History',
-                                              contentText:
-                                                  'Delete work history: ${i['position']} / ${i['company']}',
-                                              textLeft: 'Cancel',
-                                              textRight: 'Delete',
+                                              title: "delete".tr +
+                                                  " " +
+                                                  "work history".tr,
+                                              contentText: "delete".tr +
+                                                  " " +
+                                                  "work history".tr +
+                                                  ": ${i['position']} / ${i['company']}",
+                                              textLeft: 'cancel'.tr,
+                                              textRight: 'delete'.tr,
                                               colorTextRight:
                                                   AppColors.fontDanger,
                                             );
@@ -1413,7 +1421,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
-                              text: 'Add Work History',
+                              text: "add".tr + " " + 'work history'.tr,
                               colorText: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
@@ -1435,10 +1443,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
                         )
                       : BoxDecDottedBorderProfileDetail(
                           boxDecColor: AppColors.lightPrimary,
-                          title: "Work History",
+                          title: "work history".tr,
                           titleFontWeight: FontWeight.bold,
-                          text: "Input details of your employment history",
-                          buttonText: "Add",
+                          text: "details employment history".tr,
+                          buttonText: "add".tr,
                           pressButton: () {
                             Navigator.push(
                               context,
@@ -1464,12 +1472,12 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               height: 10,
                             ),
                             Text(
-                              "Education",
+                              "education".tr,
                               style: bodyTextMedium(
                                   AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
-                              "Input details of your education",
+                              "details education".tr,
                               style: bodyTextSmall(
                                 AppColors.fontGreyOpacity,
                               ),
@@ -1594,11 +1602,15 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                           context: context,
                                           builder: (context) {
                                             return AlertDialogButtonConfirmCancelBetween(
-                                              title: 'Delete Education',
-                                              contentText:
-                                                  'Delete education: ${i['subject']} / ${i['qualifications']['name']} / ${i['school']}',
-                                              textLeft: 'Cancel',
-                                              textRight: 'Delete',
+                                              title: "delete".tr +
+                                                  " " +
+                                                  "education".tr,
+                                              contentText: "delete".tr +
+                                                  " " +
+                                                  "education".tr +
+                                                  ': ${i['subject']} / ${i['qualifications']['name']} / ${i['school']}',
+                                              textLeft: 'cancel'.tr,
+                                              textRight: 'delete'.tr,
                                               colorTextRight:
                                                   AppColors.fontDanger,
                                             );
@@ -1618,7 +1630,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
-                              text: 'Add Education',
+                              text: "add".tr + " " + "education".tr,
                               colorText: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
@@ -1640,10 +1652,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
                         )
                       : BoxDecDottedBorderProfileDetail(
                           boxDecColor: AppColors.lightPrimary,
-                          title: "Education",
+                          title: "education".tr,
                           titleFontWeight: FontWeight.bold,
-                          text: "Input details of your education",
-                          buttonText: "Add",
+                          text: "details education".tr,
+                          buttonText: "add".tr,
                           pressButton: () {
                             Navigator.push(
                               context,
@@ -1669,12 +1681,12 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               height: 10,
                             ),
                             Text(
-                              "Language",
+                              "language".tr,
                               style: bodyTextMedium(
                                   AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
-                              "Add all the languages you can speak to increase your job prospects",
+                              "add all languages".tr,
                               style: bodyTextSmall(
                                 AppColors.fontGreyOpacity,
                               ),
@@ -1742,11 +1754,15 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                           context: context,
                                           builder: (context) {
                                             return AlertDialogButtonConfirmCancelBetween(
-                                              title: 'Delete Language',
-                                              contentText:
-                                                  'Delete language: ${i['LanguageId']['name']}',
-                                              textLeft: 'Cancel',
-                                              textRight: 'Delete',
+                                              title: "delete".tr +
+                                                  " " +
+                                                  "language".tr,
+                                              contentText: "delete".tr +
+                                                  " " +
+                                                  "language".tr +
+                                                  ': ${i['LanguageId']['name']}',
+                                              textLeft: 'cancel'.tr,
+                                              textRight: 'delete'.tr,
                                               colorTextRight:
                                                   AppColors.fontDanger,
                                             );
@@ -1766,7 +1782,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
-                              text: 'Add Language',
+                              text: "add".tr + " " + "language".tr,
                               colorText: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
@@ -1788,11 +1804,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
                         )
                       : BoxDecDottedBorderProfileDetail(
                           boxDecColor: AppColors.lightPrimary,
-                          title: "Language",
+                          title: "language".tr,
                           titleFontWeight: FontWeight.bold,
-                          text:
-                              "Add all the languages you can speak to increase your job prospects",
-                          buttonText: "Add",
+                          text: "add all languages".tr,
+                          buttonText: "add".tr,
                           pressButton: () {
                             Navigator.push(
                               context,
@@ -1817,12 +1832,12 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               height: 10,
                             ),
                             Text(
-                              "Skill",
+                              "skill".tr,
                               style: bodyTextMedium(
                                   AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
-                              "In this section, you should list skills that are relevant to the position or career area you are interested in",
+                              "you should list skills".tr,
                               style: bodyTextSmall(
                                 AppColors.fontGreyOpacity,
                               ),
@@ -1887,11 +1902,15 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                           context: context,
                                           builder: (context) {
                                             return AlertDialogButtonConfirmCancelBetween(
-                                              title: 'Delete Skill',
-                                              contentText:
-                                                  'Delete skill: ${i['keySkillId']['name']}',
-                                              textLeft: 'Cancel',
-                                              textRight: 'Delete',
+                                              title: 'delete'.tr +
+                                                  " " +
+                                                  "skill".tr,
+                                              contentText: 'delete'.tr +
+                                                  " " +
+                                                  "skill".tr +
+                                                  ': ${i['keySkillId']['name']}',
+                                              textLeft: 'cancel'.tr,
+                                              textRight: 'delete'.tr,
                                               colorTextRight:
                                                   AppColors.fontDanger,
                                             );
@@ -1911,7 +1930,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
-                              text: 'Add Skill',
+                              text: "add".tr + " " + 'skill'.tr,
                               colorText: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
@@ -1933,11 +1952,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
                         )
                       : BoxDecDottedBorderProfileDetail(
                           boxDecColor: AppColors.lightPrimary,
-                          title: "Skill",
+                          title: "skill".tr,
                           titleFontWeight: FontWeight.bold,
-                          text:
-                              "In this section, you should list skills that are relevant to the position or career area you are interested in",
-                          buttonText: "Add",
+                          text: "you should list skills".tr,
+                          buttonText: "add".tr,
                           pressButton: () {
                             Navigator.push(
                               context,

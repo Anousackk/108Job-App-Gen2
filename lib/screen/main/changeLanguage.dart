@@ -12,7 +12,7 @@ class ChangeLanguage extends StatefulWidget {
 
 class _ChangeLanguageState extends State<ChangeLanguage> {
   String _isLocaleLanguage = "";
-  String _isLanguageApi = "";
+  // String _isLanguageApi = "";
   checkLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     var getLanguageSharePref = prefs.getString('setLanguage');
@@ -31,16 +31,16 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
     if (Get.locale == Locale('lo', 'LA')) {
       setState(() {
         _isLocaleLanguage = 'lo';
-        _isLanguageApi = 'LA';
+        // _isLanguageApi = 'LA';
       });
     } else if (Get.locale == Locale('en', 'US')) {
       setState(() {
         _isLocaleLanguage = 'en';
-        _isLanguageApi = 'EN';
+        // _isLanguageApi = 'EN';
       });
     }
     print("_isLocaleLanguage form Login: " + _isLocaleLanguage);
-    print("_isLanguageApi form Login: " + _isLanguageApi);
+    // print("_isLanguageApi form Login: " + _isLanguageApi);
   }
 
   @override
@@ -64,11 +64,11 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
             GestureDetector(
               onTap: () {
                 var langEng = Locale('en', 'US');
-                setLanguage(langEng, 'en', _isLanguageApi);
+                setLanguage(langEng, 'en', "EN");
               },
               child: Container(
-                width: 40,
-                height: 40,
+                width: 30,
+                height: 30,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -81,11 +81,11 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
             GestureDetector(
               onTap: () {
                 var langLao = Locale('lo', 'LA');
-                setLanguage(langLao, 'lo', _isLanguageApi);
+                setLanguage(langLao, 'lo', "LA");
               },
               child: Container(
-                width: 40,
-                height: 40,
+                width: 30,
+                height: 30,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
