@@ -177,6 +177,7 @@ class _HomeState extends State<Home> {
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: AppColors.backgroundWhite,
           type: BottomNavigationBarType.fixed,
+          unselectedFontSize: 14,
           showSelectedLabels:
               true, // Set to true to show labels for selected tabs
           showUnselectedLabels:
@@ -189,56 +190,84 @@ class _HomeState extends State<Home> {
           items: [
             BottomNavigationBarItem(
               icon: Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 5),
-                child: FaIcon(
-                  FontAwesomeIcons.house,
-                  color: _currentIndex == 0
-                      ? AppColors.iconPrimary
-                      : AppColors.iconGrayOpacity,
+                padding: const EdgeInsets.only(
+                  top: 10,
                 ),
+                child: _currentIndex == 0
+                    ? Text(
+                        "\uf015",
+                        style: fontAwesomeSolid(
+                            null, 22, AppColors.iconPrimary, null),
+                      )
+                    : Text(
+                        "\uf015",
+                        style: fontAwesomeRegular(
+                            null, 22, AppColors.iconGrayOpacity, null),
+                      ),
               ),
               label: "home".tr,
             ),
             BottomNavigationBarItem(
               icon: Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 5),
-                child: FaIcon(
-                  FontAwesomeIcons.magnifyingGlass,
-                  color: _currentIndex == 1
-                      ? AppColors.iconPrimary
-                      : AppColors.iconGrayOpacity,
+                padding: const EdgeInsets.only(
+                  top: 10,
                 ),
+                child: _currentIndex == 1
+                    ? Text(
+                        "\uf002",
+                        style: fontAwesomeSolid(
+                            null, 22, AppColors.iconPrimary, null),
+                      )
+                    : Text(
+                        "\uf002",
+                        style: fontAwesomeRegular(
+                            null, 22, AppColors.iconGrayOpacity, null),
+                      ),
               ),
               label: "job search".tr,
             ),
             BottomNavigationBarItem(
               icon: Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 5),
-                child: FaIcon(
-                  FontAwesomeIcons.solidBuilding,
-                  color: _currentIndex == 2
-                      ? AppColors.iconPrimary
-                      : AppColors.iconGrayOpacity,
+                padding: const EdgeInsets.only(
+                  top: 10,
                 ),
+                child: _currentIndex == 2
+                    ? Text(
+                        "\uf1ad",
+                        style: fontAwesomeSolid(
+                            null, 22, AppColors.iconPrimary, null),
+                      )
+                    : Text(
+                        "\uf1ad",
+                        style: fontAwesomeRegular(
+                            null, 22, AppColors.iconGrayOpacity, null),
+                      ),
               ),
               label: "company".tr,
             ),
             BottomNavigationBarItem(
               icon: Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 5),
-                child: FaIcon(
-                  FontAwesomeIcons.briefcase,
-                  color: _currentIndex == 3
-                      ? AppColors.iconPrimary
-                      : AppColors.iconGrayOpacity,
+                padding: const EdgeInsets.only(
+                  top: 10,
                 ),
+                child: _currentIndex == 3
+                    ? Text(
+                        "\uf0b1",
+                        style: fontAwesomeSolid(
+                            null, 22, AppColors.iconPrimary, null),
+                      )
+                    : Text(
+                        "\uf0b1",
+                        style: fontAwesomeRegular(
+                            null, 22, AppColors.iconGrayOpacity, null),
+                      ),
               ),
               label: "my job".tr,
             ),
             // BottomNavigationBarItem(
             //   backgroundColor: AppColors.grey,
             //   icon: Padding(
-            //     padding: const EdgeInsets.only(top: 10, bottom: 5),
+            //     padding: const EdgeInsets.only(top: 10,),
             //     child: Container(
             //       // color: AppColors.primary,
             //       child: Stack(
@@ -280,13 +309,20 @@ class _HomeState extends State<Home> {
             // ),
             BottomNavigationBarItem(
               icon: Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 5),
-                child: FaIcon(
-                  FontAwesomeIcons.solidUser,
-                  color: _currentIndex == 4
-                      ? AppColors.iconPrimary
-                      : AppColors.iconGrayOpacity,
+                padding: const EdgeInsets.only(
+                  top: 10,
                 ),
+                child: _currentIndex == 4
+                    ? Text(
+                        "\uf007",
+                        style: fontAwesomeSolid(
+                            null, 22, AppColors.iconPrimary, null),
+                      )
+                    : Text(
+                        "\uf007",
+                        style: fontAwesomeRegular(
+                            null, 22, AppColors.iconGrayOpacity, null),
+                      ),
               ),
               label: "account".tr,
             )
@@ -860,8 +896,8 @@ class _MainHomeState extends State<MainHome> {
                                         },
                                         child: Text(
                                           "seemore".tr,
-                                          style: bodyTextSmall(
-                                              AppColors.fontPrimary),
+                                          style: bodyTextNormal(
+                                              AppColors.fontPrimary, null),
                                         ),
                                       )
                                     ],
@@ -906,9 +942,9 @@ class _MainHomeState extends State<MainHome> {
                                                   decoration: BoxDecoration(
                                                       color: AppColors
                                                           .backgroundWhite,
-                                                      border: Border.all(
-                                                          color: AppColors
-                                                              .borderGreyOpacity),
+                                                      // border: Border.all(
+                                                      //     color: AppColors
+                                                      //         .borderGreyOpacity),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10)),
@@ -1178,8 +1214,8 @@ class _MainHomeState extends State<MainHome> {
                                         },
                                         child: Text(
                                           "seemore".tr,
-                                          style: bodyTextSmall(
-                                              AppColors.fontPrimary),
+                                          style: bodyTextNormal(
+                                              AppColors.fontPrimary, null),
                                         ),
                                       )
                                     ],
@@ -1224,9 +1260,9 @@ class _MainHomeState extends State<MainHome> {
                                                   decoration: BoxDecoration(
                                                       color: AppColors
                                                           .backgroundWhite,
-                                                      border: Border.all(
-                                                          color: AppColors
-                                                              .borderGreyOpacity),
+                                                      // border: Border.all(
+                                                      //     color: AppColors
+                                                      //         .borderGreyOpacity),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10)),
@@ -1666,19 +1702,25 @@ class _MainHomeState extends State<MainHome> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                "all company".tr,
+                                                "seemore".tr,
                                                 style: bodyTextNormal(
                                                     AppColors.fontPrimary,
-                                                    FontWeight.bold),
+                                                    null),
                                               ),
-                                              SizedBox(
-                                                width: 5,
-                                              ),
-                                              FaIcon(
-                                                FontAwesomeIcons.arrowRight,
-                                                color: AppColors.iconPrimary,
-                                                size: 15,
-                                              )
+                                              // Text(
+                                              //   "all company".tr,
+                                              //   style: bodyTextNormal(
+                                              //       AppColors.fontPrimary,
+                                              //       FontWeight.bold),
+                                              // ),
+                                              // SizedBox(
+                                              //   width: 5,
+                                              // ),
+                                              // FaIcon(
+                                              //   FontAwesomeIcons.arrowRight,
+                                              //   color: AppColors.iconPrimary,
+                                              //   size: 15,
+                                              // )
                                             ],
                                           ),
                                         ),
@@ -2079,7 +2121,7 @@ class _MainHomeState extends State<MainHome> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 30,
+                                      height: 20,
                                     )
                                   ],
                                 )

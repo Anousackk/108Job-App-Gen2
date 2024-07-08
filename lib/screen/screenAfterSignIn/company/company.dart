@@ -56,7 +56,10 @@ class _CompanyState extends State<Company> {
   Timer? _timer;
 
   fetchCompanies(String searchType) async {
-    if (!_hasMoreData) return;
+    if (!_hasMoreData) {
+      _isLoadingMoreData = false;
+      return;
+    }
 
     if (_statusShowLoading) {
       showDialog(
@@ -78,20 +81,26 @@ class _CompanyState extends State<Company> {
     List fetchedCompanies = res['employerList'];
     totals = res['totals'];
 
+    // Simulate a network call
+    // await Future.delayed(Duration(microseconds: 500));
+
     // _companies = res['employerList'];
 
+    // setState(() {
     page++;
     _companies.addAll(List<Map<String, dynamic>>.from(fetchedCompanies));
     if (_companies.length >= totals || fetchedCompanies.length < perPage) {
       _hasMoreData = false;
     }
     _isLoadingMoreData = false;
+    print("_isLoadingMoreData + ${_isLoadingMoreData}");
     _isLoading = false;
 
     if (res['employerList'] != null && _statusShowLoading) {
       _statusShowLoading = false;
       Navigator.pop(context);
     }
+    // });
 
     if (mounted) {
       setState(() {});
@@ -214,6 +223,16 @@ class _CompanyState extends State<Company> {
       fetchCompanyFeature();
     }
 
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          _isLoadingMoreData = true;
+        });
+        fetchCompanies(_searchType);
+      }
+    });
+
     _searchCompanyNameController.text = _searchCompanyName;
   }
 
@@ -262,6 +281,8 @@ class _CompanyState extends State<Company> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Text("${_hasMoreData}"),
+                        // Text("${_isLoadingMoreData}"),
                         SizedBox(
                           height: 20,
                         ),
@@ -911,11 +932,6 @@ class _CompanyState extends State<Company> {
                               //
                               //
                               //
-                              //
-                              //
-                              //
-                              //
-
                               //SliverList of company
                               _companies.length > 0
                                   ? SliverList(
@@ -926,30 +942,40 @@ class _CompanyState extends State<Company> {
                                                 ? Padding(
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        horizontal: 20,
-                                                        vertical: 8),
-                                                    child: ElevatedButton(
-                                                      style: ButtonStyle(
-                                                          backgroundColor:
-                                                              MaterialStatePropertyAll(
-                                                                  AppColors
-                                                                      .lightPrimary)),
-                                                      onPressed: () => {
-                                                        setState(() {
-                                                          _isLoadingMoreData =
-                                                              true;
-                                                        }),
-                                                        fetchCompanies(
-                                                            _searchType),
-                                                      },
-                                                      child: Text(
-                                                        'view more'.tr,
-                                                        style: TextStyle(
-                                                            color: AppColors
-                                                                .fontPrimary),
-                                                      ),
-                                                    ),
+                                                        horizontal: 0,
+                                                        vertical: 10),
+                                                    child: Container(
+                                                        // child: Text("Loading"),
+                                                        ),
                                                   )
+
+                                                // Padding(
+                                                //     padding: const EdgeInsets
+                                                //         .symmetric(
+                                                //         horizontal: 20,
+                                                //         vertical: 8),
+                                                //     child: ElevatedButton(
+                                                //       style: ButtonStyle(
+                                                //           backgroundColor:
+                                                //               MaterialStatePropertyAll(
+                                                //                   AppColors
+                                                //                       .lightPrimary)),
+                                                //       onPressed: () => {
+                                                //         setState(() {
+                                                //           _isLoadingMoreData =
+                                                //               true;
+                                                //         }),
+                                                //         fetchCompanies(
+                                                //             _searchType),
+                                                //       },
+                                                //       child: Text(
+                                                //         'view more'.tr,
+                                                //         style: TextStyle(
+                                                //             color: AppColors
+                                                //                 .fontPrimary),
+                                                //       ),
+                                                //     ),
+                                                //   )
                                                 : Padding(
                                                     padding:
                                                         const EdgeInsets.all(
@@ -1225,7 +1251,7 @@ class _CompanyState extends State<Company> {
                                                 ),
                                               ),
                                               SizedBox(
-                                                height: 10,
+                                                height: 15,
                                               ),
                                             ],
                                           );
@@ -1245,9 +1271,12 @@ class _CompanyState extends State<Company> {
                             ],
                           ),
                         ),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
                         if (_isLoadingMoreData)
                           Padding(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(0),
                             child: Center(child: CircularProgressIndicator()),
                           ),
                       ],

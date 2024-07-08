@@ -315,6 +315,17 @@ class _JobSearchState extends State<JobSearch>
       getJobsSearchSeeker();
     }
 
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          _isLoadingMoreData = true;
+        });
+
+        getJobsSearchSeeker();
+      }
+    });
+
     _searchTitleController.text = _searchTitle;
 
     //
@@ -1485,27 +1496,36 @@ class _JobSearchState extends State<JobSearch>
                                       return _hasMoreData
                                           ? Padding(
                                               padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: ElevatedButton(
-                                                style: ButtonStyle(
-                                                    backgroundColor:
-                                                        MaterialStatePropertyAll(
-                                                            AppColors
-                                                                .lightPrimary)),
-                                                onPressed: () => {
-                                                  setState(() {
-                                                    _isLoadingMoreData = true;
-                                                  }),
-                                                  getJobsSearchSeeker(),
-                                                },
-                                                child: Text(
-                                                  'view more'.tr,
-                                                  style: TextStyle(
-                                                      color: AppColors
-                                                          .fontPrimary),
-                                                ),
-                                              ),
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 0,
+                                                      vertical: 10),
+                                              child: Container(
+                                                  // child: Text("Loading"),
+                                                  ),
                                             )
+                                          // Padding(
+                                          //     padding:
+                                          //         const EdgeInsets.all(8.0),
+                                          //     child: ElevatedButton(
+                                          //       style: ButtonStyle(
+                                          //           backgroundColor:
+                                          //               MaterialStatePropertyAll(
+                                          //                   AppColors
+                                          //                       .lightPrimary)),
+                                          //       onPressed: () => {
+                                          //         setState(() {
+                                          //           _isLoadingMoreData = true;
+                                          //         }),
+                                          //         getJobsSearchSeeker(),
+                                          //       },
+                                          //       child: Text(
+                                          //         'view more'.tr,
+                                          //         style: TextStyle(
+                                          //             color: AppColors
+                                          //                 .fontPrimary),
+                                          //       ),
+                                          //     ),
+                                          //   )
                                           : Padding(
                                               padding:
                                                   const EdgeInsets.all(8.0),
@@ -2244,7 +2264,7 @@ class _JobSearchState extends State<JobSearch>
                         ),
                         if (_isLoadingMoreData)
                           Padding(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(0),
                             child: Center(child: CircularProgressIndicator()),
                           ),
                       ],
@@ -2290,7 +2310,10 @@ class _JobSearchState extends State<JobSearch>
 
   getJobsSearchSeeker() async {
     // if (_isLoadingMoreData || !_hasMoreData) return;
-    if (!_hasMoreData) return;
+    if (!_hasMoreData) {
+      _isLoadingMoreData = false;
+      return;
+    }
 
     // setState(() {
     //   _isLoadingMoreData = true;

@@ -3,6 +3,9 @@
 import 'package:app/functions/colors.dart';
 import 'package:flutter/material.dart';
 
+//
+//
+//
 //appbar
 TextStyle appbarTextSmall(Color? textColor) {
   return TextStyle(
@@ -27,6 +30,9 @@ TextStyle appbarTextMedium(Color? textColor, FontWeight? fontWeight) {
   );
 }
 
+//
+//
+//
 //header
 TextStyle headerTextNormal(Color? textColor) {
   return TextStyle(
@@ -43,6 +49,9 @@ TextStyle headerTextMediuml(Color? textColor, FontWeight? fontWeight) {
   );
 }
 
+//
+//
+//
 //body
 TextStyle bodyTextSmall(Color? textColor) {
   return TextStyle(
@@ -99,6 +108,9 @@ TextStyle bodyTextMaxLarge(Color? textColor, FontWeight? fontWeight) {
   );
 }
 
+//
+//
+//
 //botder
 TextStyle botderTextNormal(Color? textColor) {
   return TextStyle(
@@ -107,6 +119,9 @@ TextStyle botderTextNormal(Color? textColor) {
   );
 }
 
+//
+//
+//
 //button
 TextStyle buttonTextNormal(Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
@@ -116,6 +131,9 @@ TextStyle buttonTextNormal(Color? textColor, FontWeight? fontWeight) {
   );
 }
 
+//
+//
+//
 //input
 TextStyle inputTextSmall(Color? textColor) {
   return TextStyle(
@@ -131,6 +149,9 @@ TextStyle inputTextNormal(Color? textColor) {
   );
 }
 
+//
+//
+//
 //tabBar
 TextStyle tabBarTextSmall(Color? textColor) {
   return TextStyle(
@@ -151,6 +172,40 @@ TextStyle textValidateSmall(Color? textColor) {
   return TextStyle(
     color: textColor == null ? AppColors.fontDanger : textColor,
     fontSize: 12,
+  );
+}
+
+//
+//
+//
+//Font Awesome
+TextStyle fontAwesomeSolid(String? fontFamily, double? fontSize, Color? color,
+    FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily == null ? "FontAwesomeSolid" : fontFamily,
+    fontSize: fontSize == null ? 15 : fontSize,
+    color: color == null ? AppColors.iconDark : color,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+  );
+}
+
+TextStyle fontAwesomeRegular(String? fontFamily, double? fontSize, Color? color,
+    FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily == null ? "FontAwesomeRegular" : fontFamily,
+    fontSize: fontSize == null ? 15 : fontSize,
+    color: color == null ? AppColors.iconDark : color,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+  );
+}
+
+TextStyle fontAwesomeLight(String? fontFamily, double? fontSize, Color? color,
+    FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily == null ? "FontAwesomeLight" : fontFamily,
+    fontSize: fontSize == null ? 15 : fontSize,
+    color: color == null ? AppColors.iconDark : color,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
   );
 }
 

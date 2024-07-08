@@ -59,7 +59,10 @@ class _MyJobsState extends State<MyJobs> {
   DateTime _dateTimeNow = DateTime.now();
 
   fetchMyJob(String type) async {
-    if (!_hasMoreData) return;
+    if (!_hasMoreData) {
+      _isLoadingMoreData = false;
+      return;
+    }
 
     //
     //ສະແດງ AlertDialog Loading
@@ -220,6 +223,16 @@ class _MyJobsState extends State<MyJobs> {
     } else {
       fetchMyJob(_typeMyJob);
     }
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          _isLoadingMoreData = true;
+        });
+        fetchMyJob(_typeMyJob);
+      }
+    });
 
     _searchTitleController.text = _searchTitle;
   }
@@ -502,29 +515,38 @@ class _MyJobsState extends State<MyJobs> {
                                         if (index == _listMyJobs.length) {
                                           return _hasMoreData
                                               ? Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: ElevatedButton(
-                                                    style: ButtonStyle(
-                                                        backgroundColor:
-                                                            MaterialStatePropertyAll(
-                                                                AppColors
-                                                                    .lightPrimary)),
-                                                    onPressed: () => {
-                                                      setState(() {
-                                                        _isLoadingMoreData =
-                                                            true;
-                                                      }),
-                                                      fetchMyJob(_typeMyJob),
-                                                    },
-                                                    child: Text(
-                                                      'view more'.tr,
-                                                      style: TextStyle(
-                                                          color: AppColors
-                                                              .fontPrimary),
-                                                    ),
-                                                  ),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 0,
+                                                      vertical: 10),
+                                                  child: Container(
+                                                      // child: Text("Loading"),
+                                                      ),
                                                 )
+                                              // Padding(
+                                              //     padding:
+                                              //         const EdgeInsets.all(8.0),
+                                              //     child: ElevatedButton(
+                                              //       style: ButtonStyle(
+                                              //           backgroundColor:
+                                              //               MaterialStatePropertyAll(
+                                              //                   AppColors
+                                              //                       .lightPrimary)),
+                                              //       onPressed: () => {
+                                              //         setState(() {
+                                              //           _isLoadingMoreData =
+                                              //               true;
+                                              //         }),
+                                              //         fetchMyJob(_typeMyJob),
+                                              //       },
+                                              //       child: Text(
+                                              //         'view more'.tr,
+                                              //         style: TextStyle(
+                                              //             color: AppColors
+                                              //                 .fontPrimary),
+                                              //       ),
+                                              //     ),
+                                              //   )
                                               : Padding(
                                                   padding:
                                                       const EdgeInsets.all(8.0),
@@ -1023,7 +1045,7 @@ class _MyJobsState extends State<MyJobs> {
                         ),
                   if (_isLoadingMoreData)
                     Padding(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(0),
                       child: Center(child: CircularProgressIndicator()),
                     ),
                 ],
