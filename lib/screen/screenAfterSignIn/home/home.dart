@@ -173,6 +173,7 @@ class _HomeState extends State<Home> {
 
         //
         //
+        //
         //BottomNavigatorBar
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: AppColors.backgroundWhite,
