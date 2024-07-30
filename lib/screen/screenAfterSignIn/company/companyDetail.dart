@@ -42,6 +42,7 @@ class _CompanyDetailState extends State<CompanyDetail>
   String _id = "";
   String _memberLevel = "";
   String _logo = "";
+  String _cardCover = "";
   String _companyName = "";
   String _followerTotals = "";
   String _aboutCompany = "";
@@ -79,6 +80,7 @@ class _CompanyDetailState extends State<CompanyDetail>
     var companyInfo = res['companyInfo'];
     _id = companyInfo['_id'];
     _logo = companyInfo['logo'];
+    _cardCover = companyInfo['cardCover'];
     _companyName = companyInfo['companyName'];
     _address = companyInfo['address'];
     _email = companyInfo['appliedEmails'];
@@ -353,40 +355,93 @@ class _CompanyDetailState extends State<CompanyDetail>
                   )
                 : Column(
                     children: [
-                      Expanded(
-                        flex: 5,
-                        child: Stack(
-                          children: [
-                            //
-                            //
-                            //Image size 5/2
-                            Container(
-                              padding: EdgeInsets.only(top: 20),
-                              alignment: Alignment.topCenter,
-                              color: AppColors.background,
-                              child: FaIcon(
-                                FontAwesomeIcons.solidImage,
-                                size: 70,
-                                color: AppColors.backgroundGreyOpacity,
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //Section 1 card cover
+                      Stack(
+                        children: [
+                          //
+                          //
+                          //Image size 5/2
+                          Container(
+                            width: double.infinity,
+                            // padding: EdgeInsets.only(top: 20),
+                            alignment: Alignment.topCenter,
+                            color: AppColors.background,
+                            child: AspectRatio(
+                              aspectRatio: 5 / 2,
+                              child: ClipRRect(
+                                // borderRadius: BorderRadius.only(
+                                //   topLeft: Radius.circular(8),
+                                //   topRight: Radius.circular(8),
+                                // ),
+                                child: _cardCover == ""
+                                    ? Center(
+                                        child: Container(
+                                          padding: EdgeInsets.only(bottom: 30),
+                                          child: FaIcon(
+                                            FontAwesomeIcons.image,
+                                            size: 70,
+                                            color: AppColors.secondary,
+                                          ),
+                                        ),
+                                      )
+                                    : Image.network(
+                                        "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_cardCover}",
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Center(
+                                            child: Container(
+                                              padding:
+                                                  EdgeInsets.only(bottom: 30),
+                                              child: FaIcon(
+                                                FontAwesomeIcons.image,
+                                                size: 70,
+                                                color: AppColors.secondary,
+                                              ),
+                                            ),
+                                          ); // Display an error message
+                                        },
+                                      ),
                               ),
                             ),
-                            Positioned(
-                              top: 20,
-                              left: 20,
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pop([
-                                    _checkStatusFollow,
-                                    _callBackCompanyId,
-                                    _callBackIsFollow
-                                  ]);
-                                },
-                                child: FaIcon(FontAwesomeIcons.arrowLeft),
-                              ),
-                            )
-                          ],
-                        ),
+                          ),
+                          Positioned(
+                            top: 20,
+                            left: 20,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop([
+                                  _checkStatusFollow,
+                                  _callBackCompanyId,
+                                  _callBackIsFollow
+                                ]);
+                              },
+                              child: FaIcon(FontAwesomeIcons.arrowLeft),
+                            ),
+                          )
+                        ],
                       ),
+
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //Section 2 company detail
                       Expanded(
                         flex: 20,
                         child: Stack(
@@ -399,9 +454,9 @@ class _CompanyDetailState extends State<CompanyDetail>
                               decoration: BoxDecoration(
                                 color: AppColors.backgroundWhite,
                                 borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(25),
-                                  topRight: Radius.circular(25),
-                                ),
+                                    // topLeft: Radius.circular(25),
+                                    // topRight: Radius.circular(25),
+                                    ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: AppColors.grey.withOpacity(0.2),
@@ -726,6 +781,8 @@ class _CompanyDetailState extends State<CompanyDetail>
                                               children: [
                                                 //
                                                 //
+                                                //
+                                                //
                                                 //TabBarView About(HtmlWidget)
                                                 SingleChildScrollView(
                                                   physics:
@@ -758,6 +815,8 @@ class _CompanyDetailState extends State<CompanyDetail>
 
                                                 //
                                                 //
+                                                //
+                                                //
                                                 //TabBarView Video
                                                 Container(
                                                   child: Container(
@@ -779,6 +838,8 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                   ),
                                                 ),
 
+                                                //
+                                                //
                                                 //
                                                 //
                                                 //TabBarView Photo Gallery
@@ -841,6 +902,8 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                   ),
                                                 ),
 
+                                                //
+                                                //
                                                 //
                                                 //
                                                 //TabBarView Benefits
@@ -930,6 +993,8 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                   ),
                                                 ),
 
+                                                //
+                                                //
                                                 //
                                                 //
                                                 //TabBarView Jobs Opening
@@ -1076,7 +1141,9 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                                                 SizedBox(
                                                                                                   width: 5,
                                                                                                 ),
-                                                                                                Text("${_jobOpeningWorkingLocation}", style: bodyTextSmall(null), overflow: TextOverflow.ellipsis),
+                                                                                                Flexible(
+                                                                                                  child: Text("${_jobOpeningWorkingLocation}", style: bodyTextSmall(null), overflow: TextOverflow.ellipsis),
+                                                                                                ),
                                                                                               ],
                                                                                             ),
                                                                                             Row(
@@ -1179,6 +1246,8 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                   ),
                                                 ),
 
+                                                //
+                                                //
                                                 //
                                                 //
                                                 //TabBarView Contact
@@ -1621,7 +1690,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                   child: !_isFollow
                                                       ? ButtonWithIconLeft(
                                                           paddingButton:
-                                                              MaterialStateProperty
+                                                              WidgetStateProperty
                                                                   .all<
                                                                       EdgeInsets>(
                                                             EdgeInsets.all(0),
@@ -1662,7 +1731,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                         )
                                                       : ButtonWithIconLeft(
                                                           paddingButton:
-                                                              MaterialStateProperty
+                                                              WidgetStateProperty
                                                                   .all<
                                                                       EdgeInsets>(
                                                             EdgeInsets.all(0),
@@ -1710,7 +1779,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                   child: !_isSubmit
                                                       ? Button(
                                                           paddingButton:
-                                                              MaterialStateProperty
+                                                              WidgetStateProperty
                                                                   .all<
                                                                       EdgeInsets>(
                                                             EdgeInsets.all(5),
@@ -1767,12 +1836,12 @@ class _CompanyDetailState extends State<CompanyDetail>
                                     color: neumorphismColor,
                                     borderRadius: BorderRadius.circular(10),
                                     boxShadow: [
-                                      BoxShadow(
-                                        blurRadius: blur,
-                                        offset: -distance,
-                                        color: AppColors.white,
-                                        inset: isPress,
-                                      ),
+                                      // BoxShadow(
+                                      //   blurRadius: blur,
+                                      //   offset: -distance,
+                                      //   color: AppColors.white,
+                                      //   inset: isPress,
+                                      // ),
                                       BoxShadow(
                                         blurRadius: blur,
                                         offset: distance,

@@ -169,6 +169,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                     Expanded(
                       flex: 15,
                       child: SingleChildScrollView(
+                        physics: ClampingScrollPhysics(),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -584,7 +585,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                               height: 5,
                             ),
                             SimpleTextFieldSingleValidate(
-                              heightCon: 150,
+                              heightCon: 180,
                               maxLines: 20,
                               inputColor: AppColors.backgroundWhite,
                               codeController: _responsibilityController,

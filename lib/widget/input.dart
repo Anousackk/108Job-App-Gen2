@@ -1372,6 +1372,7 @@ class _BoxDecorationInputState extends State<BoxDecorationInput> {
                       //     // ),
                       //   ),
                       // ),
+
                       Flexible(
                         child: Text(
                           "${widget.text}",

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names, use_full_hex_values_for_flutter_colors
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -17,13 +17,12 @@ import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 class JobSearchDetail extends StatefulWidget {
-  const JobSearchDetail(
-      {Key? key, this.jobId, this.newJob, this.statusFromScreen})
+  const JobSearchDetail({Key? key, this.jobId, this.newJob, this.status})
       : super(key: key);
   static String routeName = '/JobSearchDetail';
   final jobId;
   final newJob;
-  final statusFromScreen;
+  final status;
 
   @override
   State<JobSearchDetail> createState() => _JobSearchDetailState();
@@ -37,6 +36,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
   String _industry = "";
   String _address = "";
   String _title = "";
+  String _jobFunction = "";
   String _workLocation = "";
   dynamic _openDate;
   dynamic _closeDate;
@@ -45,6 +45,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
   String _experience = "";
   String _description = "";
   List _allOnlineJob = [];
+  bool _isShowSalary = false;
   bool _isSaved = false;
   bool _isApplied = false;
   bool _isLoading = false;
@@ -57,7 +58,10 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
   String _checkStatusCallBack = "";
 
   fetchJobSearchDetail(dynamic jobId) async {
+    print("2" + jobId.toString());
+
     var res = await fetchData(getJobSearchDetailSeekerApi + jobId);
+    // print("${res}");
     dynamic _jobDetail = res['jobDetail'];
 
     _id = _jobDetail['jobId'];
@@ -68,7 +72,9 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     _address = _jobDetail['address'];
 
     _title = _jobDetail['title'];
+    _jobFunction = _jobDetail['jobFunction'];
     _salary = _jobDetail['salaryRange'];
+    _isShowSalary = _jobDetail['isShowSalary'];
     _workLocation = _jobDetail['workingLocations'];
     _education = _jobDetail['jobEductionLevel'];
     _experience = _jobDetail['jobExperience'];
@@ -76,9 +82,9 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     _closeDate = _jobDetail['closingDate'];
     _isFollow = _jobDetail["follow"];
 
-    if (widget.statusFromScreen == "NotificationScreen") {
+    if (widget.status == true) {
       setState(() {
-        _callBackJobSearchId = _id;
+        _callBackJobSearchId = widget.jobId;
       });
     }
 
@@ -313,6 +319,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
   void initState() {
     super.initState();
     _isLoading = true;
+    print("1" + widget.jobId.toString());
     fetchJobSearchDetail(widget.jobId);
   }
 
@@ -341,7 +348,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         body: SafeArea(
           child: _isLoading
               ? Container(
-                  color: AppColors.background,
+                  color: AppColors.backgroundWhite,
                   width: double.infinity,
                   height: double.infinity,
                   child: Center(
@@ -351,366 +358,212 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
               : Container(
                   height: double.infinity,
                   width: double.infinity,
-                  color: AppColors.background,
+                  color: AppColors.backgroundWhite,
                   child: Column(
                     children: [
                       //
                       //
+                      //
+                      //
+                      //
                       //Button back
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop([
-                            _checkStatusCallBack,
-                            _callBackJobSearchId,
-                            _callBackIsSave
-                          ]);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          child: Row(
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.arrowLeft,
-                                color: AppColors.iconDark,
-                                size: IconSize.mIcon,
-                              )
-                            ],
-                          ),
+                      Container(
+                        // padding: EdgeInsets.symmetric(
+                        //   horizontal: 20,
+                        // ),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop([
+                                  _checkStatusCallBack,
+                                  _callBackJobSearchId,
+                                  _callBackIsSave
+                                ]);
+                              },
+                              child: Container(
+                                color: AppColors.backgroundWhite,
+                                padding: EdgeInsets.all(20),
+                                child: FaIcon(
+                                  FontAwesomeIcons.arrowLeft,
+                                  color: AppColors.iconDark,
+                                  size: IconSize.mIcon,
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       ),
-
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //Section1
-                      //Job Title,
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              children: [
-                                Text(
-                                  "job title".tr,
-                                  style: bodyTextMedium(null, FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                //
-                                //Job Title
-                                Text(
-                                  "${_title}",
-                                  style:
-                                      bodyTextSmall(AppColors.fontGreyOpacity),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-
-                          //
-                          //
-                          //
-                          //SingleChildScrollView
-                          //WorkLocation, Education, Experience, Salary, Opening, Close
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              physics: ClampingScrollPhysics(),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 5),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: AppColors.greyWhite,
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 8),
-                                      child: Text(
-                                        "${_workLocation}",
-                                        style: bodyTextSmall(null),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 5),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: AppColors.greyWhite,
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 8),
-                                      child: Text(
-                                        "${_education}",
-                                        style: bodyTextSmall(null),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 5),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: AppColors.greyWhite,
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 8),
-                                      child: Text(
-                                        "${_experience}",
-                                        style: bodyTextSmall(null),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 5),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: AppColors.greyWhite,
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 8),
-                                      child: Text(
-                                        "${_salary}",
-                                        style: bodyTextSmall(null),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColors.greyWhite,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 8),
-                                    child: Text(
-                                      "${_openDate} - ${_closeDate}",
-                                      style: bodyTextSmall(null),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //Section2
-                      //Job Description, Company to follow
                       Expanded(
                         flex: 15,
                         child: SingleChildScrollView(
                           physics: ClampingScrollPhysics(),
                           child: Column(
                             children: [
-                              // SizedBox(
-                              //   height: 15,
-                              // ),
-                              // Divider(
-                              //   color: AppColors.borderSecondary,
-                              // ),
-                              // SizedBox(
-                              //   height: 15,
-                              // ),
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //Section1
+                              //Job Title,
+                              Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "${_title}",
+                                          style: bodyTextMedium(
+                                              null, FontWeight.bold),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        //
+                                        //Job Title
+                                        Text(
+                                          "${_jobFunction}",
+                                          style: bodyTextNormal(
+                                              AppColors.fontGreyOpacity, null),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+
+                                  //
+                                  //
+                                  //
+                                  //SingleChildScrollView
+                                  //WorkLocation, Education, Experience, Salary, Opening, Close
+                                  Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      physics: ClampingScrollPhysics(),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(right: 5),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: AppColors.greyWhite,
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 8),
+                                              child: Text(
+                                                "${_workLocation}",
+                                                style: bodyTextSmall(null),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(right: 5),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: AppColors.greyWhite,
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 8),
+                                              child: Text(
+                                                "${_education}",
+                                                style: bodyTextSmall(null),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(right: 5),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: AppColors.greyWhite,
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 8),
+                                              child: Text(
+                                                "${_experience}",
+                                                style: bodyTextSmall(null),
+                                              ),
+                                            ),
+                                          ),
+                                          if (!_isShowSalary)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 5),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.greyWhite,
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 8),
+                                                child: Text(
+                                                  "${_salary}",
+                                                  style: bodyTextSmall(null),
+                                                ),
+                                              ),
+                                            ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColors.greyWhite,
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 8),
+                                            child: Text(
+                                              "${_openDate} - ${_closeDate}",
+                                              style: bodyTextSmall(null),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
 
                               //
                               //
-                              //Section2
-                              //Job Title, Working Location, Date, Salary, Education Level, Working Experince
-                              // Container(
-                              //   // color: AppColors.lightBlue,
-                              //   width: double.infinity,
-                              //   padding: EdgeInsets.symmetric(horizontal: 20),
-                              //   child: Column(
-                              //     mainAxisAlignment: MainAxisAlignment.start,
-                              //     crossAxisAlignment: CrossAxisAlignment.start,
-                              //     children: [
-                              //       //
-                              //       //Job Title
-                              //       Text(
-                              //         "${_title}",
-                              //         style: bodyTextMaxNormal(
-                              //             null, FontWeight.bold),
-                              //       ),
-                              //       SizedBox(
-                              //         height: 5,
-                              //       ),
-                              //       //
-                              //       //Working Location
-                              //       Row(
-                              //         crossAxisAlignment:
-                              //             CrossAxisAlignment.start,
-                              //         children: [
-                              //           Text(
-                              //             "Working Location:  ",
-                              //             style: bodyTextSmall(null),
-                              //           ),
-                              //           Expanded(
-                              //             child: Text(
-                              //               "${_workLocation}",
-                              //               style: bodyTextSmall(
-                              //                   AppColors.fontPrimary),
-                              //               overflow: TextOverflow.fade,
-                              //             ),
-                              //           )
-                              //         ],
-                              //       ),
-                              //       // SizedBox(
-                              //       //   height: 5,
-                              //       // ),
-                              //       //
-                              //       //Open date to Close date
-                              //       Row(
-                              //         crossAxisAlignment:
-                              //             CrossAxisAlignment.start,
-                              //         children: [
-                              //           Text(
-                              //             "Date:  ",
-                              //             style: bodyTextSmall(null),
-                              //           ),
-                              //           Text(
-                              //             "${_openDate}",
-                              //             style: bodyTextSmall(
-                              //                 AppColors.fontPrimary),
-                              //           ),
-                              //           Text(" to "),
-                              //           Text(
-                              //             "${_closeDate}",
-                              //             style: bodyTextSmall(
-                              //                 AppColors.fontPrimary),
-                              //           )
-                              //         ],
-                              //       ),
-                              //       // SizedBox(
-                              //       //   height: 5,
-                              //       // ),
-                              //       //
-                              //       //Salart
-                              //       Row(
-                              //         children: [
-                              //           Text(
-                              //             "Salary:  ",
-                              //             style: bodyTextSmall(null),
-                              //           ),
-                              //           Expanded(
-                              //             child: Text(
-                              //               "${_salary}",
-                              //               style: bodyTextSmall(
-                              //                   AppColors.fontPrimary),
-                              //               overflow: TextOverflow.fade,
-                              //             ),
-                              //           )
-                              //         ],
-                              //       ),
-                              //       // SizedBox(
-                              //       //   height: 5,
-                              //       // ),
-                              //       //
-                              //       //Education Level
-                              //       Row(
-                              //         children: [
-                              //           Text(
-                              //             "Education Level:  ",
-                              //             style: bodyTextSmall(null),
-                              //           ),
-                              //           Expanded(
-                              //             child: Text(
-                              //               "${_education}",
-                              //               style: bodyTextSmall(
-                              //                   AppColors.fontPrimary),
-                              //               overflow: TextOverflow.fade,
-                              //             ),
-                              //           )
-                              //         ],
-                              //       ),
-                              //       // SizedBox(
-                              //       //   height: 5,
-                              //       // ),
-                              //       //
-                              //       //Working Experince
-                              //       Row(
-                              //         children: [
-                              //           Text(
-                              //             "Working Experience:  ",
-                              //             style: bodyTextSmall(null),
-                              //           ),
-                              //           Expanded(
-                              //             child: Text(
-                              //               "${_experience}",
-                              //               style: bodyTextSmall(
-                              //                   AppColors.fontPrimary),
-                              //               overflow: TextOverflow.fade,
-                              //             ),
-                              //           )
-                              //         ],
-                              //       )
-                              //     ],
-                              //   ),
-                              // ),
-                              // SizedBox(
-                              //   height: 15,
-                              // ),
-                              // Divider(
-                              //   color: AppColors.borderSecondary,
-                              // ),
-                              // SizedBox(
-                              //   height: 15,
-                              // ),
-
                               //
                               //
                               //Section 2
                               //Job Description
                               Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
+                                    const EdgeInsets.symmetric(horizontal: 0),
                                 child: Container(
                                   width: double.infinity,
                                   padding: EdgeInsets.all(15),
                                   decoration: BoxDecoration(
                                     color: AppColors.backgroundWhite,
-                                    borderRadius: BorderRadius.circular(10),
+                                    // borderRadius: BorderRadius.circular(10),
+                                    border: Border.symmetric(
+                                      horizontal:
+                                          BorderSide(color: AppColors.borderBG),
+                                    ),
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -765,9 +618,10 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                       horizontal: 20),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: AppColors.backgroundWhite,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
+                                        color: AppColors.backgroundWhite,
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: AppColors.borderBG)),
                                     padding: EdgeInsets.all(15),
                                     child: Row(
                                       children: [
@@ -875,78 +729,78 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                         //
                                         //
                                         //Bottom follower / following
-                                        GestureDetector(
-                                          onTap: () {
-                                            followCompany(
-                                              _companyName,
-                                              _companyID,
-                                            );
-                                            setState(() {
-                                              _isFollow = !_isFollow;
-                                            });
-                                          },
-                                          child: _isFollow
-                                              ? Container(
-                                                  padding: EdgeInsets.all(8),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        AppColors.buttonPrimary,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    border: Border.all(
-                                                        color: AppColors
-                                                            .borderGreyOpacity),
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      FaIcon(
-                                                        FontAwesomeIcons.heart,
-                                                        size: 13,
-                                                        color:
-                                                            AppColors.iconLight,
-                                                      ),
-                                                      SizedBox(
-                                                        width: 8,
-                                                      ),
-                                                      Text(
-                                                        "following".tr,
-                                                        style: bodyTextSmall(
-                                                            AppColors
-                                                                .fontWhite),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              : Container(
-                                                  padding: EdgeInsets.all(8),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    border: Border.all(
-                                                      color: AppColors
-                                                          .borderGreyOpacity,
-                                                    ),
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      FaIcon(
-                                                        FontAwesomeIcons.heart,
-                                                        size: 13,
-                                                      ),
-                                                      SizedBox(
-                                                        width: 8,
-                                                      ),
-                                                      Text(
-                                                        "follow".tr,
-                                                        style:
-                                                            bodyTextSmall(null),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                        )
+                                        // GestureDetector(
+                                        //   onTap: () {
+                                        //     followCompany(
+                                        //       _companyName,
+                                        //       _companyID,
+                                        //     );
+                                        //     setState(() {
+                                        //       _isFollow = !_isFollow;
+                                        //     });
+                                        //   },
+                                        //   child: _isFollow
+                                        //       ? Container(
+                                        //           padding: EdgeInsets.all(8),
+                                        //           decoration: BoxDecoration(
+                                        //             color:
+                                        //                 AppColors.buttonPrimary,
+                                        //             borderRadius:
+                                        //                 BorderRadius.circular(
+                                        //                     8),
+                                        //             border: Border.all(
+                                        //                 color: AppColors
+                                        //                     .borderGreyOpacity),
+                                        //           ),
+                                        //           child: Row(
+                                        //             children: [
+                                        //               FaIcon(
+                                        //                 FontAwesomeIcons.heart,
+                                        //                 size: 13,
+                                        //                 color:
+                                        //                     AppColors.iconLight,
+                                        //               ),
+                                        //               SizedBox(
+                                        //                 width: 8,
+                                        //               ),
+                                        //               Text(
+                                        //                 "following".tr,
+                                        //                 style: bodyTextSmall(
+                                        //                     AppColors
+                                        //                         .fontWhite),
+                                        //               ),
+                                        //             ],
+                                        //           ),
+                                        //         )
+                                        //       : Container(
+                                        //           padding: EdgeInsets.all(8),
+                                        //           decoration: BoxDecoration(
+                                        //             borderRadius:
+                                        //                 BorderRadius.circular(
+                                        //                     8),
+                                        //             border: Border.all(
+                                        //               color: AppColors
+                                        //                   .borderGreyOpacity,
+                                        //             ),
+                                        //           ),
+                                        //           child: Row(
+                                        //             children: [
+                                        //               FaIcon(
+                                        //                 FontAwesomeIcons.heart,
+                                        //                 size: 13,
+                                        //               ),
+                                        //               SizedBox(
+                                        //                 width: 8,
+                                        //               ),
+                                        //               Text(
+                                        //                 "follow".tr,
+                                        //                 style:
+                                        //                     bodyTextSmall(null),
+                                        //               ),
+                                        //             ],
+                                        //           ),
+                                        //         ),
+                                        // )
                                       ],
                                     ),
                                   ),
@@ -973,15 +827,28 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                       //
                       //
                       //
-                      //
                       //Button Save job and Apply job
                       Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         decoration: BoxDecoration(
-                            border: Border(
-                                top: BorderSide(
-                                    color: AppColors.borderGreyOpacity))),
+                          color: AppColors.backgroundWhite,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0x000000).withOpacity(0.05),
+                              offset: Offset(0, -6),
+                              blurRadius: 4,
+                              spreadRadius: 0,
+                            ),
+                          ],
+                          // border: Border(
+                          //   top: BorderSide(color: AppColors.borderGreyOpacity),
+                          // ),
+                        ),
                         child: Row(
                           children: [
                             Expanded(
@@ -989,13 +856,14 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                               child: !_isSaved
                                   ? ButtonWithIconLeft(
                                       paddingButton:
-                                          MaterialStateProperty.all<EdgeInsets>(
+                                          WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(0),
                                       ),
                                       borderRadius:
                                           BorderRadius.circular(1.5.w),
-                                      buttonBorderColor: AppColors.borderBG,
-                                      colorButton: AppColors.background,
+                                      buttonBorderColor:
+                                          AppColors.backgroundWhite,
+                                      colorButton: AppColors.backgroundWhite,
                                       widgetIcon: FaIcon(
                                         FontAwesomeIcons.heart,
                                         color: AppColors.iconDark,
@@ -1015,13 +883,14 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                     )
                                   : ButtonWithIconLeft(
                                       paddingButton:
-                                          MaterialStateProperty.all<EdgeInsets>(
+                                          WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(0),
                                       ),
                                       borderRadius:
                                           BorderRadius.circular(1.5.w),
-                                      buttonBorderColor: AppColors.borderBG,
-                                      colorButton: AppColors.background,
+                                      buttonBorderColor:
+                                          AppColors.backgroundWhite,
+                                      colorButton: AppColors.backgroundWhite,
                                       widgetIcon: FaIcon(
                                         FontAwesomeIcons.solidHeart,
                                         color: AppColors.iconPrimary,
@@ -1048,7 +917,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                               child: !_isApplied
                                   ? ButtonWithIconLeft(
                                       paddingButton:
-                                          MaterialStateProperty.all<EdgeInsets>(
+                                          WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
                                       ),
                                       borderRadius: BorderRadius.circular(50),
@@ -1067,7 +936,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                     )
                                   : ButtonWithIconLeft(
                                       paddingButton:
-                                          MaterialStateProperty.all<EdgeInsets>(
+                                          WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
                                       ),
                                       borderRadius: BorderRadius.circular(50),

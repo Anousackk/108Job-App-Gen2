@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_is_empty, unused_element, file_names
 
+import 'dart:convert';
+
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
@@ -13,11 +15,13 @@ import 'package:app/widget/listJobFuncSelectedAlertDialog.dart';
 import 'package:app/widget/listMultiSelectedAlertDialog.dart';
 import 'package:app/widget/listSingleSelectedAlertDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 
 class WorkPreferences extends StatefulWidget {
   const WorkPreferences({Key? key, this.id, this.workPreference})
@@ -35,6 +39,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
   TextEditingController _salaryController = TextEditingController();
   TextEditingController _professionalSummaryController =
       TextEditingController();
+  QuillController _quillController = QuillController.basic();
 
   //
   //Get list items all
@@ -49,8 +54,8 @@ class _WorkPreferencesState extends State<WorkPreferences> {
   //Selected list item(ສະເພາະເຂົ້າ Database)
   String? _id;
   String _workPosition = "";
-  String _salary = "";
   String _currency = "₭";
+  String _salary = "";
   String _selectedJobLevel = "";
   String _selectedJobFunctions = "";
   List _selectedJobFunctionsItems = [];
@@ -69,15 +74,18 @@ class _WorkPreferencesState extends State<WorkPreferences> {
   String _localeLanguageApi = "";
 
   bool _isValidateValue = false;
-
-  TextEditingController _controller = TextEditingController();
   String _formattedValue = '';
 
   setValueGetById() {
+    final NumberFormat formatter = NumberFormat('#,##0');
     setState(() {
       dynamic i = widget.workPreference;
       _workPosition = i['currentJobTitle'];
+      _workPositionController.text = _workPosition;
+
       _salary = i['salary'].toString();
+      _salaryController.text = formatter.format(int.parse(_salary));
+
       _currency = i['currency'];
       _selectedJobLevel = i['jobLevelId']['_id'];
       _joblevelName = i['jobLevelId']['name'];
@@ -135,9 +143,13 @@ class _WorkPreferencesState extends State<WorkPreferences> {
           _jobFunctionItemName.map((j) => j['name']).join(',');
       _jobFunctionItemName = mapJobFunctionItemName.split(',');
 
-      _workPositionController.text = _workPosition;
-      _salaryController.text = _salary;
-      _professionalSummaryController.text = _professionalSummary;
+      try {
+        final json = jsonDecode(_professionalSummary);
+        _quillController.document = Document.fromJson(json);
+      } catch (e) {
+        // Handle the decoding error (e.g., print an error message)
+        print('Error decoding JSON: $e');
+      }
     });
   }
 
@@ -163,7 +175,6 @@ class _WorkPreferencesState extends State<WorkPreferences> {
   void initState() {
     super.initState();
 
-    _salaryController.addListener(_formatSalary);
     getSharedPreferences();
     getJobFunctionsSeeker();
 
@@ -176,28 +187,12 @@ class _WorkPreferencesState extends State<WorkPreferences> {
     }
 
     _workPositionController.text = _workPosition;
-    // _salaryController.text = _salary;
-    _professionalSummaryController.text = _professionalSummary;
   }
 
   @override
   void dispose() {
-    _salaryController.removeListener(_formatSalary);
-    _salaryController.dispose();
+    _quillController.dispose();
     super.dispose();
-  }
-
-  void _formatSalary() {
-    final value = _salaryController.text.replaceAll(',', ''); // Remove commas
-    final numericRegex = RegExp(r'^\d+(\.\d+)?$');
-    if (numericRegex.hasMatch(value)) {
-      final formattedValue =
-          NumberFormat('#,##0').format(int.tryParse(value) ?? 0);
-      _salaryController.value = TextEditingValue(
-        text: formattedValue,
-        selection: TextSelection.collapsed(offset: formattedValue.length),
-      );
-    }
   }
 
   @override
@@ -320,23 +315,33 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                             SizedBox(
                               height: 5,
                             ),
+
                             SimpleTextFieldSingleValidate(
                               codeController: _salaryController,
                               changed: (value) {
+                                // String cleanedString =
+                                //     value.replaceAll(",", "");
+                                // dynamic valDouble = cleanedString;
+                                // MoneyFormatter fmf =
+                                //     MoneyFormatter(amount: valDouble);
                                 setState(() {
+                                  // _salary = fmf.output.withoutFractionDigits;
                                   _salary = value;
                                 });
-
-                                print(_salary);
                               },
                               // heightCon: 12.5.w,
+
                               keyboardType: TextInputType.number,
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     decimal: true),
+                              inputFormat: [ThousandsSeparatorInputFormatter()],
                               inputColor: AppColors.inputWhite,
                               hintText: "0",
                               hintTextFontWeight: FontWeight.bold,
                               suffixIcon: Container(
+                                // margin: EdgeInsets.only(right: 1),
                                 width: 150,
-                                height: 13.w,
+                                height: 55,
                                 decoration: BoxDecoration(
                                   color: AppColors.greyOpacity,
                                   borderRadius: BorderRadius.only(
@@ -793,6 +798,8 @@ class _WorkPreferencesState extends State<WorkPreferences> {
 
                             //
                             //
+                            //
+                            //
                             //Expected Benefits
                             Text(
                               "benefit".tr,
@@ -883,6 +890,12 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                               height: 20,
                             ),
 
+                            // Text("${_professionalSummary}"),
+                            // Text(jsonEncode(_quillController.document
+                            //         .toDelta()
+                            //         .toJson())
+                            //     .toString()),
+
                             //
                             //
                             //Professional Summary
@@ -891,27 +904,101 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                               style: bodyTextNormal(null, FontWeight.bold),
                             ),
                             SizedBox(
-                              height: 5,
+                              height: 10,
                             ),
-                            SimpleTextFieldSingleValidate(
-                              codeController: _professionalSummaryController,
-                              heightCon: 250,
-                              maxLines: 20,
-                              inputColor: AppColors.backgroundWhite,
-                              changed: (value) {
-                                setState(() {
-                                  _professionalSummary = value;
-                                });
-                              },
-                              hintText: "tell about you".tr,
-                              hintTextFontWeight: FontWeight.bold,
-                              validator: (value) {
-                                if (value == null || value == "") {
-                                  return "required".tr;
-                                }
-                                return null;
-                              },
+                            // SimpleTextFieldSingleValidate(
+                            //   codeController: _professionalSummaryController,
+                            //   heightCon: 250,
+                            //   maxLines: 20,
+                            //   inputColor: AppColors.backgroundWhite,
+                            //   changed: (value) {
+                            //     setState(() {
+                            //       _professionalSummary = value;
+                            //     });
+                            //   },
+                            //   hintText: "tell about you".tr,
+                            //   hintTextFontWeight: FontWeight.bold,
+                            //   validator: (value) {
+                            //     if (value == null || value == "") {
+                            //       return "required".tr;
+                            //     }
+                            //     return null;
+                            //   },
+                            // ),
+
+                            Container(
+                              width: double.infinity,
+                              color: AppColors.background,
+                              child: QuillToolbar.simple(
+                                configurations:
+                                    QuillSimpleToolbarConfigurations(
+                                  controller: _quillController,
+                                  toolbarIconAlignment: WrapAlignment.start,
+                                  toolbarSectionSpacing: 0,
+                                  showFontFamily: false,
+                                  showFontSize: false,
+                                  showHeaderStyle: false,
+                                  showAlignmentButtons: false,
+                                  showBackgroundColorButton: false,
+                                  showClipboardCopy: false,
+                                  showClipboardCut: false,
+                                  showClipboardPaste: false,
+                                  showColorButton: false,
+                                  showCodeBlock: false,
+                                  showDirection: false,
+                                  showQuote: false,
+                                  showUndo: false,
+                                  showSuperscript: false,
+                                  showLeftAlignment: false,
+                                  showRedo: false,
+                                  showRightAlignment: false,
+                                  showSearchButton: false,
+                                  showJustifyAlignment: false,
+                                  showLineHeightButton: false,
+                                  showSubscript: false,
+                                  showCenterAlignment: false,
+                                  showInlineCode: false,
+                                  showSmallButton: false,
+                                  // showClearFormat: false,
+                                  showIndent: false,
+                                  showListCheck: false,
+                                  showDividers: false,
+                                ),
+                              ),
                             ),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  color: AppColors.background,
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10),
+                                  )),
+                              child: QuillEditor.basic(
+                                focusNode: currentFocus,
+                                configurations: QuillEditorConfigurations(
+                                  keyboardAppearance: Brightness.dark,
+                                  // requestKeyboardFocusOnCheckListChanged: true,
+                                  controller: _quillController,
+                                  scrollPhysics: ClampingScrollPhysics(),
+                                  readOnlyMouseCursor: SystemMouseCursors.text,
+                                  maxHeight: 400,
+                                  minHeight: 400,
+                                  placeholder: "professional summary".tr,
+                                  padding: EdgeInsets.all(10),
+                                  dialogTheme: QuillDialogTheme(
+                                    labelTextStyle:
+                                        TextStyle(color: AppColors.fontPrimary),
+                                    buttonStyle: ButtonStyle(
+                                      backgroundColor: WidgetStateProperty.all(
+                                        AppColors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
                             SizedBox(
                               height: 30,
                             ),
@@ -923,6 +1010,8 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                       height: 10,
                     ),
 
+                    //
+                    //
                     //
                     //
                     //Button Save
@@ -1011,13 +1100,14 @@ class _WorkPreferencesState extends State<WorkPreferences> {
     var res = await postData(addWorkPreferenceSeekerApi, {
       "currentJobTitle": _workPosition,
       "currency": _currency.toString(),
-      "expectedSalary": int.parse(_salary),
+      "expectedSalary": _salary,
       "jobLevelId": _selectedJobLevel,
       "jobFunctionId": _selectedJobFunctionsItems,
       "industryId": _selectedIndustriesListItem,
       "benefitsId": _selectedBenefitsListItem,
       "provinceId": _selectedProvincesListItem,
-      "professionalSummary": _professionalSummary
+      "professionalSummary":
+          jsonEncode(_quillController.document.toDelta().toJson())
     });
     print(res);
 
@@ -1164,32 +1254,63 @@ class _WorkPreferencesState extends State<WorkPreferences> {
   }
 }
 
+// DropdownButtonMenu(
+//   inputColor: AppColors.backgroundWhite,
+//   hintTextFontWeight: FontWeight.bold,
+//   hintText: 'Select Benefits',
+//   onChanged: (i) {
+//     setState(() {
+//       _benefit = i;
+//     });
+//   },
+//   value: _benefit,
+//   items: _listBenefits
+//       .map(
+//         (i) => DropdownMenuItem(
+//           value: i['_id'].toString(),
+//           child: Text(
+//             i['name'],
+//             overflow: TextOverflow.ellipsis,
+//           ),
+//         ),
+//       )
+//       .toList(),
+//   validator: (value) => value == null || value == ""
+//       ? "required"
+//       : null,
+// ),
 
+class ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  final NumberFormat _formatter = NumberFormat('#,##0');
 
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.isEmpty) {
+      return newValue.copyWith(text: '');
+    }
 
+    // Remove any existing commas
+    String newText = newValue.text.replaceAll(',', '');
 
-  // DropdownButtonMenu(
-  //   inputColor: AppColors.backgroundWhite,
-  //   hintTextFontWeight: FontWeight.bold,
-  //   hintText: 'Select Benefits',
-  //   onChanged: (i) {
-  //     setState(() {
-  //       _benefit = i;
-  //     });
-  //   },
-  //   value: _benefit,
-  //   items: _listBenefits
-  //       .map(
-  //         (i) => DropdownMenuItem(
-  //           value: i['_id'].toString(),
-  //           child: Text(
-  //             i['name'],
-  //             overflow: TextOverflow.ellipsis,
-  //           ),
-  //         ),
-  //       )
-  //       .toList(),
-  //   validator: (value) => value == null || value == ""
-  //       ? "required"
-  //       : null,
-  // ),
+    // Parse the input as a number
+    final num? value = num.tryParse(newText);
+    if (value == null) {
+      return oldValue;
+    }
+
+    // Format the number with commas
+    final String formattedText = _formatter.format(value);
+
+    // Calculate the new cursor position
+    int selectionIndex =
+        formattedText.length - (newValue.text.length - newValue.selection.end);
+
+    return TextEditingValue(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: selectionIndex),
+    );
+  }
+}

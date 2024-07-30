@@ -18,11 +18,15 @@ class VerificationCode extends StatefulWidget {
       this.fromRegister,
       this.token,
       this.phoneNumber,
-      this.email})
+      this.email,
+      this.name,
+      this.password})
       : super(key: key);
   final verifyCode;
   final fromRegister;
   final token;
+  final name;
+  final password;
   final phoneNumber;
   final email;
 
@@ -36,11 +40,53 @@ class _VerificationCodeState extends State<VerificationCode> {
   dynamic _otpCode;
   String _token = "";
 
+  requestOTPRegister() async {
+    var res = await postData(apirequestOTPRegisterSeeker, {
+      "email": widget.email ?? "",
+      "mobile": widget.phoneNumber ?? "",
+    });
+
+    print("function requestOTPRegister working in verificationcode screen " +
+        "${res}");
+
+    if (res['token'] != null) {
+      setState(() {
+        _token = res['token'].toString();
+      });
+    } else if (res['message'] != null) {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogWarning(
+            title: "warning".tr,
+            text: res['message'],
+          );
+        },
+      );
+      Navigator.pop(context);
+    } else {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogWarning(
+            title: "warning".tr,
+            text: "invalid".tr,
+          );
+        },
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
-    _token = widget.token;
+    if (widget.fromRegister == null || widget.fromRegister == "") {
+      _token = widget.token;
+    }
+    if (widget.fromRegister == 'fromRegister') {
+      requestOTPRegister();
+    }
   }
 
   @override
@@ -77,7 +123,15 @@ class _VerificationCodeState extends State<VerificationCode> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Text("${_token}"),
+                        // widget.name.toString(),
+                        // widget.email.toString(),
+                        // widget.phoneNumber.toString(),
+                        // widget.password.toString()
+                        // Text("${widget.name}"),
+                        // Text("${widget.email}"),
+                        // Text("${widget.phoneNumber}"),
+                        // Text("${widget.password}"),
+
                         Text(
                           widget.verifyCode == 'verifyPhoneNum'
                               ? "verify your phone".tr
@@ -179,7 +233,12 @@ class _VerificationCodeState extends State<VerificationCode> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                resendOTPCode();
+                                if (widget.fromRegister == "fromRegister") {
+                                  print("fromRegister can resend");
+                                  newResendOTPCodeFromRegister();
+                                } else {
+                                  resendOTPCode();
+                                }
                               },
                               child: Text(
                                 "resend".tr,
@@ -195,7 +254,12 @@ class _VerificationCodeState extends State<VerificationCode> {
                     text: 'verify'.tr,
                     fontWeight: FontWeight.bold,
                     press: () {
-                      verifyCode();
+                      if (widget.fromRegister == 'fromRegister') {
+                        print("from register can register");
+                        newVerifyCodeFromRegister();
+                      } else {
+                        verifyCode();
+                      }
                     },
                   ),
                   SizedBox(
@@ -230,6 +294,31 @@ class _VerificationCodeState extends State<VerificationCode> {
       if (mounted) {
         setState(() {
           _token = res['token'];
+        });
+      }
+    }
+  }
+
+  newResendOTPCodeFromRegister() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomAlertLoading();
+      },
+    );
+
+    var res = await postData(apiNewResendOTPCodeApiSeeker, {
+      "verifyToken": _token,
+    });
+    print(res);
+
+    if (res["token"] != null || res['token'] != "") {
+      Navigator.pop(context);
+
+      if (mounted) {
+        setState(() {
+          _token = res['token'].toString();
         });
       }
     }
@@ -322,5 +411,91 @@ class _VerificationCodeState extends State<VerificationCode> {
     //   );
     // }
     // });
+  }
+
+  newVerifyCodeFromRegister() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomAlertLoading();
+      },
+    );
+
+    var res = await postData(apiNewVerifyCodeSeeker, {
+      "verifyToken": _token,
+      "verifyCode": _otpCode.toString(),
+    });
+
+    if (res != null) {
+      Navigator.pop(context);
+    }
+
+    if (res["token"] != null) {
+      print("VerifyCode: " + '${res}');
+
+      await postData(apiRegisterSeeker, {
+        // "name": widget.name.toString(),
+        "email": widget.email.toString(),
+        "mobile": widget.phoneNumber.toString(),
+        "password": widget.password.toString()
+      }).then((value) async {
+        print("in apiRegisterSeeker " + "${value}");
+        if (value['token'] != null) {
+          print("in apiNewVerifyCodeSeeker ${value['token']}");
+
+          String token = value['token'].toString();
+          print("register token " + value['token'].toString());
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VerificationSuccess(
+                verifySuccess: widget.verifyCode,
+                checkFromRegister: widget.fromRegister,
+                token: token,
+              ),
+            ),
+          );
+        } else {
+          print(
+              "in apiNewVerifyCodeSeeker warning message: ${value['message']}");
+
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return CustomAlertDialogWarning(
+                title: "Warning",
+                text: value['message'] == null ? "Invalid" : value['message'],
+                press: () {
+                  Navigator.pop(context);
+                },
+              );
+            },
+          );
+        }
+      });
+    } else if (res['message'] != null) {
+      print(res['message']);
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogError(
+            title: "invalid".tr,
+            text: res['message'],
+          );
+        },
+      );
+    } else {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogWarning(
+            title: "warning".tr,
+            text: res['message'],
+          );
+        },
+      );
+    }
   }
 }

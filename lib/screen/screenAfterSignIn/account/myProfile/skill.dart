@@ -28,6 +28,7 @@ class Skill extends StatefulWidget {
 
 class _SkillState extends State<Skill> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  ScrollController _scrollController = ScrollController();
   TextEditingController _skillController = TextEditingController();
 
   //Get list items all
@@ -42,6 +43,13 @@ class _SkillState extends State<Skill> {
   //value display(ສະເພາະສະແດງ)
   String _skillLevelName = "";
   String _localeLanguageApi = "";
+
+  bool _isLoadingMoreData = false;
+  bool _hasMoreData = true;
+
+  dynamic page = 1;
+  dynamic perPage = 5;
+  dynamic totals;
 
   bool _isValidateValue = false;
   Timer? _timer;
@@ -82,8 +90,19 @@ class _SkillState extends State<Skill> {
       print("id != null");
       print("${_id}");
 
-      setValueGetById();
+      getKeySkillSeeker(_skill);
     }
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          _isLoadingMoreData = true;
+        });
+
+        getKeySkillSeeker(_skill);
+      }
+    });
 
     _skillController.text = _skill;
   }
@@ -140,6 +159,8 @@ class _SkillState extends State<Skill> {
 
                             //
                             //
+                            //
+                            //
                             //Skill
                             Text(
                               "skill".tr,
@@ -159,10 +180,15 @@ class _SkillState extends State<Skill> {
                                 _timer?.cancel();
 
                                 // Start a new timer
-                                _timer = Timer(Duration(seconds: 2), () {
+                                _timer = Timer(Duration(milliseconds: 500), () {
                                   // Perform API call here
                                   print('Calling API Get KeySkill');
-                                  getKeySkillSeeker('EN', _skill);
+                                  setState(() {
+                                    _listKeySkill.clear();
+                                    _hasMoreData = true;
+                                    page = 1;
+                                  });
+                                  getKeySkillSeeker(_skill);
                                 });
                               },
                               inputColor: AppColors.inputWhite,
@@ -175,10 +201,16 @@ class _SkillState extends State<Skill> {
                             ),
 
                             //
+                            //
+                            //
+                            //
+                            //
+                            //
                             //show list keySkill if _listKeySkill is not empty
                             if (_listKeySkill.isNotEmpty)
                               Container(
-                                height: _listKeySkill.length > 5 ? 200 : null,
+                                height: totals > 5 ? 200 : null,
+                                // height: 200,
                                 decoration: BoxDecoration(
                                   color: AppColors.background,
                                   borderRadius: BorderRadius.only(
@@ -187,31 +219,53 @@ class _SkillState extends State<Skill> {
                                   ),
                                 ),
                                 child: ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: _listKeySkill.length > 5
-                                        ? ScrollPhysics()
-                                        : NeverScrollableScrollPhysics(),
-                                    itemCount: _listKeySkill.length,
-                                    itemBuilder: (context, index) {
-                                      dynamic i = _listKeySkill[index];
-                                      String name = i['name'];
-                                      return GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            _skill = name;
-                                            _skillController.text = _skill;
+                                  controller: _scrollController,
+                                  shrinkWrap: true,
+                                  physics: totals > 5
+                                      ? ScrollPhysics()
+                                      : NeverScrollableScrollPhysics(),
+                                  itemCount: _listKeySkill.length + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index == _listKeySkill.length) {
+                                      return _hasMoreData
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 0,
+                                                      vertical: 10),
+                                              child: Container(
+                                                  // child: Text("Loading"),
+                                                  ),
+                                            )
+                                          : Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Center(
+                                                  child:
+                                                      Text('no have data'.tr)),
+                                            );
+                                    }
+                                    dynamic i = _listKeySkill[index];
+                                    String name = i['name'];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _skill = name;
+                                          _skillController.text = _skill;
 
-                                            _listKeySkill = [];
-                                          });
-                                          print("${_skill}");
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.all(10),
-                                          child: Text("${name}"),
-                                        ),
-                                      );
-                                    }),
+                                          _listKeySkill = [];
+                                        });
+                                        print("${_skill}");
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        child: Text("${name}"),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
+
                             SizedBox(
                               height: 20,
                             ),
@@ -350,20 +404,42 @@ class _SkillState extends State<Skill> {
     });
   }
 
-  getKeySkillSeeker(String lang, String searchVal) async {
-    var res = await fetchData(
-        getKeySkillSeekerApi + "lang=${lang}&search=${searchVal}");
+  getKeySkillSeeker(String searchVal) async {
+    if (!_hasMoreData) {
+      _isLoadingMoreData = false;
+      return;
+    }
+
+    var res = await postData(getKeySkillSeekerApi, {
+      "lang": _localeLanguageApi,
+      "search": searchVal,
+      "page": page,
+      "perPage": perPage,
+    });
 
     print(res);
 
-    setState(() {
-      if (res['getKeySkill'] != null) {
-        print("!=null");
-        _listKeySkill = res['getKeySkill'];
-      } else {
-        _listKeySkill = [];
-      }
-    });
+    List fetchKeySkill = res['getKeySkill'];
+    totals = res['totals'];
+
+    page++;
+    _listKeySkill.addAll(List<Map<String, dynamic>>.from(fetchKeySkill));
+    if (_listKeySkill.length >= totals || fetchKeySkill.length < perPage) {
+      _hasMoreData = false;
+    }
+    _isLoadingMoreData = false;
+
+    if (mounted) {
+      setState(() {});
+    }
+    // setState(() {
+    //   if (res['getKeySkill'] != null) {
+    //     print("!=null");
+    //     _listKeySkill = res['getKeySkill'];
+    //   } else {
+    //     _listKeySkill = [];
+    //   }
+    // });
   }
 
   addSkill() async {

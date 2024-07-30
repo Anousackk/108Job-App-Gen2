@@ -173,76 +173,76 @@ class _UploadCVState extends State<UploadCV> {
                     //
                     //
                     //Question ask?
-                    Text(
-                      "question you my ask".tr,
-                      style: bodyTextNormal(null, FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    // Text(
+                    //   "question you my ask".tr,
+                    //   style: bodyTextNormal(null, FontWeight.bold),
+                    // ),
+                    // SizedBox(
+                    //   height: 10,
+                    // ),
 
                     //
                     //
                     //1. BoxDecoration Question ask
-                    BoxDecorationInput(
-                      boxDecBorderRadius: BorderRadius.circular(10),
-                      colorInput: AppColors.greyWhite,
-                      paddingFaIcon: EdgeInsets.only(left: 15),
-                      mainAxisAlignmentTextIcon: MainAxisAlignment.start,
-                      text: "1. " + "what is cv".tr,
-                      colorText: AppColors.fontPrimary,
-                      widgetIconActive: FaIcon(
-                        FontAwesomeIcons.chevronRight,
-                        color: AppColors.iconPrimary,
-                        size: IconSize.sIcon,
-                      ),
-                      press: () {},
-                      validateText: Container(),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
+                    // BoxDecorationInput(
+                    //   boxDecBorderRadius: BorderRadius.circular(10),
+                    //   colorInput: AppColors.greyWhite,
+                    //   paddingFaIcon: EdgeInsets.only(left: 15),
+                    //   mainAxisAlignmentTextIcon: MainAxisAlignment.start,
+                    //   text: "1. " + "what is cv".tr,
+                    //   colorText: AppColors.fontPrimary,
+                    //   widgetIconActive: FaIcon(
+                    //     FontAwesomeIcons.chevronRight,
+                    //     color: AppColors.iconPrimary,
+                    //     size: IconSize.sIcon,
+                    //   ),
+                    //   press: () {},
+                    //   validateText: Container(),
+                    // ),
+                    // SizedBox(
+                    //   height: 5,
+                    // ),
 
-                    //
-                    //
-                    //2. BoxDecoration Question ask
-                    BoxDecorationInput(
-                      boxDecBorderRadius: BorderRadius.circular(10),
-                      colorInput: AppColors.greyWhite,
-                      paddingFaIcon: EdgeInsets.only(left: 15),
-                      mainAxisAlignmentTextIcon: MainAxisAlignment.start,
-                      text: "2. " + "i don't have cv".tr,
-                      colorText: AppColors.fontPrimary,
-                      widgetIconActive: FaIcon(
-                        FontAwesomeIcons.chevronRight,
-                        color: AppColors.iconPrimary,
-                        size: IconSize.sIcon,
-                      ),
-                      press: () {},
-                      validateText: Container(),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
+                    // //
+                    // //
+                    // //2. BoxDecoration Question ask
+                    // BoxDecorationInput(
+                    //   boxDecBorderRadius: BorderRadius.circular(10),
+                    //   colorInput: AppColors.greyWhite,
+                    //   paddingFaIcon: EdgeInsets.only(left: 15),
+                    //   mainAxisAlignmentTextIcon: MainAxisAlignment.start,
+                    //   text: "2. " + "i don't have cv".tr,
+                    //   colorText: AppColors.fontPrimary,
+                    //   widgetIconActive: FaIcon(
+                    //     FontAwesomeIcons.chevronRight,
+                    //     color: AppColors.iconPrimary,
+                    //     size: IconSize.sIcon,
+                    //   ),
+                    //   press: () {},
+                    //   validateText: Container(),
+                    // ),
+                    // SizedBox(
+                    //   height: 5,
+                    // ),
 
-                    //
-                    //
-                    //3. BoxDecoration Question ask
-                    BoxDecorationInput(
-                      boxDecBorderRadius: BorderRadius.circular(10),
-                      colorInput: AppColors.greyWhite,
-                      paddingFaIcon: EdgeInsets.only(left: 15),
-                      mainAxisAlignmentTextIcon: MainAxisAlignment.start,
-                      text: "3. " + "why should upload cv".tr,
-                      colorText: AppColors.fontPrimary,
-                      widgetIconActive: FaIcon(
-                        FontAwesomeIcons.chevronRight,
-                        color: AppColors.iconPrimary,
-                        size: IconSize.sIcon,
-                      ),
-                      press: () {},
-                      validateText: Container(),
-                    ),
+                    // //
+                    // //
+                    // //3. BoxDecoration Question ask
+                    // BoxDecorationInput(
+                    //   boxDecBorderRadius: BorderRadius.circular(10),
+                    //   colorInput: AppColors.greyWhite,
+                    //   paddingFaIcon: EdgeInsets.only(left: 15),
+                    //   mainAxisAlignmentTextIcon: MainAxisAlignment.start,
+                    //   text: "3. " + "why should upload cv".tr,
+                    //   colorText: AppColors.fontPrimary,
+                    //   widgetIconActive: FaIcon(
+                    //     FontAwesomeIcons.chevronRight,
+                    //     color: AppColors.iconPrimary,
+                    //     size: IconSize.sIcon,
+                    //   ),
+                    //   press: () {},
+                    //   validateText: Container(),
+                    // ),
                   ],
                 ),
 

@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, prefer_adjacent_string_concatenation, non_constant_identifier_names, unnecessary_string_interpolations, prefer_final_fields, unused_field, prefer_if_null_operators, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names
 
+import 'dart:io';
+
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/auth_service.dart';
@@ -7,13 +9,17 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/login/login.dart';
 import 'package:app/screen/screenAfterSignIn/account/loginInfo/changePassword.dart';
+import 'package:app/screen/screenAfterSignIn/account/loginInfo/deleteAccount.dart';
+import 'package:app/screen/screenAfterSignIn/account/loginInfo/setPassPlatforms.dart';
 import 'package:app/screen/securityVerify/addPhoneNumOrMail.dart';
 import 'package:app/widget/appbar.dart';
+import 'package:apple_product_name/apple_product_name.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginInformation extends StatefulWidget {
@@ -31,6 +37,8 @@ class _LoginInformationState extends State<LoginInformation> {
   String _googleEmail = "";
   String _facebookId = "";
   String _facebookEmail = "";
+  String _modelName = "";
+
   bool _passwordStatus = false;
   bool _isloading = true;
 
@@ -54,11 +62,57 @@ class _LoginInformationState extends State<LoginInformation> {
     setState(() {});
   }
 
-  removeSharedPreToken() async {
+  loadInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      print('iOS-running name: ${iosInfo.name}');
+      print('iOS-running systemVersion: '
+              '${iosInfo.systemName}' +
+          ' ' +
+          '${iosInfo.systemVersion}');
+      var name = iosInfo.name;
+      var systemName = iosInfo.systemName;
+      var systemVersion = iosInfo.systemVersion;
+      var productName = iosInfo.utsname.productName;
+      setState(() {
+        _modelName = productName.toString();
+      });
+    } else if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      print('Running on version.release: ${androidInfo.version.release}');
+      print('Running on model: ' "${androidInfo.brand}" +
+          ' ' +
+          "${androidInfo.model}");
+
+      var brand = androidInfo.brand.toString();
+      var model = androidInfo.model.toString();
+      var versionRelease = androidInfo.version.release.toString();
+      setState(() {
+        _modelName = brand.toString() + ' ' + model.toString();
+      });
+    }
+  }
+
+  logOut() async {
+    await loadInfo();
+    var res = await postData(apiLogoutSeeker, {
+      "notifyToken": [
+        {"model": _modelName}
+      ]
+    });
+
+    print("logout: " + res);
+  }
+
+  removeSharedPreTokenAndLogOut() async {
     final prefs = await SharedPreferences.getInstance();
+    await logOut();
+
     var removeEmployeeToken = await prefs.remove('employeeToken');
-    await GoogleSignIn().signOut();
-    await FacebookAuth.instance.logOut();
+    AuthService().facebookSignOut();
+    AuthService().googleSignOut();
 
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => Login()), (route) => false);
@@ -103,13 +157,18 @@ class _LoginInformationState extends State<LoginInformation> {
                       children: [
                         SizedBox(height: 30),
 
-                        //
-                        //
-                        //Content Login Information
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
                               //
                               //
                               //General Infomation
@@ -128,6 +187,8 @@ class _LoginInformationState extends State<LoginInformation> {
 
                               //
                               //
+                              //
+                              //
                               //Phone Number
                               //Phone Number ຖ້າບໍ່ທັນມີ
                               _phoneNumber == ""
@@ -137,7 +198,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                       iconLeft: FaIcon(
                                         FontAwesomeIcons.chevronRight,
                                         size: 13,
-                                        color: AppColors.iconGray,
+                                        color: AppColors.iconDark,
                                       ),
                                       press: () {
                                         Navigator.push(
@@ -159,6 +220,8 @@ class _LoginInformationState extends State<LoginInformation> {
 
                               //
                               //
+                              //
+                              //
                               //Email
                               //Email ຖ້າບໍ່ທັນມີ
                               _email == ""
@@ -168,7 +231,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                       iconLeft: FaIcon(
                                         FontAwesomeIcons.chevronRight,
                                         size: 13,
-                                        color: AppColors.iconGray,
+                                        color: AppColors.iconDark,
                                       ),
                                       press: () {
                                         Navigator.push(
@@ -190,29 +253,89 @@ class _LoginInformationState extends State<LoginInformation> {
 
                               //
                               //
+                              //
+                              //
                               //Password
                               if (_phoneNumber != "" || _email != "")
-                                AddGeneralInformation(
-                                  title: "password".tr,
-                                  text: "change password".tr,
-                                  iconLeft: FaIcon(
-                                    FontAwesomeIcons.chevronRight,
-                                    size: 13,
-                                    color: AppColors.iconGray,
-                                  ),
-                                  press: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ChangePassword(),
+                                _passwordStatus
+                                    ? AddGeneralInformation(
+                                        title: "password".tr,
+                                        text: "change password".tr,
+                                        iconLeft: FaIcon(
+                                          FontAwesomeIcons.chevronRight,
+                                          size: 13,
+                                          color: AppColors.iconDark,
+                                        ),
+                                        press: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ChangePassword(),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : AddGeneralInformation(
+                                        title: "password".tr,
+                                        text: "set pass".tr,
+                                        iconLeft: FaIcon(
+                                          FontAwesomeIcons.chevronRight,
+                                          size: 13,
+                                          color: AppColors.iconDark,
+                                        ),
+                                        press: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SetPasswordPlatforms(),
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
+
+                              //
+                              //
+                              //
+                              //
+                              //Delete account
+                              AddGeneralInformation(
+                                title: "delete account".tr,
+                                text: "",
+                                iconLeft: FaIcon(
+                                  FontAwesomeIcons.chevronRight,
+                                  size: 13,
+                                  color: AppColors.iconDark,
                                 ),
+                                press: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DeleteAccount(),
+                                    ),
+                                  ).then((value) {
+                                    print(value);
+                                    if (value ==
+                                        "set password platform successful") {
+                                      checkSeekerInfo();
+                                    }
+                                  });
+                                },
+                              ),
                               SizedBox(
                                 height: 30,
                               ),
 
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
                               //
                               //
                               //Connect other Platforms
@@ -231,10 +354,12 @@ class _LoginInformationState extends State<LoginInformation> {
 
                               //
                               //
+                              //
+                              //
                               //Gmail
                               GestureDetector(
                                 onTap: () async {
-                                  if (_googleId == "") {
+                                  if (_googleId == "" && _googleEmail == "") {
                                     AuthService().loginSyncGoogleFacebook(
                                         context, "google", (val) {
                                       print(val);
@@ -242,6 +367,44 @@ class _LoginInformationState extends State<LoginInformation> {
                                         checkSeekerInfo();
                                       }
                                     });
+                                  } else {
+                                    var result = await showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return SimpleAlertDialog(
+                                            title: "disconnect".tr,
+                                            contentText:
+                                                "are u sure disconnect".tr,
+                                            textLeft: "cancel".tr,
+                                            textRight: 'confirm'.tr,
+                                          );
+                                        });
+                                    if (result == 'Ok') {
+                                      var res = await postData(
+                                          apiSyncGoogleFacebookAip, {
+                                        "id": _googleId,
+                                        "email": _googleEmail,
+                                        "type": "google",
+                                      });
+                                      if (res["message"] != null) {
+                                        await checkSeekerInfo();
+                                        await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return CustomAlertDialogSuccess(
+                                              title:
+                                                  "Disconnect Google Success",
+                                              text: res["message"],
+                                              textButton: "OK",
+                                              press: () {
+                                                Navigator.pop(context);
+                                              },
+                                            );
+                                          },
+                                        );
+                                      }
+                                    }
                                   }
                                 },
                                 child: ConnectOtherPlatform(
@@ -255,10 +418,13 @@ class _LoginInformationState extends State<LoginInformation> {
 
                               //
                               //
+                              //
+                              //
                               //Facebook
                               GestureDetector(
-                                onTap: () {
-                                  if (_facebookId == "") {
+                                onTap: () async {
+                                  if (_facebookId == "" &&
+                                      _facebookEmail == "") {
                                     AuthService().loginSyncGoogleFacebook(
                                         context, "facebook", (val) {
                                       print(val);
@@ -266,6 +432,44 @@ class _LoginInformationState extends State<LoginInformation> {
                                         checkSeekerInfo();
                                       }
                                     });
+                                  } else {
+                                    var result = await showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return SimpleAlertDialog(
+                                            title: "disconnect".tr,
+                                            contentText:
+                                                "are u sure disconnect".tr,
+                                            textLeft: "cancel".tr,
+                                            textRight: 'confirm'.tr,
+                                          );
+                                        });
+                                    if (result == 'Ok') {
+                                      var res = await postData(
+                                          apiSyncGoogleFacebookAip, {
+                                        "id": _facebookId,
+                                        "email": _facebookEmail,
+                                        "type": "facebook",
+                                      });
+                                      if (res["message"] != null) {
+                                        await checkSeekerInfo();
+                                        await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return CustomAlertDialogSuccess(
+                                              title:
+                                                  "Disconnect Facebook Success",
+                                              text: res["message"],
+                                              textButton: "OK",
+                                              press: () {
+                                                Navigator.pop(context);
+                                              },
+                                            );
+                                          },
+                                        );
+                                      }
+                                    }
                                   }
                                 },
                                 child: ConnectOtherPlatform(
@@ -282,6 +486,13 @@ class _LoginInformationState extends State<LoginInformation> {
 
                         //
                         //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //
                         //Log Out
                         GestureDetector(
                           onTap: () async {
@@ -296,7 +507,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                   );
                                 });
                             if (result == 'Ok') {
-                              removeSharedPreToken();
+                              removeSharedPreTokenAndLogOut();
                             }
                           },
                           child: Container(
@@ -352,16 +563,16 @@ class _AddGeneralInformationState extends State<AddGeneralInformation> {
       children: [
         Container(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "${widget.title}",
-                style: bodyTextNormal(null, null),
-              ),
-              GestureDetector(
-                onTap: widget.press,
-                child: Row(
+          child: GestureDetector(
+            onTap: widget.press,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "${widget.title}",
+                  style: bodyTextNormal(null, null),
+                ),
+                Row(
                   children: [
                     Container(
                       padding: EdgeInsets.only(right: 5),
@@ -369,7 +580,7 @@ class _AddGeneralInformationState extends State<AddGeneralInformation> {
                         "${widget.text}",
                         style: bodyTextNormal(
                             widget.textColor == null
-                                ? AppColors.fontGrey
+                                ? AppColors.fontDark
                                 : widget.textColor,
                             null),
                       ),
@@ -379,8 +590,8 @@ class _AddGeneralInformationState extends State<AddGeneralInformation> {
                     )
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         Divider(
@@ -394,10 +605,11 @@ class _AddGeneralInformationState extends State<AddGeneralInformation> {
 
 class ConnectOtherPlatform extends StatefulWidget {
   const ConnectOtherPlatform(
-      {Key? key, this.title, this.text, required this.strImage})
+      {Key? key, this.title, this.text, required this.strImage, this.press})
       : super(key: key);
   final String? title, text;
   final String strImage;
+  final Function()? press;
 
   @override
   State<ConnectOtherPlatform> createState() => _ConnectOtherPlatformState();
@@ -408,38 +620,41 @@ class _ConnectOtherPlatformState extends State<ConnectOtherPlatform> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Image(
-                    image: AssetImage("${widget.strImage}"),
-                    height: 20,
-                    width: 20,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "${widget.title}",
-                    style: bodyTextNormal(null, null),
-                  ),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                    color: AppColors.opacityBlue,
-                    borderRadius: BorderRadius.circular(5)),
-                child: Text(
-                  "${widget.text}",
-                  style: bodyTextNormal(AppColors.fontGrey, null),
+        GestureDetector(
+          onTap: widget.press,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Image(
+                      image: AssetImage("${widget.strImage}"),
+                      height: 20,
+                      width: 20,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "${widget.title}",
+                      style: bodyTextNormal(null, null),
+                    ),
+                  ],
                 ),
-              )
-            ],
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                      color: AppColors.opacityBlue,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Text(
+                    "${widget.text}",
+                    style: bodyTextNormal(AppColors.fontGrey, null),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
         Divider(

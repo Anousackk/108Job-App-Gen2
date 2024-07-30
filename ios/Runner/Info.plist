@@ -60,17 +60,19 @@
 		<string>fb-messenger-share-api</string>
 		<string>sms</string>
 		<string>tel</string>
+		<string>google</string>
+  		<string>com.googleusercontent.apps.1012689313058-sb6ljqkt07h0ktu9n73egj35qmouljh8</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Your reason for accessing the camera</string>
+	<string>Allow “108 Jobs to access your camera to take a picture and detect your face.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app does not require access to the NSLocation.</string>
+	<string>This app needs access to location when in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app does not require access to the NSLocation.</string>
+	<string>Would like to Access Your Location This app needs access to your location to enable the check in and check out feature.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Your reason for accessing the photo library</string>
+	<string>'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

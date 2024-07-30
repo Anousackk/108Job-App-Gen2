@@ -49,6 +49,14 @@ TextStyle headerTextMediuml(Color? textColor, FontWeight? fontWeight) {
   );
 }
 
+TextStyle bodyTitleNormal(Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 18,
+  );
+}
+
 //
 //
 //
@@ -57,6 +65,21 @@ TextStyle bodyTextSmall(Color? textColor) {
   return TextStyle(
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 12,
+  );
+}
+
+TextStyle bodyTextMaxSmall(Color? textColor) {
+  return TextStyle(
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 13,
+  );
+}
+
+TextStyle bodyTextMinNormal(Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 14,
   );
 }
 
@@ -69,6 +92,14 @@ TextStyle bodyTextNormal(Color? textColor, FontWeight? fontWeight) {
 }
 
 TextStyle bodyTextMaxNormal(Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 16,
+  );
+}
+
+TextStyle bodyTextSuperMaxNormal(Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,

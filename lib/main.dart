@@ -6,7 +6,8 @@ import 'package:app/functions/colors.dart';
 import 'package:app/i18n/i18n.dart';
 import 'package:app/routes.dart';
 import 'package:app/screen/login/login.dart';
-import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
+import 'package:app/screen/screenAfterSignIn/Notifications/notification.dart';
+import 'package:app/screen/screenAfterSignIn/message/message.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -64,6 +65,15 @@ Future<void> main() async {
       badge: true,
       sound: true,
     );
+
+    // await flutterLocalNotificationsPlugin
+    //     .resolvePlatformSpecificImplementation<
+    //         IOSFlutterLocalNotificationsPlugin>()
+    //     ?.requestPermissions(
+    //       alert: true,
+    //       badge: true,
+    //       sound: true,
+    //     );
   }
 
   //Application in foreground(flutter_local_notifications)
@@ -122,6 +132,8 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
+  String? getLanguageSharePref;
+
   Future<void> _initializeFCM() async {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Received a message while in the foreground!');
@@ -164,46 +176,62 @@ class MyAppState extends State<MyApp> {
       }
     });
 
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
+    FirebaseMessaging.instance.getInitialMessage().then((message) async {
       if (message != null) {
         // Handle notification when the app is completely closed and opened by the user
-        _handleMessage(message);
+        await handleMessage(message);
       }
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       // Handle notification when the app is in the background and opened by the user
-      _handleMessage(message);
+      await handleMessage(message);
     });
   }
 
-  void _handleMessage(RemoteMessage message) {
+  handleMessage(RemoteMessage message) async {
     print("message ${message}");
-    if (message.data['screen'] == 'Jobpage') {
-      print("message.data ${message.data}");
+    //Screen: Notification_Page
+    //Screen: Messages_Page
+    if (message.data['screen'] == 'Notification_Page') {
+      // print("Notification_Page:  ${message.data}");
 
-      String jobId = message.data['id'];
-      print("jobId ${jobId}");
+      // dynamic jobId = message.data['id'];
+      // print("jobId: ${jobId}");
 
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) =>
-      //         JobSearchDetail(jobId: message.data['id'].toString()),
+      // navigatorKey.currentState?.pushNamed(
+      //   JobSearchDetail.routeName,
+      //   arguments: JobSearchDetail(
+      //     jobId: jobId,
+      //   ),
+      // );
+
+      navigatorKey.currentState?.pushNamed(
+        Notifications.routeName,
+        arguments: Notifications(),
+      );
+    } else if (message.data['screen'] == 'Messages_Page') {
+      // print("Messages_Page:  ${message.data}");
+
+      // dynamic msgId = message.data['id'];
+      // print("msgId: ${msgId}");
+
+      // navigatorKey.currentState?.pushNamed(
+      //   JobSearchDetail.routeName,
+      //   arguments: JobSearchDetail(
+      //     jobId: jobId,
       //   ),
       // );
       navigatorKey.currentState?.pushNamed(
-        JobSearchDetail.routeName,
-        arguments: JobSearchDetail(
-          jobId: jobId,
-        ),
+        Messages.routeName,
+        arguments: Messages(),
       );
     }
   }
 
   checkLanguage() async {
     final prefs = await SharedPreferences.getInstance();
-    var getLanguageSharePref = prefs.getString('setLanguage');
+    getLanguageSharePref = prefs.getString('setLanguage');
 
     if (getLanguageSharePref == 'lo') {
       Get.updateLocale(Locale('lo', 'LA'));
@@ -250,17 +278,25 @@ class MyAppState extends State<MyApp> {
             }
           },
           child: GetMaterialApp(
+            // color: AppColors.backgroundWhite,
             translations: LocalString(),
             locale: Locale('lo', 'LA'),
             fallbackLocale: Locale('lo', 'LA'),
             debugShowCheckedModeBanner: false,
             navigatorKey: navigatorKey,
             theme: ThemeData(
-              // scaffoldBackgroundColor: AppColors.dark,
-              fontFamily: 'NotoSansLaoRegular',
-              primaryColor: primaryColor,
+              useMaterial3: false,
+              scaffoldBackgroundColor: AppColors.backgroundWhite,
+              textTheme: TextTheme(),
+
+              fontFamily: Get.locale == Locale('lo', 'LA') || Get.locale == null
+                  ? 'NotoSansLaoRegular'
+                  : 'SatoshiMedium',
+              // primaryColor: primaryColor,
               appBarTheme: AppBarTheme(
-                // color: AppColors.dark,
+                backgroundColor: AppColors.backgroundWhite,
+
+                // color: AppColors.red,
                 elevation: 0,
 
                 // systemOverlayStyle: SystemUiOverlayStyle.dark,
@@ -270,23 +306,28 @@ class MyAppState extends State<MyApp> {
               ),
             ),
             home: Scaffold(
+              // backgroundColor: AppColors.backgroundWhite,
               appBar: AppBar(
                 toolbarHeight: 0,
                 systemOverlayStyle: SystemUiOverlayStyle.dark,
-                backgroundColor: AppColors.white,
+                // backgroundColor: AppColors.backgroundWhite,
               ),
               // body: Login(),
               body: UpgradeAlert(
                 upgrader: Upgrader(
-                  showIgnore: false,
-                  showLater: false,
-                  canDismissDialog: false,
-                  showReleaseNotes: false,
+                  // showIgnore: false,
+                  // showLater: false,
+                  // canDismissDialog: false,
+                  // showReleaseNotes: false,
                   // shouldPopScope: () => false,
                   durationUntilAlertAgain: Duration(days: 1),
-                  dialogStyle: Platform.isIOS
-                      ? UpgradeDialogStyle.cupertino
-                      : UpgradeDialogStyle.material,
+                  storeController: UpgraderStoreController(
+                    onAndroid: () => UpgraderPlayStore(),
+                    oniOS: () => UpgraderAppStore(),
+                  ),
+                  // dialogStyle: Platform.isIOS
+                  //     ? UpgradeDialogStyle.cupertino
+                  //     : UpgradeDialogStyle.material,
                   // messages: UpgraderMessages(),
                   messages: MyUpgraderMessages(),
                 ),
@@ -301,15 +342,22 @@ class MyAppState extends State<MyApp> {
             routes: routes,
             onGenerateRoute: (settings) {
               print("settings: ${settings}");
-              if (settings.name == JobSearchDetail.routeName) {
-                final args = settings.arguments as JobSearchDetail;
+              if (settings.name == Notifications.routeName) {
+                final args = settings.arguments as Notifications;
 
                 print("args: ${args}");
                 return MaterialPageRoute(
                   builder: (context) {
-                    return JobSearchDetail(
-                      jobId: args.jobId.toString(),
-                    );
+                    return Notifications();
+                  },
+                );
+              } else {
+                final args = settings.arguments as Messages;
+
+                print("args: ${args}");
+                return MaterialPageRoute(
+                  builder: (context) {
+                    return Messages();
                   },
                 );
               }

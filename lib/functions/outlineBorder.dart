@@ -26,13 +26,13 @@ BoxDecoration boxDecoration(BorderRadiusGeometry? borderRadius, Color? color,
     Color? borderColor, double? borderWidth) {
   return BoxDecoration(
     borderRadius:
-        borderRadius == null ? BorderRadius.circular(1.5.w) : borderRadius,
+        borderRadius == null ? BorderRadius.circular(20) : borderRadius,
+    color: color == null ? AppColors.greyOpacity : color,
     border: Border.all(
         color: borderColor == null
             ? AppColors.borderGrey.withOpacity(0)
             : borderColor,
         width: borderWidth == null ? 1 : borderWidth),
-    color: color == null ? AppColors.greyOpacity : color,
   );
 }
 

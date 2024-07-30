@@ -2,6 +2,7 @@
 
 import 'package:app/firebase_options.dart';
 import 'package:app/functions/api.dart';
+import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/launchInBrowser.dart';
@@ -13,6 +14,7 @@ import 'package:app/screen/screenAfterSignIn/account/account.dart';
 import 'package:app/screen/screenAfterSignIn/company/company.dart';
 import 'package:app/screen/screenAfterSignIn/company/companyDetail.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearch.dart';
+import 'package:app/screen/screenAfterSignIn/message/message.dart';
 import 'package:app/screen/screenAfterSignIn/myJob/myJob.dart';
 import 'package:app/widget/listMultiSelectedAlertDialog.dart';
 import 'package:carousel_slider/carousel_controller.dart';
@@ -41,6 +43,7 @@ class _HomeState extends State<Home> {
   String _companyType = "";
   String _typeString = "";
   String _totalNotiUnRead = "";
+  String _totalMessageUnRead = "";
 
   int _currentIndex = 0;
 
@@ -83,22 +86,31 @@ class _HomeState extends State<Home> {
     });
   }
 
-  fetchNotifications() async {
-    var res =
-        await postData(getNotificationsSeeker, {"page": 1, "perPage": 10});
-    _totalNotiUnRead = res['unreadTotals'].toString();
+  // fetchNotifications() async {
+  //   var res = await postData(getNotificationsSeeker,
+  //       {"page": 1, "perPage": 10, "type": "Notification_Page"});
+  //   _totalNotiUnRead = res['unreadTotals'].toString();
 
-    print("${_totalNotiUnRead}");
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+  // }
 
-    if (mounted) {
-      setState(() {});
-    }
-  }
+  // fetchMessages() async {
+  //   var res = await postData(getNotificationsSeeker,
+  //       {"page": 1, "perPage": 10, "type": "Messages_Page"});
+  //   _totalMessageUnRead = res['unreadTotals'].toString();
+
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
-    fetchNotifications();
+    // fetchNotifications();
+    // fetchMessages();
     // print("${_totalNotiUnRead}");
   }
 
@@ -178,32 +190,33 @@ class _HomeState extends State<Home> {
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: AppColors.backgroundWhite,
           type: BottomNavigationBarType.fixed,
-          unselectedFontSize: 14,
+          unselectedFontSize: 12,
+          selectedFontSize: 12,
           showSelectedLabels:
               true, // Set to true to show labels for selected tabs
           showUnselectedLabels:
               true, // Set to true to show labels for unselected tabs
           selectedItemColor: AppColors.primary,
 
-          iconSize: 25,
+          // iconSize: 25,
           currentIndex: _currentIndex,
           onTap: _onTapBottomNav,
           items: [
             BottomNavigationBarItem(
               icon: Padding(
                 padding: const EdgeInsets.only(
-                  top: 10,
+                  top: 0,
                 ),
                 child: _currentIndex == 0
                     ? Text(
                         "\uf015",
                         style: fontAwesomeSolid(
-                            null, 22, AppColors.iconPrimary, null),
+                            null, 18, AppColors.iconPrimary, null),
                       )
                     : Text(
                         "\uf015",
                         style: fontAwesomeRegular(
-                            null, 22, AppColors.iconGrayOpacity, null),
+                            null, 18, AppColors.iconGrayOpacity, null),
                       ),
               ),
               label: "home".tr,
@@ -211,18 +224,18 @@ class _HomeState extends State<Home> {
             BottomNavigationBarItem(
               icon: Padding(
                 padding: const EdgeInsets.only(
-                  top: 10,
+                  top: 0,
                 ),
                 child: _currentIndex == 1
                     ? Text(
                         "\uf002",
                         style: fontAwesomeSolid(
-                            null, 22, AppColors.iconPrimary, null),
+                            null, 18, AppColors.iconPrimary, null),
                       )
                     : Text(
                         "\uf002",
                         style: fontAwesomeRegular(
-                            null, 22, AppColors.iconGrayOpacity, null),
+                            null, 18, AppColors.iconGrayOpacity, null),
                       ),
               ),
               label: "job search".tr,
@@ -230,18 +243,18 @@ class _HomeState extends State<Home> {
             BottomNavigationBarItem(
               icon: Padding(
                 padding: const EdgeInsets.only(
-                  top: 10,
+                  top: 0,
                 ),
                 child: _currentIndex == 2
                     ? Text(
                         "\uf1ad",
                         style: fontAwesomeSolid(
-                            null, 22, AppColors.iconPrimary, null),
+                            null, 18, AppColors.iconPrimary, null),
                       )
                     : Text(
                         "\uf1ad",
                         style: fontAwesomeRegular(
-                            null, 22, AppColors.iconGrayOpacity, null),
+                            null, 18, AppColors.iconGrayOpacity, null),
                       ),
               ),
               label: "company".tr,
@@ -249,18 +262,18 @@ class _HomeState extends State<Home> {
             BottomNavigationBarItem(
               icon: Padding(
                 padding: const EdgeInsets.only(
-                  top: 10,
+                  top: 0,
                 ),
                 child: _currentIndex == 3
                     ? Text(
                         "\uf0b1",
                         style: fontAwesomeSolid(
-                            null, 22, AppColors.iconPrimary, null),
+                            null, 18, AppColors.iconPrimary, null),
                       )
                     : Text(
                         "\uf0b1",
                         style: fontAwesomeRegular(
-                            null, 22, AppColors.iconGrayOpacity, null),
+                            null, 18, AppColors.iconGrayOpacity, null),
                       ),
               ),
               label: "my job".tr,
@@ -311,18 +324,18 @@ class _HomeState extends State<Home> {
             BottomNavigationBarItem(
               icon: Padding(
                 padding: const EdgeInsets.only(
-                  top: 10,
+                  top: 0,
                 ),
                 child: _currentIndex == 4
                     ? Text(
                         "\uf007",
                         style: fontAwesomeSolid(
-                            null, 22, AppColors.iconPrimary, null),
+                            null, 18, AppColors.iconPrimary, null),
                       )
                     : Text(
                         "\uf007",
                         style: fontAwesomeRegular(
-                            null, 22, AppColors.iconGrayOpacity, null),
+                            null, 18, AppColors.iconGrayOpacity, null),
                       ),
               ),
               label: "account".tr,
@@ -394,6 +407,7 @@ class _MainHomeState extends State<MainHome> {
   dynamic _fcmToken;
   String _localeLanguageApi = "EN";
   String _totalNotiUnRead = "";
+  String _totalMessageUnRead = "";
 
   //error setState() called after dispose(). it can help!!!
   @override
@@ -434,8 +448,8 @@ class _MainHomeState extends State<MainHome> {
 
   getProfileSeeker() async {
     var res = await fetchData(getProfileSeekerApi);
-    // print(res);
-    if (res == null) {
+
+    if (res == 'Unauthorized') {
       removeSharedPreToken();
     }
 
@@ -447,7 +461,8 @@ class _MainHomeState extends State<MainHome> {
   removeSharedPreToken() async {
     final prefs = await SharedPreferences.getInstance();
     var removeEmployeeToken = await prefs.remove('employeeToken');
-    await GoogleSignIn().signOut();
+    AuthService().facebookSignOut();
+    AuthService().googleSignOut();
 
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => Login()), (route) => false);
@@ -544,14 +559,27 @@ class _MainHomeState extends State<MainHome> {
     fetchSpotLight();
     fetchHiring();
     fetchNotifications();
+    fetchMessages();
   }
 
   fetchNotifications() async {
-    var res =
-        await postData(getNotificationsSeeker, {"page": 1, "perPage": 10});
+    var res = await postData(getNotificationsSeeker,
+        {"page": 1, "perPage": 10, "type": "Notification_Page"});
     _totalNotiUnRead = res['unreadTotals'].toString();
 
-    print("${_totalNotiUnRead}");
+    print("Noti page: ${_totalNotiUnRead}");
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  fetchMessages() async {
+    var res = await postData(getNotificationsSeeker,
+        {"page": 1, "perPage": 10, "type": "Messages_Page"});
+    _totalMessageUnRead = res['unreadTotals'].toString();
+
+    print("Mess page: ${_totalMessageUnRead}");
 
     if (mounted) {
       setState(() {});
@@ -611,37 +639,47 @@ class _MainHomeState extends State<MainHome> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
+                                      //
+                                      //
+                                      //ChangeLanguage
                                       ChangeLanguage(),
                                       SizedBox(
-                                        width: 10,
+                                        width: 20,
                                       ),
+
+                                      //
+                                      //
+                                      //Notication
                                       GestureDetector(
                                         onTap: () {
                                           Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Notifications(
-                                                        callbackTotalNoti:
-                                                            (value) {
-                                                          setState(() {
-                                                            _totalNotiUnRead =
-                                                                value;
-                                                          });
-                                                        },
-                                                        statusFromScreen:
-                                                            "HomeScreen"),
-                                              ));
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Notifications(
+                                                callbackTotalNoti: (value) {
+                                                  setState(() {
+                                                    _totalNotiUnRead = value;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                          // .then((value) {
+                                          //   setState(() {
+                                          //     _totalNotiUnRead = value;
+                                          //   });
+                                          // });
                                         },
                                         child: Stack(
                                           clipBehavior: Clip.none,
                                           alignment:
                                               AlignmentDirectional.center,
                                           children: [
-                                            FaIcon(
-                                              FontAwesomeIcons.solidBell,
-                                              color: AppColors.primary,
-                                              size: 25,
+                                            Text(
+                                              "\uf0f3",
+                                              style: fontAwesomeLight(null, 20,
+                                                  AppColors.iconDark, null),
                                             ),
                                             if (_totalNotiUnRead != "0" &&
                                                 _totalNotiUnRead.isNotEmpty)
@@ -658,6 +696,68 @@ class _MainHomeState extends State<MainHome> {
                                                   child: Center(
                                                     child: Text(
                                                       "${_totalNotiUnRead}",
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: AppColors
+                                                              .fontWhite),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+
+                                      //
+                                      //
+                                      //Message
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => Messages(
+                                                callbackTotalNoti: (value) {
+                                                  setState(() {
+                                                    _totalMessageUnRead = value;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ).then((value) {
+                                            setState(() {
+                                              _totalMessageUnRead = value;
+                                            });
+                                          });
+                                        },
+                                        child: Stack(
+                                          clipBehavior: Clip.none,
+                                          alignment:
+                                              AlignmentDirectional.center,
+                                          children: [
+                                            Text(
+                                              "\uf27a",
+                                              style: fontAwesomeLight(null, 20,
+                                                  AppColors.iconDark, null),
+                                            ),
+                                            if (_totalMessageUnRead != "0" &&
+                                                _totalMessageUnRead.isNotEmpty)
+                                              Positioned(
+                                                top: -8,
+                                                right: -10,
+                                                child: Container(
+                                                  height: 20,
+                                                  width: 20,
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.danger,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      "${_totalMessageUnRead}",
                                                       style: TextStyle(
                                                           fontSize: 10,
                                                           color: AppColors
@@ -770,7 +870,7 @@ class _MainHomeState extends State<MainHome> {
                                                               ? Image.asset(
                                                                   'assets/image/no-image-available.png',
                                                                   fit: BoxFit
-                                                                      .fill,
+                                                                      .contain,
                                                                 )
                                                               : Image.network(
                                                                   "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${imagePath['image']}",
@@ -784,7 +884,7 @@ class _MainHomeState extends State<MainHome> {
                                                                         .asset(
                                                                       'assets/image/no-image-available.png',
                                                                       fit: BoxFit
-                                                                          .fill,
+                                                                          .contain,
                                                                     ); // Display an error message
                                                                   },
                                                                 ),
@@ -831,322 +931,11 @@ class _MainHomeState extends State<MainHome> {
 
                               //
                               //
-                              //Top industry hiring now
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  //
-                                  //
-                                  //title top industry hiring now
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "job by industry".tr,
-                                        style: bodyTextMaxNormal(
-                                            null, FontWeight.bold),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          var result = await showDialog(
-                                              barrierDismissible: false,
-                                              context: context,
-                                              builder: (context) {
-                                                return ListMultiSelectedAlertDialog(
-                                                  title: "job by industry".tr,
-                                                  listItems: _listIndustries,
-                                                  selectedListItem:
-                                                      _selectedIndustryListItem,
-                                                );
-                                              }).then(
-                                            (value) {
-                                              setState(() {
-                                                //value = []
-                                                //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                if (value.length > 0) {
-                                                  _selectedIndustryListItem =
-                                                      value;
-                                                  _industryName =
-                                                      []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
-
-                                                  for (var item
-                                                      in _listIndustries) {
-                                                    //
-                                                    //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedIndustryListItem ກົງກັບ _listIndustries ບໍ່
-                                                    if (_selectedIndustryListItem
-                                                        .contains(
-                                                            item['_id'])) {
-                                                      //
-                                                      //add Language Name ເຂົ້າໃນ _industryName
-                                                      setState(() {
-                                                        _industryName
-                                                            .add(item['name']);
-                                                      });
-                                                    }
-                                                  }
-                                                  widget.callBackSelectedIndustryProvince!(
-                                                      'Industry',
-                                                      _selectedIndustryListItem);
-
-                                                  print(_industryName);
-                                                }
-                                              });
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          "seemore".tr,
-                                          style: bodyTextNormal(
-                                              AppColors.fontPrimary, null),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-
-                                  //
-                                  //
-                                  //list card industry hiring now
-                                  if (_listTopIndustry.length > 0)
-                                    Container(
-                                      height: 160,
-                                      width: double.infinity,
-                                      child: ListView.builder(
-                                          physics: ClampingScrollPhysics(),
-                                          shrinkWrap: true,
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: _listTopIndustry.length,
-                                          itemBuilder: (context, index) {
-                                            double spacing = 10;
-                                            dynamic i = _listTopIndustry[index];
-                                            _listCompaniesAssignedTopIndustry =
-                                                i['companiesAssigned'] ?? [];
-
-                                            return Padding(
-                                              padding: EdgeInsets.only(
-                                                left: index == 0 ? 0 : spacing,
-                                                right: index == 9 ? 0 : 0,
-                                              ),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    widget.callBackToJobSearchTopIndustry!(
-                                                        i);
-                                                  });
-                                                },
-                                                child: Container(
-                                                  width: 300,
-                                                  padding: EdgeInsets.all(20),
-                                                  decoration: BoxDecoration(
-                                                      color: AppColors
-                                                          .backgroundWhite,
-                                                      // border: Border.all(
-                                                      //     color: AppColors
-                                                      //         .borderGreyOpacity),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10)),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Flexible(
-                                                        child: Text(
-                                                          "${i['name']}",
-                                                          style: bodyTextNormal(
-                                                              null,
-                                                              FontWeight.bold),
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            "${i['jobArvairiable'].toString()} ",
-                                                            style:
-                                                                bodyTextSmall(
-                                                              AppColors
-                                                                  .fontPrimary,
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            "job available".tr,
-                                                            style:
-                                                                bodyTextSmall(
-                                                                    null),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-
-                                                      //
-                                                      //
-                                                      //GridView.count Image Card
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Container(
-                                                              height: 60,
-                                                              child: GridView
-                                                                  .count(
-                                                                crossAxisCount:
-                                                                    _listCompaniesAssignedTopIndustry.length >
-                                                                            3
-                                                                        ? 3
-                                                                        : 4,
-                                                                crossAxisSpacing:
-                                                                    _listCompaniesAssignedTopIndustry.length >
-                                                                            3
-                                                                        ? 10
-                                                                        : 10,
-                                                                mainAxisSpacing:
-                                                                    15,
-                                                                shrinkWrap:
-                                                                    true,
-                                                                physics:
-                                                                    NeverScrollableScrollPhysics(),
-                                                                children: List.generate(
-                                                                    _listCompaniesAssignedTopIndustry
-                                                                        .length,
-                                                                    (index) {
-                                                                  dynamic c =
-                                                                      _listCompaniesAssignedTopIndustry[
-                                                                          index];
-
-                                                                  return Container(
-                                                                    width: 55,
-                                                                    height: 55,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      border:
-                                                                          Border
-                                                                              .all(
-                                                                        color: AppColors
-                                                                            .borderGreyOpacity,
-                                                                      ),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      color: AppColors
-                                                                          .backgroundWhite,
-                                                                    ),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding:
-                                                                          const EdgeInsets
-                                                                              .all(
-                                                                              5),
-                                                                      child:
-                                                                          ClipRRect(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8),
-                                                                        child:
-                                                                            Center(
-                                                                          child: c['logo'] == ""
-                                                                              ? Image.asset(
-                                                                                  'assets/image/no-image-available.png',
-                                                                                  fit: BoxFit.contain,
-                                                                                )
-                                                                              : Image.network(
-                                                                                  "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${c['logo']}",
-                                                                                  fit: BoxFit.contain,
-                                                                                  errorBuilder: (context, error, stackTrace) {
-                                                                                    return Image.asset(
-                                                                                      'assets/image/no-image-available.png',
-                                                                                      fit: BoxFit.contain,
-                                                                                    ); // Display an error message
-                                                                                  },
-                                                                                ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                }),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          //
-                                                          //
-                                                          //ຖ້າ _listCompaniesAssignedTopIndustry ຫຼາຍກວ່າ 3 ໃຫ້ສະແດງ Card Count ໂຕເລກ
-                                                          if (_listCompaniesAssignedTopIndustry
-                                                                  .length >
-                                                              3)
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 10),
-                                                              child: Container(
-                                                                height: 55,
-                                                                width: 55,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  border: Border
-                                                                      .all(
-                                                                    color: AppColors
-                                                                        .borderGreyOpacity,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  color: AppColors
-                                                                      .backgroundWhite,
-                                                                ),
-                                                                child: Row(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Text(
-                                                                      "${_listCompaniesAssignedTopIndustry.length - 3}",
-                                                                      style: bodyTextMaxNormal(
-                                                                          AppColors
-                                                                              .fontPrimary,
-                                                                          null),
-                                                                    ),
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .plus,
-                                                                      size: 15,
-                                                                      color: AppColors
-                                                                          .iconPrimary,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            )
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          }),
-                                    ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-                                ],
-                              ),
-
+                              //
+                              //
+                              //
+                              //
+                              //
                               //
                               //
                               //Province hiring now
@@ -1162,7 +951,7 @@ class _MainHomeState extends State<MainHome> {
                                     children: [
                                       Text(
                                         "job by province".tr,
-                                        style: bodyTextMaxNormal(
+                                        style: bodyTitleNormal(
                                             null, FontWeight.bold),
                                       ),
                                       GestureDetector(
@@ -1215,7 +1004,7 @@ class _MainHomeState extends State<MainHome> {
                                         },
                                         child: Text(
                                           "seemore".tr,
-                                          style: bodyTextNormal(
+                                          style: bodyTextMinNormal(
                                               AppColors.fontPrimary, null),
                                         ),
                                       )
@@ -1230,17 +1019,339 @@ class _MainHomeState extends State<MainHome> {
                                   //list card province
                                   if (_listProvince.length > 0)
                                     Container(
-                                      height: 160,
+                                      height: 140,
+                                      width: double.infinity,
+                                      child: ListView.builder(
+                                        physics: ClampingScrollPhysics(),
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: _listProvince.length,
+                                        itemBuilder: (context, index) {
+                                          double spacing = 10;
+                                          dynamic i = _listProvince[index];
+                                          _listCompaniesAssignedProvince =
+                                              i['companiesAssigned'] ?? [];
+
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              left: index == 0 ? 0 : spacing,
+                                              right: index == 9 ? 0 : 0,
+                                            ),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  widget.callBackToJobSearchProvince!(
+                                                      i);
+                                                });
+                                              },
+                                              child: Container(
+                                                width: 220,
+                                                padding: EdgeInsets.all(20),
+                                                decoration: BoxDecoration(
+                                                    color: AppColors
+                                                        .backgroundWhite,
+                                                    // border: Border.all(
+                                                    //     color: AppColors
+                                                    //         .borderGreyOpacity),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Flexible(
+                                                      child: Text(
+                                                        "${i['name']}",
+                                                        style:
+                                                            bodyTextMaxNormal(
+                                                                null,
+                                                                FontWeight
+                                                                    .bold),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          "${i['jobArvairiable'].toString()} ",
+                                                          style: bodyTextMinNormal(
+                                                              AppColors
+                                                                  .fontPrimary,
+                                                              null),
+                                                        ),
+                                                        Text(
+                                                          "job available".tr,
+                                                          style:
+                                                              bodyTextMinNormal(
+                                                                  null, null),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+
+                                                    //
+                                                    //
+                                                    //GridView.count Image Card
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Container(
+                                                            // color:
+                                                            //     AppColors.red,
+                                                            height: 40,
+                                                            child:
+                                                                GridView.count(
+                                                              crossAxisCount: 4,
+                                                              crossAxisSpacing:
+                                                                  8,
+                                                              mainAxisSpacing:
+                                                                  10,
+                                                              shrinkWrap: true,
+                                                              physics:
+                                                                  NeverScrollableScrollPhysics(),
+                                                              children: List.generate(
+                                                                  _listCompaniesAssignedProvince
+                                                                      .length,
+                                                                  (index) {
+                                                                dynamic c =
+                                                                    _listCompaniesAssignedProvince[
+                                                                        index];
+
+                                                                return Container(
+                                                                  width: 40,
+                                                                  height: 40,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border:
+                                                                        Border
+                                                                            .all(
+                                                                      color: AppColors
+                                                                          .borderGreyOpacity,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10),
+                                                                    color: AppColors
+                                                                        .backgroundWhite,
+                                                                  ),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            5),
+                                                                    child:
+                                                                        ClipRRect(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
+                                                                      child:
+                                                                          Center(
+                                                                        child: c['logo'] ==
+                                                                                ""
+                                                                            ? Image.asset(
+                                                                                'assets/image/no-image-available.png',
+                                                                                fit: BoxFit.contain,
+                                                                              )
+                                                                            : Image.network(
+                                                                                "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${c['logo']}",
+                                                                                fit: BoxFit.contain,
+                                                                                errorBuilder: (context, error, stackTrace) {
+                                                                                  return Image.asset(
+                                                                                    'assets/image/no-image-available.png',
+                                                                                    fit: BoxFit.contain,
+                                                                                  ); // Display an error message
+                                                                                },
+                                                                              ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              }),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        //
+                                                        //
+                                                        //ຖ້າ _listCompaniesAssignedProvince ຫຼາຍກວ່າ 3 ໃຫ້ສະແດງ Card Count ໂຕເລກ
+                                                        // if (_listCompaniesAssignedProvince
+                                                        //         .length >
+                                                        //     3)
+                                                        //   Padding(
+                                                        //     padding:
+                                                        //         const EdgeInsets
+                                                        //             .only(
+                                                        //             left: 10),
+                                                        //     child: Container(
+                                                        //       height: 55,
+                                                        //       width: 55,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         border:
+                                                        //             Border.all(
+                                                        //           color: AppColors
+                                                        //               .borderGreyOpacity,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius
+                                                        //                 .circular(
+                                                        //                     10),
+                                                        //         color: AppColors
+                                                        //             .backgroundWhite,
+                                                        //       ),
+                                                        //       child: Row(
+                                                        //         crossAxisAlignment:
+                                                        //             CrossAxisAlignment
+                                                        //                 .center,
+                                                        //         mainAxisAlignment:
+                                                        //             MainAxisAlignment
+                                                        //                 .center,
+                                                        //         children: [
+                                                        //           Text(
+                                                        //             "${_listCompaniesAssignedProvince.length - 3}",
+                                                        //             style: bodyTextMaxNormal(
+                                                        //                 AppColors
+                                                        //                     .fontPrimary,
+                                                        //                 null),
+                                                        //           ),
+                                                        //           FaIcon(
+                                                        //             FontAwesomeIcons
+                                                        //                 .plus,
+                                                        //             size: 15,
+                                                        //             color: AppColors
+                                                        //                 .iconPrimary,
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   )
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                ],
+                              ),
+
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //Top industry hiring now
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  //
+                                  //
+                                  //title top industry hiring now
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "job by industry".tr,
+                                        style: bodyTitleNormal(
+                                            null, FontWeight.bold),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          var result = await showDialog(
+                                              barrierDismissible: false,
+                                              context: context,
+                                              builder: (context) {
+                                                return ListMultiSelectedAlertDialog(
+                                                  title: "job by industry".tr,
+                                                  listItems: _listIndustries,
+                                                  selectedListItem:
+                                                      _selectedIndustryListItem,
+                                                );
+                                              }).then(
+                                            (value) {
+                                              setState(() {
+                                                //value = []
+                                                //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                                if (value.length > 0) {
+                                                  _selectedIndustryListItem =
+                                                      value;
+                                                  _industryName =
+                                                      []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+
+                                                  for (var item
+                                                      in _listIndustries) {
+                                                    //
+                                                    //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedIndustryListItem ກົງກັບ _listIndustries ບໍ່
+                                                    if (_selectedIndustryListItem
+                                                        .contains(
+                                                            item['_id'])) {
+                                                      //
+                                                      //add Language Name ເຂົ້າໃນ _industryName
+                                                      setState(() {
+                                                        _industryName
+                                                            .add(item['name']);
+                                                      });
+                                                    }
+                                                  }
+                                                  widget.callBackSelectedIndustryProvince!(
+                                                      'Industry',
+                                                      _selectedIndustryListItem);
+
+                                                  print(_industryName);
+                                                }
+                                              });
+                                            },
+                                          );
+                                        },
+                                        child: Text(
+                                          "seemore".tr,
+                                          style: bodyTextMinNormal(
+                                              AppColors.fontPrimary, null),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+
+                                  //
+                                  //
+                                  //list card industry hiring now
+                                  if (_listTopIndustry.length > 0)
+                                    Container(
+                                      height: 140,
                                       width: double.infinity,
                                       child: ListView.builder(
                                           physics: ClampingScrollPhysics(),
                                           shrinkWrap: true,
                                           scrollDirection: Axis.horizontal,
-                                          itemCount: _listProvince.length,
+                                          itemCount: _listTopIndustry.length,
                                           itemBuilder: (context, index) {
                                             double spacing = 10;
-                                            dynamic i = _listProvince[index];
-                                            _listCompaniesAssignedProvince =
+                                            dynamic i = _listTopIndustry[index];
+                                            _listCompaniesAssignedTopIndustry =
                                                 i['companiesAssigned'] ?? [];
 
                                             return Padding(
@@ -1251,22 +1362,23 @@ class _MainHomeState extends State<MainHome> {
                                               child: GestureDetector(
                                                 onTap: () {
                                                   setState(() {
-                                                    widget.callBackToJobSearchProvince!(
+                                                    widget.callBackToJobSearchTopIndustry!(
                                                         i);
                                                   });
                                                 },
                                                 child: Container(
-                                                  width: 300,
+                                                  width: 220,
                                                   padding: EdgeInsets.all(20),
                                                   decoration: BoxDecoration(
-                                                      color: AppColors
-                                                          .backgroundWhite,
-                                                      // border: Border.all(
-                                                      //     color: AppColors
-                                                      //         .borderGreyOpacity),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10)),
+                                                    color: AppColors
+                                                        .backgroundWhite,
+                                                    // border: Border.all(
+                                                    //     color: AppColors
+                                                    //         .borderGreyOpacity),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -1278,11 +1390,9 @@ class _MainHomeState extends State<MainHome> {
                                                       Flexible(
                                                         child: Text(
                                                           "${i['name']}",
-                                                          style:
-                                                              bodyTextMaxNormal(
-                                                                  null,
-                                                                  FontWeight
-                                                                      .bold),
+                                                          style: bodyTextNormal(
+                                                              null,
+                                                              FontWeight.bold),
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                         ),
@@ -1294,15 +1404,16 @@ class _MainHomeState extends State<MainHome> {
                                                         children: [
                                                           Text(
                                                             "${i['jobArvairiable'].toString()} ",
-                                                            style: bodyTextSmall(
+                                                            style: bodyTextMinNormal(
                                                                 AppColors
-                                                                    .fontPrimary),
+                                                                    .fontPrimary,
+                                                                null),
                                                           ),
                                                           Text(
                                                             "job available".tr,
                                                             style:
-                                                                bodyTextSmall(
-                                                                    null),
+                                                                bodyTextMinNormal(
+                                                                    null, null),
                                                           ),
                                                         ],
                                                       ),
@@ -1317,139 +1428,133 @@ class _MainHomeState extends State<MainHome> {
                                                         children: [
                                                           Expanded(
                                                             child: Container(
-                                                              height: 60,
+                                                              height: 40,
                                                               child: GridView
                                                                   .count(
                                                                 crossAxisCount:
-                                                                    _listCompaniesAssignedProvince.length >
-                                                                            3
-                                                                        ? 3
-                                                                        : 4,
+                                                                    4,
                                                                 crossAxisSpacing:
-                                                                    _listCompaniesAssignedProvince.length >
-                                                                            3
-                                                                        ? 10
-                                                                        : 10,
+                                                                    8,
                                                                 mainAxisSpacing:
-                                                                    15,
+                                                                    10,
                                                                 shrinkWrap:
                                                                     true,
                                                                 physics:
                                                                     NeverScrollableScrollPhysics(),
-                                                                children: List.generate(
-                                                                    _listCompaniesAssignedProvince
-                                                                        .length,
-                                                                    (index) {
-                                                                  dynamic c =
-                                                                      _listCompaniesAssignedProvince[
-                                                                          index];
+                                                                children: List
+                                                                    .generate(
+                                                                  _listCompaniesAssignedTopIndustry
+                                                                      .length,
+                                                                  (index) {
+                                                                    dynamic c =
+                                                                        _listCompaniesAssignedTopIndustry[
+                                                                            index];
 
-                                                                  return Container(
-                                                                    width: 55,
-                                                                    height: 55,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      border:
-                                                                          Border
-                                                                              .all(
-                                                                        color: AppColors
-                                                                            .borderGreyOpacity,
-                                                                      ),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      color: AppColors
-                                                                          .backgroundWhite,
-                                                                    ),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding:
-                                                                          const EdgeInsets
-                                                                              .all(
-                                                                              5),
-                                                                      child:
-                                                                          ClipRRect(
+                                                                    return Container(
+                                                                      width: 40,
+                                                                      height:
+                                                                          40,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        border:
+                                                                            Border.all(
+                                                                          color:
+                                                                              AppColors.borderGreyOpacity,
+                                                                        ),
                                                                         borderRadius:
-                                                                            BorderRadius.circular(8),
+                                                                            BorderRadius.circular(10),
+                                                                        color: AppColors
+                                                                            .backgroundWhite,
+                                                                      ),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            5),
                                                                         child:
-                                                                            Center(
-                                                                          child: c['logo'] == ""
-                                                                              ? Image.asset(
-                                                                                  'assets/image/no-image-available.png',
-                                                                                  fit: BoxFit.contain,
-                                                                                )
-                                                                              : Image.network(
-                                                                                  "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${c['logo']}",
-                                                                                  fit: BoxFit.contain,
-                                                                                  errorBuilder: (context, error, stackTrace) {
-                                                                                    return Image.asset(
-                                                                                      'assets/image/no-image-available.png',
-                                                                                      fit: BoxFit.contain,
-                                                                                    ); // Display an error message
-                                                                                  },
-                                                                                ),
+                                                                            ClipRRect(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8),
+                                                                          child:
+                                                                              Center(
+                                                                            child: c['logo'] == ""
+                                                                                ? Image.asset(
+                                                                                    'assets/image/no-image-available.png',
+                                                                                    fit: BoxFit.contain,
+                                                                                  )
+                                                                                : Image.network(
+                                                                                    "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${c['logo']}",
+                                                                                    fit: BoxFit.contain,
+                                                                                    errorBuilder: (context, error, stackTrace) {
+                                                                                      return Image.asset(
+                                                                                        'assets/image/no-image-available.png',
+                                                                                        fit: BoxFit.contain,
+                                                                                      ); // Display an error message
+                                                                                    },
+                                                                                  ),
+                                                                          ),
                                                                         ),
                                                                       ),
-                                                                    ),
-                                                                  );
-                                                                }),
+                                                                    );
+                                                                  },
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
                                                           //
                                                           //
-                                                          //ຖ້າ _listCompaniesAssignedProvince ຫຼາຍກວ່າ 3 ໃຫ້ສະແດງ Card Count ໂຕເລກ
-                                                          if (_listCompaniesAssignedProvince
-                                                                  .length >
-                                                              3)
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 10),
-                                                              child: Container(
-                                                                height: 55,
-                                                                width: 55,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  border: Border
-                                                                      .all(
-                                                                    color: AppColors
-                                                                        .borderGreyOpacity,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  color: AppColors
-                                                                      .backgroundWhite,
-                                                                ),
-                                                                child: Row(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Text(
-                                                                      "${_listCompaniesAssignedProvince.length - 3}",
-                                                                      style: bodyTextMaxNormal(
-                                                                          AppColors
-                                                                              .fontPrimary,
-                                                                          null),
-                                                                    ),
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .plus,
-                                                                      size: 15,
-                                                                      color: AppColors
-                                                                          .iconPrimary,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            )
+                                                          //ຖ້າ _listCompaniesAssignedTopIndustry ຫຼາຍກວ່າ 3 ໃຫ້ສະແດງ Card Count ໂຕເລກ
+                                                          // if (_listCompaniesAssignedTopIndustry
+                                                          //         .length >
+                                                          //     3)
+                                                          //   Padding(
+                                                          //     padding:
+                                                          //         const EdgeInsets
+                                                          //             .only(
+                                                          //             left: 10),
+                                                          //     child: Container(
+                                                          //       height: 55,
+                                                          //       width: 55,
+                                                          //       decoration:
+                                                          //           BoxDecoration(
+                                                          //         border: Border
+                                                          //             .all(
+                                                          //           color: AppColors
+                                                          //               .borderGreyOpacity,
+                                                          //         ),
+                                                          //         borderRadius:
+                                                          //             BorderRadius
+                                                          //                 .circular(
+                                                          //                     10),
+                                                          //         color: AppColors
+                                                          //             .backgroundWhite,
+                                                          //       ),
+                                                          //       child: Row(
+                                                          //         crossAxisAlignment:
+                                                          //             CrossAxisAlignment
+                                                          //                 .center,
+                                                          //         mainAxisAlignment:
+                                                          //             MainAxisAlignment
+                                                          //                 .center,
+                                                          //         children: [
+                                                          //           Text(
+                                                          //             "${_listCompaniesAssignedTopIndustry.length - 3}",
+                                                          //             style: bodyTextMaxNormal(
+                                                          //                 AppColors
+                                                          //                     .fontPrimary,
+                                                          //                 null),
+                                                          //           ),
+                                                          //           FaIcon(
+                                                          //             FontAwesomeIcons
+                                                          //                 .plus,
+                                                          //             size: 15,
+                                                          //             color: AppColors
+                                                          //                 .iconPrimary,
+                                                          //           ),
+                                                          //         ],
+                                                          //       ),
+                                                          //     ),
+                                                          //   )
                                                         ],
                                                       ),
                                                     ],
@@ -1464,6 +1569,7 @@ class _MainHomeState extends State<MainHome> {
                                   ),
                                 ],
                               ),
+
                               //
                               //
                               //Wrap List Top WorkLocations
@@ -1533,6 +1639,13 @@ class _MainHomeState extends State<MainHome> {
                               //   }),
                               // ),
 
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
                               //
                               //
                               //Spotlight
@@ -1663,6 +1776,14 @@ class _MainHomeState extends State<MainHome> {
 
                               //
                               //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //
                               //Companies actively hiring
                               if (_listHirings.length > 0)
                                 //
@@ -1680,7 +1801,7 @@ class _MainHomeState extends State<MainHome> {
                                         Flexible(
                                           child: Text(
                                             "company hiring now".tr,
-                                            style: bodyTextMaxNormal(
+                                            style: bodyTitleNormal(
                                                 null, FontWeight.bold),
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -1704,7 +1825,7 @@ class _MainHomeState extends State<MainHome> {
                                             children: [
                                               Text(
                                                 "seemore".tr,
-                                                style: bodyTextNormal(
+                                                style: bodyTextMinNormal(
                                                     AppColors.fontPrimary,
                                                     null),
                                               ),
@@ -1731,7 +1852,7 @@ class _MainHomeState extends State<MainHome> {
                                       height: 10,
                                     ),
                                     Container(
-                                      height: 340,
+                                      height: 320,
                                       width: double.infinity,
                                       child: ListView.builder(
                                         physics: ClampingScrollPhysics(),
@@ -1751,6 +1872,8 @@ class _MainHomeState extends State<MainHome> {
                                           _jobsOpening =
                                               i['jobsCount'].toString();
 
+                                          //
+                                          //
                                           //
                                           //
                                           //hiring card
@@ -1782,73 +1905,123 @@ class _MainHomeState extends State<MainHome> {
                                                   children: [
                                                     //
                                                     //
-                                                    //hiring cover image
-                                                    Expanded(
-                                                        flex: 2,
-                                                        child: Stack(
-                                                          clipBehavior:
-                                                              Clip.none,
-                                                          children: [
-                                                            Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: AppColors
-                                                                    .greyShimmer,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          8),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          8),
-                                                                ),
-                                                              ),
+                                                    //
+                                                    //
+                                                    //hiring card cover
+                                                    Stack(
+                                                      clipBehavior: Clip.none,
+                                                      children: [
+                                                        Container(
+                                                          width:
+                                                              double.infinity,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: AppColors
+                                                                .greyShimmer,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(8),
+                                                              topRight: Radius
+                                                                  .circular(8),
                                                             ),
-                                                            // Positioned(
-                                                            //   right: -0,
-                                                            //   child: Container(
-                                                            //     padding: EdgeInsets
-                                                            //         .symmetric(
-                                                            //             horizontal:
-                                                            //                 15,
-                                                            //             vertical: 10),
-                                                            //     decoration:
-                                                            //         BoxDecoration(
-                                                            //       color: AppColors
-                                                            //           .lightPrimary,
-                                                            //       borderRadius:
-                                                            //           BorderRadius
-                                                            //               .only(
-                                                            //         bottomLeft: Radius
-                                                            //             .circular(8),
-                                                            //       ),
-                                                            //     ),
-                                                            //     child: Row(children: [
-                                                            //       Text(
-                                                            //         "${_jobsOpening}",
-                                                            //         style: bodyTextNormal(
-                                                            //             AppColors
-                                                            //                 .fontPrimary,
-                                                            //             FontWeight
-                                                            //                 .bold),
-                                                            //       ),
-                                                            //       SizedBox(
-                                                            //         width: 5,
-                                                            //       ),
-                                                            //       Text(
-                                                            //         "job open".tr,
-                                                            //         style: bodyTextNormal(
-                                                            //             AppColors
-                                                            //                 .fontPrimary,
-                                                            //             null),
-                                                            //       )
-                                                            //     ]),
-                                                            //   ),
-                                                            // )
-                                                          ],
-                                                        )),
+                                                          ),
+                                                          child: AspectRatio(
+                                                            aspectRatio: 5 / 2,
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        8),
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                        8),
+                                                              ),
+                                                              child:
+                                                                  i['cardCover'] ==
+                                                                          ""
+                                                                      ? Center(
+                                                                          child:
+                                                                              Container(
+                                                                            padding:
+                                                                                EdgeInsets.only(bottom: 30),
+                                                                            child:
+                                                                                FaIcon(
+                                                                              FontAwesomeIcons.image,
+                                                                              size: 40,
+                                                                              color: AppColors.secondary,
+                                                                            ),
+                                                                          ),
+                                                                        )
+                                                                      : Image
+                                                                          .network(
+                                                                          "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${i['cardCover']}",
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          errorBuilder: (context,
+                                                                              error,
+                                                                              stackTrace) {
+                                                                            return Center(
+                                                                              child: Container(
+                                                                                padding: EdgeInsets.only(bottom: 30),
+                                                                                child: FaIcon(
+                                                                                  FontAwesomeIcons.image,
+                                                                                  size: 40,
+                                                                                  color: AppColors.secondary,
+                                                                                ),
+                                                                              ),
+                                                                            ); // Display an error message
+                                                                          },
+                                                                        ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        // Positioned(
+                                                        //   right: -0,
+                                                        //   child: Container(
+                                                        //     padding: EdgeInsets
+                                                        //         .symmetric(
+                                                        //             horizontal:
+                                                        //                 15,
+                                                        //             vertical: 10),
+                                                        //     decoration:
+                                                        //         BoxDecoration(
+                                                        //       color: AppColors
+                                                        //           .lightPrimary,
+                                                        //       borderRadius:
+                                                        //           BorderRadius
+                                                        //               .only(
+                                                        //         bottomLeft: Radius
+                                                        //             .circular(8),
+                                                        //       ),
+                                                        //     ),
+                                                        //     child: Row(children: [
+                                                        //       Text(
+                                                        //         "${_jobsOpening}",
+                                                        //         style: bodyTextNormal(
+                                                        //             AppColors
+                                                        //                 .fontPrimary,
+                                                        //             FontWeight
+                                                        //                 .bold),
+                                                        //       ),
+                                                        //       SizedBox(
+                                                        //         width: 5,
+                                                        //       ),
+                                                        //       Text(
+                                                        //         "job open".tr,
+                                                        //         style: bodyTextNormal(
+                                                        //             AppColors
+                                                        //                 .fontPrimary,
+                                                        //             null),
+                                                        //       )
+                                                        //     ]),
+                                                        //   ),
+                                                        // )
+                                                      ],
+                                                    ),
 
                                                     //
                                                     //
@@ -1899,7 +2072,7 @@ class _MainHomeState extends State<MainHome> {
                                                                       .spaceBetween,
                                                               children: [
                                                                 SizedBox(
-                                                                  height: 40,
+                                                                  height: 20,
                                                                 ),
                                                                 Container(
                                                                   child: Column(
@@ -1934,12 +2107,20 @@ class _MainHomeState extends State<MainHome> {
                                                                           MainAxisAlignment
                                                                               .center,
                                                                       children: [
-                                                                        FaIcon(
-                                                                          FontAwesomeIcons
-                                                                              .solidUser,
-                                                                          size:
-                                                                              IconSize.xsIcon,
+                                                                        Text(
+                                                                          "\uf275",
+                                                                          style: fontAwesomeRegular(
+                                                                              null,
+                                                                              12,
+                                                                              AppColors.iconDark,
+                                                                              null),
                                                                         ),
+                                                                        // FaIcon(
+                                                                        //   FontAwesomeIcons
+                                                                        //       .industry,
+                                                                        //   size:
+                                                                        //       IconSize.xsIcon,
+                                                                        // ),
                                                                         SizedBox(
                                                                           width:
                                                                               5,
@@ -1968,11 +2149,13 @@ class _MainHomeState extends State<MainHome> {
                                                                           MainAxisAlignment
                                                                               .center,
                                                                       children: [
-                                                                        FaIcon(
-                                                                          FontAwesomeIcons
-                                                                              .locationDot,
-                                                                          size:
-                                                                              IconSize.xsIcon,
+                                                                        Text(
+                                                                          "\uf007",
+                                                                          style: fontAwesomeRegular(
+                                                                              null,
+                                                                              12,
+                                                                              AppColors.iconDark,
+                                                                              null),
                                                                         ),
                                                                         SizedBox(
                                                                           width:
@@ -2058,8 +2241,8 @@ class _MainHomeState extends State<MainHome> {
                                                           Positioned(
                                                             top: -40,
                                                             child: Container(
-                                                              height: 90,
-                                                              width: 90,
+                                                              height: 70,
+                                                              width: 70,
                                                               decoration:
                                                                   BoxDecoration(
                                                                 border:
@@ -2094,7 +2277,7 @@ class _MainHomeState extends State<MainHome> {
                                                                         )
                                                                       : Image
                                                                           .network(
-                                                                          "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                                          "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${i['logo']}",
                                                                           fit: BoxFit
                                                                               .contain,
                                                                           errorBuilder: (context,

@@ -1,7 +1,5 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_final_fields, unused_field, non_constant_identifier_names, prefer_const_literals_to_create_immutables, prefer_typing_uninitialized_variables, curly_braces_in_flow_control_structures, unused_local_variable, avoid_print, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_if_null_operators
 
-import 'package:app/functions/alert_dialog.dart';
-import 'package:app/functions/api.dart';
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
@@ -27,12 +25,16 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  TextEditingController _fullNameController = TextEditingController();
+
   TextEditingController _phoneNumberController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+
   TextEditingController _passwordController = TextEditingController();
 
   String _name = "";
   String _email = "";
-  dynamic _phoneNumber;
+  String _phoneNumber = "";
   String _password = "";
 
   bool _isCheckTelAndEmail = true;
@@ -44,7 +46,25 @@ class _RegisterState extends State<Register> {
       //_isCheckTelAndEmail = true / Phone Number
       //_isCheckTelAndEmail = false / Email
       _isCheckTelAndEmail = !_isCheckTelAndEmail;
+      _email = "";
+      _phoneNumber = "";
+      _password = "";
+
+      _phoneNumberController.text = _phoneNumber;
+      _emailController.text = _email;
+      _passwordController.text = _password;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _fullNameController.text = _name;
+    _phoneNumberController.text = _phoneNumber;
+    _emailController.text = _email;
+    _passwordController.text = _password;
   }
 
   @override
@@ -195,34 +215,35 @@ class _RegisterState extends State<Register> {
                               //
                               //
                               //Name
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "fullname".tr,
-                                    style:
-                                        bodyTextNormal(null, FontWeight.bold),
-                                  ),
-                                  SizedBox(
-                                    height: 2.w, //5
-                                  ),
-                                  SimpleTextFieldWithIconRight(
-                                    changed: (value) {
-                                      setState(() {
-                                        _name = value;
-                                      });
-                                    },
-                                    hintText: "fullname".tr,
-                                    hintTextFontWeight: FontWeight.bold,
-                                    suffixIcon: Icon(
-                                      Icons.keyboard,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5.w, //20
-                              ),
+                              // Column(
+                              //   crossAxisAlignment: CrossAxisAlignment.start,
+                              //   children: [
+                              //     Text(
+                              //       "fullname".tr,
+                              //       style:
+                              //           bodyTextNormal(null, FontWeight.bold),
+                              //     ),
+                              //     SizedBox(
+                              //       height: 2.w, //5
+                              //     ),
+                              //     SimpleTextFieldWithIconRight(
+                              //       textController: _fullNameController,
+                              //       changed: (value) {
+                              //         setState(() {
+                              //           _name = value;
+                              //         });
+                              //       },
+                              //       hintText: "fullname".tr,
+                              //       hintTextFontWeight: FontWeight.bold,
+                              //       suffixIcon: Icon(
+                              //         Icons.keyboard,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                              // SizedBox(
+                              //   height: 5.w, //20
+                              // ),
 
                               // Text("${_phoneNumber}"),
 
@@ -276,6 +297,7 @@ class _RegisterState extends State<Register> {
                                       height: 2.w, //5
                                     ),
                                     SimpleTextFieldWithIconRight(
+                                      textController: _emailController,
                                       changed: (value) {
                                         setState(() {
                                           _email = value;
@@ -305,6 +327,7 @@ class _RegisterState extends State<Register> {
                                     height: 2.w, //5
                                   ),
                                   TextFieldPassword(
+                                    codeController: _passwordController,
                                     isObscure: _isObscure,
                                     changed: (value) {
                                       setState(() {
@@ -354,7 +377,21 @@ class _RegisterState extends State<Register> {
                                 fontWeight: FontWeight.bold,
                                 press: () {
                                   if (formkey.currentState!.validate()) {
-                                    register();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => VerificationCode(
+                                          verifyCode: _isCheckTelAndEmail
+                                              ? 'verifyPhoneNum'
+                                              : 'verifyEmail',
+                                          fromRegister: 'fromRegister',
+                                          // name: _name,
+                                          phoneNumber: _phoneNumber,
+                                          email: _email,
+                                          password: _password,
+                                        ),
+                                      ),
+                                    );
                                   }
                                 },
                               ),
@@ -430,6 +467,9 @@ class _RegisterState extends State<Register> {
                                   BoxDecorationIcon(
                                     padding: EdgeInsets.all(13),
                                     StrImage: 'assets/image/facebook.png',
+                                    press: () {
+                                      AuthService().loginWithFacebook(context);
+                                    },
                                   )
                                 ],
                               ),
@@ -532,69 +572,56 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  register() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustomAlertLoading();
-      },
-    );
-    await postData(apiRegisterSeeker, {
-      "name": _name,
-      "email": _email,
-      "mobile": _phoneNumber.toString(),
-      "password": _password
-    }).then((value) async {
-      print(value);
-      Navigator.pop(context);
+  // register() async {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) {
+  //       return CustomAlertLoading();
+  //     },
+  //   );
+  //   await postData(apiRegisterSeeker, {
+  //     "name": _name,
+  //     "email": _email,
+  //     "mobile": _phoneNumber.toString(),
+  //     "password": _password
+  //   }).then((value) async {
+  //     print(value);
+  //     Navigator.pop(context);
 
-      if (value['token'] != null) {
-        String token = value['token'].toString();
-        print("register token " + value['token'].toString());
+  //     if (value['token'] != null) {
+  //       String token = value['token'].toString();
+  //       print("register token " + value['token'].toString());
 
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VerificationCode(
-              verifyCode:
-                  _isCheckTelAndEmail ? 'verifyPhoneNum' : 'verifyEmail',
-              fromRegister: 'fromRegister',
-              token: token,
-              phoneNumber: _phoneNumber,
-              email: _email,
-            ),
-          ),
-        );
-      } else {
-        print("message: ${value['message']}");
+  //       await Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => VerificationCode(
+  //             verifyCode:
+  //                 _isCheckTelAndEmail ? 'verifyPhoneNum' : 'verifyEmail',
+  //             fromRegister: 'fromRegister',
+  //             token: token,
+  //             phoneNumber: _phoneNumber,
+  //             email: _email,
+  //           ),
+  //         ),
+  //       );
+  //     } else {
+  //       print("message: ${value['message']}");
 
-        await showDialog(
-          context: context,
-          builder: (context) {
-            return CustomAlertDialogWarning(
-              title: "Warning",
-              text: value['message'] == null ? "Invalid" : value['message'],
-              press: () {
-                Navigator.pop(context);
-              },
-            );
-          },
-        );
-      }
-    });
-
-    // if (result != "" || result != null) {
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => VerificationCode(
-    //         verifyCode: _isCheckTelAndEmail ? 'verifyPhoneNum' : 'verifyEmail',
-    //         fromRegister: 'fromRegister',
-    //         tokenRegister: result,
-    //       ),
-    //     ),
-    //   );
-    // }
-  }
+  //       await showDialog(
+  //         context: context,
+  //         builder: (context) {
+  //           return CustomAlertDialogWarning(
+  //             title: "Warning",
+  //             text: value['message'] == null ? "Invalid" : value['message'],
+  //             press: () {
+  //               Navigator.pop(context);
+  //             },
+  //           );
+  //         },
+  //       );
+  //     }
+  //   });
+  // }
 }

@@ -6,10 +6,10 @@ import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 //Url Server Dev
-// const String globalURL = 'https://db.dev.108.jobs/application-api';
+const String globalURL = 'https://db-dev.108.jobs/application-api';
 
 //Url Server 108Jobs
-const String globalURL = 'https://db.108.jobs/application-api';
+// const String globalURL = 'https://db.108.jobs/application-api';
 
 //Login with google && facebook
 const apiLoginWithGoogle = globalURL + "/seeker-signup-google-app";
@@ -19,9 +19,18 @@ const apiSyncGoogleFacebookAip = globalURL + "/sync-google-facebook-seeker-app";
 //Register
 var apiRegisterSeeker = globalURL + '/register-basic-member-seeker-app';
 var apiVerifyCodeSeeker = globalURL + '/verify-register-code-seeker-app';
+var apiNewVerifyCodeSeeker = globalURL + '/seeker-verify-request-register-app';
+var apirequestOTPRegisterSeeker =
+    globalURL + '/seeker-request-otp-register-app';
+
+//Reset new Password
+var apiResetNewPasswordSeeker = globalURL + "/seeker-reset-password-app";
 
 //Set Password
-var setPasswordSeeker = globalURL + "/seeker-reset-password-app";
+var apiSetPasswordSeeker = globalURL + "/seeker-set-password-app";
+
+//Delere Account
+var apiDeleteAccountSeeker = globalURL + "/seeker-delete-account-app";
 
 //Login
 var apiSigInSeeker = globalURL + "/seeker-login-app";
@@ -37,6 +46,8 @@ var addPhoneNumEmailPassApiSeeker = globalURL + "/seeker-set-mobile-email-app";
 //Forgot Password
 var requestOTPCodeApiSeeker = globalURL + "/seeker-request-verification-app";
 var resendOTPCodeApiSeeker = globalURL + "/seeker-resend-verification-app";
+var apiNewResendOTPCodeApiSeeker =
+    globalURL + "/seeker-resend-request-otp-register-verify-code-app";
 
 //
 //Job Search
@@ -84,6 +95,10 @@ var getMyJobSeekerApi = globalURL + "/seeker-get-my-job-app";
 var getNotificationsSeeker = globalURL + "/notify-historied-app";
 
 //
+//Messages
+var getMessageDetailSeeker = globalURL + "/message-detail-app/";
+
+//
 //My Profile
 var getProfileSeekerApi = globalURL + "/seeker-profile-app";
 var getTotalMyJobSeekerApi = globalURL + "/seeker-get-totals-myjob-app";
@@ -124,7 +139,7 @@ var addSkillSeekerApi = globalURL + "/add-skill-seeker-app";
 var deleteSkillSeekerApi = globalURL + "/delete-skill-seeker-app/";
 
 //Language
-var getKeySkillSeekerApi = globalURL + "/get-keyskills-job-seeker-app?";
+var getKeySkillSeekerApi = globalURL + "/get-keyskills-job-seeker-new-app";
 var addLanguageSeekerApi = globalURL + "/add-languageskill-seeker-app";
 var deleteLanguageSeekerApi = globalURL + "/delete-languageskill-seeker-app/";
 
@@ -160,8 +175,8 @@ fetchData(url) async {
     return jsonDecode(res.body);
   } else if (res.statusCode == 409) {
     return jsonDecode(res.body);
-  } else {
-    return jsonDecode(res.body);
+  } else if (res.statusCode == 401) {
+    return res.body;
   }
 }
 

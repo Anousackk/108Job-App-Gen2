@@ -35,23 +35,23 @@ class _ButtonDefaultState extends State<ButtonDefault> {
       // height: 12.w,
       child: TextButton(
         style: ButtonStyle(
-          side: MaterialStateProperty.resolveWith<BorderSide>(
-            (Set<MaterialState> states) {
+          side: WidgetStateProperty.resolveWith<BorderSide>(
+            (Set<WidgetState> states) {
               return BorderSide(
                 color: widget.buttonBorderColor ?? AppColors.borderWhite,
               ); // Default border color
             },
           ),
-          padding: MaterialStateProperty.all<EdgeInsets>(
+          padding: WidgetStateProperty.all<EdgeInsets>(
             EdgeInsets.symmetric(horizontal: 20),
           ),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius:
                   widget.boxDecBorderRadius ?? BorderRadius.circular(12.w),
             ),
           ),
-          backgroundColor: MaterialStateProperty.all(
+          backgroundColor: WidgetStateProperty.all(
             widget.colorButton == null ? AppColors.primary : widget.colorButton,
           ),
         ),
@@ -161,7 +161,7 @@ class Button extends StatefulWidget {
   final Color? colorText;
   final FontWeight? fontWeight;
   final double? height;
-  final MaterialStateProperty<EdgeInsetsGeometry?>? paddingButton;
+  final WidgetStateProperty<EdgeInsetsGeometry?>? paddingButton;
 
   final Function()? press;
 
@@ -178,23 +178,23 @@ class _ButtonState extends State<Button> {
       child: TextButton(
         style: ButtonStyle(
           padding: widget.paddingButton ??
-              MaterialStateProperty.all<EdgeInsets>(
+              WidgetStateProperty.all<EdgeInsets>(
                 EdgeInsets.zero,
               ),
-          side: MaterialStateProperty.resolveWith<BorderSide>(
-            (Set<MaterialState> states) {
+          side: WidgetStateProperty.resolveWith<BorderSide>(
+            (Set<WidgetState> states) {
               return BorderSide(
                 color: widget.buttonBorderColor ??
                     AppColors.borderWhite.withOpacity(0),
               ); // Default border color
             },
           ),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.w),
             ),
           ),
-          backgroundColor: MaterialStateProperty.all(
+          backgroundColor: WidgetStateProperty.all(
             widget.colorButton == null ? AppColors.primary : widget.colorButton,
           ),
         ),
@@ -241,20 +241,20 @@ class _SimpleButtonState extends State<SimpleButton> {
       height: 12.w,
       child: TextButton(
         style: ButtonStyle(
-          side: MaterialStateProperty.resolveWith<BorderSide>(
-            (Set<MaterialState> states) {
+          side: WidgetStateProperty.resolveWith<BorderSide>(
+            (Set<WidgetState> states) {
               return BorderSide(
                 color: widget.buttonBorderColor ??
                     AppColors.borderWhite.withOpacity(0),
               ); // Default border color
             },
           ),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(1.5.w),
             ),
           ),
-          backgroundColor: MaterialStateProperty.all(
+          backgroundColor: WidgetStateProperty.all(
             widget.colorButton == null
                 ? AppColors.buttonPrimary
                 : widget.colorButton,

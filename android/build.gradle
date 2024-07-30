@@ -1,5 +1,7 @@
 buildscript {
-    ext.kotlin_version = '1.8.21'
+    // ext.kotlin_version = '1.8.21'
+    ext.kotlin_version = '1.9.23'
+
     repositories {
         google()
         mavenCentral()
@@ -8,7 +10,7 @@ buildscript {
     dependencies {
         // classpath 'com.google.gms:google-services:4.3.3'
         classpath 'com.google.gms:google-services:4.3.13'
-        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath 'com.android.tools.build:gradle:8.5.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -23,6 +25,8 @@ allprojects {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
     project.evaluationDependsOn(':app')
 }
 

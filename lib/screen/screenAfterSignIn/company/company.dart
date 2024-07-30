@@ -81,12 +81,6 @@ class _CompanyState extends State<Company> {
     List fetchedCompanies = res['employerList'];
     totals = res['totals'];
 
-    // Simulate a network call
-    // await Future.delayed(Duration(microseconds: 500));
-
-    // _companies = res['employerList'];
-
-    // setState(() {
     page++;
     _companies.addAll(List<Map<String, dynamic>>.from(fetchedCompanies));
     if (_companies.length >= totals || fetchedCompanies.length < perPage) {
@@ -101,6 +95,40 @@ class _CompanyState extends State<Company> {
       Navigator.pop(context);
     }
     // });
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  fetchCompaniesTypingSearch(String searchType) async {
+    setState(() {
+      _hasMoreData = true;
+      page = 1;
+    });
+    if (!_hasMoreData) {
+      _isLoadingMoreData = false;
+      return;
+    }
+
+    var res = await postData(getCompaniesSeekerApi, {
+      "companyName": _searchCompanyName,
+      "industryId": _selectedIndustryListItem,
+      "page": page,
+      "perPage": perPage,
+      "searchType": searchType
+    });
+
+    List fetchedCompanies = res['employerList'];
+    totals = res['totals'];
+
+    page++;
+    _companies.clear();
+    _companies.addAll(List<Map<String, dynamic>>.from(fetchedCompanies));
+    if (_companies.length >= totals || fetchedCompanies.length < perPage) {
+      _hasMoreData = false;
+    }
+    _isLoadingMoreData = false;
 
     if (mounted) {
       setState(() {});
@@ -325,17 +353,14 @@ class _CompanyState extends State<Company> {
 
                                     //
                                     //Start a new timer
-                                    _timer = Timer(Duration(seconds: 1), () {
+                                    _timer =
+                                        Timer(Duration(milliseconds: 500), () {
                                       //
                                       // Perform API call here
-                                      print('Calling API Get JobsSearch');
-                                      setState(() {
-                                        _statusShowLoading = true;
-                                        _companies.clear();
-                                        _hasMoreData = true;
-                                        page = 1;
-                                      });
-                                      fetchCompanies(_searchType);
+                                      print(
+                                          'Calling API get Companies after typing search');
+
+                                      fetchCompaniesTypingSearch(_searchType);
                                       // fetchCompanyFeature();
                                     });
                                   },
@@ -448,14 +473,26 @@ class _CompanyState extends State<Company> {
                                                   children: [
                                                     //
                                                     //
-                                                    //Featured cover image
-                                                    Expanded(
-                                                      flex: 2,
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: AppColors
-                                                              .greyShimmer,
+                                                    //
+                                                    //
+                                                    //Featured card cover
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .greyShimmer,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  8),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  8),
+                                                        ),
+                                                      ),
+                                                      child: AspectRatio(
+                                                        aspectRatio: 5 / 2,
+                                                        child: ClipRRect(
                                                           borderRadius:
                                                               BorderRadius.only(
                                                             topLeft:
@@ -465,10 +502,54 @@ class _CompanyState extends State<Company> {
                                                                 Radius.circular(
                                                                     8),
                                                           ),
+                                                          child:
+                                                              i['cardCover'] ==
+                                                                      ""
+                                                                  ? Center(
+                                                                      child:
+                                                                          Container(
+                                                                        padding:
+                                                                            EdgeInsets.only(bottom: 30),
+                                                                        child:
+                                                                            FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .image,
+                                                                          size:
+                                                                              40,
+                                                                          color:
+                                                                              AppColors.secondary,
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  : Image
+                                                                      .network(
+                                                                      "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${i['cardCover']}",
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      errorBuilder: (context,
+                                                                          error,
+                                                                          stackTrace) {
+                                                                        return Center(
+                                                                          child:
+                                                                              Container(
+                                                                            padding:
+                                                                                EdgeInsets.only(bottom: 30),
+                                                                            child:
+                                                                                FaIcon(
+                                                                              FontAwesomeIcons.image,
+                                                                              size: 40,
+                                                                              color: AppColors.secondary,
+                                                                            ),
+                                                                          ),
+                                                                        ); // Display an error message
+                                                                      },
+                                                                    ),
                                                         ),
                                                       ),
                                                     ),
 
+                                                    //
+                                                    //
                                                     //
                                                     //
                                                     //Featured details

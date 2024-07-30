@@ -819,9 +819,89 @@ class LocalString extends Translations {
       "la": "ປິດ",
     },
     {
+      "key": "message",
+      "en": "Message",
+      "la": "ຂໍ້ຄວາມ",
+    },
+    {
+      "key": "date",
+      "en": "Date",
+      "la": "ວັນທີ",
+    },
+    {
+      "key": "message detail",
+      "en": "Message detail",
+      "la": "ລາຍລະອຽດ ຂໍ້ຄວາມ",
+    },
+    {
       "key": "hide profile from companies",
       "en": "Hide your profile from these companies",
       "la": "ເຊື່ອງໂປຣໄຟລ໌ຂອງທ່ານຈາກບໍລິສັດເຫຼົ່ານີ້",
+    },
+
+    {
+      "key": "delete account",
+      "en": "Delete account",
+      "la": "ລົບບັນຊີ",
+    },
+    {
+      "key": "continue",
+      "en": "Continue",
+      "la": "ສືບຕໍ່",
+    },
+
+    {
+      "key": "account_delete_title",
+      "en":
+          "We regret your decision to leave.  Please be aware that deleting your account will result in:",
+      "la": "ພວກເຮົາເສຍໃຈທີ່ທ່ານຈະລົບບັນຊີຂອງທ່ານ, ການລົບບັນຊີຈະມີຜົນດັ່ງນີ້:",
+    },
+    {
+      "key": "account_delete_1",
+      "en":
+          "Due to recent changes, employers are no longer able to access your applications and profile.",
+      "la": "ບັນດາບໍລິສັດ ຈະບໍ່ສາມາດເຫັນໃບສະໝັກທ່ານຜ່ານມາຂອງທ່ານ.",
+    },
+    {
+      "key": "account_delete_2",
+      "en":
+          "Your 108Jobs profile and curriculum vitaes (CVs) have been entirely deleted.",
+      "la": "ໂປຣຟາຍ ແລະ ຊີວີ້ ຂອງທ່ານຈະຖືກລົບອອກຈາກລະບົບ.",
+    },
+    {
+      "key": "account_delete_3",
+      "en":
+          "We will not be sending you any further emails, including those related to job alerts or recommendations.",
+      "la": "ທ່ານຈະບໍ່ໄດ້ຮັບອີ່ເມວແຈ້ງເຕືອນວຽກ ຫຼື ວຽກແນະນຳຈາກພວກເຮົາອີກ.",
+    },
+    {
+      "key": "account_delete_4",
+      "en":
+          "Your account will be permanently deleted in 7 days. This action is irreversible and includes all data.",
+      "la":
+          "ຂໍ້ມູນທຸກຢ່າງໃນບັນຊີຂອງທ່ານຈະຖືກລົບອອກຢ່າງຖາວອນຈາກລະບົບພາຍໃນ 7 ວັນ",
+    },
+    {
+      "key": "account_delete_5",
+      "en":
+          "Accidentally deleted your account? Log back in within 7 days to recover it.",
+      "la":
+          "ພາຍໃນ 7 ວັນ, ທ່ານຍັງສາມາດກູ້ຄືນບັນຊີຂອງທ່ານດ້ວຍການເຂົ້າສູ່ລະບົບອີກຄັ້ງ. ",
+    },
+    {
+      "key": "are u sure delete account",
+      "en": "Are you sure to delete account?",
+      "la": "ທ່ານແນ່ໃຈບໍ່ທີ່ຈະລົບບັນຊີອອກຈາກລະບົບ?",
+    },
+    {
+      "key": "disconnect",
+      "en": "Disconnect",
+      "la": "ຍົກເລີກການເຊື່ອມຕໍ່",
+    },
+    {
+      "key": "are u sure disconnect",
+      "en": "Are you sure to delete disconnect?",
+      "la": "ທ່ານແນ່ໃຈບໍ່ທີ່ຈະຍົກເລີກການເຊື່ອມຕໍ່?",
     },
 
     //Hide your profile from these companies

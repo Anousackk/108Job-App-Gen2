@@ -3,7 +3,7 @@
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/login/login.dart';
-import 'package:app/screen/setPassword.dart/setPassword.dart';
+import 'package:app/screen/resetNewPassword.dart/resetNewPassword.dart';
 import 'package:app/widget/boxDecorationIcon.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +70,7 @@ class _VerificationSuccessState extends State<VerificationSuccess> {
                 height: 30,
               ),
               ButtonDefault(
+                buttonBorderColor: AppColors.borderBG,
                 text: widget.checkFromRegister == "fromRegister"
                     ? "close".tr
                     : "set pass".tr,
@@ -85,7 +86,7 @@ class _VerificationSuccessState extends State<VerificationSuccess> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SetPassword(
+                        builder: (context) => ResetNewPassword(
                           token: widget.token,
                         ),
                       ),

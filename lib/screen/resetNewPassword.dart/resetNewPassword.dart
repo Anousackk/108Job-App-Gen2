@@ -12,15 +12,15 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
-class SetPassword extends StatefulWidget {
-  const SetPassword({Key? key, this.token}) : super(key: key);
+class ResetNewPassword extends StatefulWidget {
+  const ResetNewPassword({Key? key, this.token}) : super(key: key);
   final token;
 
   @override
-  State<SetPassword> createState() => _SetPasswordState();
+  State<ResetNewPassword> createState() => _ResetNewPasswordState();
 }
 
-class _SetPasswordState extends State<SetPassword> {
+class _ResetNewPasswordState extends State<ResetNewPassword> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
@@ -78,6 +78,8 @@ class _SetPasswordState extends State<SetPassword> {
 
                           //
                           //
+                          //
+                          //
                           //Password
                           TextFormField(
                             controller: _passwordController,
@@ -112,6 +114,8 @@ class _SetPasswordState extends State<SetPassword> {
                             height: 30,
                           ),
 
+                          //
+                          //
                           //
                           //
                           //Confirm password
@@ -156,13 +160,15 @@ class _SetPasswordState extends State<SetPassword> {
 
                   //
                   //
+                  //
+                  //
                   //Button Save Password
                   Button(
                     text: "confirm".tr,
                     fontWeight: FontWeight.bold,
                     press: () async {
                       if (formkey.currentState!.validate()) {
-                        setPassword();
+                        resetNewPassword();
                       }
                     },
                   ),
@@ -178,8 +184,8 @@ class _SetPasswordState extends State<SetPassword> {
     );
   }
 
-  setPassword() async {
-    await postData(setPasswordSeeker, {
+  resetNewPassword() async {
+    await postData(apiResetNewPasswordSeeker, {
       "changePassToken": widget.token,
       "newPassword": _password,
       "confirmPassword": _confirmPassword,

@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -15,10 +15,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 3.1.3+3
+version: 3.1.7+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0" 
+  sdk: ">=2.12.0 <3.22.2"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,41 +30,40 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   carousel_slider:
   cached_network_image:
-  graphql_flutter: 
+  graphql_flutter:
   flutter_widget_from_html_core: ^0.14.11
-  shimmer: 
-  dotted_border: 
-  file_picker: 
+  shimmer:
+  dotted_border:
+  file_picker:
   animated_size_and_fade:
   shared_preferences:
-  validators: 
-  dio: 
+  validators:
+  dio:
   path_provider:
-  http_parser: 
-  flutter_native_splash: 
-  fluttertoast: 
-  device_info_plus:
+  http_parser:
+  flutter_native_splash:
+  fluttertoast:
+  device_info_plus: ^10.1.0
   auto_size_text:
-  # flutter_phoenix: 
+  # flutter_phoenix:
   url_launcher: ^6.2.6
-  page_transition: 
-  photo_view: 
-  youtube_plyr_iframe: 
-  intl: 
-  share: 
-  firebase_messaging: 
-  firebase_core: 
-  firebase_auth:
-  flutter_local_notifications:
+  page_transition:
+  photo_view:
+  youtube_plyr_iframe:
+  intl:
+  share:
+  firebase_messaging:
+  firebase_core:
+  firebase_auth: ^5.1.1
+  flutter_local_notifications: ^12.0.1+1
   sms_autofill:
   flutter_smart_dialog:
-  upgrader:
+  upgrader: ^10.3.0
   sizer:
   form_field_validator:
   get:
@@ -77,10 +76,15 @@ dependencies:
   permission_handler:
   multi_dropdown:
   flutter_inset_box_shadow:
-  new_version:
   image_picker: ^1.0.7
   hexcolor: ^3.0.1
-  # flutter_quill: ^9.5.3
+  flutter_quill: ^9.5.3
+  flutter_keyboard_visibility: ^6.0.0
+  html:
+  # money_formatter: ^0.0.6
+  # currency_text_input_formatter: ^2.2.3
+  # connectivity_plus: ^6.0.3
+  # flutter_inappwebview: ^5.8.0
   # flutter_phoenix: ^1.0.0
 flutter_native_splash:
   image: assets/image/Logo108.png
@@ -103,16 +107,14 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
   # To add assets to your application, add an assets section, like this:
   assets:
-   - assets/image/
-   - assets/font/
-
+    - assets/image/
+    - assets/font/
 
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -142,7 +144,7 @@ flutter:
         - asset: assets/font/fa-light-300.ttf
     - family: PoppinsMedium
       fonts:
-        - asset: assets/font/Poppins-Medium.ttf 
+        - asset: assets/font/Poppins-Medium.ttf
     - family: PoppinsRegular
       fonts:
         - asset: assets/font/Poppins-Regular.ttf
@@ -155,7 +157,22 @@ flutter:
     - family: NotoSansLaoRegular
       fonts:
         - asset: assets/font/NotoSansLao-Regular.ttf
-    
+    - family: SatoshiBlack
+      fonts:
+        - asset: assets/font/Satoshi-Black.ttf
+    - family: SatoshiBold
+      fonts:
+        - asset: assets/font/Satoshi-Bold.ttf
+    - family: SatoshiLight
+      fonts:
+        - asset: assets/font/Satoshi-Light.ttf
+    - family: SatoshiMedium
+      fonts:
+        - asset: assets/font/Satoshi-Medium.ttf
+    - family: SatoshiRegular
+      fonts:
+        - asset: assets/font/Satoshi-Regular.ttf
+
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

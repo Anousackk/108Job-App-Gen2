@@ -172,6 +172,8 @@ class _LoginState extends State<Login> {
       "password": _password,
     });
 
+    print('${res}');
+
     if (res != null) {
       Navigator.pop(context);
     }
@@ -198,7 +200,6 @@ class _LoginState extends State<Login> {
       Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(builder: (context) => Home()), (route) => false);
     } else if (res['message'] != null) {
-      print(res['message']);
       await showDialog(
         context: context,
         builder: (context) {

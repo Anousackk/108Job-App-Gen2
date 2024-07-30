@@ -128,7 +128,7 @@ class _MyProfileState extends State<MyProfile>
             return CupertinoAlertDialogOk(
               title: '“108 Jobs” Would like to Access Your Photos',
               contentText:
-                  "Allow “108 Jobs” to access your photos to send image to your manager, to detect your face.",
+                  "'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.",
               text: 'Continue',
             );
           },
@@ -146,7 +146,7 @@ class _MyProfileState extends State<MyProfile>
             return CupertinoAlertDialogOk(
               title: 'Allow Access Photos',
               contentText:
-                  "“108 Jobs” needs to access your photos to send image to your manager, to detect your face. \n Please go to Setting and turn on the permission.",
+                  "'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.",
               text: 'Continue',
             );
           },
@@ -604,6 +604,18 @@ class _MyProfileState extends State<MyProfile>
   }
 }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //Profile Detail
@@ -1965,9 +1977,9 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             ).then(widget.onGoBack);
                           },
                         ),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
+                  SizedBox(
+                    height: 20,
+                  ),
 
                   // Button(
                   //   text: "Request for review",

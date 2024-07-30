@@ -139,58 +139,57 @@ class _AccountState extends State<Account> {
                                   //
                                   //
                                   //Placeholder circle for profile picture
-                                  DottedBorder(
-                                    dashPattern: [6, 7],
-                                    strokeWidth: 2,
-                                    borderType: BorderType.Circle,
-                                    color: AppColors.borderWhite,
-                                    borderPadding: EdgeInsets.all(1),
-                                    child: Container(
-                                      width: 150,
-                                      height: 150,
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        child: _imageSrc == ""
-                                            ? Image.asset(
-                                                'assets/image/no-image-available.png',
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.network(
-                                                "${_imageSrc}",
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (context, error,
-                                                    stackTrace) {
-                                                  return Image.asset(
-                                                    'assets/image/no-image-available.png',
-                                                    fit: BoxFit.cover,
-                                                  ); // Display an error message
-                                                },
-                                              ),
-                                      ),
-
-                                      // decoration: BoxDecoration(
-                                      //   shape: BoxShape.circle,
-                                      //   color: AppColors.greyOpacity,
-                                      //   image: _imageSrc == ""
-                                      //       ? DecorationImage(
-                                      //           image: AssetImage(
-                                      //               'assets/image/def-profile.png'),
-                                      //           fit: BoxFit.cover,
-                                      //         )
-                                      //       : DecorationImage(
-                                      //           image: NetworkImage(_imageSrc),
-                                      //           fit: BoxFit.cover,
-                                      //         ),
-                                      // ),
-
-                                      // child: CircleAvatar(
-                                      //   radius: 90,
-                                      //   backgroundImage:
-                                      //       AssetImage('assets/image/def-profile.png'),
-                                      // ),
+                                  // DottedBorder(
+                                  // dashPattern: [6, 7],
+                                  // strokeWidth: 2,
+                                  // borderType: BorderType.Circle,
+                                  // color: AppColors.borderWhite,
+                                  // borderPadding: EdgeInsets.all(1),
+                                  Container(
+                                    width: 150,
+                                    height: 150,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: _imageSrc == ""
+                                          ? Image.asset(
+                                              'assets/image/defprofile.jpg',
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Image.network(
+                                              "${_imageSrc}",
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Image.asset(
+                                                  'assets/image/defprofile.jpg',
+                                                  fit: BoxFit.cover,
+                                                ); // Display an error message
+                                              },
+                                            ),
                                     ),
+
+                                    // decoration: BoxDecoration(
+                                    //   shape: BoxShape.circle,
+                                    //   color: AppColors.greyOpacity,
+                                    //   image: _imageSrc == ""
+                                    //       ? DecorationImage(
+                                    //           image: AssetImage(
+                                    //               'assets/image/def-profile.png'),
+                                    //           fit: BoxFit.cover,
+                                    //         )
+                                    //       : DecorationImage(
+                                    //           image: NetworkImage(_imageSrc),
+                                    //           fit: BoxFit.cover,
+                                    //         ),
+                                    // ),
+
+                                    // child: CircleAvatar(
+                                    //   radius: 90,
+                                    //   backgroundImage:
+                                    //       AssetImage('assets/image/def-profile.png'),
+                                    // ),
                                   ),
+                                  // ),
                                   //
                                   //
                                   //Status Seeker on top profile image
@@ -258,7 +257,7 @@ class _AccountState extends State<Account> {
                               textAlign: TextAlign.center,
                             ),
                             SizedBox(
-                              height: 5,
+                              height: 20,
                             ),
                           ],
                         ),
@@ -365,6 +364,7 @@ class _AccountState extends State<Account> {
                               mainAxisAlignmentTextIcon:
                                   MainAxisAlignment.start,
                               text: "login info".tr,
+
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.chevronRight,
                                 color: AppColors.iconGrayOpacity,

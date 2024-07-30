@@ -4,31 +4,33 @@ import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
-import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
+import 'package:app/screen/screenAfterSignIn/message/messageDetail.dart';
 import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:html/parser.dart' show parse;
+import 'package:html/dom.dart' as dom;
 
-class Notifications extends StatefulWidget {
-  const Notifications({Key? key, this.callbackTotalNoti, this.statusFromScreen})
-      : super(key: key);
-  static String routeName = '/Notifications';
+class Messages extends StatefulWidget {
+  const Messages({
+    Key? key,
+    this.callbackTotalNoti,
+  }) : super(key: key);
+  static String routeName = '/Message';
   final Function(String)? callbackTotalNoti;
-  final statusFromScreen;
 
   @override
-  State<Notifications> createState() => _NotificationsState();
+  State<Messages> createState() => _MessagesState();
 }
 
-class _NotificationsState extends State<Notifications> {
+class _MessagesState extends State<Messages> {
   ScrollController _scrollController = ScrollController();
 
-  List _listNotifications = [];
-  String _title = "";
-  dynamic _openingDate;
-  dynamic _closingDate;
+  List _listMessages = [];
+  String _message = "";
+  dynamic _createdAt;
   dynamic _status;
   bool _isLoading = false;
   bool _isLoadingMoreData = false;
@@ -37,27 +39,25 @@ class _NotificationsState extends State<Notifications> {
   dynamic page = 1;
   dynamic perPage = 10;
   dynamic totals;
-  dynamic totalNotiUnRead;
+  dynamic totalMessageUnRead;
 
-  fetchNotifications() async {
+  fetchMessages() async {
     if (!_hasMoreData) {
       _isLoadingMoreData = false;
       return;
     }
 
     var res = await postData(getNotificationsSeeker,
-        {"page": page, "perPage": perPage, "type": "Notification_Page"});
+        {"page": page, "perPage": perPage, "type": "Messages_Page"});
 
     List fetchNotification = res['notifyList'];
-    // _listNotifications = res['notifyList'];
+    // _listMessages = res['notifyList'];
     totals = res['totals'];
-    totalNotiUnRead = res['unreadTotals'].toString();
+    totalMessageUnRead = res['unreadTotals'].toString();
 
     page++;
-    _listNotifications
-        .addAll(List<Map<String, dynamic>>.from(fetchNotification));
-    if (_listNotifications.length >= totals ||
-        fetchNotification.length < perPage) {
+    _listMessages.addAll(List<Map<String, dynamic>>.from(fetchNotification));
+    if (_listMessages.length >= totals || fetchNotification.length < perPage) {
       _hasMoreData = false;
     }
     _isLoadingMoreData = false;
@@ -68,16 +68,21 @@ class _NotificationsState extends State<Notifications> {
     }
   }
 
-  fetchApiCheckTotalNotiUnRead() async {
+  fetchApiCheckTotalMessageUnRead() async {
     var e = await postData(getNotificationsSeeker,
-        {"page": page, "perPage": perPage, "type": "Notification_Page"});
+        {"page": page, "perPage": perPage, "type": "Messages_Page"});
     setState(() {
-      totalNotiUnRead = e['unreadTotals'].toString();
+      totalMessageUnRead = e['unreadTotals'].toString();
     });
-    print(totalNotiUnRead);
+    print(totalMessageUnRead);
     if (mounted) {
       setState(() {});
     }
+  }
+
+  String parseHtmlString(String htmlString) {
+    dom.Document document = parse(htmlString);
+    return document.body?.text ?? '';
   }
 
   @override
@@ -85,7 +90,7 @@ class _NotificationsState extends State<Notifications> {
     super.initState();
 
     _isLoading = true;
-    fetchNotifications();
+    fetchMessages();
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
@@ -93,7 +98,7 @@ class _NotificationsState extends State<Notifications> {
         setState(() {
           _isLoadingMoreData = true;
         });
-        fetchNotifications();
+        fetchMessages();
       }
     });
   }
@@ -124,10 +129,9 @@ class _NotificationsState extends State<Notifications> {
                         alignment: Alignment.center,
                         child: Row(
                           children: [
-                            // if (widget.statusFromScreen == "HomeScreen")
                             GestureDetector(
                               onTap: () {
-                                Navigator.of(context).pop(totalNotiUnRead);
+                                Navigator.of(context).pop(totalMessageUnRead);
                               },
                               child: FaIcon(
                                 FontAwesomeIcons.arrowLeft,
@@ -138,7 +142,7 @@ class _NotificationsState extends State<Notifications> {
                               child: Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  "notification".tr,
+                                  "message".tr,
                                   style: bodyTextMedium(null, FontWeight.bold),
                                 ),
                               ),
@@ -146,7 +150,7 @@ class _NotificationsState extends State<Notifications> {
                           ],
                         ),
                       ),
-                      _listNotifications.length > 0
+                      _listMessages.length > 0
                           ? Expanded(
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -154,9 +158,9 @@ class _NotificationsState extends State<Notifications> {
                                   controller: _scrollController,
                                   shrinkWrap: true,
                                   physics: ClampingScrollPhysics(),
-                                  itemCount: _listNotifications.length + 1,
+                                  itemCount: _listMessages.length + 1,
                                   itemBuilder: (context, index) {
-                                    if (index == _listNotifications.length) {
+                                    if (index == _listMessages.length) {
                                       return _hasMoreData
                                           ? Padding(
                                               padding:
@@ -180,7 +184,7 @@ class _NotificationsState extends State<Notifications> {
                                           //         setState(() {
                                           //           _isLoadingMoreData = true;
                                           //         }),
-                                          //         fetchNotifications(),
+                                          //         fetchMessages(),
                                           //       },
                                           //       child: Text(
                                           //         'view more'.tr,
@@ -198,12 +202,11 @@ class _NotificationsState extends State<Notifications> {
                                                       Text('no have data'.tr)),
                                             );
                                     }
-                                    dynamic i = _listNotifications[index];
-                                    _title = i['title'];
-                                    _openingDate = i['openingDate'];
-                                    _closingDate = i['closingDate'];
+                                    dynamic i = _listMessages[index];
+
+                                    _message = parseHtmlString(i['message']);
+                                    _createdAt = i['createdAt'];
                                     _status = i['status'];
-                                    // _status = true;
 
                                     //
                                     //Open Date
@@ -212,28 +215,15 @@ class _NotificationsState extends State<Notifications> {
                                         value: '',
                                         currentFormat: '',
                                         desiredFormat: '');
-                                    DateTime openDate = parsDateTime(
-                                        value: _openingDate,
+                                    DateTime createdAt = parsDateTime(
+                                        value: _createdAt,
                                         currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
                                         desiredFormat: "yyyy-MM-dd HH:mm:ss");
                                     //
                                     //Format to string 13-03-2024
-                                    _openingDate = DateFormat('dd-MM-yyyy')
-                                        .format(openDate);
+                                    _createdAt = DateFormat('dd-MM-yyyy')
+                                        .format(createdAt);
 
-                                    //pars ISO to Flutter DateTime
-                                    parsDateTime(
-                                        value: '',
-                                        currentFormat: '',
-                                        desiredFormat: '');
-                                    DateTime closeDate = parsDateTime(
-                                        value: _closingDate,
-                                        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                        desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                    //
-                                    //Format to string 13-03-2024
-                                    _closingDate = DateFormat('dd-MM-yyyy')
-                                        .format(closeDate);
                                     return Column(
                                       children: [
                                         GestureDetector(
@@ -242,29 +232,30 @@ class _NotificationsState extends State<Notifications> {
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    JobSearchDetail(
-                                                  jobId: i['jobId'],
+                                                    MessageDetail(
+                                                  messageId: i['msgId'],
                                                   status: i['status'],
                                                 ),
                                               ),
                                             ).then((value) async {
-                                              if (value[1] != "") {
-                                                await fetchApiCheckTotalNotiUnRead();
+                                              if (value != "") {
+                                                print("call back mess id : " +
+                                                    value);
+                                                await fetchApiCheckTotalMessageUnRead();
 
                                                 setState(() {
-                                                  dynamic job =
-                                                      _listNotifications
-                                                          .firstWhere((e) =>
-                                                              e['jobId'] ==
-                                                              value[1]);
-                                                  job["status"] = false;
+                                                  dynamic mes = _listMessages
+                                                      .firstWhere((m) =>
+                                                          m['msgId'] == value);
+                                                  print(mes.toString());
+                                                  mes["status"] = false;
 
                                                   Future.delayed(
                                                       Duration(
                                                           milliseconds: 100),
                                                       () {
                                                     widget.callbackTotalNoti!(
-                                                        totalNotiUnRead
+                                                        totalMessageUnRead
                                                             .toString());
                                                   });
                                                 });
@@ -307,7 +298,7 @@ class _NotificationsState extends State<Notifications> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                        "${_title}",
+                                                        "${_message}",
                                                         style: bodyTextMaxNormal(
                                                             _status
                                                                 ? null
@@ -323,37 +314,19 @@ class _NotificationsState extends State<Notifications> {
                                                       Row(
                                                         children: [
                                                           Text(
-                                                            "opening date".tr +
-                                                                ": ",
+                                                            "date".tr + ": ",
                                                             style: bodyTextSmall(
                                                                 AppColors
                                                                     .fontGreyOpacity),
                                                           ),
                                                           Text(
-                                                            "${_openingDate}",
+                                                            "${_createdAt}",
                                                             style: bodyTextSmall(
                                                                 AppColors
                                                                     .fontGreyOpacity),
                                                           ),
                                                         ],
                                                       ),
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            "closing date".tr +
-                                                                ": ",
-                                                            style: bodyTextSmall(
-                                                                AppColors
-                                                                    .fontGreyOpacity),
-                                                          ),
-                                                          Text(
-                                                            "${_closingDate}",
-                                                            style: bodyTextSmall(
-                                                                AppColors
-                                                                    .fontGreyOpacity),
-                                                          ),
-                                                        ],
-                                                      )
                                                     ],
                                                   ),
                                                 ),
@@ -384,8 +357,7 @@ class _NotificationsState extends State<Notifications> {
                           child: Center(child: CircularProgressIndicator()),
                         ),
                     ],
-                  ),
-                ),
+                  )),
         ),
       ),
     );

@@ -208,6 +208,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
                       //
                       //
+                      //
+                      //
                       //Name
                       Text(
                         "first name".tr,
@@ -237,6 +239,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
                       //
                       //
+                      //
+                      //
                       //LastName
                       Text(
                         "last name".tr,
@@ -264,6 +268,9 @@ class _PersonalInformationState extends State<PersonalInformation> {
                         height: 20,
                       ),
 
+                      //
+                      //
+                      //
                       //
                       //
                       //Date of birth
