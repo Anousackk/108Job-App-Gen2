@@ -57,6 +57,8 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
     var res = await fetchData(informationApiSeeker);
     _passwordStatus = res["info"]["passwordStatus"];
     print(_passwordStatus);
+
+    setState(() {});
   }
 
   @override

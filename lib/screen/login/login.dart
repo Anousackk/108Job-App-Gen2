@@ -27,6 +27,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:sizer/sizer.dart';
 // import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 
@@ -590,12 +591,19 @@ class _LoginState extends State<Login> {
 
                                   //
                                   //
+                                  //
+                                  //
+                                  //
+                                  //
+                                  //
+                                  //
                                   //Signe in with orther
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+                                      //
                                       //
                                       //Google Log in
                                       BoxDecorationIcon(
@@ -609,6 +617,8 @@ class _LoginState extends State<Login> {
                                       SizedBox(
                                         width: 3.w,
                                       ),
+
+                                      //
                                       //
                                       //Facebook Log in
                                       BoxDecorationIcon(
@@ -618,11 +628,39 @@ class _LoginState extends State<Login> {
                                           AuthService()
                                               .loginWithFacebook(context);
                                         },
-                                      )
+                                      ),
+                                      if (Platform.isIOS)
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 3.w,
+                                            ),
+
+                                            //
+                                            //
+                                            //Apple Log in
+                                            BoxDecorationIcon(
+                                              padding: EdgeInsets.all(13),
+                                              StrImage:
+                                                  'assets/image/apple.png',
+                                              press: () async {
+                                                AuthService()
+                                                    .loginWithApple(context);
+                                              },
+                                            ),
+                                          ],
+                                        )
                                     ],
                                   ),
                                   SizedBox(
                                     height: 30,
+                                  ),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      AuthService().appleSignOut();
+                                    },
+                                    child: Text("Apple SignOut"),
                                   ),
 
                                   //

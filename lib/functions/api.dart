@@ -14,7 +14,10 @@ const String globalURL = 'https://db-dev.108.jobs/application-api';
 //Login with google && facebook
 const apiLoginWithGoogle = globalURL + "/seeker-signup-google-app";
 const apiLoginWithFacebook = globalURL + "/seeker-signup-facebook-app";
-const apiSyncGoogleFacebookAip = globalURL + "/sync-google-facebook-seeker-app";
+const apiSyncGoogleFacebookAip =
+    globalURL + "/connect-google-facebook-seeker-app";
+const apiDisconnectGoogleFacebookAip =
+    globalURL + "/disconnect-google-facebook-seeker-app";
 
 //Register
 var apiRegisterSeeker = globalURL + '/register-basic-member-seeker-app';

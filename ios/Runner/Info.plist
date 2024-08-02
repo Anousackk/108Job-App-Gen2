@@ -33,6 +33,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<!-- <string>org.cenixoft.OneHundredEightJobs</string> -->
 				<string>fb729771102607675</string>
 				<string>com.googleusercontent.apps.1012689313058-sb6ljqkt07h0ktu9n73egj35qmouljh8</string>
 			</array>
@@ -61,7 +62,7 @@
 		<string>sms</string>
 		<string>tel</string>
 		<string>google</string>
-  		<string>com.googleusercontent.apps.1012689313058-sb6ljqkt07h0ktu9n73egj35qmouljh8</string>
+		<string>com.googleusercontent.apps.1012689313058-sb6ljqkt07h0ktu9n73egj35qmouljh8</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -94,13 +95,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortrait</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>

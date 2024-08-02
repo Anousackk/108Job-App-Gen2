@@ -291,7 +291,14 @@ class _LoginInformationState extends State<LoginInformation> {
                                               builder: (context) =>
                                                   SetPasswordPlatforms(),
                                             ),
-                                          );
+                                          ).then((value) {
+                                            print(value);
+                                            if (value ==
+                                                "set password platform successful") {
+                                              checkSeekerInfo();
+                                            }
+                                          });
+                                          ;
                                         },
                                       ),
 
@@ -314,13 +321,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                     MaterialPageRoute(
                                       builder: (context) => DeleteAccount(),
                                     ),
-                                  ).then((value) {
-                                    print(value);
-                                    if (value ==
-                                        "set password platform successful") {
-                                      checkSeekerInfo();
-                                    }
-                                  });
+                                  );
                                 },
                               ),
                               SizedBox(
@@ -356,7 +357,7 @@ class _LoginInformationState extends State<LoginInformation> {
                               //
                               //
                               //
-                              //Gmail
+                              //Google connect
                               GestureDetector(
                                 onTap: () async {
                                   if (_googleId == "" && _googleEmail == "") {
@@ -367,7 +368,11 @@ class _LoginInformationState extends State<LoginInformation> {
                                         checkSeekerInfo();
                                       }
                                     });
-                                  } else {
+                                  } else if (_googleId != "" &&
+                                      _googleEmail != "" &&
+                                      _email != "" &&
+                                      _phoneNumber != "" &&
+                                      _passwordStatus != "") {
                                     var result = await showDialog(
                                         context: context,
                                         builder: (context) {
@@ -381,7 +386,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                         });
                                     if (result == 'Ok') {
                                       var res = await postData(
-                                          apiSyncGoogleFacebookAip, {
+                                          apiDisconnectGoogleFacebookAip, {
                                         "id": _googleId,
                                         "email": _googleEmail,
                                         "type": "google",
@@ -393,9 +398,8 @@ class _LoginInformationState extends State<LoginInformation> {
                                           context: context,
                                           builder: (context) {
                                             return CustomAlertDialogSuccess(
-                                              title:
-                                                  "Disconnect Google Success",
-                                              text: res["message"],
+                                              title: "Disconnect Google",
+                                              text: "Disconnect google success",
                                               textButton: "OK",
                                               press: () {
                                                 Navigator.pop(context);
@@ -405,6 +409,13 @@ class _LoginInformationState extends State<LoginInformation> {
                                         );
                                       }
                                     }
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DeleteAccount(),
+                                      ),
+                                    );
                                   }
                                 },
                                 child: ConnectOtherPlatform(
@@ -420,7 +431,7 @@ class _LoginInformationState extends State<LoginInformation> {
                               //
                               //
                               //
-                              //Facebook
+                              //Facebook connect
                               GestureDetector(
                                 onTap: () async {
                                   if (_facebookId == "" &&
@@ -432,7 +443,11 @@ class _LoginInformationState extends State<LoginInformation> {
                                         checkSeekerInfo();
                                       }
                                     });
-                                  } else {
+                                  } else if (_facebookId != "" &&
+                                      _facebookEmail != "" &&
+                                      _email != "" &&
+                                      _phoneNumber != "" &&
+                                      _passwordStatus != "") {
                                     var result = await showDialog(
                                         context: context,
                                         builder: (context) {
@@ -446,7 +461,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                         });
                                     if (result == 'Ok') {
                                       var res = await postData(
-                                          apiSyncGoogleFacebookAip, {
+                                          apiDisconnectGoogleFacebookAip, {
                                         "id": _facebookId,
                                         "email": _facebookEmail,
                                         "type": "facebook",
@@ -458,9 +473,9 @@ class _LoginInformationState extends State<LoginInformation> {
                                           context: context,
                                           builder: (context) {
                                             return CustomAlertDialogSuccess(
-                                              title:
-                                                  "Disconnect Facebook Success",
-                                              text: res["message"],
+                                              title: "Disconnect Facebook",
+                                              text:
+                                                  "Disconnect facebook success",
                                               textButton: "OK",
                                               press: () {
                                                 Navigator.pop(context);
@@ -470,6 +485,13 @@ class _LoginInformationState extends State<LoginInformation> {
                                         );
                                       }
                                     }
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DeleteAccount(),
+                                      ),
+                                    );
                                   }
                                 },
                                 child: ConnectOtherPlatform(

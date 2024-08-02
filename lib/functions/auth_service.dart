@@ -1,13 +1,17 @@
 // ignore_for_file: unused_local_variable, body_might_complete_normally_nullable, prefer_const_constructors, avoid_print
 
+import 'dart:io';
+
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/screen/screenAfterSignIn/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthService {
   loginWithFacebook(BuildContext context) async {
@@ -172,12 +176,79 @@ class AuthService {
     }
   }
 
+  loginWithApple(BuildContext context) async {
+    final firebaseAuth = FirebaseAuth.instance;
+    try {
+      print("try");
+      //Alert dialog loading
+      // showDialog(
+      //   context: context,
+      //   barrierDismissible: false,
+      //   builder: (context) {
+      //     return CustomAlertLoading();
+      //   },
+      // );
+
+      //
+      //
+      //
+      //Request Apple ID token and authorization code
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          // AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      var appleSigninId;
+      var appleSigninEmail;
+
+      if (credential.userIdentifier != null) {
+        //
+        //set userIdentifier shared preferences.
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(
+            'appleUserIdentifier', credential.userIdentifier.toString());
+        print("userIdentifier: " + "${credential.userIdentifier!}");
+        appleSigninId = credential.userIdentifier.toString();
+      } else {
+        final prefs = await SharedPreferences.getInstance();
+        appleSigninId = await prefs.getString("appleUserIdentifier");
+      }
+
+      if (credential.email != null) {
+        print("email: " + "${credential.email!}");
+      }
+
+      // print(credential.toString());
+      // if (credential.givenName != null) {
+      //   print("firstName: " + "${credential.givenName!}");
+      // }
+
+      // if (credential.familyName != null) {
+      //   print("lastName: " + "${credential.familyName!}");
+      // }
+
+      print("credential " + "${credential}");
+    } catch (error) {
+      print(error);
+      print("catch");
+      // Navigator.pop(context);
+    }
+  }
+
   googleSignOut() async {
     await GoogleSignIn().signOut();
   }
 
   facebookSignOut() async {
     await FacebookAuth.instance.logOut();
+  }
+
+  appleSignOut() async {
+    final firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth.signOut();
+    print("Apple SignOut");
   }
 
   loginSyncGoogleFacebook(
