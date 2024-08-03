@@ -1,14 +1,12 @@
 // ignore_for_file: unused_local_variable, body_might_complete_normally_nullable, prefer_const_constructors, avoid_print
 
-import 'dart:io';
-
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/screen/screenAfterSignIn/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -180,14 +178,15 @@ class AuthService {
     final firebaseAuth = FirebaseAuth.instance;
     try {
       print("try");
+
       //Alert dialog loading
-      // showDialog(
-      //   context: context,
-      //   barrierDismissible: false,
-      //   builder: (context) {
-      //     return CustomAlertLoading();
-      //   },
-      // );
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return CustomAlertLoading();
+        },
+      );
 
       //
       //
@@ -205,6 +204,7 @@ class AuthService {
 
       if (credential.userIdentifier != null) {
         //
+        //
         //set userIdentifier shared preferences.
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(
@@ -217,7 +217,47 @@ class AuthService {
       }
 
       if (credential.email != null) {
+        //
+        //
+        //set userIdentifier shared preferences.
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('appleEmail', credential.email.toString());
         print("email: " + "${credential.email!}");
+        appleSigninEmail = credential.email.toString();
+      } else {
+        final prefs = await SharedPreferences.getInstance();
+        appleSigninEmail = await prefs.getString("appleEmail");
+      }
+
+      if (appleSigninId != null && appleSigninEmail != null) {
+        var res = await postData(apiLoginWithApple, {
+          "data": {
+            "id": appleSigninId,
+            // "displayName": gSignInDisplayName,
+            "email": appleSigninEmail
+          }
+        });
+
+        print(res);
+
+        // close alert dialog loading
+        if (res != null) {
+          Navigator.pop(context);
+        }
+
+        if (res["token"] != null) {
+          var employeeToken = res["token"] ?? "";
+
+          //
+          //set token use shared preferences.
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('employeeToken', employeeToken);
+
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Home()),
+              (route) => false);
+        }
       }
 
       // print(credential.toString());
@@ -233,7 +273,7 @@ class AuthService {
     } catch (error) {
       print(error);
       print("catch");
-      // Navigator.pop(context);
+      Navigator.pop(context);
     }
   }
 
@@ -253,6 +293,7 @@ class AuthService {
 
   loginSyncGoogleFacebook(
       BuildContext context, String type, Function(String val) callBack) async {
+    //
     //
     //
     //Type Facebook
@@ -306,7 +347,7 @@ class AuthService {
                     return CustomAlertDialogSuccess(
                       title: "Connect Facebook Success",
                       text: res["message"],
-                      textButton: "OK",
+                      textButton: "ok".tr,
                       press: () {
                         Navigator.pop(context);
                       },
@@ -320,7 +361,7 @@ class AuthService {
                     return CustomAlertDialogWarning(
                       title: "Warning",
                       text: res["message"],
-                      textButton: "OK",
+                      textButton: "ok".tr,
                       press: () {
                         Navigator.pop(context);
                       },
@@ -336,6 +377,8 @@ class AuthService {
         }
       });
     }
+
+    //
     //
     //
     //Type Google
@@ -400,7 +443,117 @@ class AuthService {
                 return CustomAlertDialogSuccess(
                   title: "Connect Google Success",
                   text: res["message"],
-                  textButton: "OK",
+                  textButton: "ok".tr,
+                  press: () {
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            );
+          } else {
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return CustomAlertDialogWarning(
+                  title: "Warning",
+                  text: res["message"],
+                  press: () {
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            );
+          }
+        } else {
+          Navigator.pop(context);
+        }
+      } catch (error) {
+        Navigator.pop(context);
+      }
+    }
+
+    //
+    //
+    //
+    //Type Apple
+    else if (type == "apple") {
+      final firebaseAuth = FirebaseAuth.instance;
+
+      try {
+        print("sync apple");
+
+        //Alert dialog loading
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return CustomAlertLoading();
+          },
+        );
+
+        //
+        //
+        //
+        //Request Apple ID token and authorization code
+        final credential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            // AppleIDAuthorizationScopes.fullName,
+          ],
+        );
+
+        var appleSigninId;
+        var appleSigninEmail;
+
+        if (credential.userIdentifier != null) {
+          //
+          //
+          //set userIdentifier shared preferences.
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(
+              'appleUserIdentifier', credential.userIdentifier.toString());
+          print("userIdentifier: " + "${credential.userIdentifier!}");
+          appleSigninId = credential.userIdentifier.toString();
+        } else {
+          final prefs = await SharedPreferences.getInstance();
+          appleSigninId = await prefs.getString("appleUserIdentifier");
+        }
+
+        if (credential.email != null) {
+          //
+          //
+          //set userIdentifier shared preferences.
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('appleEmail', credential.email.toString());
+          print("email: " + "${credential.email!}");
+          appleSigninEmail = credential.email.toString();
+        } else {
+          final prefs = await SharedPreferences.getInstance();
+          appleSigninEmail = await prefs.getString("appleEmail");
+        }
+
+        if (appleSigninId != null && appleSigninEmail != null) {
+          var res = await postData(apiSyncGoogleFacebookAip, {
+            "id": appleSigninId,
+            "email": appleSigninEmail,
+            "type": "apple",
+          });
+          callBack(res['message']);
+
+          //close alert dialog loading
+          if (res != null) {
+            Navigator.pop(context);
+          }
+
+          if (res["message"] == "Sync successful") {
+            await showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) {
+                return CustomAlertDialogSuccess(
+                  title: "Connect Apple Success",
+                  text: res["message"],
+                  textButton: "ok".tr,
                   press: () {
                     Navigator.pop(context);
                   },

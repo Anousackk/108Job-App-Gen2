@@ -629,6 +629,7 @@ class _LoginState extends State<Login> {
                                               .loginWithFacebook(context);
                                         },
                                       ),
+
                                       if (Platform.isIOS)
                                         Row(
                                           children: [
@@ -654,13 +655,6 @@ class _LoginState extends State<Login> {
                                   ),
                                   SizedBox(
                                     height: 30,
-                                  ),
-
-                                  GestureDetector(
-                                    onTap: () {
-                                      AuthService().appleSignOut();
-                                    },
-                                    child: Text("Apple SignOut"),
                                   ),
 
                                   //

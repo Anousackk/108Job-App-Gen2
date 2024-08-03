@@ -37,6 +37,8 @@ class _LoginInformationState extends State<LoginInformation> {
   String _googleEmail = "";
   String _facebookId = "";
   String _facebookEmail = "";
+  String _appleId = "";
+  String _appleEmail = "";
   String _modelName = "";
 
   bool _passwordStatus = false;
@@ -54,6 +56,8 @@ class _LoginInformationState extends State<LoginInformation> {
     _googleEmail = res["info"]["googleEmail"] ?? "";
     _facebookId = res['info']['facebookId'] ?? "";
     _facebookEmail = res['info']['facebookEmail'] ?? "";
+    _appleId = res['info']['appleId'] ?? "";
+    _appleEmail = res['info']['appleEmail'] ?? "";
     _isloading = false;
 
     // print(_googleId);
@@ -369,10 +373,10 @@ class _LoginInformationState extends State<LoginInformation> {
                                       }
                                     });
                                   } else if (_googleId != "" &&
-                                      _googleEmail != "" &&
-                                      _email != "" &&
-                                      _phoneNumber != "" &&
-                                      _passwordStatus != "") {
+                                          _googleEmail != "" &&
+                                          _passwordStatus != "" &&
+                                          _email != "" ||
+                                      _phoneNumber != "") {
                                     var result = await showDialog(
                                         context: context,
                                         builder: (context) {
@@ -400,7 +404,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                             return CustomAlertDialogSuccess(
                                               title: "Disconnect Google",
                                               text: "Disconnect google success",
-                                              textButton: "OK",
+                                              textButton: "ok".tr,
                                               press: () {
                                                 Navigator.pop(context);
                                               },
@@ -444,10 +448,10 @@ class _LoginInformationState extends State<LoginInformation> {
                                       }
                                     });
                                   } else if (_facebookId != "" &&
-                                      _facebookEmail != "" &&
-                                      _email != "" &&
-                                      _phoneNumber != "" &&
-                                      _passwordStatus != "") {
+                                          _facebookEmail != "" &&
+                                          _passwordStatus != "" &&
+                                          _email != "" ||
+                                      _phoneNumber != "") {
                                     var result = await showDialog(
                                         context: context,
                                         builder: (context) {
@@ -476,7 +480,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                               title: "Disconnect Facebook",
                                               text:
                                                   "Disconnect facebook success",
-                                              textButton: "OK",
+                                              textButton: "ok".tr,
                                               press: () {
                                                 Navigator.pop(context);
                                               },
@@ -500,6 +504,79 @@ class _LoginInformationState extends State<LoginInformation> {
                                   text: _facebookId != ""
                                       ? _facebookEmail
                                       : "link".tr,
+                                ),
+                              ),
+
+                              //
+                              //
+                              //
+                              //
+                              //Apple connect
+                              GestureDetector(
+                                onTap: () async {
+                                  if (_appleId == "" && _appleEmail == "") {
+                                    AuthService().loginSyncGoogleFacebook(
+                                        context, "apple", (val) {
+                                      print(val);
+                                      if (val == "Sync successful") {
+                                        checkSeekerInfo();
+                                      }
+                                    });
+                                  } else if (_appleEmail != "" &&
+                                          _appleId != "" &&
+                                          _passwordStatus != "" &&
+                                          _email != "" ||
+                                      _phoneNumber != "") {
+                                    var result = await showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return SimpleAlertDialog(
+                                            title: "disconnect".tr,
+                                            contentText:
+                                                "are u sure disconnect".tr,
+                                            textLeft: "cancel".tr,
+                                            textRight: 'confirm'.tr,
+                                          );
+                                        });
+                                    if (result == 'Ok') {
+                                      var res = await postData(
+                                          apiDisconnectGoogleFacebookAip, {
+                                        "id": _appleId,
+                                        "email": _appleEmail,
+                                        "type": "apple",
+                                      });
+                                      if (res["message"] != null) {
+                                        await checkSeekerInfo();
+                                        await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return CustomAlertDialogSuccess(
+                                              title: "Disconnect Apple",
+                                              text: "Disconnect apple success",
+                                              textButton: "ok".tr,
+                                              press: () {
+                                                Navigator.pop(context);
+                                              },
+                                            );
+                                          },
+                                        );
+                                      }
+                                    }
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DeleteAccount(),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: ConnectOtherPlatform(
+                                  title: "Apple",
+                                  strImage: 'assets/image/apple.png',
+                                  text:
+                                      _appleId != "" ? _appleEmail : "link".tr,
                                 ),
                               ),
                             ],
