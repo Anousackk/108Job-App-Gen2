@@ -4,7 +4,6 @@ import 'package:app/firebase_options.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
-import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/login/login.dart';
@@ -25,7 +24,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
@@ -622,15 +620,14 @@ class _MainHomeState extends State<MainHome> {
                             // crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
-                                child: AspectRatio(
-                                  aspectRatio: 10 / 2,
-                                  child: Container(
-                                    alignment: Alignment.centerLeft,
-                                    // color: AppColors.red,
-                                    child: Image.asset(
-                                      'assets/image/Logo108.png',
-                                      fit: BoxFit.contain,
-                                    ),
+                                child: Container(
+                                  height: 45,
+                                  width: 45,
+                                  alignment: Alignment.centerLeft,
+                                  // color: AppColors.red,
+                                  child: Image.asset(
+                                    'assets/image/Logo108.png',
+                                    fit: BoxFit.contain,
                                   ),
                                 ),
                               ),

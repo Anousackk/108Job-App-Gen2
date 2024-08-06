@@ -9,11 +9,9 @@ import 'package:app/screen/screenAfterSignIn/account/jobAlert/jobAlert.dart';
 import 'package:app/screen/screenAfterSignIn/account/loginInfo/loginInformation.dart';
 import 'package:app/screen/screenAfterSignIn/account/myProfile/myProfile.dart';
 import 'package:app/widget/input.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:sizer/sizer.dart';
 
 class Account extends StatefulWidget {
   const Account(
@@ -118,6 +116,12 @@ class _AccountState extends State<Account> {
                   physics: ClampingScrollPhysics(),
                   child: Column(
                     children: [
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
                       //
                       //
                       //Profile Image
@@ -265,6 +269,13 @@ class _AccountState extends State<Account> {
 
                       //
                       //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
                       //Profile Statisics
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20),
@@ -341,6 +352,14 @@ class _AccountState extends State<Account> {
                             ),
                             SizedBox(height: 20),
 
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
+                            //
                             //
                             //
                             //Account Setting
@@ -479,7 +498,7 @@ class StatisicBox extends StatelessWidget {
       height: 100,
       width: double.infinity,
       padding: EdgeInsets.all(10),
-      decoration: boxDecoration(BorderRadius.circular(2.w),
+      decoration: boxDecoration(BorderRadius.circular(10),
           boxColor == null ? AppColors.lightPrimary : boxColor, null, null),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

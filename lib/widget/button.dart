@@ -238,7 +238,8 @@ class _SimpleButtonState extends State<SimpleButton> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 12.w,
+      // height: 12.w,
+      height: 60,
       child: TextButton(
         style: ButtonStyle(
           side: WidgetStateProperty.resolveWith<BorderSide>(
@@ -251,7 +252,8 @@ class _SimpleButtonState extends State<SimpleButton> {
           ),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(1.5.w),
+              // borderRadius: BorderRadius.circular(1.5.w),
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
           backgroundColor: WidgetStateProperty.all(

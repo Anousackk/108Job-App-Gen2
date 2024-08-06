@@ -32,14 +32,16 @@ class _TextFormFieldTextRightState extends State<TextFormFieldTextRight> {
       textAlign: TextAlign.end,
       decoration: InputDecoration(
         isDense: true,
-        contentPadding: EdgeInsets.all(1.3.h),
+        // contentPadding: EdgeInsets.all(1.3.h),
+        contentPadding: EdgeInsets.all(10),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.inputColor),
           borderRadius: BorderRadius.circular(1.w),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.primary),
-          borderRadius: BorderRadius.circular(1.w),
+          // borderRadius: BorderRadius.circular(1.w),
+          borderRadius: BorderRadius.circular(8),
         ),
         prefixIcon: Container(
           padding: EdgeInsets.symmetric(horizontal: 15),
@@ -51,7 +53,7 @@ class _TextFormFieldTextRightState extends State<TextFormFieldTextRight> {
                 'file-exclamation',
                 style: TextStyle(
                     color: AppColors.grey,
-                    fontSize: 12.sp,
+                    // fontSize: 12.sp,
                     fontFamily: 'FontAwesomePro-Regular'),
               ),
               SizedBox(
@@ -59,7 +61,7 @@ class _TextFormFieldTextRightState extends State<TextFormFieldTextRight> {
               ),
               Text(
                 widget.hintText,
-                style: TextStyle(color: AppColors.grey, fontSize: 12.sp),
+                // style: TextStyle(color: AppColors.grey, fontSize: 12.sp),
               )
             ],
           ),
@@ -115,7 +117,8 @@ class _TextFieldMultiValidateState extends State<TextFieldMultiValidate> {
       // textAlign: TextAlign.center,
       decoration: InputDecoration(
         border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 2.5.w),
+        // contentPadding: EdgeInsets.symmetric(horizontal: 2.5.w),
+
         fillColor: AppColors.inputColor,
         filled: true,
         enabledBorder: enableOutlineBorder(
@@ -130,7 +133,7 @@ class _TextFieldMultiValidateState extends State<TextFieldMultiValidate> {
           color: widget.hintStyleColor == null
               ? AppColors.black
               : widget.hintStyleColor,
-          fontSize: 10.sp,
+          // fontSize: 10.sp,
         ),
         // helperText: ' ',
       ),
@@ -239,7 +242,9 @@ class _SimpleTextFieldWithIconLeftState
 
           border: OutlineInputBorder(),
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 3.5.w, vertical: 3.5.w),
+              // EdgeInsets.symmetric(horizontal: 3.5.w, vertical: 3.5.w),
+              EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+
           fillColor: AppColors.inputColor,
           filled: true,
           enabledBorder: enableOutlineBorder(
@@ -365,7 +370,9 @@ class _SimpleTextFieldWithIconRightState
 
           border: OutlineInputBorder(),
           contentPadding:
-              EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+              // EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+              EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+
           fillColor: widget.inputColor == null
               ? AppColors.inputLight
               : widget.inputColor,
@@ -506,7 +513,8 @@ class _SimpleTextFieldSingleValidateState
             prefixIcon: widget.prefixIcon,
             border: OutlineInputBorder(),
             contentPadding: widget.contenPadding == null
-                ? EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w)
+                // ? EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w)
+                ? EdgeInsets.symmetric(vertical: 15, horizontal: 15)
                 : widget.contenPadding,
             fillColor: widget.inputColor == null
                 ? AppColors.inputColor
@@ -614,7 +622,9 @@ class _TextFieldTextCenterState extends State<TextFieldTextCenter> {
           ),
 
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 3.w),
+              // EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 3.w),
+              EdgeInsets.symmetric(horizontal: 10, vertical: 13),
+
           fillColor: widget.inputColor == null
               ? AppColors.inputColor
               : widget.inputColor,
@@ -718,7 +728,9 @@ class _TextFieldPhoneNumberState extends State<TextFieldPhoneNumber> {
             : widget.keyboardType,
         decoration: InputDecoration(
           prefixIcon: Container(
-            padding: EdgeInsets.only(right: 3.w),
+            // padding: EdgeInsets.only(right: 3.w),
+            padding: EdgeInsets.only(right: 13),
+
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -729,7 +741,9 @@ class _TextFieldPhoneNumberState extends State<TextFieldPhoneNumber> {
                     ),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 3.w),
+                    // padding: EdgeInsets.symmetric(horizontal: 3.w),
+                    padding: EdgeInsets.symmetric(horizontal: 13),
+
                     child: Text(
                       '${widget.preFix}',
                       style: bodyTextNormal(
@@ -742,7 +756,8 @@ class _TextFieldPhoneNumberState extends State<TextFieldPhoneNumber> {
           ),
           border: OutlineInputBorder(),
           contentPadding:
-              EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+              // EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+              EdgeInsets.symmetric(vertical: 15, horizontal: 15),
           fillColor: AppColors.inputLight,
           filled: true,
           enabledBorder: enableOutlineBorder(
@@ -836,14 +851,18 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
           selectAll: true,
         ),
         style: TextStyle(
-          fontSize: 3.5.w,
+          // fontSize: 3.5.w,
+          fontSize: 13,
         ),
         decoration: InputDecoration(
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(1.5.w),
+            // borderRadius: BorderRadius.circular(1.5.w),
+            borderRadius: BorderRadius.circular(8),
           ),
           contentPadding:
-              EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+              // EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+              EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+
           fillColor: AppColors.inputLight,
           filled: true,
           enabledBorder: enableOutlineBorder(
@@ -925,7 +944,8 @@ class _DropdownButtonMenuState extends State<DropdownButtonMenu> {
               prefixIcon: widget.widgetPrefixIcon,
               border: OutlineInputBorder(),
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+                  // EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+                  EdgeInsets.symmetric(vertical: 15, horizontal: 15),
               fillColor: widget.inputColor == null
                   ? AppColors.inputColor
                   : widget.inputColor,
@@ -1330,7 +1350,7 @@ class _BoxDecorationInputState extends State<BoxDecorationInput> {
           onTap: widget.press,
           child: Container(
             width: double.infinity,
-            height: widget.heigth == null ? 12.w : widget.heigth,
+            height: widget.heigth == null ? 60 : widget.heigth,
             decoration: boxDecoration(
                 widget.boxDecBorderRadius,
                 widget.colorInput == null

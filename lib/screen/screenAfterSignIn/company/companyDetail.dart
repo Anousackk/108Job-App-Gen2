@@ -1700,7 +1700,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                   .circular(
                                                                       12.w),
                                                           colorButton: AppColors
-                                                              .buttonBG,
+                                                              .buttonWhite,
                                                           widgetIcon: FaIcon(
                                                             FontAwesomeIcons
                                                                 .heart,
@@ -1741,7 +1741,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                   .circular(
                                                                       12.w),
                                                           colorButton: AppColors
-                                                              .lightPrimary,
+                                                              .buttonWhite,
                                                           widgetIcon: FaIcon(
                                                             FontAwesomeIcons
                                                                 .solidHeart,

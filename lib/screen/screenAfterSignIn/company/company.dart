@@ -9,12 +9,10 @@ import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/screenAfterSignIn/company/companyDetail.dart';
 import 'package:app/widget/input.dart';
-import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:sizer/sizer.dart';
 
 class Company extends StatefulWidget {
   const Company({
@@ -337,8 +335,10 @@ class _CompanyState extends State<Company> {
                                 // flex: 8,
                                 child: SimpleTextFieldSingleValidate(
                                   codeController: _searchCompanyNameController,
+                                  // contenPadding: EdgeInsets.symmetric(
+                                  //     vertical: 2.5.w, horizontal: 3.5.w),
                                   contenPadding: EdgeInsets.symmetric(
-                                      vertical: 2.5.w, horizontal: 3.5.w),
+                                      vertical: 10, horizontal: 15),
                                   enabledBorder: enableOutlineBorder(
                                     AppColors.borderBG,
                                   ),
@@ -1014,341 +1014,335 @@ class _CompanyState extends State<Company> {
                               //
                               //
                               //SliverList of company
-                              _companies.length > 0
-                                  ? SliverList(
-                                      delegate: SliverChildBuilderDelegate(
-                                        (BuildContext context, int index) {
-                                          if (index == _companies.length) {
-                                            return _hasMoreData
-                                                ? Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 0,
-                                                        vertical: 10),
-                                                    child: Container(
-                                                        // child: Text("Loading"),
-                                                        ),
-                                                  )
-
-                                                // Padding(
-                                                //     padding: const EdgeInsets
-                                                //         .symmetric(
-                                                //         horizontal: 20,
-                                                //         vertical: 8),
-                                                //     child: ElevatedButton(
-                                                //       style: ButtonStyle(
-                                                //           backgroundColor:
-                                                //               MaterialStatePropertyAll(
-                                                //                   AppColors
-                                                //                       .lightPrimary)),
-                                                //       onPressed: () => {
-                                                //         setState(() {
-                                                //           _isLoadingMoreData =
-                                                //               true;
-                                                //         }),
-                                                //         fetchCompanies(
-                                                //             _searchType),
-                                                //       },
-                                                //       child: Text(
-                                                //         'view more'.tr,
-                                                //         style: TextStyle(
-                                                //             color: AppColors
-                                                //                 .fontPrimary),
-                                                //       ),
-                                                //     ),
-                                                //   )
-                                                : Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Center(
-                                                        child: Text(
-                                                            'no have data'.tr)),
-                                                  );
-                                          }
-
-                                          dynamic i = _companies[index];
-                                          _companyName = i['companyName'];
-                                          _industry = i['industry'];
-                                          _address = i['address'];
-                                          _logo = i['logo'];
-                                          _followerTotals =
-                                              i['followerTotals'].toString();
-                                          _isFollow = i['follow'];
-
-                                          return Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          CompanyDetail(
-                                                        companyId: i['_id'],
-                                                      ),
-                                                    ),
-                                                  ).then((value) {
-                                                    // if (value == "Success") {
-                                                    //   setState(() {
-                                                    //     _statusShowLoading =
-                                                    //         true;
-                                                    //   });
-                                                    //   onGoBack(value);
-                                                    // }
-                                                    if (value[1] != "") {
-                                                      setState(() {
-                                                        dynamic company =
-                                                            _companies.firstWhere(
-                                                                (e) =>
-                                                                    e['_id'] ==
-                                                                    value[1]);
-
-                                                        company['follow'] =
-                                                            value[2];
-                                                      });
-                                                    }
-                                                  });
-                                                },
-                                                child: Container(
-                                                  margin: EdgeInsets.symmetric(
-                                                      horizontal: 20),
-                                                  padding: EdgeInsets.all(12),
-                                                  decoration: BoxDecoration(
-                                                    color: AppColors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    // border: Border.all(
-                                                    //     color: AppColors
-                                                    //         .borderSecondary),
+                              // _companies.length > 0
+                              //     ?
+                              SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (BuildContext context, int index) {
+                                    if (index == _companies.length) {
+                                      return _hasMoreData
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 0,
+                                                      vertical: 10),
+                                              child: Container(
+                                                  // child: Text("Loading"),
                                                   ),
+                                            )
+
+                                          // Padding(
+                                          //     padding: const EdgeInsets
+                                          //         .symmetric(
+                                          //         horizontal: 20,
+                                          //         vertical: 8),
+                                          //     child: ElevatedButton(
+                                          //       style: ButtonStyle(
+                                          //           backgroundColor:
+                                          //               MaterialStatePropertyAll(
+                                          //                   AppColors
+                                          //                       .lightPrimary)),
+                                          //       onPressed: () => {
+                                          //         setState(() {
+                                          //           _isLoadingMoreData =
+                                          //               true;
+                                          //         }),
+                                          //         fetchCompanies(
+                                          //             _searchType),
+                                          //       },
+                                          //       child: Text(
+                                          //         'view more'.tr,
+                                          //         style: TextStyle(
+                                          //             color: AppColors
+                                          //                 .fontPrimary),
+                                          //       ),
+                                          //     ),
+                                          //   )
+                                          : Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Center(
+                                                  child:
+                                                      Text('no have data'.tr)),
+                                            );
+                                    }
+
+                                    dynamic i = _companies[index];
+                                    _companyName = i['companyName'];
+                                    _industry = i['industry'];
+                                    _address = i['address'];
+                                    _logo = i['logo'];
+                                    _followerTotals =
+                                        i['followerTotals'].toString();
+                                    _isFollow = i['follow'];
+
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CompanyDetail(
+                                                  companyId: i['_id'],
+                                                ),
+                                              ),
+                                            ).then((value) {
+                                              // if (value == "Success") {
+                                              //   setState(() {
+                                              //     _statusShowLoading =
+                                              //         true;
+                                              //   });
+                                              //   onGoBack(value);
+                                              // }
+                                              if (value[1] != "") {
+                                                setState(() {
+                                                  dynamic company = _companies
+                                                      .firstWhere((e) =>
+                                                          e['_id'] == value[1]);
+
+                                                  company['follow'] = value[2];
+                                                });
+                                              }
+                                            });
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: 20),
+                                            padding: EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              // border: Border.all(
+                                              //     color: AppColors
+                                              //         .borderSecondary),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 7,
                                                   child: Row(
                                                     children: [
-                                                      Expanded(
-                                                        flex: 7,
-                                                        child: Row(
-                                                          children: [
-                                                            //
-                                                            //
-                                                            //Logo Company
-                                                            Container(
-                                                              height: 90,
-                                                              width: 90,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                border:
-                                                                    Border.all(
-                                                                  color: AppColors
-                                                                      .borderSecondary,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                                color: AppColors
-                                                                    .backgroundWhite,
-                                                              ),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(5),
-                                                                child:
-                                                                    ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                  child: _logo ==
-                                                                          ""
-                                                                      ? Image
+                                                      //
+                                                      //
+                                                      //Logo Company
+                                                      Container(
+                                                        height: 90,
+                                                        width: 90,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                            color: AppColors
+                                                                .borderSecondary,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          color: AppColors
+                                                              .backgroundWhite,
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(5),
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            child: _logo == ""
+                                                                ? Image.asset(
+                                                                    'assets/image/no-image-available.png',
+                                                                    fit: BoxFit
+                                                                        .contain,
+                                                                  )
+                                                                : Image.network(
+                                                                    "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                                    fit: BoxFit
+                                                                        .contain,
+                                                                    errorBuilder:
+                                                                        (context,
+                                                                            error,
+                                                                            stackTrace) {
+                                                                      return Image
                                                                           .asset(
-                                                                          'assets/image/no-image-available.png',
-                                                                          fit: BoxFit
-                                                                              .contain,
-                                                                        )
-                                                                      : Image
-                                                                          .network(
-                                                                          "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
-                                                                          fit: BoxFit
-                                                                              .contain,
-                                                                          errorBuilder: (context,
-                                                                              error,
-                                                                              stackTrace) {
-                                                                            return Image.asset(
-                                                                              'assets/image/no-image-available.png',
-                                                                              fit: BoxFit.contain,
-                                                                            ); // Display an error message
-                                                                          },
-                                                                        ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 15,
-                                                            ),
-
-                                                            //
-                                                            //
-                                                            //Content Company
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                      "${_companyName}",
-                                                                      style: bodyTextNormal(
-                                                                          null,
-                                                                          FontWeight
-                                                                              .bold),
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis),
-                                                                  Text(
-                                                                      "${_industry}",
-                                                                      style: bodyTextSmall(
-                                                                          null),
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis),
-                                                                  Text(
-                                                                      "${_address}",
-                                                                      style: bodyTextSmall(
-                                                                          null),
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis),
-                                                                  Text(
-                                                                      "${_followerTotals} " +
-                                                                          "follower"
-                                                                              .tr,
-                                                                      style: bodyTextSmall(
-                                                                          null))
-                                                                ],
-                                                              ),
-                                                            )
-                                                          ],
+                                                                        'assets/image/no-image-available.png',
+                                                                        fit: BoxFit
+                                                                            .contain,
+                                                                      ); // Display an error message
+                                                                    },
+                                                                  ),
+                                                          ),
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                        width: 10,
+                                                        width: 15,
                                                       ),
 
                                                       //
                                                       //
-                                                      //Button follow / following
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            i['follow'] =
-                                                                !i['follow'];
-                                                          });
-                                                          followCompany(
-                                                            i['companyName'],
-                                                            i['_id'],
-                                                          );
-                                                        },
-                                                        child: _isFollow
-                                                            ? Container(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                  8,
-                                                                ),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: AppColors
-                                                                      .buttonPrimary,
-                                                                  // border: Border.all(
-                                                                  //   color: AppColors
-                                                                  //       .borderGreyOpacity,
-                                                                  // ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                ),
-                                                                child: Row(
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .heart,
-                                                                      size: 13,
-                                                                      color: AppColors
-                                                                          .iconLight,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        "following"
-                                                                            .tr,
-                                                                        style: bodyTextSmall(
-                                                                            AppColors.fontWhite)),
-                                                                  ],
-                                                                ),
-                                                              )
-                                                            : Container(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                  8,
-                                                                ),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  border: Border
-                                                                      .all(
-                                                                    color: AppColors
-                                                                        .borderSecondary,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                ),
-                                                                child: Row(
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .heart,
-                                                                      size: 13,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 8,
-                                                                    ),
-                                                                    Text(
-                                                                        "follow"
-                                                                            .tr,
-                                                                        style: bodyTextSmall(
-                                                                            null)),
-                                                                  ],
-                                                                ),
-                                                              ),
+                                                      //Content Company
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                                "${_companyName}",
+                                                                style: bodyTextNormal(
+                                                                    null,
+                                                                    FontWeight
+                                                                        .bold),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis),
+                                                            Text("${_industry}",
+                                                                style:
+                                                                    bodyTextSmall(
+                                                                        null),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis),
+                                                            Text("${_address}",
+                                                                style:
+                                                                    bodyTextSmall(
+                                                                        null),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis),
+                                                            Text(
+                                                                "${_followerTotals} " +
+                                                                    "follower"
+                                                                        .tr,
+                                                                style:
+                                                                    bodyTextSmall(
+                                                                        null))
+                                                          ],
+                                                        ),
                                                       )
                                                     ],
                                                   ),
                                                 ),
-                                              ),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                        childCount: _companies.length + 1,
-                                      ),
-                                    )
-                                  : SliverToBoxAdapter(
-                                      child: ScreenNoData(
-                                        faIcon: FontAwesomeIcons
-                                            .fileCircleExclamation,
-                                        colorIcon: AppColors.primary,
-                                        text: "no have data".tr,
-                                        colorText: AppColors.primary,
-                                      ),
-                                    ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+
+                                                //
+                                                //
+                                                //Button follow / following
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      i['follow'] =
+                                                          !i['follow'];
+                                                    });
+                                                    followCompany(
+                                                      i['companyName'],
+                                                      i['_id'],
+                                                    );
+                                                  },
+                                                  child: _isFollow
+                                                      ? Container(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                            8,
+                                                          ),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: AppColors
+                                                                .buttonPrimary,
+                                                            // border: Border.all(
+                                                            //   color: AppColors
+                                                            //       .borderGreyOpacity,
+                                                            // ),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          child: Row(
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .heart,
+                                                                size: 13,
+                                                                color: AppColors
+                                                                    .iconLight,
+                                                              ),
+                                                              SizedBox(
+                                                                width: 8,
+                                                              ),
+                                                              Text(
+                                                                  "following"
+                                                                      .tr,
+                                                                  style: bodyTextSmall(
+                                                                      AppColors
+                                                                          .fontWhite)),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      : Container(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                            8,
+                                                          ),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            border: Border.all(
+                                                              color: AppColors
+                                                                  .borderSecondary,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          child: Row(
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .heart,
+                                                                size: 13,
+                                                              ),
+                                                              SizedBox(
+                                                                width: 8,
+                                                              ),
+                                                              Text("follow".tr,
+                                                                  style:
+                                                                      bodyTextSmall(
+                                                                          null)),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                  childCount: _companies.length + 1,
+                                ),
+                              ),
+                              // : SliverToBoxAdapter(
+                              //     child: Container(
+                              //       // color: AppColors.red,
+                              //       child: ScreenNoData(
+                              //         faIcon: FontAwesomeIcons
+                              //             .fileCircleExclamation,
+                              //         colorIcon: AppColors.primary,
+                              //         text: "no have data".tr,
+                              //         colorText: AppColors.primary,
+                              //       ),
+                              //     ),
+                              //   ),
                             ],
                           ),
                         ),

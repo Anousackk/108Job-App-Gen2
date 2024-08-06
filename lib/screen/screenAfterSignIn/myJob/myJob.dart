@@ -321,6 +321,7 @@ class _MyJobsState extends State<MyJobs> {
                   //
                   //Tap list horizontal
                   Container(
+                    width: double.infinity,
                     padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                     decoration: BoxDecoration(
                       border: Border(
@@ -342,7 +343,7 @@ class _MyJobsState extends State<MyJobs> {
                                 color: _typeMyJob == "SeekerSaveJob"
                                     ? AppColors.buttonPrimary
                                     : AppColors.buttonGrey,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 "saved job".tr,
@@ -368,7 +369,7 @@ class _MyJobsState extends State<MyJobs> {
                                   color: _typeMyJob == "AppliedJob"
                                       ? AppColors.buttonPrimary
                                       : AppColors.buttonGrey,
-                                  borderRadius: BorderRadius.circular(10)),
+                                  borderRadius: BorderRadius.circular(8)),
                               child: Text(
                                 "applied job".tr,
                                 style: bodyTextNormal(
@@ -393,7 +394,7 @@ class _MyJobsState extends State<MyJobs> {
                                   color: _typeMyJob == "JobAlert"
                                       ? AppColors.buttonPrimary
                                       : AppColors.buttonGrey,
-                                  borderRadius: BorderRadius.circular(10)),
+                                  borderRadius: BorderRadius.circular(8)),
                               child: Text(
                                 "my job alert".tr,
                                 style: bodyTextNormal(
@@ -418,7 +419,7 @@ class _MyJobsState extends State<MyJobs> {
                                   color: _typeMyJob == "SeekerHideJob"
                                       ? AppColors.buttonPrimary
                                       : AppColors.buttonGrey,
-                                  borderRadius: BorderRadius.circular(10)),
+                                  borderRadius: BorderRadius.circular(8)),
                               child: Text(
                                 "hidded".tr,
                                 style: bodyTextNormal(
@@ -467,8 +468,10 @@ class _MyJobsState extends State<MyJobs> {
                             Expanded(
                               child: SimpleTextFieldSingleValidate(
                                 codeController: _searchTitleController,
+                                // contenPadding: EdgeInsets.symmetric(
+                                //     vertical: 2.5.w, horizontal: 3.5.w),
                                 contenPadding: EdgeInsets.symmetric(
-                                    vertical: 2.5.w, horizontal: 3.5.w),
+                                    vertical: 10, horizontal: 15),
                                 enabledBorder: enableOutlineBorder(
                                   AppColors.borderBG,
                                 ),

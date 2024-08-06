@@ -16,7 +16,6 @@ import 'package:app/widget/listJobFuncSelectedAlertDialog.dart';
 import 'package:app/widget/listMultiSelectedAlertDialog.dart';
 import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -407,8 +406,10 @@ class _JobSearchState extends State<JobSearch>
                               flex: 8,
                               child: SimpleTextFieldSingleValidate(
                                 codeController: _searchTitleController,
+                                // contenPadding: EdgeInsets.symmetric(
+                                //     vertical: 2.5.w, horizontal: 3.5.w),
                                 contenPadding: EdgeInsets.symmetric(
-                                    vertical: 2.5.w, horizontal: 3.5.w),
+                                    vertical: 10, horizontal: 15),
                                 enabledBorder: enableOutlineBorder(
                                   AppColors.borderBG,
                                 ),

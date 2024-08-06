@@ -6,7 +6,9 @@ import 'package:sizer/sizer.dart';
 
 OutlineInputBorder enableOutlineBorder(Color color) {
   return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(1.5.w),
+    // borderRadius: BorderRadius.circular(1.5.w),
+    borderRadius: BorderRadius.circular(8),
+
     borderSide: BorderSide(
       color: color,
     ),
@@ -15,7 +17,9 @@ OutlineInputBorder enableOutlineBorder(Color color) {
 
 OutlineInputBorder focusOutlineBorder(Color color) {
   return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(1.5.w),
+    // borderRadius: BorderRadius.circular(1.5.w),
+    borderRadius: BorderRadius.circular(8),
+
     borderSide: BorderSide(
       color: color,
     ),
@@ -48,7 +52,9 @@ BoxDecoration boxDecoration(BorderRadiusGeometry? borderRadius, Color? color,
 
 BoxDecoration boxDecorationImage(Color color, DecorationImage image) {
   return BoxDecoration(
-    borderRadius: BorderRadius.circular(1.5.w),
+    // borderRadius: BorderRadius.circular(1.5.w),
+    borderRadius: BorderRadius.circular(8),
+
     color: color,
     image: image,
   );
