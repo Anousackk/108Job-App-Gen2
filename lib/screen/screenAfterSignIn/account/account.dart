@@ -358,10 +358,6 @@ class _AccountState extends State<Account> {
                             //
                             //
                             //
-                            //
-                            //
-                            //
-                            //
                             //Account Setting
                             Text(
                               "account setting".tr,
@@ -371,12 +367,15 @@ class _AccountState extends State<Account> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //Login Information
                             BoxDecorationInput(
                               boxDecBorderRadius: BorderRadius.circular(10),
                               widgetFaIcon: FaIcon(
                                 FontAwesomeIcons.lock,
-                                size: 20,
+                                size: IconSize.xsIcon,
                                 color: AppColors.iconGray,
                               ),
                               // paddingFaIcon: EdgeInsets.only(left: 20, right: 10),
@@ -387,7 +386,7 @@ class _AccountState extends State<Account> {
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.chevronRight,
                                 color: AppColors.iconGrayOpacity,
-                                size: IconSize.sIcon,
+                                size: IconSize.xsIcon,
                               ),
                               validateText: Container(),
                               press: () {
@@ -403,12 +402,15 @@ class _AccountState extends State<Account> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //My Profile
                             BoxDecorationInput(
                               boxDecBorderRadius: BorderRadius.circular(10),
                               widgetFaIcon: FaIcon(
                                 FontAwesomeIcons.solidUser,
-                                size: 20,
+                                size: IconSize.xsIcon,
                                 color: AppColors.iconGray,
                               ),
                               // paddingFaIcon: EdgeInsets.only(left: 20, right: 10),
@@ -418,7 +420,7 @@ class _AccountState extends State<Account> {
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.chevronRight,
                                 color: AppColors.iconGrayOpacity,
-                                size: IconSize.sIcon,
+                                size: IconSize.xsIcon,
                               ),
                               press: () {
                                 Navigator.push(
@@ -438,12 +440,14 @@ class _AccountState extends State<Account> {
 
                             //
                             //
+                            //
+                            //
                             //Job Alert
                             BoxDecorationInput(
                               boxDecBorderRadius: BorderRadius.circular(10),
                               widgetFaIcon: FaIcon(
                                 FontAwesomeIcons.solidBell,
-                                size: 20,
+                                size: IconSize.xsIcon,
                                 color: AppColors.iconGray,
                               ),
                               // paddingFaIcon: EdgeInsets.only(left: 20, right: 10),
@@ -461,7 +465,7 @@ class _AccountState extends State<Account> {
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.chevronRight,
                                 color: AppColors.iconGrayOpacity,
-                                size: IconSize.sIcon,
+                                size: IconSize.xsIcon,
                               ),
                               validateText: Container(),
                             ),

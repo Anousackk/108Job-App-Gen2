@@ -32,7 +32,7 @@ class _ButtonDefaultState extends State<ButtonDefault> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      // height: 12.w,
+      height: 45,
       child: TextButton(
         style: ButtonStyle(
           side: WidgetStateProperty.resolveWith<BorderSide>(
@@ -87,7 +87,7 @@ class ButtonWithIconLeft extends StatefulWidget {
   final FontWeight? fontWeight;
   final Widget? widgetIcon;
   final BorderRadiusGeometry? borderRadius;
-  final MaterialStateProperty<EdgeInsetsGeometry?>? paddingButton;
+  final WidgetStateProperty<EdgeInsetsGeometry?>? paddingButton;
   final Function()? press;
 
   @override
@@ -98,27 +98,27 @@ class _ButtonWithIconLeftState extends State<ButtonWithIconLeft> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height: 12.w,
+      height: 45,
       child: TextButton(
         style: ButtonStyle(
           padding: widget.paddingButton ??
-              MaterialStateProperty.all<EdgeInsets>(
+              WidgetStateProperty.all<EdgeInsets>(
                 EdgeInsets.zero,
               ),
-          side: MaterialStateProperty.resolveWith<BorderSide>(
-            (Set<MaterialState> states) {
+          side: WidgetStateProperty.resolveWith<BorderSide>(
+            (Set<WidgetState> states) {
               return BorderSide(
                 color: widget.buttonBorderColor ??
                     AppColors.borderWhite.withOpacity(0),
               ); // Default border color
             },
           ),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: widget.borderRadius ?? BorderRadius.circular(12.w),
             ),
           ),
-          backgroundColor: MaterialStateProperty.all(
+          backgroundColor: WidgetStateProperty.all(
             widget.colorButton == null ? AppColors.primary : widget.colorButton,
           ),
         ),
@@ -174,7 +174,7 @@ class _ButtonState extends State<Button> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: widget.height,
+      height: widget.height ?? 45,
       child: TextButton(
         style: ButtonStyle(
           padding: widget.paddingButton ??
@@ -239,7 +239,7 @@ class _SimpleButtonState extends State<SimpleButton> {
     return SizedBox(
       width: double.infinity,
       // height: 12.w,
-      height: 60,
+      height: 45,
       child: TextButton(
         style: ButtonStyle(
           side: WidgetStateProperty.resolveWith<BorderSide>(
@@ -308,15 +308,15 @@ class _CustomButtonIconTextState extends State<CustomButtonIconText> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 12.w,
+      height: 45,
       child: TextButton(
         style: ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(1.5.w),
             ),
           ),
-          backgroundColor: MaterialStateProperty.all(
+          backgroundColor: WidgetStateProperty.all(
               widget.colorButton ?? AppColors.buttonPrimary),
         ),
         onPressed: widget.press,

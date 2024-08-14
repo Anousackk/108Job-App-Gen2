@@ -289,7 +289,7 @@ class _CompanyState extends State<Company> {
           appBar: AppBar(
             toolbarHeight: 0,
             systemOverlayStyle: SystemUiOverlayStyle.dark,
-            backgroundColor: AppColors.white,
+            backgroundColor: AppColors.backgroundWhite,
           ),
           body: SafeArea(
             child: _isLoading

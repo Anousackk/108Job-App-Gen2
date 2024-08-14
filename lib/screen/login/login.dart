@@ -124,15 +124,6 @@ class _LoginState extends State<Login> {
 
       _modelName = productName.toString();
       _modelVersion = systemName.toString() + ' ' + systemVersion.toString();
-      // print('iOS-running systemName: ${iosInfo.systemName}');
-      // print('iOS-running model: ${iosInfo.model}');
-      // print('iOS-running localizedModel: ${iosInfo.localizedModel}');
-      // print('iOS-running utsname.sysname: ${iosInfo.utsname.sysname}');
-      // print('iOS-running utsname.nodename: ${iosInfo.utsname.nodename}');
-      // print('iOS-running utsname.release ${iosInfo.utsname.release}');
-      // print('iOS-running utsname.version: ${iosInfo.utsname.version}');
-      // print('iOS-running utsname.machine: ${iosInfo.utsname.machine}');
-      // print('iOS-running utsname.productName: ${iosInfo.utsname.productName}');
     } else if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       print('Running on version.release: ${androidInfo.version.release}');
@@ -147,16 +138,6 @@ class _LoginState extends State<Login> {
       _modelName = brand.toString() + ' ' + model.toString();
       _modelVersion = versionRelease.toString();
     }
-    // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-
-    // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    // print('Running on ${androidInfo.model}');
-
-    // IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-    // print('Running on ${iosInfo.utsname.machine}');
-
-    // WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
-    // print('Running on ${webBrowserInfo.userAgent}');
   }
 
   login() async {
@@ -615,7 +596,7 @@ class _LoginState extends State<Login> {
                                         },
                                       ),
                                       SizedBox(
-                                        width: 3.w,
+                                        width: 10,
                                       ),
 
                                       //
@@ -634,9 +615,11 @@ class _LoginState extends State<Login> {
                                         Row(
                                           children: [
                                             SizedBox(
-                                              width: 3.w,
+                                              width: 10,
                                             ),
 
+                                            //
+                                            //
                                             //
                                             //
                                             //Apple Log in

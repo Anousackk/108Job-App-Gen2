@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangeLanguage extends StatefulWidget {
-  const ChangeLanguage({Key? key}) : super(key: key);
+  const ChangeLanguage({Key? key, this.callBackSetLanguage}) : super(key: key);
+  final Function(dynamic)? callBackSetLanguage;
 
   @override
   State<ChangeLanguage> createState() => _ChangeLanguageState();
@@ -63,8 +64,10 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
           if (_isLocaleLanguage == 'lo')
             GestureDetector(
               onTap: () {
-                var langEng = Locale('en', 'US');
-                setLanguage(langEng, 'en', "EN");
+                setState(() {
+                  var langEng = Locale('en', 'US');
+                  setLanguage(langEng, 'en', "EN");
+                });
               },
               child: Container(
                 width: 30,
@@ -80,8 +83,10 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
           if (_isLocaleLanguage == 'en')
             GestureDetector(
               onTap: () {
-                var langLao = Locale('lo', 'LA');
-                setLanguage(langLao, 'lo', "LA");
+                setState(() {
+                  var langLao = Locale('lo', 'LA');
+                  setLanguage(langLao, 'lo', "LA");
+                });
               },
               child: Container(
                 width: 30,
@@ -104,7 +109,12 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
     await prefs.setString('setLanguage', langString);
     await prefs.setString('setLanguageApi', langApi);
 
+    widget.callBackSetLanguage!("Set Language Success");
+    print("Set Language Success");
+
     Get.updateLocale(lang);
     checkLanguage();
+
+    setState(() {});
   }
 }

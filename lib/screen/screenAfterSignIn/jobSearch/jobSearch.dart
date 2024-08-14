@@ -21,7 +21,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
 
 class JobSearch extends StatefulWidget {
   const JobSearch(
@@ -888,56 +887,59 @@ class _JobSearchState extends State<JobSearch>
                                                             }).then(
                                                       (value) {
                                                         print(value);
-                                                        _selectedJobFunctionsItems =
-                                                            value;
-                                                        List pName = [];
-                                                        List chName = [];
-
-                                                        //value = [_selectedListItemsChilds]
-                                                        //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                        if (value != null) {
-                                                          print(
-                                                              "value != null");
+                                                        setState(() {
                                                           _selectedJobFunctionsItems =
                                                               value;
-                                                          _jobFunctionItemName =
-                                                              []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+                                                          List pName = [];
+                                                          List chName = [];
 
-                                                          for (var pItem
-                                                              in _listJobFunctions) {
-                                                            //
-                                                            //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedJobFunctionsItems ກົງກັບ _listJobFunctions ບໍ່
-                                                            if (_selectedJobFunctionsItems
-                                                                .contains(pItem[
-                                                                    "_id"])) {
-                                                              setState(() {
-                                                                _jobFunctionItemName
-                                                                    .add(pItem[
-                                                                        "name"]);
-                                                              });
-                                                            }
-                                                            for (var chItem
-                                                                in pItem[
-                                                                    "item"]) {
+                                                          //value = [_selectedListItemsChilds]
+                                                          //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                                          if (value != null) {
+                                                            print(
+                                                                "value != null");
+                                                            _selectedJobFunctionsItems =
+                                                                value;
+                                                            _jobFunctionItemName =
+                                                                []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+
+                                                            for (var pItem
+                                                                in _listJobFunctions) {
+                                                              //
+                                                              //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedJobFunctionsItems ກົງກັບ _listJobFunctions ບໍ່
                                                               if (_selectedJobFunctionsItems
-                                                                  .contains(chItem[
+                                                                  .contains(pItem[
                                                                       "_id"])) {
                                                                 setState(() {
                                                                   _jobFunctionItemName
-                                                                      .add(chItem[
+                                                                      .add(pItem[
                                                                           "name"]);
                                                                 });
                                                               }
+                                                              for (var chItem
+                                                                  in pItem[
+                                                                      "item"]) {
+                                                                if (_selectedJobFunctionsItems
+                                                                    .contains(
+                                                                        chItem[
+                                                                            "_id"])) {
+                                                                  setState(() {
+                                                                    _jobFunctionItemName
+                                                                        .add(chItem[
+                                                                            "name"]);
+                                                                  });
+                                                                }
+                                                              }
                                                             }
-                                                          }
 
-                                                          // print(pName);
-                                                          // print(chName);
-                                                          print(
-                                                              _jobFunctionItemName);
-                                                          print(
-                                                              _selectedJobFunctionsItems);
-                                                        }
+                                                            // print(pName);
+                                                            // print(chName);
+                                                            print(
+                                                                _jobFunctionItemName);
+                                                            print(
+                                                                _selectedJobFunctionsItems);
+                                                          }
+                                                        });
                                                       },
                                                     );
                                                   },
@@ -2199,6 +2201,8 @@ class _JobSearchState extends State<JobSearch>
                                                                         });
                                                                 if (result ==
                                                                     'Ok') {
+                                                                  print(
+                                                                      "press ok");
                                                                   _removeJobsSearchSeekerLocal(
                                                                       i['jobId']);
                                                                   hideJob(

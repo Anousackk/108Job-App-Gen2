@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_final_fields, unused_field, non_constant_identifier_names, prefer_const_literals_to_create_immutables, prefer_typing_uninitialized_variables, curly_braces_in_flow_control_structures, unused_local_variable, avoid_print, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_if_null_operators
 
+import 'dart:io';
+
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
@@ -162,6 +164,10 @@ class _RegisterState extends State<Register> {
 
                               //
                               //
+                              //
+                              //
+                              //
+                              //
                               //Change Language Lao-Eng
                               Container(
                                 // color: AppColors.blue,
@@ -191,6 +197,11 @@ class _RegisterState extends State<Register> {
                                 height: 35,
                               ),
 
+                              //
+                              //
+                              //
+                              //
+                              //
                               //
                               //
                               //Text Register
@@ -249,7 +260,11 @@ class _RegisterState extends State<Register> {
 
                               //
                               //
-                              //Input Phone Number
+                              //
+                              //
+                              //
+                              //
+                              //Phone Number
                               if (_isCheckTelAndEmail)
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,9 +296,14 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ],
                                 ),
+
                               //
                               //
-                              //Input Email
+                              //
+                              //
+                              //
+                              //
+                              //Email
                               if (!_isCheckTelAndEmail)
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,6 +332,9 @@ class _RegisterState extends State<Register> {
                                 height: 2.5.h, //20
                               ),
 
+                              //
+                              //
+                              //
                               //
                               //
                               //Password
@@ -371,6 +394,9 @@ class _RegisterState extends State<Register> {
 
                               //
                               //
+                              //
+                              //
+                              //
                               //Button Register
                               SimpleButton(
                                 text: "register".tr,
@@ -399,6 +425,10 @@ class _RegisterState extends State<Register> {
                                 height: 2.5.h, //20
                               ),
 
+                              //
+                              //
+                              //
+                              //
                               //
                               //
                               //Text Register with Phone Number or Email
@@ -449,11 +479,20 @@ class _RegisterState extends State<Register> {
 
                               //
                               //
-                              //Signe up with orther
+                              //
+                              //
+                              //
+                              //Sign up with orther
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  //
+                                  //
+                                  //
+                                  //
+                                  //
+                                  //Google
                                   BoxDecorationIcon(
                                     padding: EdgeInsets.all(13),
                                     StrImage: 'assets/image/google.png',
@@ -462,15 +501,51 @@ class _RegisterState extends State<Register> {
                                     },
                                   ),
                                   SizedBox(
-                                    width: 3.w,
+                                    width: 10,
                                   ),
+
+                                  //
+                                  //
+                                  //
+                                  //
+                                  //
+                                  //Facebook
                                   BoxDecorationIcon(
                                     padding: EdgeInsets.all(13),
                                     StrImage: 'assets/image/facebook.png',
                                     press: () {
                                       AuthService().loginWithFacebook(context);
                                     },
-                                  )
+                                  ),
+
+                                  //
+                                  //
+                                  //
+                                  //
+                                  //
+                                  //Apple
+                                  if (Platform.isIOS)
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+
+                                        //
+                                        //
+                                        //
+                                        //
+                                        //Apple Log in
+                                        BoxDecorationIcon(
+                                          padding: EdgeInsets.all(13),
+                                          StrImage: 'assets/image/apple.png',
+                                          press: () async {
+                                            AuthService()
+                                                .loginWithApple(context);
+                                          },
+                                        ),
+                                      ],
+                                    )
                                 ],
                               ),
 

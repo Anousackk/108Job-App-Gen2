@@ -434,6 +434,7 @@ class _MyJobsState extends State<MyJobs> {
                       ),
                     ),
                   ),
+
                   SizedBox(
                     height: 15,
                   ),
@@ -1263,14 +1264,16 @@ class _MyJobsState extends State<MyJobs> {
                                                                                 title: "hide".tr + "${i['jobTitle']}",
                                                                                 contentText: "do u want".tr + "hide".tr + "${i['jobTitle']}",
                                                                                 textLeft: 'cancel'.tr,
-                                                                                textRight: 'hide'.tr,
+                                                                                textRight: 'unhide'.tr,
                                                                                 colorTextRight: AppColors.fontDanger,
                                                                               );
                                                                             });
                                                                         if (result ==
                                                                             'Ok') {
+                                                                          print(
+                                                                              "press ok");
                                                                           _removeJobsSearchSeekerLocal(
-                                                                              i['jobId']);
+                                                                              i['_id']);
                                                                           unSaveUnHideMyJob(
                                                                             i['_id'],
                                                                             _typeMyJob,
@@ -1308,6 +1311,8 @@ class _MyJobsState extends State<MyJobs> {
                                                                           i['isSaved'] =
                                                                               !i['isSaved'];
                                                                         });
+                                                                        _removeJobsSearchSeekerLocal(
+                                                                            i['_id']);
                                                                         unSaveUnHideMyJob(
                                                                           i['_id'],
                                                                           _typeMyJob,

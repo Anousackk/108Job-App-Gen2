@@ -198,6 +198,7 @@ class AuthService {
           // AppleIDAuthorizationScopes.fullName,
         ],
       );
+      print("credential " + "${credential}");
 
       var appleSigninId;
       var appleSigninEmail;
@@ -208,7 +209,9 @@ class AuthService {
         //set userIdentifier shared preferences.
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(
-            'appleUserIdentifier', credential.userIdentifier.toString());
+          'appleUserIdentifier',
+          credential.userIdentifier.toString(),
+        );
         print("userIdentifier: " + "${credential.userIdentifier!}");
         appleSigninId = credential.userIdentifier.toString();
       } else {
@@ -268,8 +271,6 @@ class AuthService {
       // if (credential.familyName != null) {
       //   print("lastName: " + "${credential.familyName!}");
       // }
-
-      print("credential " + "${credential}");
     } catch (error) {
       print(error);
       print("catch");

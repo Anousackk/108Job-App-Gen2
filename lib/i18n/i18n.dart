@@ -904,7 +904,13 @@ class LocalString extends Translations {
       "la": "ທ່ານແນ່ໃຈບໍ່ທີ່ຈະຍົກເລີກການເຊື່ອມຕໍ່?",
     },
 
-    //Hide your profile from these companies
+    {
+      "key": "valid_until",
+      "en": "Valid until",
+      "la": "ປິດຮັບສະໝັກ",
+    },
+
+    //Valid until
   ];
   @override
   Map<String, Map<String, String>> get keys {

@@ -512,73 +512,76 @@ class _LoginInformationState extends State<LoginInformation> {
                               //
                               //
                               //Apple connect
-                              GestureDetector(
-                                onTap: () async {
-                                  if (_appleId == "" && _appleEmail == "") {
-                                    AuthService().loginSyncGoogleFacebook(
-                                        context, "apple", (val) {
-                                      print(val);
-                                      if (val == "Sync successful") {
-                                        checkSeekerInfo();
-                                      }
-                                    });
-                                  } else if (_appleEmail != "" &&
-                                          _appleId != "" &&
-                                          _passwordStatus != "" &&
-                                          _email != "" ||
-                                      _phoneNumber != "") {
-                                    var result = await showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return SimpleAlertDialog(
-                                            title: "disconnect".tr,
-                                            contentText:
-                                                "are u sure disconnect".tr,
-                                            textLeft: "cancel".tr,
-                                            textRight: 'confirm'.tr,
-                                          );
-                                        });
-                                    if (result == 'Ok') {
-                                      var res = await postData(
-                                          apiDisconnectGoogleFacebookAip, {
-                                        "id": _appleId,
-                                        "email": _appleEmail,
-                                        "type": "apple",
+                              if (Platform.isIOS)
+                                GestureDetector(
+                                  onTap: () async {
+                                    if (_appleId == "" && _appleEmail == "") {
+                                      AuthService().loginSyncGoogleFacebook(
+                                          context, "apple", (val) {
+                                        print(val);
+                                        if (val == "Sync successful") {
+                                          checkSeekerInfo();
+                                        }
                                       });
-                                      if (res["message"] != null) {
-                                        await checkSeekerInfo();
-                                        await showDialog(
-                                          barrierDismissible: false,
+                                    } else if (_appleEmail != "" &&
+                                            _appleId != "" &&
+                                            _passwordStatus != "" &&
+                                            _email != "" ||
+                                        _phoneNumber != "") {
+                                      var result = await showDialog(
                                           context: context,
                                           builder: (context) {
-                                            return CustomAlertDialogSuccess(
-                                              title: "Disconnect Apple",
-                                              text: "Disconnect apple success",
-                                              textButton: "ok".tr,
-                                              press: () {
-                                                Navigator.pop(context);
-                                              },
+                                            return SimpleAlertDialog(
+                                              title: "disconnect".tr,
+                                              contentText:
+                                                  "are u sure disconnect".tr,
+                                              textLeft: "cancel".tr,
+                                              textRight: 'confirm'.tr,
                                             );
-                                          },
-                                        );
+                                          });
+                                      if (result == 'Ok') {
+                                        var res = await postData(
+                                            apiDisconnectGoogleFacebookAip, {
+                                          "id": _appleId,
+                                          "email": _appleEmail,
+                                          "type": "apple",
+                                        });
+                                        if (res["message"] != null) {
+                                          await checkSeekerInfo();
+                                          await showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (context) {
+                                              return CustomAlertDialogSuccess(
+                                                title: "Disconnect Apple",
+                                                text:
+                                                    "Disconnect apple success",
+                                                textButton: "ok".tr,
+                                                press: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              );
+                                            },
+                                          );
+                                        }
                                       }
+                                    } else {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => DeleteAccount(),
+                                        ),
+                                      );
                                     }
-                                  } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => DeleteAccount(),
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: ConnectOtherPlatform(
-                                  title: "Apple",
-                                  strImage: 'assets/image/apple.png',
-                                  text:
-                                      _appleId != "" ? _appleEmail : "link".tr,
+                                  },
+                                  child: ConnectOtherPlatform(
+                                    title: "Apple",
+                                    strImage: 'assets/image/apple.png',
+                                    text: _appleId != ""
+                                        ? _appleEmail
+                                        : "link".tr,
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         ),

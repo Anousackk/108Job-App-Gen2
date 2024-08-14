@@ -288,7 +288,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                             _isValidateValue == true && _dateOfBirth == null
                                 ? AppColors.borderDanger
                                 : AppColors.borderSecondary,
-                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 1.7.w),
+                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 8),
                         fontWeight: null,
                         widgetIconActive: FaIcon(
                           FontAwesomeIcons.calendar,
@@ -372,6 +372,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
                       //
                       //
+                      //
+                      //
                       //Gender
                       Text(
                         "gender".tr,
@@ -387,7 +389,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                             _selectedGender == "" && _isValidateValue == true
                                 ? AppColors.borderDanger
                                 : AppColors.borderSecondary,
-                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 1.7.w),
+                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 8),
                         fontWeight: null,
                         widgetIconActive: FaIcon(
                           FontAwesomeIcons.caretDown,
@@ -569,7 +571,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                 _isValidateValue == true
                             ? AppColors.borderDanger
                             : AppColors.borderSecondary,
-                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 1.7.w),
+                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 8),
                         fontWeight: null,
                         widgetIconActive: FaIcon(
                           FontAwesomeIcons.caretDown,
@@ -717,7 +719,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                 _isValidateValue == true
                             ? AppColors.borderDanger
                             : AppColors.borderSecondary,
-                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 1.7.w),
+                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 8),
                         fontWeight: null,
                         widgetIconActive: FaIcon(
                           FontAwesomeIcons.caretDown,
@@ -798,7 +800,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                             _selectedCountry == "" && _isValidateValue == true
                                 ? AppColors.borderDanger
                                 : AppColors.borderSecondary,
-                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 1.7.w),
+                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 8),
                         fontWeight: null,
                         widgetIconActive: FaIcon(
                           FontAwesomeIcons.caretDown,
@@ -880,7 +882,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                             _selectedProvince == "" && _isValidateValue == true
                                 ? AppColors.borderDanger
                                 : AppColors.borderSecondary,
-                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 1.7.w),
+                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 8),
                         fontWeight: null,
                         widgetIconActive: FaIcon(
                           FontAwesomeIcons.caretDown,
@@ -1025,7 +1027,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                             _selectedDistrict == "" && _isValidateValue == true
                                 ? AppColors.borderDanger
                                 : AppColors.borderSecondary,
-                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 1.7.w),
+                        paddingFaIcon: EdgeInsets.symmetric(horizontal: 8),
                         fontWeight: null,
                         widgetIconActive: FaIcon(
                           FontAwesomeIcons.caretDown,

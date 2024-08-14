@@ -21,7 +21,7 @@ const apiDisconnectGoogleFacebookAip =
     globalURL + "/disconnect-google-facebook-seeker-app";
 
 //Register
-var apiRegisterSeeker = globalURL + '/register-basic-member-seeker-app';
+var apiRegisterSeeker = globalURL + '/new-register-basic-member-seeker-app';
 var apiVerifyCodeSeeker = globalURL + '/verify-register-code-seeker-app';
 var apiNewVerifyCodeSeeker = globalURL + '/seeker-verify-request-register-app';
 var apirequestOTPRegisterSeeker =

@@ -329,7 +329,7 @@ class _SimpleTextFieldWithIconRightState
   Widget build(BuildContext context) {
     var textValidate = "required";
     return Container(
-      // height: 12.5.w,
+      // height: 50,
       child: TextFormField(
         onTap: widget.press,
         onChanged: widget.changed,
@@ -1350,7 +1350,7 @@ class _BoxDecorationInputState extends State<BoxDecorationInput> {
           onTap: widget.press,
           child: Container(
             width: double.infinity,
-            height: widget.heigth == null ? 60 : widget.heigth,
+            height: widget.heigth == null ? 50 : widget.heigth,
             decoration: boxDecoration(
                 widget.boxDecBorderRadius,
                 widget.colorInput == null

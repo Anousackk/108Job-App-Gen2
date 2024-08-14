@@ -312,27 +312,27 @@ class MyAppState extends State<MyApp> {
                 systemOverlayStyle: SystemUiOverlayStyle.dark,
                 // backgroundColor: AppColors.backgroundWhite,
               ),
-              // body: Login(),
-              body: UpgradeAlert(
-                upgrader: Upgrader(
-                  // showIgnore: false,
-                  // showLater: false,
-                  // canDismissDialog: false,
-                  // showReleaseNotes: false,
-                  // shouldPopScope: () => false,
-                  durationUntilAlertAgain: Duration(days: 1),
-                  storeController: UpgraderStoreController(
-                    onAndroid: () => UpgraderPlayStore(),
-                    oniOS: () => UpgraderAppStore(),
-                  ),
-                  // dialogStyle: Platform.isIOS
-                  //     ? UpgradeDialogStyle.cupertino
-                  //     : UpgradeDialogStyle.material,
-                  // messages: UpgraderMessages(),
-                  messages: MyUpgraderMessages(),
-                ),
-                child: Login(),
-              ),
+              body: Login(),
+              // body: UpgradeAlert(
+              //   upgrader: Upgrader(
+              //     // showIgnore: false,
+              //     // showLater: false,
+              //     // canDismissDialog: false,
+              //     // showReleaseNotes: false,
+              //     // shouldPopScope: () => false,
+              //     durationUntilAlertAgain: Duration(days: 1),
+              //     storeController: UpgraderStoreController(
+              //       onAndroid: () => UpgraderPlayStore(),
+              //       oniOS: () => UpgraderAppStore(),
+              //     ),
+              //     // dialogStyle: Platform.isIOS
+              //     //     ? UpgradeDialogStyle.cupertino
+              //     //     : UpgradeDialogStyle.material,
+              //     // messages: UpgraderMessages(),
+              //     messages: MyUpgraderMessages(),
+              //   ),
+              //   child: Login(),
+              // ),
             ),
             localizationsDelegates: [
               // add your localizations delegates here

@@ -423,8 +423,8 @@ class _ListJobFuncSelectedAlertDialogState
                                       shrinkWrap: true,
                                       itemCount: i['item'].length,
                                       itemBuilder: (context, childIndex) {
-                                        dynamic p = i['item'][childIndex];
-                                        String name = p['name'];
+                                        dynamic pe = i['item'][childIndex];
+                                        String name = pe['name'];
 
                                         return GestureDetector(
                                           //
@@ -436,20 +436,21 @@ class _ListJobFuncSelectedAlertDialogState
                                               //
                                               //ຖ້າໂຕທີ່ເລືອກ p['_id'] ກົງກັບ _selectedListItemsChilds(_id) ແມ່ນລົບອອກ
                                               if (_selectedListItemsChilds
-                                                  .contains(p['_id'])) {
+                                                  .contains(pe['_id'])) {
                                                 _selectedListItemsChilds
                                                     .removeWhere(
-                                                  (e) => e == p['_id'],
+                                                  (me) => me == pe['_id'],
                                                 );
                                                 if (_listItemsChilds.every(
-                                                    (eCheckBoxChilds) =>
-                                                        !_selectedListItemsChilds
-                                                            .contains(
-                                                                eCheckBoxChilds[
-                                                                    '_id']))) {
+                                                  (eCheckBoxChilds) =>
+                                                      !_selectedListItemsChilds
+                                                          .contains(
+                                                              eCheckBoxChilds[
+                                                                  '_id']),
+                                                )) {
                                                   _selectedListItemsChilds
                                                       .removeWhere(
-                                                    (x) => x == i['_id'],
+                                                    (xe) => xe == i['_id'],
                                                   );
                                                 }
 
@@ -468,7 +469,7 @@ class _ListJobFuncSelectedAlertDialogState
                                               //
                                               //ເອົາຂໍ້ມູນທີ່ເລືອກ p['_id'] add ເຂົ້າໃນ array _selectedListItemsChilds
                                               _selectedListItemsChilds
-                                                  .add(p['_id']);
+                                                  .add(pe['_id']);
                                             });
                                           },
                                           child: Container(
@@ -482,7 +483,7 @@ class _ListJobFuncSelectedAlertDialogState
                                                 //checkbox icon Childs
                                                 Container(
                                                   child: _selectedListItemsChilds
-                                                          .contains(p['_id'])
+                                                          .contains(pe['_id'])
                                                       ? Icon(Icons.check_box,
                                                           color: AppColors
                                                               .iconPrimary)
@@ -501,7 +502,7 @@ class _ListJobFuncSelectedAlertDialogState
                                                     style: bodyTextNormal(
                                                         _selectedListItemsChilds
                                                                 .contains(
-                                                                    p['_id'])
+                                                                    pe['_id'])
                                                             ? AppColors
                                                                 .fontPrimary
                                                             : null,

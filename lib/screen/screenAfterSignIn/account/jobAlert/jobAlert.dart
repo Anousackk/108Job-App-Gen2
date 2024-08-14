@@ -72,7 +72,7 @@ class _JobAlertState extends State<JobAlert> {
 
   getJobAlert() async {
     res = await fetchData(getJobAlertSeekerApi);
-    // print(res);
+    print(res);
     if (res.isNotEmpty) {
       dynamic resJobAlertSetting = res['jobAlertSetting'];
       _jobFunctionJobAlert = resJobAlertSetting['jobFunction'];
@@ -81,6 +81,10 @@ class _JobAlertState extends State<JobAlert> {
       _industryJobAlert = resJobAlertSetting['industry'];
 
       _jobAlertForEdit = res['jobAlertForEdit'];
+      _selectedIndustryListItem = _jobAlertForEdit['industry'];
+      _selectedJobFunctionsItems = _jobAlertForEdit['jobFunction'];
+      _selectedJobLevelListItem = _jobAlertForEdit['jobLevel'];
+      _selectedProvincesListItem = _jobAlertForEdit['workLocation'];
     } else {
       print("eie");
     }
@@ -102,6 +106,7 @@ class _JobAlertState extends State<JobAlert> {
         return CustomAlertLoading();
       },
     );
+
     var res = await postData(addJobAlertSeekerApi, {
       "jobTitle": [],
       "jobFunctionId": _selectedJobFunctionsItems,
@@ -116,6 +121,7 @@ class _JobAlertState extends State<JobAlert> {
     }
 
     if (res != null) {
+      print(res.toString());
       await showDialog(
         barrierDismissible: false,
         context: context,
@@ -142,51 +148,60 @@ class _JobAlertState extends State<JobAlert> {
       //
       //Work Province Id
       _selectedProvincesListItem = i['workLocation'];
-      String mapWorkProvince =
-          _selectedProvincesListItem.map((p) => p['_id']).join(',');
-      _selectedProvincesListItem = mapWorkProvince.split(',');
-      //
-      //Work Province Name
-      _provinceName = i['workLocation'];
-      String mapWorkProvinceName =
-          _provinceName.map((p) => p['name']).join(',');
-      _provinceName = mapWorkProvinceName.split(',');
+      if (_selectedProvincesListItem.length > 0) {
+        String mapWorkProvince =
+            _selectedProvincesListItem.map((p) => p['_id']).join(',');
+        _selectedProvincesListItem = mapWorkProvince.split(',');
+
+        //
+        //Work Province Name
+        _provinceName = i['workLocation'];
+        String mapWorkProvinceName =
+            _provinceName.map((p) => p['name']).join(',');
+        _provinceName = mapWorkProvinceName.split(',');
+      }
 
       //
       //Industry Id
       _selectedIndustryListItem = i['industry'];
-      String mapIndustry =
-          _selectedIndustryListItem.map((i) => i['_id']).join(',');
-      _selectedIndustryListItem = mapIndustry.split(',');
-      //
-      //Industry Name
-      _industryName = i['industry'];
-      String mapIndustryName = _industryName.map((i) => i['name']).join(',');
-      _industryName = mapIndustryName.split(',');
+      if (_selectedIndustryListItem.length > 0) {
+        String mapIndustry =
+            _selectedIndustryListItem.map((i) => i['_id']).join(',');
+        _selectedIndustryListItem = mapIndustry.split(',');
+        //
+        //Industry Name
+        _industryName = i['industry'];
+        String mapIndustryName = _industryName.map((i) => i['name']).join(',');
+        _industryName = mapIndustryName.split(',');
+      }
 
       //
       //Job Level Id
       _selectedJobLevelListItem = i['jobLevel'];
-      String mapJobLevelId =
-          _selectedJobLevelListItem.map((i) => i['_id']).join(',');
-      _selectedJobLevelListItem = mapJobLevelId.split(',');
-      //
-      //Job Level Name
-      _jobLevelName = i['jobLevel'];
-      String mapJobLevelName = _jobLevelName.map((i) => i['name']).join(',');
-      _jobLevelName = mapJobLevelName.split(',');
+      if (_selectedJobLevelListItem.length > 0) {
+        String mapJobLevelId =
+            _selectedJobLevelListItem.map((i) => i['_id']).join(',');
+        _selectedJobLevelListItem = mapJobLevelId.split(',');
+        //
+        //Job Level Name
+        _jobLevelName = i['jobLevel'];
+        String mapJobLevelName = _jobLevelName.map((i) => i['name']).join(',');
+        _jobLevelName = mapJobLevelName.split(',');
+      }
 
       //
       //Job Function Id(selectedItem id)
       _selectedJobFunctionsItems = i['jobFunction'];
-      _selectedJobFunctionsItems =
-          _selectedJobFunctionsItems.map((e) => e['_id'].toString()).toList();
-      //
-      //Job Function Name(seletedItem name)
-      _jobFunctionItemName = i['jobFunction'];
-      String mapJobFunctionItemName =
-          _jobFunctionItemName.map((j) => j['name']).join(',');
-      _jobFunctionItemName = mapJobFunctionItemName.split(',');
+      if (_selectedJobFunctionsItems.length > 0) {
+        _selectedJobFunctionsItems =
+            _selectedJobFunctionsItems.map((e) => e['_id'].toString()).toList();
+        //
+        //Job Function Name(seletedItem name)
+        _jobFunctionItemName = i['jobFunction'];
+        String mapJobFunctionItemName =
+            _jobFunctionItemName.map((j) => j['name']).join(',');
+        _jobFunctionItemName = mapJobFunctionItemName.split(',');
+      }
     });
   }
 
@@ -242,6 +257,10 @@ class _JobAlertState extends State<JobAlert> {
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
+                        // Text("${_selectedIndustryListItem}"),
+                        // Text("${_selectedJobFunctionsItems}"),
+                        // Text("${_selectedJobLevelListItem}"),
+                        // Text("${_selectedProvincesListItem}"),
                         SizedBox(height: 20),
                         Expanded(
                           child: SingleChildScrollView(
@@ -260,6 +279,7 @@ class _JobAlertState extends State<JobAlert> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       //
+                                      //
                                       //Job Function
                                       Text(
                                         "job function".tr,
@@ -269,7 +289,7 @@ class _JobAlertState extends State<JobAlert> {
                                         height: 5,
                                       ),
                                       Text(
-                                        "${_jobFunctionJobAlert}",
+                                        "${_jobFunctionJobAlert != 'Any' ? _jobFunctionJobAlert : ''}",
                                         style: bodyTextNormal(
                                             null, FontWeight.bold),
                                       ),
@@ -277,6 +297,7 @@ class _JobAlertState extends State<JobAlert> {
                                         height: 15,
                                       ),
 
+                                      //
                                       //
                                       //Working Province
                                       Text(
@@ -287,7 +308,7 @@ class _JobAlertState extends State<JobAlert> {
                                         height: 5,
                                       ),
                                       Text(
-                                        "${_workLocationJobAlert}",
+                                        "${_workLocationJobAlert != 'Any' ? _workLocationJobAlert : ''}",
                                         style: bodyTextNormal(
                                             null, FontWeight.bold),
                                       ),
@@ -295,6 +316,7 @@ class _JobAlertState extends State<JobAlert> {
                                         height: 15,
                                       ),
 
+                                      //
                                       //
                                       //Industry
                                       Text(
@@ -305,7 +327,7 @@ class _JobAlertState extends State<JobAlert> {
                                         height: 5,
                                       ),
                                       Text(
-                                        "${_industryJobAlert}",
+                                        "${_industryJobAlert != 'Any' ? _industryJobAlert : ''}",
                                         style: bodyTextNormal(
                                             null, FontWeight.bold),
                                       ),
@@ -313,6 +335,7 @@ class _JobAlertState extends State<JobAlert> {
                                         height: 15,
                                       ),
 
+                                      //
                                       //
                                       //Job level
                                       Text(
@@ -323,7 +346,7 @@ class _JobAlertState extends State<JobAlert> {
                                         height: 5,
                                       ),
                                       Text(
-                                        "${_jobLevelJobAlert}",
+                                        "${_jobLevelJobAlert != 'Any' ? _jobLevelJobAlert : ''}",
                                         style: bodyTextNormal(
                                             null, FontWeight.bold),
                                       ),
@@ -338,14 +361,28 @@ class _JobAlertState extends State<JobAlert> {
                           height: 20,
                         ),
                         Button(
-                          text: res.isNotEmpty ? "edit".tr : "add".tr,
-                          fontWeight: FontWeight.bold,
+                          text: res.isNotEmpty
+                              // ||  res['jobAlertForEdit']['jobFunction'].length >
+                              //       0 ||
+                              //   res['jobAlertForEdit']['jobLevel'].length >
+                              //       0 ||
+                              //   res['jobAlertForEdit']['workLocation']
+                              //           .length >
+                              //       0 ||
+                              //   res['jobAlertForEdit']['industry'].length > 0
+                              ? "edit".tr
+                              : "add".tr,
                           press: () async {
+                            print(res);
                             if (res.isNotEmpty) {
                               _jobAlertForEdit;
 
                               setValueGetById(_jobAlertForEdit);
                             }
+
+                            //
+                            //
+                            //
                             //
                             //
                             //Alert Dialog Job Alert
@@ -379,6 +416,7 @@ class _JobAlertState extends State<JobAlert> {
                                           GestureDetector(
                                             onTap: () {
                                               Navigator.pop(context);
+                                              getJobAlert();
                                             },
                                             child: FaIcon(
                                               FontAwesomeIcons.arrowLeft,
@@ -400,6 +438,13 @@ class _JobAlertState extends State<JobAlert> {
 
                                     //
                                     //
+                                    //
+                                    //
+                                    //
+                                    //
+                                    //
+                                    //
+                                    //
                                     //Content Job Alert
                                     content: Container(
                                       padding: EdgeInsets.symmetric(
@@ -417,6 +462,10 @@ class _JobAlertState extends State<JobAlert> {
                                             SizedBox(
                                               height: 10,
                                             ),
+
+                                            //
+                                            //
+                                            //
                                             //
                                             //
                                             //Job Function
@@ -467,54 +516,57 @@ class _JobAlertState extends State<JobAlert> {
                                                     }).then(
                                                   (value) {
                                                     print(value);
-                                                    _selectedJobFunctionsItems =
-                                                        value;
-                                                    List pName = [];
-                                                    List chName = [];
-
-                                                    //value = [_selectedListItemsChilds]
-                                                    //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                    if (value != null) {
-                                                      print("value != null");
+                                                    setState(() {
                                                       _selectedJobFunctionsItems =
                                                           value;
-                                                      _jobFunctionItemName =
-                                                          []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+                                                      List pName = [];
+                                                      List chName = [];
 
-                                                      for (var pItem
-                                                          in _listJobFunctions) {
-                                                        //
-                                                        //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedJobFunctionsItems ກົງກັບ _listJobFunctions ບໍ່
-                                                        if (_selectedJobFunctionsItems
-                                                            .contains(
-                                                                pItem["_id"])) {
-                                                          setState(() {
-                                                            _jobFunctionItemName
-                                                                .add(pItem[
-                                                                    "name"]);
-                                                          });
-                                                        }
-                                                        for (var chItem
-                                                            in pItem["item"]) {
+                                                      //value = [_selectedListItemsChilds]
+                                                      //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                                      if (value != null) {
+                                                        print("value != null");
+                                                        _selectedJobFunctionsItems =
+                                                            value;
+                                                        _jobFunctionItemName =
+                                                            []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+
+                                                        for (var pItem
+                                                            in _listJobFunctions) {
+                                                          //
+                                                          //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedJobFunctionsItems ກົງກັບ _listJobFunctions ບໍ່
                                                           if (_selectedJobFunctionsItems
-                                                              .contains(chItem[
+                                                              .contains(pItem[
                                                                   "_id"])) {
                                                             setState(() {
                                                               _jobFunctionItemName
-                                                                  .add(chItem[
+                                                                  .add(pItem[
                                                                       "name"]);
                                                             });
                                                           }
+                                                          for (var chItem
+                                                              in pItem[
+                                                                  "item"]) {
+                                                            if (_selectedJobFunctionsItems
+                                                                .contains(chItem[
+                                                                    "_id"])) {
+                                                              setState(() {
+                                                                _jobFunctionItemName
+                                                                    .add(chItem[
+                                                                        "name"]);
+                                                              });
+                                                            }
+                                                          }
                                                         }
-                                                      }
 
-                                                      // print(pName);
-                                                      // print(chName);
-                                                      print(
-                                                          _jobFunctionItemName);
-                                                      print(
-                                                          _selectedJobFunctionsItems);
-                                                    }
+                                                        // print(pName);
+                                                        // print(chName);
+                                                        print(
+                                                            _jobFunctionItemName);
+                                                        print(
+                                                            _selectedJobFunctionsItems);
+                                                      }
+                                                    });
                                                   },
                                                 );
                                               },
@@ -545,6 +597,9 @@ class _JobAlertState extends State<JobAlert> {
                                             ),
                                             SizedBox(height: 10),
 
+                                            //
+                                            //
+                                            //
                                             //
                                             //
                                             //Work Location
@@ -618,15 +673,19 @@ class _JobAlertState extends State<JobAlert> {
                                                 );
                                               },
                                               text: _selectedProvincesListItem
-                                                      .isEmpty
-                                                  ? "select".tr +
+                                                          .length >
+                                                      0
+                                                  ? "${_provinceName.join(', ')}"
+                                                  : "select".tr +
                                                       " " +
-                                                      "work province".tr
-                                                  : "${_provinceName.join(', ')}",
+                                                      "work province".tr,
                                               validateText: Container(),
                                             ),
                                             SizedBox(height: 10),
 
+                                            //
+                                            //
+                                            //
                                             //
                                             //
                                             //Industry
@@ -710,6 +769,10 @@ class _JobAlertState extends State<JobAlert> {
                                               height: 10,
                                             ),
 
+                                            //
+                                            //
+                                            //
+                                            //
                                             //
                                             //
                                             //Job Level

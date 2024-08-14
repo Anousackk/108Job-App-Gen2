@@ -372,6 +372,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                         //   horizontal: 20,
                         // ),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             GestureDetector(
                               onTap: () {
@@ -384,12 +385,16 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                               child: Container(
                                 color: AppColors.backgroundWhite,
                                 padding: EdgeInsets.all(20),
-                                child: FaIcon(
-                                  FontAwesomeIcons.arrowLeft,
-                                  color: AppColors.iconDark,
-                                  size: IconSize.mIcon,
+                                child: Text(
+                                  "\uf060",
+                                  style: fontAwesomeRegular(
+                                      null, 20, AppColors.iconDark, null),
                                 ),
                               ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 20),
+                              child: Text("valid_until".tr + ": ${_closeDate}"),
                             )
                           ],
                         ),
@@ -857,13 +862,13 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                   ? ButtonWithIconLeft(
                                       paddingButton:
                                           WidgetStateProperty.all<EdgeInsets>(
-                                        EdgeInsets.all(0),
+                                        EdgeInsets.all(10),
                                       ),
                                       borderRadius:
                                           BorderRadius.circular(1.5.w),
                                       buttonBorderColor:
                                           AppColors.backgroundWhite,
-                                      colorButton: AppColors.backgroundWhite,
+                                      colorButton: AppColors.buttonWhite,
                                       widgetIcon: FaIcon(
                                         FontAwesomeIcons.heart,
                                         color: AppColors.iconDark,
@@ -884,7 +889,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                   : ButtonWithIconLeft(
                                       paddingButton:
                                           WidgetStateProperty.all<EdgeInsets>(
-                                        EdgeInsets.all(0),
+                                        EdgeInsets.all(10),
                                       ),
                                       borderRadius:
                                           BorderRadius.circular(1.5.w),
