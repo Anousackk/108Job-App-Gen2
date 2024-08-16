@@ -1366,7 +1366,7 @@ class _JobSearchState extends State<JobSearch>
                                 height: 45,
                                 padding: EdgeInsets.symmetric(horizontal: 20),
                                 decoration: BoxDecoration(
-                                  color: AppColors.greyOpacity,
+                                  color: AppColors.backgroundWhite,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Align(
@@ -2185,18 +2185,17 @@ class _JobSearchState extends State<JobSearch>
                                                                             context,
                                                                         builder:
                                                                             (context) {
-                                                                          return AlertDialogButtonConfirmCancelBetween(
+                                                                          return newAlertDialogWarningConfirmCancelBetween(
+                                                                            textTop:
+                                                                                "hide_job_post".tr,
                                                                             title:
-                                                                                "hide".tr + "${i['title']}",
-                                                                            contentText: "do u want".tr +
-                                                                                "hide".tr +
                                                                                 "${i['title']}",
+                                                                            text:
+                                                                                "after_hide".tr,
                                                                             textLeft:
                                                                                 'cancel'.tr,
                                                                             textRight:
-                                                                                'hide'.tr,
-                                                                            colorTextRight:
-                                                                                AppColors.fontDanger,
+                                                                                'confirm'.tr,
                                                                           );
                                                                         });
                                                                 if (result ==
@@ -2474,7 +2473,7 @@ class _JobSearchState extends State<JobSearch>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$jobTitle " + "save job".tr + "successful".tr,
             textButton: "ok".tr,
@@ -2489,7 +2488,7 @@ class _JobSearchState extends State<JobSearch>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$jobTitle " + "unsave job".tr + "successful".tr,
             textButton: "ok".tr,
@@ -2529,7 +2528,7 @@ class _JobSearchState extends State<JobSearch>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$jobTitle " + "hide job".tr + "successful".tr,
             textButton: "ok".tr,

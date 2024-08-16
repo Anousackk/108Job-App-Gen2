@@ -5,6 +5,7 @@ import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/cupertinoDatePicker.dart';
 import 'package:app/functions/iconSize.dart';
+import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/widget/appbar.dart';
@@ -35,6 +36,8 @@ class _WorkHistoryState extends State<WorkHistory> {
   TextEditingController _companyController = TextEditingController();
   TextEditingController _jobTitleController = TextEditingController();
   TextEditingController _responsibilityController = TextEditingController();
+  FocusScopeNode _currentFocus = FocusScopeNode();
+  FocusNode focusNode = FocusNode();
 
   String? _id;
   String _company = "";
@@ -135,13 +138,11 @@ class _WorkHistoryState extends State<WorkHistory> {
     //   return !_isCurrentJob ? AppColors.white : AppColors.primary;
     // }
 
-    FocusScopeNode currentFocus = FocusScopeNode();
-
     return GestureDetector(
       onTap: () {
-        currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
+        _currentFocus = FocusScope.of(context);
+        if (!_currentFocus.hasPrimaryFocus) {
+          _currentFocus.unfocus();
         }
       },
       child: MediaQuery(
@@ -181,6 +182,9 @@ class _WorkHistoryState extends State<WorkHistory> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //Company
                             Text(
                               "company".tr,
@@ -208,6 +212,9 @@ class _WorkHistoryState extends State<WorkHistory> {
                               height: 20,
                             ),
 
+                            //
+                            //
+                            //
                             //
                             //
                             //Job Title
@@ -295,6 +302,9 @@ class _WorkHistoryState extends State<WorkHistory> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //From DateTime(Month)
                             Text(
                               "from".tr + " " + "month".tr + "/" + "year".tr,
@@ -322,6 +332,8 @@ class _WorkHistoryState extends State<WorkHistory> {
                                 size: IconSize.sIcon,
                               ),
                               press: () {
+                                FocusScope.of(context).requestFocus(focusNode);
+
                                 //
                                 // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
                                 var formatDateTimeNow = DateFormat("yyyy-MM-dd")
@@ -413,6 +425,9 @@ class _WorkHistoryState extends State<WorkHistory> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //To DateTime(Month)
                             if (!_isCurrentJob)
                               Column(
@@ -451,6 +466,9 @@ class _WorkHistoryState extends State<WorkHistory> {
                                             size: IconSize.sIcon,
                                           ),
                                           press: () {
+                                            FocusScope.of(context)
+                                                .requestFocus(focusNode);
+
                                             setState(() {
                                               _toMonthYear == null
                                                   ? _toMonthYear =
@@ -576,6 +594,11 @@ class _WorkHistoryState extends State<WorkHistory> {
                                 ],
                               ),
 
+                            //
+                            //
+                            //
+                            //
+                            //
                             // Responsibility
                             Text(
                               "responsibility".tr,
@@ -585,8 +608,11 @@ class _WorkHistoryState extends State<WorkHistory> {
                               height: 5,
                             ),
                             SimpleTextFieldSingleValidate(
-                              heightCon: 180,
+                              heightCon: 300,
                               maxLines: 20,
+                              enabledBorder: enableOutlineBorder(
+                                AppColors.borderSecondary,
+                              ),
                               inputColor: AppColors.backgroundWhite,
                               codeController: _responsibilityController,
                               changed: (value) {
@@ -674,7 +700,7 @@ class _WorkHistoryState extends State<WorkHistory> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "save".tr + "work history".tr + "successful".tr,
             textButton: "ok".tr,

@@ -194,7 +194,7 @@ class _CompanyState extends State<Company> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$companyName " + "followed".tr,
             textButton: "ok".tr,
@@ -211,7 +211,7 @@ class _CompanyState extends State<Company> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$companyName " + "unfollowed".tr,
             textButton: "ok".tr,

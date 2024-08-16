@@ -256,7 +256,7 @@ class _UploadCVState extends State<UploadCV> {
                       await showDialog(
                         context: context,
                         builder: (context) {
-                          return CustomAlertDialogWarning(
+                          return CustomAlertDialogWarningWithoutButton(
                             title: "warning".tr,
                             text: "plz select".tr,
                           );
@@ -303,7 +303,7 @@ class _UploadCVState extends State<UploadCV> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "sccessful".tr,
             text: res['message'],
             textButton: "ok".tr,
@@ -318,7 +318,7 @@ class _UploadCVState extends State<UploadCV> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogError(
+          return CustomAlertDialogErrorWithoutButton(
             title: "invalid".tr,
             text: res['message'],
           );

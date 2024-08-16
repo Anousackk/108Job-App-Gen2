@@ -317,7 +317,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: res['message'],
             textButton: "ok".tr,
@@ -332,7 +332,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogError(
+          return CustomAlertDialogErrorWithoutButton(
             title: "invalid".tr,
             text: res['message'],
           );

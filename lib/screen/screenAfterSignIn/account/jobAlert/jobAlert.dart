@@ -126,7 +126,7 @@ class _JobAlertState extends State<JobAlert> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "save".tr + " " + "job alert".tr + " " + "successful".tr,
             textButton: "ok".tr,

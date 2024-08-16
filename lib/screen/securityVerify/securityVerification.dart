@@ -298,7 +298,7 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogError(
+          return CustomAlertDialogErrorWithoutButton(
             title: "invalid".tr,
             text: res['message'],
           );

@@ -17,7 +17,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
 
 class PersonalInformation extends StatefulWidget {
   const PersonalInformation({Key? key, this.id, this.profile})
@@ -33,6 +32,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
+  FocusScopeNode _currentFocus = FocusScopeNode();
+  FocusNode focusNode = FocusNode();
 
   //
   //Get list items all
@@ -158,6 +159,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
     getSharedPreferences();
 
     //
+    //
     //Check by _id ເພື່ອເອົາຂໍ້ມູນມາອັບເດດ
     _id = widget.id ?? "";
   }
@@ -165,17 +167,17 @@ class _PersonalInformationState extends State<PersonalInformation> {
   @override
   void dispose() {
     super.dispose();
+    _nameController.dispose();
+    _lastNameController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    FocusScopeNode currentFocus = FocusScopeNode();
-
     return GestureDetector(
       onTap: () {
-        currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
+        _currentFocus = FocusScope.of(context);
+        if (!_currentFocus.hasPrimaryFocus) {
+          _currentFocus.unfocus();
         }
       },
       child: MediaQuery(
@@ -296,6 +298,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           size: IconSize.sIcon,
                         ),
                         press: () {
+                          FocusScope.of(context).requestFocus(focusNode);
+
                           // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
                           var formatDateTimeNow = DateFormat("yyyy-MM-dd")
                               .parse(_dateTimeNow.toString());
@@ -397,6 +401,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           size: IconSize.sIcon,
                         ),
                         press: () async {
+                          FocusScope.of(context).requestFocus(focusNode);
+
                           var result = await showDialog(
                               barrierDismissible: false,
                               context: context,
@@ -408,6 +414,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                 );
                               }).then(
                             (value) {
+                              // print(_currentFocus);
                               //value = "_id"
                               //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
                               if (value != "") {
@@ -556,6 +563,9 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
                       //
                       //
+                      //
+                      //
+                      //
                       //Marital Status
                       Text(
                         "marital status".tr,
@@ -579,6 +589,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           size: IconSize.sIcon,
                         ),
                         press: () async {
+                          FocusScope.of(context).requestFocus(focusNode);
+
                           var result = await showDialog(
                               barrierDismissible: false,
                               context: context,
@@ -704,6 +716,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
                       //
                       //
+                      //
+                      //
                       //Nationality
                       Text(
                         "nationality".tr,
@@ -727,6 +741,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           size: IconSize.sIcon,
                         ),
                         press: () async {
+                          FocusScope.of(context).requestFocus(focusNode);
+
                           var result = await showDialog(
                               barrierDismissible: false,
                               context: context,
@@ -785,6 +801,9 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
                       //
                       //
+                      //
+                      //
+                      //
                       //Country
                       Text(
                         "country".tr,
@@ -808,6 +827,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           size: IconSize.sIcon,
                         ),
                         press: () async {
+                          FocusScope.of(context).requestFocus(focusNode);
+
                           var result = await showDialog(
                               barrierDismissible: false,
                               context: context,
@@ -866,6 +887,9 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
                       //
                       //
+                      //
+                      //
+                      //
                       //Province
                       Text(
                         "province".tr,
@@ -890,6 +914,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           size: IconSize.sIcon,
                         ),
                         press: () async {
+                          FocusScope.of(context).requestFocus(focusNode);
+
                           var result = await showDialog(
                               barrierDismissible: false,
                               context: context,
@@ -1012,6 +1038,9 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
                       //
                       //
+                      //
+                      //
+                      //
                       //District
                       Text(
                         "district".tr,
@@ -1035,6 +1064,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           size: IconSize.sIcon,
                         ),
                         press: () async {
+                          FocusScope.of(context).requestFocus(focusNode);
+
                           var result = await showDialog(
                               barrierDismissible: false,
                               context: context,
@@ -1202,7 +1233,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "save".tr +
                 " " +
@@ -1221,7 +1252,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogError(
+          return CustomAlertDialogErrorWithoutButton(
             title: "invalid".tr,
             text: "invalid".tr,
           );

@@ -6,10 +6,10 @@ import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 //Url Server Dev
-const String globalURL = 'https://db-dev.108.jobs/application-api';
+// const String globalURL = 'https://db-dev.108.jobs/application-api';
 
 //Url Server 108Jobs
-// const String globalURL = 'https://db.108.jobs/application-api';
+const String globalURL = 'https://db.108.jobs/application-api';
 
 //Login with google && facebook
 const apiLoginWithGoogle = globalURL + "/seeker-signup-google-app";

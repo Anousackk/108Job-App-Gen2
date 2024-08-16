@@ -910,6 +910,18 @@ class LocalString extends Translations {
       "la": "ປິດຮັບສະໝັກ",
     },
 
+    {
+      "key": "hide_job_post",
+      "en": "Hide the job posting",
+      "la": "ເຊື່ອງປະກາດວຽກ",
+    },
+    {
+      "key": "after_hide",
+      "en":
+          "This job vacancy will no longer be visible on this page after being hidden",
+      "la": "ຫຼັງຈາກເຊື່ອງວຽກ ວຽກດັ່ງກ່າວຈະບໍ່ສະແດງຢູ່ໜ້ານີ້ອີກ",
+    },
+
     //Valid until
   ];
   @override

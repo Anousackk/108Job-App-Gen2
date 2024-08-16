@@ -40,6 +40,11 @@ class _WorkPreferencesState extends State<WorkPreferences> {
   TextEditingController _professionalSummaryController =
       TextEditingController();
   QuillController _quillController = QuillController.basic();
+  FocusScopeNode _currentFocus = FocusScopeNode();
+  FocusNode focusNode = FocusNode();
+  FocusNode editorFocusNode = FocusNode();
+
+  bool isToolBarVisible = true;
 
   //
   //Get list items all
@@ -185,8 +190,13 @@ class _WorkPreferencesState extends State<WorkPreferences> {
 
       setValueGetById();
     }
-
     _workPositionController.text = _workPosition;
+    _salaryController.text = _salary;
+    // focusNode.addListener(() {
+    //   setState(() {
+    //     isToolBarVisible = focusNode.hasPrimaryFocus;
+    //   });
+    // });
   }
 
   @override
@@ -197,13 +207,11 @@ class _WorkPreferencesState extends State<WorkPreferences> {
 
   @override
   Widget build(BuildContext context) {
-    FocusScopeNode currentFocus = FocusScopeNode();
-
     return GestureDetector(
       onTap: () {
-        currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
+        _currentFocus = FocusScope.of(context);
+        if (!_currentFocus.hasPrimaryFocus) {
+          _currentFocus.unfocus();
         }
       },
       child: MediaQuery(
@@ -430,6 +438,8 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                 size: IconSize.sIcon,
                               ),
                               press: () async {
+                                FocusScope.of(context).requestFocus(focusNode);
+
                                 var result = await showDialog(
                                     barrierDismissible: false,
                                     context: context,
@@ -443,18 +453,21 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                   (value) {
                                     //value = "_id"
                                     //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                    if (value != "") {
-                                      //
-                                      //ເອົາ _listJobLevels ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
-                                      dynamic findValue = _listJobLevels
-                                          .firstWhere((i) => i["_id"] == value);
+                                    setState(() {
+                                      if (value != "") {
+                                        //
+                                        //ເອົາ _listJobLevels ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
+                                        dynamic findValue =
+                                            _listJobLevels.firstWhere(
+                                                (i) => i["_id"] == value);
 
-                                      setState(() {
-                                        _selectedJobLevel = findValue['_id'];
-                                        _joblevelName = findValue['name'];
-                                      });
-                                      print(_joblevelName);
-                                    }
+                                        setState(() {
+                                          _selectedJobLevel = findValue['_id'];
+                                          _joblevelName = findValue['name'];
+                                        });
+                                        print(_joblevelName);
+                                      }
+                                    });
                                   },
                                 );
                               },
@@ -518,6 +531,8 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                 size: IconSize.sIcon,
                               ),
                               press: () async {
+                                FocusScope.of(context).requestFocus(focusNode);
+
                                 var result = await showDialog(
                                     barrierDismissible: false,
                                     context: context,
@@ -531,43 +546,45 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                     }).then(
                                   (value) {
                                     print(value);
-                                    _selectedJobFunctionsItems = value;
-                                    List pName = [];
-                                    List chName = [];
-
-                                    //value = [_selectedListItemsChilds]
-                                    //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                    if (value != null) {
-                                      print("value != null");
+                                    setState(() {
                                       _selectedJobFunctionsItems = value;
-                                      _jobFunctionItemName =
-                                          []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+                                      List pName = [];
+                                      List chName = [];
 
-                                      for (var pItem in _listJobFunctions) {
-                                        //
-                                        //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedJobFunctionsItems ກົງກັບ _listJobFunctions ບໍ່
-                                        if (_selectedJobFunctionsItems
-                                            .contains(pItem["_id"])) {
-                                          setState(() {
-                                            _jobFunctionItemName
-                                                .add(pItem["name"]);
-                                          });
-                                        }
-                                        for (var chItem in pItem["item"]) {
+                                      //value = [_selectedListItemsChilds]
+                                      //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                      if (value != null) {
+                                        print("value != null");
+                                        _selectedJobFunctionsItems = value;
+                                        _jobFunctionItemName =
+                                            []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+
+                                        for (var pItem in _listJobFunctions) {
+                                          //
+                                          //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedJobFunctionsItems ກົງກັບ _listJobFunctions ບໍ່
                                           if (_selectedJobFunctionsItems
-                                              .contains(chItem["_id"])) {
+                                              .contains(pItem["_id"])) {
                                             setState(() {
                                               _jobFunctionItemName
-                                                  .add(chItem["name"]);
+                                                  .add(pItem["name"]);
                                             });
                                           }
+                                          for (var chItem in pItem["item"]) {
+                                            if (_selectedJobFunctionsItems
+                                                .contains(chItem["_id"])) {
+                                              setState(() {
+                                                _jobFunctionItemName
+                                                    .add(chItem["name"]);
+                                              });
+                                            }
+                                          }
                                         }
-                                      }
 
-                                      // print(pName);
-                                      // print(chName);
-                                      print(_jobFunctionItemName);
-                                    }
+                                        // print(pName);
+                                        // print(chName);
+                                        print(_jobFunctionItemName);
+                                      }
+                                    });
                                   },
                                 );
                               },
@@ -630,6 +647,8 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                 size: IconSize.sIcon,
                               ),
                               press: () async {
+                                FocusScope.of(context).requestFocus(focusNode);
+
                                 var result = await showDialog(
                                     barrierDismissible: false,
                                     context: context,
@@ -643,12 +662,9 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                     }).then(
                                   (value) {
                                     setState(() {
-                                      print("01: ${value}");
-
                                       //value = []
                                       //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
                                       if (value.length > 0) {
-                                        print("02: ${value}");
                                         _selectedProvincesListItem = value;
                                         _provinceName =
                                             []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
@@ -731,6 +747,8 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                 size: IconSize.sIcon,
                               ),
                               press: () async {
+                                FocusScope.of(context).requestFocus(focusNode);
+
                                 var result = await showDialog(
                                     barrierDismissible: false,
                                     context: context,
@@ -744,6 +762,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                     }).then(
                                   (value) {
                                     setState(() {
+                                      print(value);
                                       //value = []
                                       //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
                                       if (value.length > 0) {
@@ -827,6 +846,8 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                 size: IconSize.sIcon,
                               ),
                               press: () async {
+                                FocusScope.of(context).requestFocus(focusNode);
+
                                 var result = await showDialog(
                                     barrierDismissible: false,
                                     context: context,
@@ -841,25 +862,27 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                   (value) {
                                     //value = []
                                     //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                    if (value.length > 0) {
-                                      _selectedBenefitsListItem = value;
-                                      _benefitName =
-                                          []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+                                    setState(() {
+                                      if (value.length > 0) {
+                                        _selectedBenefitsListItem = value;
+                                        _benefitName =
+                                            []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
 
-                                      for (var item in _listBenefits) {
-                                        //
-                                        //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedBenefitsListItem ກົງກັບ _listIndustries ບໍ່
-                                        if (_selectedBenefitsListItem
-                                            .contains(item['_id'])) {
+                                        for (var item in _listBenefits) {
                                           //
-                                          //add Provinces Name ເຂົ້າໃນ _benefitName
-                                          setState(() {
-                                            _benefitName.add(item['name']);
-                                          });
+                                          //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedBenefitsListItem ກົງກັບ _listIndustries ບໍ່
+                                          if (_selectedBenefitsListItem
+                                              .contains(item['_id'])) {
+                                            //
+                                            //add Provinces Name ເຂົ້າໃນ _benefitName
+                                            setState(() {
+                                              _benefitName.add(item['name']);
+                                            });
+                                          }
                                         }
+                                        print(_benefitName);
                                       }
-                                      print(_benefitName);
-                                    }
+                                    });
                                   },
                                 );
                               },
@@ -975,11 +998,12 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                     bottomRight: Radius.circular(10),
                                   )),
                               child: QuillEditor.basic(
-                                focusNode: currentFocus,
+                                focusNode: editorFocusNode,
                                 configurations: QuillEditorConfigurations(
                                   keyboardAppearance: Brightness.dark,
                                   // requestKeyboardFocusOnCheckListChanged: true,
                                   controller: _quillController,
+
                                   scrollPhysics: ClampingScrollPhysics(),
                                   readOnlyMouseCursor: SystemMouseCursors.text,
                                   maxHeight: 400,
@@ -1120,7 +1144,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "save".tr + " " + "job level".tr + " " + "successful".tr,
             textButton: "ok".tr,

@@ -312,7 +312,7 @@ class _AccountState extends State<Account> {
                                   flex: 1,
                                   child: StatisicBox(
                                     boxColor: AppColors.lightGrayishCyan,
-                                    amount: "${_appliedJobs}",
+                                    amount: "${_epmSavedSeeker}",
                                     text: "company view profile".tr,
                                   ),
                                 )
@@ -334,7 +334,7 @@ class _AccountState extends State<Account> {
                                     },
                                     child: StatisicBox(
                                       boxColor: AppColors.lightOrange,
-                                      amount: "${_epmSavedSeeker}",
+                                      amount: "${_appliedJobs}",
                                       text: "applied job".tr,
                                     ),
                                   ),
@@ -506,7 +506,7 @@ class StatisicBox extends StatelessWidget {
           boxColor == null ? AppColors.lightPrimary : boxColor, null, null),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             "${amount}",

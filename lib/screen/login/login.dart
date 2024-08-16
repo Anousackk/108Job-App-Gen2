@@ -185,7 +185,7 @@ class _LoginState extends State<Login> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogError(
+          return CustomAlertDialogErrorWithoutButton(
             title: "Invalid",
             text: res['message'],
           );

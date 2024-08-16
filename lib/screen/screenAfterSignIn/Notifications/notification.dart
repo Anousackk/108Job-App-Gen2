@@ -106,20 +106,20 @@ class _NotificationsState extends State<Notifications> {
         body: SafeArea(
           child: _isLoading
               ? Container(
-                  color: AppColors.background,
+                  color: AppColors.backgroundWhite,
                   width: double.infinity,
                   height: double.infinity,
                   child: Center(child: CircularProgressIndicator()),
                 )
               : Container(
-                  color: AppColors.background,
+                  color: AppColors.backgroundWhite,
                   height: double.infinity,
                   width: double.infinity,
                   child: Column(
                     children: [
                       Container(
                         padding: EdgeInsets.all(20),
-                        color: AppColors.background,
+                        color: AppColors.backgroundWhite,
                         width: double.infinity,
                         alignment: Alignment.center,
                         child: Row(
@@ -149,7 +149,7 @@ class _NotificationsState extends State<Notifications> {
                       _listNotifications.length > 0
                           ? Expanded(
                               child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                // padding: EdgeInsets.symmetric(horizontal: 20),
                                 child: ListView.builder(
                                   controller: _scrollController,
                                   shrinkWrap: true,
@@ -200,40 +200,46 @@ class _NotificationsState extends State<Notifications> {
                                     }
                                     dynamic i = _listNotifications[index];
                                     _title = i['title'];
-                                    _openingDate = i['openingDate'];
-                                    _closingDate = i['closingDate'];
+                                    _openingDate = i['openingDate'] ?? null;
+                                    _closingDate = i['closingDate'] ?? null;
                                     _status = i['status'];
                                     // _status = true;
 
-                                    //
-                                    //Open Date
-                                    //pars ISO to Flutter DateTime
-                                    parsDateTime(
-                                        value: '',
-                                        currentFormat: '',
-                                        desiredFormat: '');
-                                    DateTime openDate = parsDateTime(
-                                        value: _openingDate,
-                                        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                        desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                    //
-                                    //Format to string 13-03-2024
-                                    _openingDate = DateFormat('dd-MM-yyyy')
-                                        .format(openDate);
+                                    if (_openingDate != null) {
+                                      //
+                                      //Open Date
+                                      //pars ISO to Flutter DateTime
+                                      parsDateTime(
+                                          value: '',
+                                          currentFormat: '',
+                                          desiredFormat: '');
+                                      DateTime openDate = parsDateTime(
+                                          value: _openingDate,
+                                          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+                                          desiredFormat: "yyyy-MM-dd HH:mm:ss");
+                                      //
+                                      //Format to string 13-03-2024
+                                      _openingDate = DateFormat('dd-MM-yyyy')
+                                          .format(openDate);
+                                    }
 
-                                    //pars ISO to Flutter DateTime
-                                    parsDateTime(
-                                        value: '',
-                                        currentFormat: '',
-                                        desiredFormat: '');
-                                    DateTime closeDate = parsDateTime(
-                                        value: _closingDate,
-                                        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                        desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                    //
-                                    //Format to string 13-03-2024
-                                    _closingDate = DateFormat('dd-MM-yyyy')
-                                        .format(closeDate);
+                                    if (_closingDate != null) {
+                                      //
+                                      //Close Date
+                                      //pars ISO to Flutter DateTime
+                                      parsDateTime(
+                                          value: '',
+                                          currentFormat: '',
+                                          desiredFormat: '');
+                                      DateTime closeDate = parsDateTime(
+                                          value: _closingDate,
+                                          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+                                          desiredFormat: "yyyy-MM-dd HH:mm:ss");
+                                      //
+                                      //Format to string 13-03-2024
+                                      _closingDate = DateFormat('dd-MM-yyyy')
+                                          .format(closeDate);
+                                    }
                                     return Column(
                                       children: [
                                         GestureDetector(
@@ -273,20 +279,23 @@ class _NotificationsState extends State<Notifications> {
                                           },
                                           child: Container(
                                             width: double.infinity,
-                                            padding: EdgeInsets.all(15),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 15),
                                             decoration: BoxDecoration(
-                                              color: AppColors.backgroundWhite,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              border: _status
-                                                  ? Border.all(
-                                                      color: AppColors
-                                                          .borderPrimary,
-                                                      width: 2)
-                                                  : Border.all(
-                                                      color:
-                                                          AppColors.borderWhite,
-                                                      width: 2),
+                                              color: _status
+                                                  ? AppColors.lightPrimary
+                                                  : AppColors.backgroundWhite,
+                                              // borderRadius:
+                                              //     BorderRadius.circular(10),
+                                              // border: _status
+                                              //     ? Border.all(
+                                              //         color: AppColors
+                                              //             .borderPrimary,
+                                              //         width: 2)
+                                              //     : Border.all(
+                                              //         color:
+                                              //             AppColors.borderWhite,
+                                              //         width: 2),
                                             ),
                                             child: Row(
                                               children: [
@@ -306,16 +315,36 @@ class _NotificationsState extends State<Notifications> {
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      Text(
-                                                        "${_title}",
-                                                        style: bodyTextMaxNormal(
-                                                            _status
-                                                                ? null
-                                                                : AppColors
-                                                                    .fontGreyOpacity,
-                                                            null),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Text(
+                                                              "${_title}",
+                                                              style:
+                                                                  bodyTextMaxNormal(
+                                                                      null,
+                                                                      null),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          if (_status)
+                                                            Container(
+                                                              height: 8,
+                                                              width: 8,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: AppColors
+                                                                    .primary,
+                                                              ),
+                                                            )
+                                                        ],
                                                       ),
                                                       SizedBox(
                                                         height: 5,
@@ -361,9 +390,9 @@ class _NotificationsState extends State<Notifications> {
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
-                                          height: 10,
-                                        )
+                                        // SizedBox(
+                                        //   height: 10,
+                                        // )
                                       ],
                                     );
                                   },

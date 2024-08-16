@@ -32,6 +32,8 @@ class _EducationState extends State<Education> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController _subjectController = TextEditingController();
   TextEditingController _collageController = TextEditingController();
+  FocusScopeNode _currentFocus = FocusScopeNode();
+  FocusNode focusNode = FocusNode();
 
   //
   //Get list items all
@@ -135,13 +137,13 @@ class _EducationState extends State<Education> {
 
   @override
   Widget build(BuildContext context) {
-    FocusScopeNode currentFocus = FocusScopeNode();
+    FocusScopeNode _currentFocus = FocusScopeNode();
 
     return GestureDetector(
       onTap: () {
-        currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
+        _currentFocus = FocusScope.of(context);
+        if (!_currentFocus.hasPrimaryFocus) {
+          _currentFocus.unfocus();
         }
       },
       child: MediaQuery(
@@ -273,6 +275,8 @@ class _EducationState extends State<Education> {
                                 size: IconSize.sIcon,
                               ),
                               press: () async {
+                                FocusScope.of(context).requestFocus(focusNode);
+
                                 var result = await showDialog(
                                     barrierDismissible: false,
                                     context: context,
@@ -330,6 +334,9 @@ class _EducationState extends State<Education> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //From DateTime(Year)
                             Text(
                               "from".tr + " " + "year".tr,
@@ -356,6 +363,8 @@ class _EducationState extends State<Education> {
                                 size: IconSize.sIcon,
                               ),
                               press: () {
+                                FocusScope.of(context).requestFocus(focusNode);
+
                                 // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
                                 var formatDateTimeNow = DateFormat("yyyy-MM-dd")
                                     .parse(_dateTimeNow.toString());
@@ -436,6 +445,9 @@ class _EducationState extends State<Education> {
 
                             //
                             //
+                            //
+                            //
+                            //
                             //To DateTime(Month)
                             Text(
                               "to".tr + " " + "year".tr,
@@ -464,6 +476,14 @@ class _EducationState extends State<Education> {
                                       size: IconSize.sIcon,
                                     ),
                                     press: () {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
+
+                                      // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
+                                      var formatDateTimeNow =
+                                          DateFormat("yyyy-MM-dd")
+                                              .parse(_dateTimeNow.toString());
+
                                       setState(() {
                                         _toYear == null
                                             ? _toYear = _fromYear
@@ -483,7 +503,8 @@ class _EducationState extends State<Education> {
                                                 : _toYear,
                                             mode: CupertinoDatePickerMode
                                                 .monthYear,
-                                            // dateOrder: DatePickerDateOrder.dmy,
+                                            dateOrder: DatePickerDateOrder.ymd,
+                                            maximumDate: formatDateTimeNow,
                                             minimumDate: _fromYear,
                                             use24hFormat: true,
                                             onDateTimeChanged:
@@ -654,7 +675,7 @@ class _EducationState extends State<Education> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "save".tr + " " + "education".tr + " " + "successful".tr,
             textButton: "ok".tr,

@@ -57,7 +57,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarning(
+          return CustomAlertDialogWarningWithoutButton(
             title: "warning".tr,
             text: res['message'],
           );
@@ -68,7 +68,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarning(
+          return CustomAlertDialogWarningWithoutButton(
             title: "warning".tr,
             text: "invalid".tr,
           );
@@ -360,7 +360,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogError(
+          return CustomAlertDialogErrorWithoutButton(
             title: "invalid".tr,
             text: res['message'],
           );
@@ -370,7 +370,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarning(
+          return CustomAlertDialogWarningWithoutButton(
             title: "warning".tr,
             text: "invalid".tr,
           );
@@ -391,7 +391,7 @@ class _VerificationCodeState extends State<VerificationCode> {
     //   showDialog(
     //     context: context,
     //     builder: (context) {
-    //       return CustomAlertDialogError(
+    //       return CustomAlertDialogErrorWithoutButton(
     //         title: "Error",
     //         text: value['message'],
     //       );
@@ -464,7 +464,7 @@ class _VerificationCodeState extends State<VerificationCode> {
           await showDialog(
             context: context,
             builder: (context) {
-              return CustomAlertDialogWarning(
+              return CustomAlertDialogWarningWithoutButton(
                 title: "Warning",
                 text: value['message'] == null ? "Invalid" : value['message'],
                 press: () {
@@ -480,7 +480,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogError(
+          return CustomAlertDialogErrorWithoutButton(
             title: "invalid".tr,
             text: res['message'],
           );
@@ -490,7 +490,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarning(
+          return CustomAlertDialogWarningWithoutButton(
             title: "warning".tr,
             text: res['message'],
           );

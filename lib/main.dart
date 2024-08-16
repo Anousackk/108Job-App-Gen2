@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace, body_might_complete_normally_nullable
 import 'dart:io';
-import 'package:app/MyUpgraderMessages.dart';
 import 'package:app/firebase_options.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/i18n/i18n.dart';
@@ -17,7 +16,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:upgrader/upgrader.dart';
 
 //Background messages
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {

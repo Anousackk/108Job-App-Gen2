@@ -111,20 +111,20 @@ class _MessagesState extends State<Messages> {
         body: SafeArea(
           child: _isLoading
               ? Container(
-                  color: AppColors.background,
+                  color: AppColors.backgroundWhite,
                   width: double.infinity,
                   height: double.infinity,
                   child: Center(child: CircularProgressIndicator()),
                 )
               : Container(
-                  color: AppColors.background,
+                  color: AppColors.backgroundWhite,
                   height: double.infinity,
                   width: double.infinity,
                   child: Column(
                     children: [
                       Container(
                         padding: EdgeInsets.all(20),
-                        color: AppColors.background,
+                        color: AppColors.backgroundWhite,
                         width: double.infinity,
                         alignment: Alignment.center,
                         child: Row(
@@ -153,7 +153,7 @@ class _MessagesState extends State<Messages> {
                       _listMessages.length > 0
                           ? Expanded(
                               child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                // padding: EdgeInsets.symmetric(horizontal: 20),
                                 child: ListView.builder(
                                   controller: _scrollController,
                                   shrinkWrap: true,
@@ -203,26 +203,27 @@ class _MessagesState extends State<Messages> {
                                             );
                                     }
                                     dynamic i = _listMessages[index];
-
                                     _message = parseHtmlString(i['message']);
-                                    _createdAt = i['createdAt'];
+                                    _createdAt = i['createdAt'] ?? null;
                                     _status = i['status'];
 
-                                    //
-                                    //Open Date
-                                    //pars ISO to Flutter DateTime
-                                    parsDateTime(
-                                        value: '',
-                                        currentFormat: '',
-                                        desiredFormat: '');
-                                    DateTime createdAt = parsDateTime(
-                                        value: _createdAt,
-                                        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                        desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                    //
-                                    //Format to string 13-03-2024
-                                    _createdAt = DateFormat('dd-MM-yyyy')
-                                        .format(createdAt);
+                                    if (_createdAt != null) {
+                                      //
+                                      //Create Date
+                                      //pars ISO to Flutter DateTime
+                                      parsDateTime(
+                                          value: '',
+                                          currentFormat: '',
+                                          desiredFormat: '');
+                                      DateTime createdAt = parsDateTime(
+                                          value: _createdAt,
+                                          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+                                          desiredFormat: "yyyy-MM-dd HH:mm:ss");
+                                      //
+                                      //Format to string 13-03-2024
+                                      _createdAt = DateFormat('dd-MM-yyyy')
+                                          .format(createdAt);
+                                    }
 
                                     return Column(
                                       children: [
@@ -264,20 +265,23 @@ class _MessagesState extends State<Messages> {
                                           },
                                           child: Container(
                                             width: double.infinity,
-                                            padding: EdgeInsets.all(15),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 15),
                                             decoration: BoxDecoration(
-                                              color: AppColors.backgroundWhite,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              border: _status
-                                                  ? Border.all(
-                                                      color: AppColors
-                                                          .borderPrimary,
-                                                      width: 2)
-                                                  : Border.all(
-                                                      color:
-                                                          AppColors.borderWhite,
-                                                      width: 2),
+                                              color: _status
+                                                  ? AppColors.lightPrimary
+                                                  : AppColors.backgroundWhite,
+                                              // borderRadius:
+                                              //     BorderRadius.circular(10),
+                                              // border: _status
+                                              //     ? Border.all(
+                                              //         color: AppColors
+                                              //             .borderPrimary,
+                                              //         width: 2)
+                                              //     : Border.all(
+                                              //         color:
+                                              //             AppColors.borderWhite,
+                                              //         width: 2),
                                             ),
                                             child: Row(
                                               children: [
@@ -297,16 +301,36 @@ class _MessagesState extends State<Messages> {
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      Text(
-                                                        "${_message}",
-                                                        style: bodyTextMaxNormal(
-                                                            _status
-                                                                ? null
-                                                                : AppColors
-                                                                    .fontGreyOpacity,
-                                                            null),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Text(
+                                                              "${_message}",
+                                                              style:
+                                                                  bodyTextMaxNormal(
+                                                                      null,
+                                                                      null),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          if (_status)
+                                                            Container(
+                                                              height: 8,
+                                                              width: 8,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: AppColors
+                                                                    .primary,
+                                                              ),
+                                                            )
+                                                        ],
                                                       ),
                                                       SizedBox(
                                                         height: 5,
@@ -334,9 +358,9 @@ class _MessagesState extends State<Messages> {
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
-                                          height: 10,
-                                        )
+                                        // SizedBox(
+                                        //   height: 10,
+                                        // )
                                       ],
                                     );
                                   },

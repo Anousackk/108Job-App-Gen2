@@ -161,7 +161,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$companyName " + "followed".tr,
             textButton: "ok".tr,
@@ -181,7 +181,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$companyName " + "unfollowed".tr,
             textButton: "ok".tr,
@@ -221,7 +221,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$companyName " + "submitted cv".tr,
             textButton: "ok".tr,
@@ -237,7 +237,7 @@ class _CompanyDetailState extends State<CompanyDetail>
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarning(
+          return CustomAlertDialogWarningWithoutButton(
             title: "warning".tr,
             text: "$message",
           );
@@ -250,7 +250,7 @@ class _CompanyDetailState extends State<CompanyDetail>
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarning(
+          return CustomAlertDialogWarningWithoutButton(
             title: "warning".tr,
             text: "$message",
           );
@@ -285,7 +285,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$jobTitle " + "save job".tr + "successful".tr,
             textButton: "ok".tr,
@@ -300,7 +300,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$jobTitle " + "unsave job".tr + "successful".tr,
             textButton: "ok".tr,

@@ -331,7 +331,7 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogError(
+          return CustomAlertDialogErrorWithoutButton(
             title: "invalid".tr,
             text: res['message'],
           );
@@ -368,7 +368,7 @@ class _AddPhoneNumberOrEmailState extends State<AddPhoneNumberOrEmail> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogError(
+          return CustomAlertDialogErrorWithoutButton(
             title: "invalid".tr,
             text: "${res["message"]}",
           );

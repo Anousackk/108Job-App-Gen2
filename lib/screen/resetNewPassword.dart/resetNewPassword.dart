@@ -259,7 +259,7 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
         await showDialog(
           context: context,
           builder: (context) {
-            return CustomAlertDialogError(
+            return CustomAlertDialogErrorWithoutButton(
               title: "invalid".tr,
               text: value['message'],
             );

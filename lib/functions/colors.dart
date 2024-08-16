@@ -65,13 +65,12 @@ class AppColors {
   static Color fontDanger = Color(0xFFDD2C00);
   static Color fontWaring = HexColor("#FF6D00");
   static Color fontInfo = Color(0xFFFDC527);
-
-  static Color fontSuccess = Color(0xff00B147);
+  static Color fontSuccess = HexColor("#3D8B35");
 
   //icon
   static Color iconWarning = HexColor("#FF6D00");
   static Color iconInfo = Color(0xFFFDC527);
-
+  static Color iconSuccess = HexColor("#3D8B35");
   static Color iconPrimary = HexColor("#0067BC");
   static Color iconGray = Color(0xff585858);
   static Color iconGrayOpacity = Color(0xff888888);

@@ -153,7 +153,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$_title " + "save job".tr + "successful".tr,
             textButton: "ok".tr,
@@ -172,7 +172,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$_title " + "unsave job".tr + "successful".tr,
             textButton: "ok".tr,
@@ -217,7 +217,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$_title ".tr + "apply".tr + "successful".tr,
             textButton: "ok".tr,
@@ -237,7 +237,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarning(
+          return CustomAlertDialogWarningWithoutButton(
             title: "warning".tr,
             text: "$message",
           );
@@ -268,7 +268,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$companyName " + "followed".tr,
             textButton: "ok".tr,
@@ -285,7 +285,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$companyName " + "unfollowed".tr,
             textButton: "ok".tr,

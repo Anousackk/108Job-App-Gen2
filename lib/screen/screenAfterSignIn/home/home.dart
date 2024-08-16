@@ -633,8 +633,8 @@ class _MainHomeState extends State<MainHome> {
                               children: [
                                 Expanded(
                                   child: Container(
-                                    height: 45,
-                                    width: 45,
+                                    height: 30,
+                                    width: 30,
                                     alignment: Alignment.centerLeft,
                                     // color: AppColors.red,
                                     child: Image.asset(
@@ -1149,7 +1149,8 @@ class _MainHomeState extends State<MainHome> {
                                                                     _listCompaniesAssignedProvince
                                                                         .length,
                                                                     (index) {
-                                                                  dynamic c =
+                                                                  dynamic
+                                                                      logoProvince =
                                                                       _listCompaniesAssignedProvince[
                                                                           index];
 
@@ -1182,13 +1183,13 @@ class _MainHomeState extends State<MainHome> {
                                                                             BorderRadius.circular(8),
                                                                         child:
                                                                             Center(
-                                                                          child: c['logo'] == ""
+                                                                          child: logoProvince['logo'] == ""
                                                                               ? Image.asset(
                                                                                   'assets/image/no-image-available.png',
                                                                                   fit: BoxFit.contain,
                                                                                 )
                                                                               : Image.network(
-                                                                                  "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${c['logo']}",
+                                                                                  "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${logoProvince['logo']}",
                                                                                   fit: BoxFit.contain,
                                                                                   errorBuilder: (context, error, stackTrace) {
                                                                                     return Image.asset(
@@ -1479,7 +1480,7 @@ class _MainHomeState extends State<MainHome> {
                                                                         .length,
                                                                     (index) {
                                                                       dynamic
-                                                                          c =
+                                                                          logoTopIndustry =
                                                                           _listCompaniesAssignedTopIndustry[
                                                                               index];
 
@@ -1511,13 +1512,13 @@ class _MainHomeState extends State<MainHome> {
                                                                                 BorderRadius.circular(8),
                                                                             child:
                                                                                 Center(
-                                                                              child: c['logo'] == ""
+                                                                              child: logoTopIndustry['logo'] == ""
                                                                                   ? Image.asset(
                                                                                       'assets/image/no-image-available.png',
                                                                                       fit: BoxFit.contain,
                                                                                     )
                                                                                   : Image.network(
-                                                                                      "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${c['logo']}",
+                                                                                      "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${logoTopIndustry['logo']}",
                                                                                       fit: BoxFit.contain,
                                                                                       errorBuilder: (context, error, stackTrace) {
                                                                                         return Image.asset(

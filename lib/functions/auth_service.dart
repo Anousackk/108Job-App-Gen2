@@ -345,7 +345,7 @@ class AuthService {
                   barrierDismissible: false,
                   context: context,
                   builder: (context) {
-                    return CustomAlertDialogSuccess(
+                    return CustomAlertDialogSuccessButtonConfirm(
                       title: "Connect Facebook Success",
                       text: res["message"],
                       textButton: "ok".tr,
@@ -359,7 +359,7 @@ class AuthService {
                 await showDialog(
                   context: context,
                   builder: (context) {
-                    return CustomAlertDialogWarning(
+                    return CustomAlertDialogWarningWithoutButton(
                       title: "Warning",
                       text: res["message"],
                       textButton: "ok".tr,
@@ -441,7 +441,7 @@ class AuthService {
               barrierDismissible: false,
               context: context,
               builder: (context) {
-                return CustomAlertDialogSuccess(
+                return CustomAlertDialogSuccessButtonConfirm(
                   title: "Connect Google Success",
                   text: res["message"],
                   textButton: "ok".tr,
@@ -455,7 +455,7 @@ class AuthService {
             await showDialog(
               context: context,
               builder: (context) {
-                return CustomAlertDialogWarning(
+                return CustomAlertDialogWarningWithoutButton(
                   title: "Warning",
                   text: res["message"],
                   press: () {
@@ -551,7 +551,7 @@ class AuthService {
               barrierDismissible: false,
               context: context,
               builder: (context) {
-                return CustomAlertDialogSuccess(
+                return CustomAlertDialogSuccessButtonConfirm(
                   title: "Connect Apple Success",
                   text: res["message"],
                   textButton: "ok".tr,
@@ -565,7 +565,7 @@ class AuthService {
             await showDialog(
               context: context,
               builder: (context) {
-                return CustomAlertDialogWarning(
+                return CustomAlertDialogWarningWithoutButton(
                   title: "Warning",
                   text: res["message"],
                   press: () {

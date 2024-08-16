@@ -376,7 +376,7 @@ class _LanguageState extends State<Language> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "save".tr + " " + "language".tr + "successful".tr,
             textButton: "ok".tr,

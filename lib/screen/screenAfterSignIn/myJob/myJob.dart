@@ -199,7 +199,7 @@ class _MyJobsState extends State<MyJobs> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful".tr,
             text: "$title $_textAlert",
             textButton: "ok".tr,
@@ -729,7 +729,7 @@ class _MyJobsState extends State<MyJobs> {
                                                       Radius.circular(20),
                                                     ),
                                                     backgroundColor:
-                                                        AppColors.buttonDanger,
+                                                        AppColors.buttonWarning,
                                                     foregroundColor:
                                                         AppColors.fontWhite,
                                                     icon: FontAwesomeIcons
@@ -1260,12 +1260,21 @@ class _MyJobsState extends State<MyJobs> {
                                                                         var result = await showDialog(
                                                                             context: context,
                                                                             builder: (context) {
-                                                                              return AlertDialogButtonConfirmCancelBetween(
-                                                                                title: "hide".tr + "${i['jobTitle']}",
-                                                                                contentText: "do u want".tr + "hide".tr + "${i['jobTitle']}",
+                                                                              return
+                                                                                  //  AlertDialogButtonConfirmCancelBetween(
+                                                                                  //   title: "hide".tr + "${i['jobTitle']}",
+                                                                                  //   contentText: "do u want".tr + "hide".tr + "${i['jobTitle']}",
+                                                                                  //   textLeft: 'cancel'.tr,
+                                                                                  //   textRight: 'unhide'.tr,
+                                                                                  //   colorTextRight: AppColors.fontDanger,
+                                                                                  // );
+
+                                                                                  newAlertDialogWarningConfirmCancelBetween(
+                                                                                textTop: "unhide job".tr,
+                                                                                title: "${i['jobTitle']}",
+                                                                                text: "do u want".tr + "unhide job".tr + " " + "${i['jobTitle']}",
                                                                                 textLeft: 'cancel'.tr,
-                                                                                textRight: 'unhide'.tr,
-                                                                                colorTextRight: AppColors.fontDanger,
+                                                                                textRight: 'confirm'.tr,
                                                                               );
                                                                             });
                                                                         if (result ==

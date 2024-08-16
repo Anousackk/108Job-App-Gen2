@@ -401,7 +401,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                           barrierDismissible: false,
                                           context: context,
                                           builder: (context) {
-                                            return CustomAlertDialogSuccess(
+                                            return CustomAlertDialogSuccessButtonConfirm(
                                               title: "Disconnect Google",
                                               text: "Disconnect google success",
                                               textButton: "ok".tr,
@@ -476,7 +476,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                           barrierDismissible: false,
                                           context: context,
                                           builder: (context) {
-                                            return CustomAlertDialogSuccess(
+                                            return CustomAlertDialogSuccessButtonConfirm(
                                               title: "Disconnect Facebook",
                                               text:
                                                   "Disconnect facebook success",
@@ -552,7 +552,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                             barrierDismissible: false,
                                             context: context,
                                             builder: (context) {
-                                              return CustomAlertDialogSuccess(
+                                              return CustomAlertDialogSuccessButtonConfirm(
                                                 title: "Disconnect Apple",
                                                 text:
                                                     "Disconnect apple success",

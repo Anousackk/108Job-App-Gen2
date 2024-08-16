@@ -30,6 +30,8 @@ class _SkillState extends State<Skill> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   ScrollController _scrollController = ScrollController();
   TextEditingController _skillController = TextEditingController();
+  FocusScopeNode _currentFocus = FocusScopeNode();
+  FocusNode focusNode = FocusNode();
 
   //Get list items all
   List _listSkillLevel = [];
@@ -116,13 +118,13 @@ class _SkillState extends State<Skill> {
 
   @override
   Widget build(BuildContext context) {
-    FocusScopeNode currentFocus = FocusScopeNode();
+    FocusScopeNode _currentFocus = FocusScopeNode();
 
     return GestureDetector(
       onTap: () {
-        currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
+        _currentFocus = FocusScope.of(context);
+        if (!_currentFocus.hasPrimaryFocus) {
+          _currentFocus.unfocus();
         }
       },
       child: MediaQuery(
@@ -272,6 +274,10 @@ class _SkillState extends State<Skill> {
 
                             //
                             //
+                            //
+                            //
+                            //
+                            //
                             //Proficiency Skill / Skill level
                             Text(
                               "proficiency".tr,
@@ -299,6 +305,8 @@ class _SkillState extends State<Skill> {
                                 size: IconSize.sIcon,
                               ),
                               press: () async {
+                                FocusScope.of(context).requestFocus(focusNode);
+
                                 var result = await showDialog(
                                     barrierDismissible: false,
                                     context: context,
@@ -469,7 +477,7 @@ class _SkillState extends State<Skill> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccess(
+          return CustomAlertDialogSuccessButtonConfirm(
             title: "successful",
             text: "save".tr + " " + "skill".tr + "successful".tr,
             textButton: "ok".tr,
