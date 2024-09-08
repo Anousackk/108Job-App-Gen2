@@ -8,6 +8,7 @@ import 'package:app/screen/securityVerify/securityVerification.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 
 class ChangePassword extends StatefulWidget {
@@ -22,10 +23,66 @@ class _ChangePasswordState extends State<ChangePassword> {
   TextEditingController _currentPasswordController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
+  FocusScopeNode _currentFocus = FocusScopeNode();
+  FocusNode focusNode = FocusNode();
+  AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
   String _currentPassword = "";
   String _password = "";
   String _confirmPassword = "";
+
+  changePassword() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomAlertLoading();
+      },
+    );
+
+    var res = await postData(changePasswordApiSeeker, {
+      "currentPass": _currentPassword,
+      "newPassword": _password,
+      "confirmPassword": _confirmPassword
+    });
+
+    if (res != null) {
+      Navigator.pop(context);
+    }
+
+    if (res["message"] == "Password has changed") {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogSuccessButtonConfirm(
+            title: "successful".tr,
+            text: res['message'],
+            textButton: "ok".tr,
+            press: () {
+              Navigator.pop(context);
+            },
+          );
+        },
+      );
+      Navigator.pop(context);
+    } else {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogErrorWithoutButton(
+            title: "incorrect".tr,
+            text: res['message'],
+          );
+        },
+      );
+    }
+    ;
+  }
+
+  resetFormValidation() {
+    formkey.currentState!.reset();
+    _autoValidateMode = AutovalidateMode.disabled;
+  }
 
   @override
   void initState() {
@@ -49,15 +106,14 @@ class _ChangePasswordState extends State<ChangePassword> {
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: GestureDetector(
         onTap: () {
-          currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
+          _currentFocus = FocusScope.of(context);
+          if (!_currentFocus.hasPrimaryFocus) {
+            _currentFocus.unfocus();
           }
         },
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: 'change password'.tr,
-            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);
@@ -72,6 +128,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   Expanded(
                     child: Form(
                       key: formkey,
+                      autovalidateMode: _autoValidateMode,
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
@@ -79,6 +136,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                               height: 20,
                             ),
 
+                            //
+                            //
                             //
                             //
                             //Current Password
@@ -101,7 +160,6 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 ),
                                 labelStyle: TextStyle(
                                   color: AppColors.fontGreyOpacity,
-                                  fontWeight: FontWeight.bold,
                                 ),
                                 alignLabelWithHint: true, // set label to bottom
                                 labelText: "current password".tr,
@@ -110,6 +168,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   children: [
                                     GestureDetector(
                                       onTap: () {
+                                        FocusScope.of(context)
+                                            .requestFocus(focusNode);
+
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -129,17 +190,18 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   ],
                                 ),
                               ),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return "required".tr;
-                                }
-                                return null;
-                              },
+                              validator: MultiValidator([
+                                RequiredValidator(errorText: 'required'.tr),
+                                MinLengthValidator(8,
+                                    errorText: "enter8password".tr),
+                              ]),
                             ),
                             SizedBox(
                               height: 20,
                             ),
 
+                            //
+                            //
                             //
                             //
                             //Password
@@ -161,23 +223,23 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 ),
                                 labelStyle: TextStyle(
                                   color: AppColors.fontGreyOpacity,
-                                  fontWeight: FontWeight.bold,
                                 ),
                                 alignLabelWithHint: true, // set label to bottom
 
                                 labelText: "password".tr,
                               ),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return "required".tr;
-                                }
-                                return null;
-                              },
+                              validator: MultiValidator([
+                                RequiredValidator(errorText: 'required'.tr),
+                                MinLengthValidator(8,
+                                    errorText: "enter8password".tr),
+                              ]),
                             ),
                             SizedBox(
                               height: 20,
                             ),
 
+                            //
+                            //
                             //
                             //
                             //Confirm password
@@ -201,18 +263,16 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 ),
                                 labelStyle: TextStyle(
                                   color: AppColors.fontGreyOpacity,
-                                  fontWeight: FontWeight.bold,
                                 ),
                                 alignLabelWithHint: true, // set label to bottom
 
                                 labelText: "confirm password".tr,
                               ),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return "required".tr;
-                                }
-                                return null;
-                              },
+                              validator: MultiValidator([
+                                RequiredValidator(errorText: 'required'.tr),
+                                MinLengthValidator(8,
+                                    errorText: "enter8password".tr),
+                              ]),
                             ),
 
                             SizedBox(
@@ -229,8 +289,11 @@ class _ChangePasswordState extends State<ChangePassword> {
                   //Button Save Password
                   Button(
                     text: "change password".tr,
-                    fontWeight: FontWeight.bold,
                     press: () async {
+                      FocusScope.of(context).requestFocus(focusNode);
+
+                      _autoValidateMode = AutovalidateMode.always;
+
                       if (formkey.currentState!.validate()) {
                         changePassword();
                       }
@@ -272,7 +335,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       //               ),
                       //               ButtonDefault(
                       //                 text: 'Close',
-                      //                 fontWeight: FontWeight.bold,
+                      //
                       //                 press: () {},
                       //               )
                       //             ],
@@ -292,53 +355,5 @@ class _ChangePasswordState extends State<ChangePassword> {
         ),
       ),
     );
-  }
-
-  changePassword() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustomAlertLoading();
-      },
-    );
-
-    var res = await postData(changePasswordApiSeeker, {
-      "currentPass": _currentPassword,
-      "newPassword": _password,
-      "confirmPassword": _confirmPassword
-    });
-
-    if (res != null) {
-      Navigator.pop(context);
-    }
-
-    if (res["message"] == "Password has changed") {
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: res['message'],
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-            },
-          );
-        },
-      );
-      Navigator.pop(context);
-    } else {
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return CustomAlertDialogErrorWithoutButton(
-            title: "invalid".tr,
-            text: res['message'],
-          );
-        },
-      );
-    }
-    ;
   }
 }

@@ -45,7 +45,15 @@ var apiLogoutSeeker = globalURL + "/logout";
 //['Basic Member', 'Basic Job Seeker', 'Expert Job Seeker']
 var informationApiSeeker = globalURL + "/seeker-login-information-app";
 var changePasswordApiSeeker = globalURL + "/seeker-change-password-app";
-var addPhoneNumEmailPassApiSeeker = globalURL + "/seeker-set-mobile-email-app";
+// var addPhoneNumEmailPassApiSeeker = globalURL + "/seeker-set-mobile-email-app";
+
+//
+//new add/update phone number/email in Login Infomation screen
+var addPhoneEmailRequestOTPSeekerApi =
+    globalURL + "/seeker-request-verifycode-app";
+var verifyCodeLoginInfoSeekerApi = globalURL + "/seeker-verify-code-app";
+var changePhoneEmailLoginInfoSeekerApi = globalURL + "/seeker-change-email-app";
+var resendOTPLoginInfoSeekerApi = globalURL + "/seeker-resend-verifycode-app";
 
 //Forgot Password
 var requestOTPCodeApiSeeker = globalURL + "/seeker-request-verification-app";
@@ -82,6 +90,7 @@ var getHiringEmployee = globalURL + "/get-hiring-employer-seeker-app";
 var getTopWorkingLocationEmployee = globalURL + "/get-top-workinglocation-app";
 var groupIndustryWorkingLocationEmployee =
     globalURL + "/get-grouy-by-industry-workinglocation-app?";
+var getPopupBanner = globalURL + "/get-popup-banner-seeker";
 
 //
 //Job Search && My Job

@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_final_fields, sized_box_for_whitespace, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, unnecessary_null_in_if_null_operators, unused_local_variable, unnecessary_string_interpolations, file_names
 
+import 'dart:async';
+
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
@@ -7,15 +9,16 @@ import 'package:app/functions/textSize.dart';
 import 'package:app/screen/securityVerify/verificationSuccess.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
-import 'package:app/widget/input.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:sizer/sizer.dart';
 
 class VerificationCode extends StatefulWidget {
   const VerificationCode(
       {Key? key,
       this.verifyCode,
-      this.fromRegister,
+      this.checkStatusFromScreen,
       this.token,
       this.phoneNumber,
       this.email,
@@ -23,7 +26,7 @@ class VerificationCode extends StatefulWidget {
       this.password})
       : super(key: key);
   final verifyCode;
-  final fromRegister;
+  final checkStatusFromScreen;
   final token;
   final name;
   final password;
@@ -35,10 +38,12 @@ class VerificationCode extends StatefulWidget {
 }
 
 class _VerificationCodeState extends State<VerificationCode> {
-  List<TextEditingController> _controllers =
-      List.generate(4, (_) => TextEditingController());
+  TextEditingController _otpCodeController = TextEditingController();
+  late StreamController<ErrorAnimationType> errorController;
+
   dynamic _otpCode;
   String _token = "";
+  // String currentText = "";
 
   requestOTPRegister() async {
     var res = await postData(apirequestOTPRegisterSeeker, {
@@ -70,23 +75,41 @@ class _VerificationCodeState extends State<VerificationCode> {
         builder: (context) {
           return CustomAlertDialogWarningWithoutButton(
             title: "warning".tr,
-            text: "invalid".tr,
+            text: "incorrect".tr,
           );
         },
       );
     }
   }
 
+  otpCodeClearValue() {
+    setState(() {
+      _otpCode = "";
+      _otpCodeController.clear();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
-    if (widget.fromRegister == null || widget.fromRegister == "") {
+    errorController = StreamController<ErrorAnimationType>();
+
+    if (widget.checkStatusFromScreen == null ||
+        widget.checkStatusFromScreen == "" ||
+        widget.checkStatusFromScreen == 'fromLoginInfo') {
       _token = widget.token;
     }
-    if (widget.fromRegister == 'fromRegister') {
+    if (widget.checkStatusFromScreen == 'fromRegister') {
       requestOTPRegister();
     }
+  }
+
+  @override
+  void dispose() {
+    errorController.close();
+
+    super.dispose();
   }
 
   @override
@@ -127,10 +150,11 @@ class _VerificationCodeState extends State<VerificationCode> {
                         // widget.email.toString(),
                         // widget.phoneNumber.toString(),
                         // widget.password.toString()
-                        // Text("${widget.name}"),
+
+                        // Text("${widget.token}"),
                         // Text("${widget.email}"),
                         // Text("${widget.phoneNumber}"),
-                        // Text("${widget.password}"),
+                        // Text("${_otpCode}"),
 
                         Text(
                           widget.verifyCode == 'verifyPhoneNum'
@@ -151,75 +175,98 @@ class _VerificationCodeState extends State<VerificationCode> {
                         if (widget.verifyCode == 'verifyPhoneNum')
                           Text("otp sent to".tr + " ${widget.phoneNumber}"),
                         SizedBox(
-                          height: 10,
+                          height: 20,
                         ),
 
-                        SimpleTextFieldWithIconRight(
-                          keyboardType: TextInputType.number,
-                          press: () {
-                            // setState(() {
-                            //   _isFocusIconColorFullname = true;
-                            // });
-                          },
-                          changed: (value) {
-                            setState(() {
-                              _otpCode = value;
-                            });
-                          },
-                          isObscure: false,
-                          hintText: widget.verifyCode == "verifyPhoneNum"
-                              ? "enter".tr + " " + "otp code".tr
-                              : "enter".tr + " " + "verify code".tr,
-                          hintTextFontWeight: FontWeight.bold,
-                          suffixIcon: Icon(Icons.keyboard),
-                        ),
-
-                        //
-                        //
-                        //
-                        // Padding(
-                        //   padding: EdgeInsets.symmetric(
-                        //       horizontal: 55, vertical: 20),
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        //     children: List.generate(
-                        //       4,
-                        //       (index) => SizedBox(
-                        //         width: 50, // Set the width of each box
-                        //         height: 60, // Set the height of each box
-                        //         child: TextFormField(
-                        //           controller: _controllers[index],
-                        //           // keyboardType: TextInputType.number,
-                        //           keyboardType: TextInputType.phone,
-                        //           textAlign: TextAlign.center,
-                        //           textAlignVertical: TextAlignVertical.top,
-                        //           maxLength: 1,
-                        //           decoration: InputDecoration(
-                        //             counter: Offstage(),
-                        //             enabledBorder: enableOutlineBorder(
-                        //                 AppColors.borderSecondary),
-                        //             focusedBorder: focusOutlineBorder(
-                        //                 AppColors.borderPrimary),
-                        //           ),
-                        //           onChanged: (value) {
-                        //             // print(_otpCode);
-                        //             // Verify OTP when the code is complete (length is 4)
-
-                        //             if (value.length == 1 &&
-                        //                 index < _controllers.length - 1) {
-                        //               FocusScope.of(context).nextFocus();
-                        //             }
-                        //           },
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
+                        // SimpleTextFieldWithIconRight(
+                        //   keyboardType: TextInputType.number,
+                        //   press: () {
+                        //     // setState(() {
+                        //     //   _isFocusIconColorFullname = true;
+                        //     // });
+                        //   },
+                        //   changed: (value) {
+                        //     setState(() {
+                        //       _otpCode = value;
+                        //     });
+                        //   },
+                        //   isObscure: false,
+                        //   hintText: widget.verifyCode == "verifyPhoneNum"
+                        //       ? "enter".tr + " " + "otp code".tr
+                        //       : "enter".tr + " " + "verify code".tr,
+                        //   hintTextFontWeight: FontWeight.bold,
+                        //   suffixIcon: Icon(Icons.keyboard),
                         // ),
 
-                        SizedBox(
-                          height: 10,
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //pin code textfield
+                        Container(
+                          width: 60.w,
+                          child: PinCodeTextField(
+                            length: 4,
+                            obscureText: false,
+                            animationType: AnimationType.fade,
+                            keyboardType: TextInputType.number,
+                            pinTheme: PinTheme(
+                              inactiveFillColor: AppColors.backgroundWhite,
+                              inactiveColor: AppColors.grey,
+                              activeColor: AppColors.primary,
+                              activeFillColor: AppColors.fontWhite,
+                              selectedFillColor: AppColors.lightPrimary,
+                              shape: PinCodeFieldShape.underline,
+                              borderRadius: BorderRadius.circular(5),
+                              fieldHeight: 50,
+                              fieldWidth: 50,
+                            ),
+                            animationDuration: Duration(milliseconds: 300),
+                            backgroundColor: AppColors.backgroundWhite,
+                            enableActiveFill: true,
+                            errorAnimationController: errorController,
+                            controller: _otpCodeController,
+                            onCompleted: (v) {
+                              print("Completed");
+                              if (widget.checkStatusFromScreen ==
+                                  'fromRegister') {
+                                print("work api verify code from register");
+                                newVerifyCodeFromRegister();
+                              } else if (widget.checkStatusFromScreen ==
+                                  'fromLoginInfo') {
+                                print("work api verify code from login info");
+                                newVerifyCodeFromLoginInfo();
+                              } else {
+                                print(
+                                    "work api verify code from login forgot password or from reset password");
+
+                                verifyCode();
+                              }
+                            },
+                            onChanged: (value) {
+                              print(value);
+                              setState(() {
+                                _otpCode = value;
+                              });
+                            },
+                            beforeTextPaste: (text) {
+                              print("Allowing to paste $text");
+                              //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
+                              //but you can show anything you want here, like your pop up saying wrong paste format or etc
+                              return true;
+                            },
+                            appContext: context,
+                          ),
                         ),
 
+                        SizedBox(
+                          height: 20,
+                        ),
+
+                        //
+                        //
+                        //
                         //
                         //
                         //Resent OTP Code
@@ -233,10 +280,17 @@ class _VerificationCodeState extends State<VerificationCode> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                if (widget.fromRegister == "fromRegister") {
+                                if (widget.checkStatusFromScreen ==
+                                    "fromRegister") {
                                   print("fromRegister can resend");
                                   newResendOTPCodeFromRegister();
+                                } else if (widget.checkStatusFromScreen ==
+                                    "fromLoginInfo") {
+                                  print("fromLoginInfo can resend");
+                                  newResendOTPCodeFromLoginInfo();
                                 } else {
+                                  print(
+                                      "fromForgot or fromResetPass can resend");
                                   resendOTPCode();
                                 }
                               },
@@ -250,18 +304,29 @@ class _VerificationCodeState extends State<VerificationCode> {
                       ],
                     ),
                   ),
-                  Button(
-                    text: 'verify'.tr,
-                    fontWeight: FontWeight.bold,
-                    press: () {
-                      if (widget.fromRegister == 'fromRegister') {
-                        print("from register can register");
-                        newVerifyCodeFromRegister();
-                      } else {
-                        verifyCode();
-                      }
-                    },
-                  ),
+
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //button press verify OTP
+                  // Button(
+                  //   text: 'verify'.tr,
+                  //   fontWeight: FontWeight.bold,
+                  //   press: () {
+                  //     if (widget.checkStatusFromScreen == 'fromRegister') {
+                  //       print("work api verify code from register");
+                  //       newVerifyCodeFromRegister();
+                  //     } else if (widget.checkStatusFromScreen ==
+                  //         'fromLoginInfo') {
+                  //       print("work api verify code from login info");
+                  //       newVerifyCodeFromLoginInfo();
+                  //     } else {
+                  //       verifyCode();
+                  //     }
+                  //   },
+                  // ),
                   SizedBox(
                     height: 20,
                   )
@@ -324,6 +389,31 @@ class _VerificationCodeState extends State<VerificationCode> {
     }
   }
 
+  newResendOTPCodeFromLoginInfo() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomAlertLoading();
+      },
+    );
+
+    var res = await postData(resendOTPLoginInfoSeekerApi, {
+      "verifyToken": widget.token,
+    });
+    print(res);
+
+    if (res["token"] != null || res['token'] != "") {
+      Navigator.pop(context);
+
+      if (mounted) {
+        setState(() {
+          _token = res['token'].toString();
+        });
+      }
+    }
+  }
+
   verifyCode() async {
     showDialog(
       context: context,
@@ -350,67 +440,34 @@ class _VerificationCodeState extends State<VerificationCode> {
         MaterialPageRoute(
           builder: (context) => VerificationSuccess(
             verifySuccess: widget.verifyCode,
-            checkFromRegister: widget.fromRegister,
+            checkStatusFromScreen: widget.checkStatusFromScreen,
             token: token,
           ),
         ),
       );
     } else if (res['message'] != null) {
-      print(res['message']);
       await showDialog(
         context: context,
         builder: (context) {
           return CustomAlertDialogErrorWithoutButton(
-            title: "invalid".tr,
-            text: res['message'],
+            title: "incorrect".tr,
+            text: "otp_code_incorrect".tr,
           );
         },
       );
+      otpCodeClearValue();
     } else {
       await showDialog(
         context: context,
         builder: (context) {
           return CustomAlertDialogWarningWithoutButton(
             title: "warning".tr,
-            text: "invalid".tr,
+            text: "system_error".tr,
           );
         },
       );
+      otpCodeClearValue();
     }
-
-    // .then((value) {
-    // dynamic message = value["message"];
-    // dynamic token = value["token"];
-
-    // Navigator.pop(context);
-
-    // print(value["message"]);
-
-    // if (value["message"] == value["message"]) {
-    //   print("message: ${value["message"]}");
-    //   showDialog(
-    //     context: context,
-    //     builder: (context) {
-    //       return CustomAlertDialogErrorWithoutButton(
-    //         title: "Error",
-    //         text: value['message'],
-    //       );
-    //     },
-    //   );
-    // } else {
-    //   print("token: ${value["token"]}");
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => VerificationSuccess(
-    //         verifySuccess: widget.verifyCode,
-    //         checkFromSignUp: widget.fromSignUp,
-    //         token: widget.tokenSignUp,
-    //       ),
-    //     ),
-    //   );
-    // }
-    // });
   }
 
   newVerifyCodeFromRegister() async {
@@ -426,76 +483,131 @@ class _VerificationCodeState extends State<VerificationCode> {
       "verifyToken": _token,
       "verifyCode": _otpCode.toString(),
     });
+    print(res.toString());
 
     if (res != null) {
       Navigator.pop(context);
     }
 
     if (res["token"] != null) {
-      print("VerifyCode: " + '${res}');
-
       await postData(apiRegisterSeeker, {
         // "name": widget.name.toString(),
         "email": widget.email.toString(),
         "mobile": widget.phoneNumber.toString(),
         "password": widget.password.toString()
       }).then((value) async {
-        print("in apiRegisterSeeker " + "${value}");
         if (value['token'] != null) {
-          print("in apiNewVerifyCodeSeeker ${value['token']}");
-
           String token = value['token'].toString();
-          print("register token " + value['token'].toString());
-
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => VerificationSuccess(
                 verifySuccess: widget.verifyCode,
-                checkFromRegister: widget.fromRegister,
+                checkStatusFromScreen: widget.checkStatusFromScreen,
                 token: token,
               ),
             ),
           );
-        } else {
-          print(
-              "in apiNewVerifyCodeSeeker warning message: ${value['message']}");
-
-          await showDialog(
-            context: context,
-            builder: (context) {
-              return CustomAlertDialogWarningWithoutButton(
-                title: "Warning",
-                text: value['message'] == null ? "Invalid" : value['message'],
-                press: () {
-                  Navigator.pop(context);
-                },
-              );
-            },
-          );
         }
       });
     } else if (res['message'] != null) {
-      print(res['message']);
       await showDialog(
         context: context,
         builder: (context) {
           return CustomAlertDialogErrorWithoutButton(
-            title: "invalid".tr,
-            text: res['message'],
+            title: "incorrect".tr,
+            text: "otp_code_incorrect".tr,
           );
         },
       );
+      otpCodeClearValue();
     } else {
       await showDialog(
         context: context,
         builder: (context) {
           return CustomAlertDialogWarningWithoutButton(
             title: "warning".tr,
-            text: res['message'],
+            text: "system_error".tr,
           );
         },
       );
+      otpCodeClearValue();
+    }
+  }
+
+  newVerifyCodeFromLoginInfo() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomAlertLoading();
+      },
+    );
+
+    var res = await postData(verifyCodeLoginInfoSeekerApi, {
+      "verifyToken": _token,
+      "email": widget.email ?? "",
+      "mobile": widget.phoneNumber ?? "",
+      "verifyCode": _otpCode.toString(),
+    });
+
+    if (res != null) {
+      Navigator.pop(context);
+    }
+    print(res.toString());
+
+    if (res["message"] == "Your verify succeed") {
+      var changed = await postData(changePhoneEmailLoginInfoSeekerApi, {
+        "email": widget.email,
+        "mobile": widget.phoneNumber,
+      });
+
+      if (changed['message'] == "Changed") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VerificationSuccess(
+              verifySuccess: widget.verifyCode,
+              checkStatusFromScreen: widget.checkStatusFromScreen,
+            ),
+          ),
+        );
+      } else {
+        await showDialog(
+          context: context,
+          builder: (context) {
+            return CustomAlertDialogErrorWithoutButton(
+              title: "incorrect".tr,
+              text: changed['message'] == null
+                  ? "incorrect".tr
+                  : changed['message'],
+            );
+          },
+        );
+        otpCodeClearValue();
+      }
+    } else if (res["message"] == "Invalid code") {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogErrorWithoutButton(
+            title: "incorrect".tr,
+            text: "otp_code_incorrect".tr,
+          );
+        },
+      );
+      otpCodeClearValue();
+    } else {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialogWarningWithoutButton(
+            title: "warning".tr,
+            text: "system_error".tr,
+          );
+        },
+      );
+      otpCodeClearValue();
     }
   }
 }

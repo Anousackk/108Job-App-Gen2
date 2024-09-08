@@ -10,6 +10,7 @@ import 'package:app/widget/boxDecorationIcon.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 
 class ResetNewPassword extends StatefulWidget {
@@ -24,9 +25,18 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
+  FocusScopeNode _currentFocus = FocusScopeNode();
+  FocusNode focusNode = FocusNode();
+  AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
   String _password = "";
   String _confirmPassword = "";
+
+  resetFormValidation() {
+    formkey.currentState!.reset();
+    _autoValidateMode = AutovalidateMode.disabled;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,21 +51,18 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
 
   @override
   Widget build(BuildContext context) {
-    FocusScopeNode currentFocus = FocusScopeNode();
-
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: GestureDetector(
         onTap: () {
-          currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
+          _currentFocus = FocusScope.of(context);
+          if (!_currentFocus.hasPrimaryFocus) {
+            _currentFocus.unfocus();
           }
         },
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: 'set pass'.tr,
-            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);
@@ -70,6 +77,7 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                   Expanded(
                     child: Form(
                       key: formkey,
+                      autovalidateMode: _autoValidateMode,
                       child: Column(
                         children: [
                           SizedBox(
@@ -99,16 +107,14 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                               ),
                               labelStyle: TextStyle(
                                 color: AppColors.fontGreyOpacity,
-                                fontWeight: FontWeight.bold,
                               ),
                               labelText: "password".tr,
                             ),
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return "required".tr;
-                              }
-                              return null;
-                            },
+                            validator: MultiValidator([
+                              RequiredValidator(errorText: 'required'.tr),
+                              MinLengthValidator(8,
+                                  errorText: "enter8password".tr),
+                            ]),
                           ),
                           SizedBox(
                             height: 30,
@@ -139,16 +145,14 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                               ),
                               labelStyle: TextStyle(
                                 color: AppColors.fontGreyOpacity,
-                                fontWeight: FontWeight.bold,
                               ),
                               labelText: "confirm".tr + " " + "password".tr,
                             ),
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return "required".tr;
-                              }
-                              return null;
-                            },
+                            validator: MultiValidator([
+                              RequiredValidator(errorText: 'required'.tr),
+                              MinLengthValidator(8,
+                                  errorText: "enter8password".tr),
+                            ]),
                           ),
                           SizedBox(
                             height: 30,
@@ -165,8 +169,10 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                   //Button Save Password
                   Button(
                     text: "confirm".tr,
-                    fontWeight: FontWeight.bold,
                     press: () async {
+                      FocusScope.of(context).requestFocus(focusNode);
+                      _autoValidateMode = AutovalidateMode.always;
+
                       if (formkey.currentState!.validate()) {
                         resetNewPassword();
                       }
@@ -230,12 +236,14 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                     ),
                     ButtonDefault(
                       text: 'close'.tr,
-                      fontWeight: FontWeight.bold,
+                      paddingButton: WidgetStateProperty.all<EdgeInsets>(
+                        EdgeInsets.symmetric(horizontal: 40),
+                      ),
                       press: () {
-                        // Create a Predicate to check if a route has the specified name
+                        //Create a Predicate to check if a route has the specified name
                         bool Function(Route<dynamic>) predicate =
                             (Route<dynamic> route) {
-                          // Check if the route has the name '/login'
+                          //Check if the route has the name '/login'
                           if (route.settings.name == Login.routeName) {
                             return true;
                           }
@@ -243,10 +251,7 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                         };
 
                         Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          Login.routeName,
-                          (route) => false,
-                        );
+                            context, Login.routeName, (route) => false);
                       },
                     )
                   ],
@@ -260,7 +265,7 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
           context: context,
           builder: (context) {
             return CustomAlertDialogErrorWithoutButton(
-              title: "invalid".tr,
+              title: "incorrect".tr,
               text: value['message'],
             );
           },

@@ -28,11 +28,12 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController _fullNameController = TextEditingController();
-
   TextEditingController _phoneNumberController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-
   TextEditingController _passwordController = TextEditingController();
+  FocusScopeNode _currentFocus = FocusScopeNode();
+  FocusNode focusNode = FocusNode();
+  AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
   String _name = "";
   String _email = "";
@@ -47,15 +48,36 @@ class _RegisterState extends State<Register> {
       //
       //_isCheckTelAndEmail = true / Phone Number
       //_isCheckTelAndEmail = false / Email
+      resetFormValidation();
+      setEmptryFormLoginValue();
+
       _isCheckTelAndEmail = !_isCheckTelAndEmail;
-      _email = "";
+    });
+  }
+
+  resetFormValidation() {
+    formkey.currentState!.reset();
+    _autoValidateMode = AutovalidateMode.disabled;
+  }
+
+  setEmptryFormLoginValue() {
+    setState(() {
       _phoneNumber = "";
+      _email = "";
       _password = "";
 
       _phoneNumberController.text = _phoneNumber;
       _emailController.text = _email;
       _passwordController.text = _password;
     });
+  }
+
+  //error setState() called after dispose(). it can help!!!
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 
   @override
@@ -71,12 +93,11 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    FocusScopeNode currentFocus = FocusScopeNode();
     return GestureDetector(
       onTap: () {
-        currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
+        _currentFocus = FocusScope.of(context);
+        if (!_currentFocus.hasPrimaryFocus) {
+          _currentFocus.unfocus();
         }
       },
       child: MediaQuery(
@@ -155,6 +176,7 @@ class _RegisterState extends State<Register> {
                         // color: AppColors.info,
                         child: Form(
                           key: formkey,
+                          autovalidateMode: _autoValidateMode,
                           child: Column(
                             // mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -188,7 +210,12 @@ class _RegisterState extends State<Register> {
                                     ),
                                     Flexible(
                                       flex: 1,
-                                      child: ChangeLanguage(),
+                                      child: ChangeLanguage(
+                                          callBackSetLanguage: (val) {
+                                        if (val == "Set Language Success") {
+                                          print("call back set language");
+                                        }
+                                      }),
                                     ),
                                   ],
                                 ),
@@ -316,8 +343,9 @@ class _RegisterState extends State<Register> {
                                     SizedBox(
                                       height: 2.w, //5
                                     ),
-                                    SimpleTextFieldWithIconRight(
+                                    TextFieldEmailWithIconRight(
                                       textController: _emailController,
+                                      keyboardType: TextInputType.emailAddress,
                                       changed: (value) {
                                         setState(() {
                                           _email = value;
@@ -402,6 +430,11 @@ class _RegisterState extends State<Register> {
                                 text: "register".tr,
                                 fontWeight: FontWeight.bold,
                                 press: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(focusNode);
+
+                                  _autoValidateMode = AutovalidateMode.always;
+
                                   if (formkey.currentState!.validate()) {
                                     Navigator.push(
                                       context,
@@ -410,7 +443,7 @@ class _RegisterState extends State<Register> {
                                           verifyCode: _isCheckTelAndEmail
                                               ? 'verifyPhoneNum'
                                               : 'verifyEmail',
-                                          fromRegister: 'fromRegister',
+                                          checkStatusFromScreen: 'fromRegister',
                                           // name: _name,
                                           phoneNumber: _phoneNumber,
                                           email: _email,
@@ -434,6 +467,8 @@ class _RegisterState extends State<Register> {
                               //Text Register with Phone Number or Email
                               GestureDetector(
                                 onTap: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(focusNode);
                                   SiginWith();
                                 },
                                 child: Text(
@@ -454,7 +489,7 @@ class _RegisterState extends State<Register> {
                                     flex: 1,
                                     child: Divider(
                                       height: 1,
-                                      color: AppColors.borderSecondary,
+                                      color: AppColors.borderGrey,
                                     ),
                                   ),
                                   Flexible(
@@ -468,7 +503,7 @@ class _RegisterState extends State<Register> {
                                     flex: 1,
                                     child: Divider(
                                       height: 1,
-                                      color: AppColors.borderSecondary,
+                                      color: AppColors.borderGrey,
                                     ),
                                   ),
                                 ],
@@ -555,7 +590,7 @@ class _RegisterState extends State<Register> {
 
                               //
                               //
-                              //Click to Log in
+                              //click to log in screen
                               Container(
                                 // color: AppColors.green,
                                 // height: 50,
@@ -569,6 +604,12 @@ class _RegisterState extends State<Register> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
+                                        resetFormValidation();
+                                        setEmptryFormLoginValue();
+
+                                        FocusScope.of(context)
+                                            .requestFocus(focusNode);
+
                                         if (widget.statusButotn ==
                                             "fromLogin") {
                                           Navigator.pop(context);

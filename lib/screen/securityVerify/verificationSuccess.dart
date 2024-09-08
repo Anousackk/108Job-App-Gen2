@@ -13,10 +13,10 @@ import 'package:get/get.dart';
 
 class VerificationSuccess extends StatefulWidget {
   const VerificationSuccess(
-      {Key? key, this.verifySuccess, this.checkFromRegister, this.token})
+      {Key? key, this.verifySuccess, this.checkStatusFromScreen, this.token})
       : super(key: key);
   final verifySuccess;
-  final checkFromRegister;
+  final checkStatusFromScreen;
   final token;
 
   @override
@@ -71,17 +71,21 @@ class _VerificationSuccessState extends State<VerificationSuccess> {
               ),
               ButtonDefault(
                 buttonBorderColor: AppColors.borderBG,
-                text: widget.checkFromRegister == "fromRegister"
+                text: widget.checkStatusFromScreen == "fromRegister"
                     ? "close".tr
-                    : "set pass".tr,
+                    : widget.checkStatusFromScreen == "fromLoginInfo"
+                        ? "close".tr
+                        : "set pass".tr,
                 fontWeight: FontWeight.bold,
                 press: () {
-                  if (widget.checkFromRegister == "fromRegister") {
+                  if (widget.checkStatusFromScreen == "fromRegister") {
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       Login.routeName,
                       (route) => false,
                     );
+                  } else if (widget.checkStatusFromScreen == "fromLoginInfo") {
+                    Navigator.popUntil(context, (route) => route.isFirst);
                   } else {
                     Navigator.push(
                       context,
@@ -93,7 +97,7 @@ class _VerificationSuccessState extends State<VerificationSuccess> {
                     );
                   }
 
-                  // if (widget.checkFromRegister == 'fromSignUp') {
+                  // if (widget.checkStatusFromScreen == 'fromSignUp') {
                   //   Navigator.pushNamedAndRemoveUntil(
                   //     context,
                   //     Login.routeName,

@@ -1253,8 +1253,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
         context: context,
         builder: (context) {
           return CustomAlertDialogErrorWithoutButton(
-            title: "invalid".tr,
-            text: "invalid".tr,
+            title: "incorrect".tr,
+            text: "incorrect".tr,
           );
         },
       );

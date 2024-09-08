@@ -19,6 +19,8 @@ class SetPasswordPlatforms extends StatefulWidget {
 class _SetPasswordPlatformsState extends State<SetPasswordPlatforms> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController _passwordController = TextEditingController();
+  FocusScopeNode _currentFocus = FocusScopeNode();
+  FocusNode focusNode = FocusNode();
 
   String _password = "";
 
@@ -53,15 +55,13 @@ class _SetPasswordPlatformsState extends State<SetPasswordPlatforms> {
 
   @override
   Widget build(BuildContext context) {
-    FocusScopeNode currentFocus = FocusScopeNode();
-
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: GestureDetector(
         onTap: () {
-          currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
+          _currentFocus = FocusScope.of(context);
+          if (!_currentFocus.hasPrimaryFocus) {
+            _currentFocus.unfocus();
           }
         },
         child: Scaffold(
@@ -111,7 +111,6 @@ class _SetPasswordPlatformsState extends State<SetPasswordPlatforms> {
                               ),
                               labelStyle: TextStyle(
                                 color: AppColors.fontGreyOpacity,
-                                fontWeight: FontWeight.bold,
                               ),
                               labelText: "password".tr,
                             ),
@@ -140,6 +139,7 @@ class _SetPasswordPlatformsState extends State<SetPasswordPlatforms> {
                     text: "confirm".tr,
                     fontWeight: FontWeight.bold,
                     press: () async {
+                      FocusScope.of(context).requestFocus(focusNode);
                       if (formkey.currentState!.validate()) {
                         setPassword();
                       }

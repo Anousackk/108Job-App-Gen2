@@ -373,19 +373,17 @@ class _AccountState extends State<Account> {
                             //Login Information
                             BoxDecorationInput(
                               boxDecBorderRadius: BorderRadius.circular(10),
+                              colorInput: AppColors.buttonGrey,
                               widgetFaIcon: FaIcon(
                                 FontAwesomeIcons.lock,
                                 size: IconSize.xsIcon,
-                                color: AppColors.iconGray,
                               ),
                               // paddingFaIcon: EdgeInsets.only(left: 20, right: 10),
                               mainAxisAlignmentTextIcon:
                                   MainAxisAlignment.start,
                               text: "login info".tr,
-
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.chevronRight,
-                                color: AppColors.iconGrayOpacity,
                                 size: IconSize.xsIcon,
                               ),
                               validateText: Container(),
@@ -408,10 +406,10 @@ class _AccountState extends State<Account> {
                             //My Profile
                             BoxDecorationInput(
                               boxDecBorderRadius: BorderRadius.circular(10),
+                              colorInput: AppColors.buttonGrey,
                               widgetFaIcon: FaIcon(
                                 FontAwesomeIcons.solidUser,
                                 size: IconSize.xsIcon,
-                                color: AppColors.iconGray,
                               ),
                               // paddingFaIcon: EdgeInsets.only(left: 20, right: 10),
                               mainAxisAlignmentTextIcon:
@@ -419,7 +417,6 @@ class _AccountState extends State<Account> {
                               text: "my profile".tr,
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.chevronRight,
-                                color: AppColors.iconGrayOpacity,
                                 size: IconSize.xsIcon,
                               ),
                               press: () {
@@ -445,10 +442,10 @@ class _AccountState extends State<Account> {
                             //Job Alert
                             BoxDecorationInput(
                               boxDecBorderRadius: BorderRadius.circular(10),
+                              colorInput: AppColors.buttonGrey,
                               widgetFaIcon: FaIcon(
                                 FontAwesomeIcons.solidBell,
                                 size: IconSize.xsIcon,
-                                color: AppColors.iconGray,
                               ),
                               // paddingFaIcon: EdgeInsets.only(left: 20, right: 10),
                               mainAxisAlignmentTextIcon:
@@ -464,7 +461,6 @@ class _AccountState extends State<Account> {
                               text: "job alert".tr,
                               widgetIconActive: FaIcon(
                                 FontAwesomeIcons.chevronRight,
-                                color: AppColors.iconGrayOpacity,
                                 size: IconSize.xsIcon,
                               ),
                               validateText: Container(),
@@ -499,7 +495,7 @@ class StatisicBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
+      height: 110,
       width: double.infinity,
       padding: EdgeInsets.all(10),
       decoration: boxDecoration(BorderRadius.circular(10),
@@ -516,6 +512,7 @@ class StatisicBox extends StatelessWidget {
             "${text}",
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
+            textAlign: TextAlign.center,
           )
         ],
       ),

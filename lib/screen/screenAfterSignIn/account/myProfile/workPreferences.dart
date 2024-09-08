@@ -220,7 +220,6 @@ class _WorkPreferencesState extends State<WorkPreferences> {
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: "work preferences".tr,
-            fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);

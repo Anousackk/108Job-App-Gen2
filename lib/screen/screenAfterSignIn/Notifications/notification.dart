@@ -323,7 +323,8 @@ class _NotificationsState extends State<Notifications> {
                                                               style:
                                                                   bodyTextMaxNormal(
                                                                       null,
-                                                                      null),
+                                                                      FontWeight
+                                                                          .bold),
                                                               overflow:
                                                                   TextOverflow
                                                                       .ellipsis,

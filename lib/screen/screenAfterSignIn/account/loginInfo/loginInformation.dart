@@ -8,10 +8,10 @@ import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/login/login.dart';
+import 'package:app/screen/screenAfterSignIn/account/loginInfo/add_updatePhoneEmail.dart';
 import 'package:app/screen/screenAfterSignIn/account/loginInfo/changePassword.dart';
 import 'package:app/screen/screenAfterSignIn/account/loginInfo/deleteAccount.dart';
 import 'package:app/screen/screenAfterSignIn/account/loginInfo/setPassPlatforms.dart';
-import 'package:app/screen/securityVerify/addPhoneNumOrMail.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:apple_product_name/apple_product_name.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -194,66 +194,58 @@ class _LoginInformationState extends State<LoginInformation> {
                               //
                               //
                               //Phone Number
-                              //Phone Number ຖ້າບໍ່ທັນມີ
-                              _phoneNumber == ""
-                                  ? AddGeneralInformation(
-                                      title: "phone".tr,
-                                      text: "add".tr + "phone".tr,
-                                      iconLeft: FaIcon(
-                                        FontAwesomeIcons.chevronRight,
-                                        size: 13,
-                                        color: AppColors.iconDark,
+                              AddGeneralInformation(
+                                title: "phone".tr,
+                                text: _phoneNumber == ""
+                                    ? "add".tr + "phone".tr
+                                    : "020 ${_phoneNumber}",
+                                iconLeft: FaIcon(
+                                  FontAwesomeIcons.chevronRight,
+                                  size: 13,
+                                  color: AppColors.iconDark,
+                                ),
+                                press: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AddUpdatePhoneNumberEmail(
+                                        phoneNumber: _phoneNumber,
+                                        addPhoneNumOrEmail: 'phoneNumber',
                                       ),
-                                      press: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                AddPhoneNumberOrEmail(
-                                                    addPhoneNumOrEmail:
-                                                        'phoneNumber'),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : AddGeneralInformation(
-                                      title: "phone".tr,
-                                      text: "020 ${_phoneNumber}",
-                                      textColor: AppColors.fontDark,
                                     ),
+                                  );
+                                },
+                              ),
 
                               //
                               //
                               //
                               //
                               //Email
-                              //Email ຖ້າບໍ່ທັນມີ
-                              _email == ""
-                                  ? AddGeneralInformation(
-                                      title: "email".tr,
-                                      text: "add".tr + "email".tr,
-                                      iconLeft: FaIcon(
-                                        FontAwesomeIcons.chevronRight,
-                                        size: 13,
-                                        color: AppColors.iconDark,
+                              AddGeneralInformation(
+                                title: "email".tr,
+                                text: _email == ""
+                                    ? "add".tr + "email".tr
+                                    : "${_email}",
+                                iconLeft: FaIcon(
+                                  FontAwesomeIcons.chevronRight,
+                                  size: 13,
+                                  color: AppColors.iconDark,
+                                ),
+                                press: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AddUpdatePhoneNumberEmail(
+                                        email: _email,
+                                        addPhoneNumOrEmail: 'email',
                                       ),
-                                      press: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                AddPhoneNumberOrEmail(
-                                                    addPhoneNumOrEmail:
-                                                        'email'),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : AddGeneralInformation(
-                                      title: "email".tr,
-                                      text: _email,
-                                      textColor: AppColors.fontDark,
                                     ),
+                                  );
+                                },
+                              ),
 
                               //
                               //

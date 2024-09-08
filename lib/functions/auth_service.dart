@@ -363,9 +363,9 @@ class AuthService {
                       title: "Warning",
                       text: res["message"],
                       textButton: "ok".tr,
-                      press: () {
-                        Navigator.pop(context);
-                      },
+                      // press: () {
+                      //   Navigator.pop(context);
+                      // },
                     );
                   },
                 );
@@ -458,9 +458,9 @@ class AuthService {
                 return CustomAlertDialogWarningWithoutButton(
                   title: "Warning",
                   text: res["message"],
-                  press: () {
-                    Navigator.pop(context);
-                  },
+                  // press: () {
+                  //   Navigator.pop(context);
+                  // },
                 );
               },
             );
@@ -568,9 +568,9 @@ class AuthService {
                 return CustomAlertDialogWarningWithoutButton(
                   title: "Warning",
                   text: res["message"],
-                  press: () {
-                    Navigator.pop(context);
-                  },
+                  // press: () {
+                  //   Navigator.pop(context);
+                  // },
                 );
               },
             );

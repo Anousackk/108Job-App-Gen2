@@ -1526,17 +1526,22 @@ class _JobSearchState extends State<JobSearch>
                                                       Text('no have data'.tr)),
                                             );
                                     }
-                                    var i = _listJobsSearch[index];
-                                    _title = i['title'];
-                                    _logo = i['logo'];
-                                    _companyName = i['companyName'];
-                                    _workingLocations = i['workingLocations'];
-                                    _openDate = i['openingDate'];
-                                    _closeDate = i['closingDate'];
-                                    _isClick = i['isClick'].toString();
-                                    _tag = i['tag'];
-                                    _disablePeople = i['disabledPeople'];
-                                    _isSaved = i['isSaved'];
+                                    var indexJobsSearch =
+                                        _listJobsSearch[index];
+                                    _title = indexJobsSearch['title'];
+                                    _logo = indexJobsSearch['logo'];
+                                    _companyName =
+                                        indexJobsSearch['companyName'];
+                                    _workingLocations =
+                                        indexJobsSearch['workingLocations'];
+                                    _openDate = indexJobsSearch['openingDate'];
+                                    _closeDate = indexJobsSearch['closingDate'];
+                                    _isClick =
+                                        indexJobsSearch['isClick'].toString();
+                                    _tag = indexJobsSearch['tag'];
+                                    _disablePeople =
+                                        indexJobsSearch['disabledPeople'];
+                                    _isSaved = indexJobsSearch['isSaved'];
 
                                     //
                                     //Open Date
@@ -1589,8 +1594,9 @@ class _JobSearchState extends State<JobSearch>
                                               print(
                                                   "hide dismiss the Slidable");
                                               _removeJobsSearchSeekerLocal(
-                                                  i['jobId']);
-                                              hideJob(i['jobId'], i['title']);
+                                                  indexJobsSearch['jobId']);
+                                              hideJob(indexJobsSearch['jobId'],
+                                                  indexJobsSearch['title']);
                                             },
                                           ),
                                           children: [
@@ -1608,11 +1614,13 @@ class _JobSearchState extends State<JobSearch>
                                                 onPressed: (context) {
                                                   print("press to save");
                                                   setState(() {
-                                                    i['isSaved'] =
-                                                        !i['isSaved'];
+                                                    indexJobsSearch['isSaved'] =
+                                                        !indexJobsSearch[
+                                                            'isSaved'];
                                                   });
                                                   saveAndUnSaveJob(
-                                                      i['jobId'], i['title']);
+                                                      indexJobsSearch['jobId'],
+                                                      indexJobsSearch['title']);
                                                   slidableController.close();
                                                 },
                                               ),
@@ -1631,11 +1639,14 @@ class _JobSearchState extends State<JobSearch>
                                                 onPressed: (context) {
                                                   print("press to unsave");
                                                   setState(() {
-                                                    i['isSaved'] =
-                                                        !i['isSaved'];
+                                                    indexJobsSearch['isSaved'] =
+                                                        !indexJobsSearch[
+                                                            'isSaved'];
                                                   });
                                                   saveAndUnSaveJob(
-                                                      i['jobId'], i['title']);
+                                                    indexJobsSearch['jobId'],
+                                                    indexJobsSearch['title'],
+                                                  );
 
                                                   slidableController.close();
                                                 },
@@ -1653,8 +1664,10 @@ class _JobSearchState extends State<JobSearch>
                                               onPressed: (constext) {
                                                 print("press to hide");
                                                 _removeJobsSearchSeekerLocal(
-                                                    i['jobId']);
-                                                hideJob(i['jobId'], i['title']);
+                                                    indexJobsSearch['jobId']);
+                                                hideJob(
+                                                    indexJobsSearch['jobId'],
+                                                    indexJobsSearch['title']);
                                               },
                                             ),
                                           ],
@@ -1670,8 +1683,10 @@ class _JobSearchState extends State<JobSearch>
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     JobSearchDetail(
-                                                        jobId: i['jobId'],
-                                                        newJob: i['newJob']),
+                                                        jobId: indexJobsSearch[
+                                                            'jobId'],
+                                                        newJob: indexJobsSearch[
+                                                            'newJob']),
                                               ),
                                             ).then((value) {
                                               //Success ແມ່ນຄ່າທີ່ໄດ້ຈາກການ Navigator.pop ທີ່ api Save Job or unSave Job ເຮັດວຽກ
@@ -2189,7 +2204,7 @@ class _JobSearchState extends State<JobSearch>
                                                                             textTop:
                                                                                 "hide_job_post".tr,
                                                                             title:
-                                                                                "${i['title']}",
+                                                                                "${indexJobsSearch['title']}",
                                                                             text:
                                                                                 "after_hide".tr,
                                                                             textLeft:
@@ -2203,10 +2218,13 @@ class _JobSearchState extends State<JobSearch>
                                                                   print(
                                                                       "press ok");
                                                                   _removeJobsSearchSeekerLocal(
-                                                                      i['jobId']);
+                                                                      indexJobsSearch[
+                                                                          'jobId']);
                                                                   hideJob(
-                                                                      i['jobId'],
-                                                                      i['title']);
+                                                                      indexJobsSearch[
+                                                                          'jobId'],
+                                                                      indexJobsSearch[
+                                                                          'title']);
                                                                 }
                                                               },
                                                               child: Row(
@@ -2232,12 +2250,16 @@ class _JobSearchState extends State<JobSearch>
                                                             GestureDetector(
                                                               onTap: () {
                                                                 setState(() {
-                                                                  i['isSaved'] =
-                                                                      !i['isSaved'];
+                                                                  indexJobsSearch[
+                                                                          'isSaved'] =
+                                                                      !indexJobsSearch[
+                                                                          'isSaved'];
                                                                 });
                                                                 saveAndUnSaveJob(
-                                                                    i['jobId'],
-                                                                    i['title']);
+                                                                    indexJobsSearch[
+                                                                        'jobId'],
+                                                                    indexJobsSearch[
+                                                                        'title']);
                                                               },
                                                               child: Row(
                                                                 children: [

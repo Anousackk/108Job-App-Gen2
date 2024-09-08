@@ -7,6 +7,7 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/screenAfterSignIn/home/home.dart';
@@ -43,6 +44,10 @@ class _LoginState extends State<Login> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController _phoneNumberController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  FocusScopeNode _currentFocus = FocusScopeNode();
+  FocusNode focusNode = FocusNode();
+  AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
   dynamic _fcmToken;
   dynamic _phoneNumber = "";
@@ -82,17 +87,6 @@ class _LoginState extends State<Login> {
     if (mounted) {
       setState(() {});
     }
-  }
-
-  SiginWith() {
-    setState(() {
-      _isCheckTelAndEmail = !_isCheckTelAndEmail;
-      _phoneNumber = "";
-      _email = "";
-
-      _phoneNumberController.text = _phoneNumber;
-      _emailController.text = _email;
-    });
   }
 
   fcm() async {
@@ -194,6 +188,32 @@ class _LoginState extends State<Login> {
     }
   }
 
+  SiginWith() {
+    setState(() {
+      resetFormValidation();
+      setEmptryFormLoginValue();
+
+      _isCheckTelAndEmail = !_isCheckTelAndEmail;
+    });
+  }
+
+  resetFormValidation() {
+    formkey.currentState!.reset();
+    _autoValidateMode = AutovalidateMode.disabled;
+  }
+
+  setEmptryFormLoginValue() {
+    setState(() {
+      _phoneNumber = "";
+      _email = "";
+      _password = "";
+
+      _phoneNumberController.text = _phoneNumber;
+      _emailController.text = _email;
+      _passwordController.text = _password;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -204,6 +224,11 @@ class _LoginState extends State<Login> {
 
     _phoneNumberController.text = _phoneNumber;
     _emailController.text = _email;
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   print("work");
+    //   // Reset form validation when the screen is loaded or reloaded
+    // });
   }
 
   @override
@@ -213,12 +238,11 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    FocusScopeNode currentFocus = FocusScopeNode();
     return GestureDetector(
       onTap: () {
-        currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
+        _currentFocus = FocusScope.of(context);
+        if (!_currentFocus.hasPrimaryFocus) {
+          _currentFocus.unfocus();
         }
       },
       child: MediaQuery(
@@ -280,6 +304,9 @@ class _LoginState extends State<Login> {
 
                       //
                       //
+                      //
+                      //
+                      //
                       //Form Log in account
                       Expanded(
                         // flex: 13,
@@ -289,6 +316,7 @@ class _LoginState extends State<Login> {
                             // color: AppColors.greyOpacity,
                             child: Form(
                               key: formkey,
+                              autovalidateMode: _autoValidateMode,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -299,18 +327,28 @@ class _LoginState extends State<Login> {
                                   SizedBox(
                                     height: 5,
                                   ),
+
+                                  //
+                                  //
                                   //
                                   //
                                   //Change Language Lao-Eng
                                   Container(
                                     padding: EdgeInsets.only(top: 10),
                                     // color: AppColors.blue,
-                                    child: ChangeLanguage(),
+                                    child: ChangeLanguage(
+                                        callBackSetLanguage: (val) {
+                                      if (val == "Set Language Success") {
+                                        print("call back set language");
+                                      }
+                                    }),
                                   ),
                                   SizedBox(
                                     height: 2.h,
                                   ),
 
+                                  //
+                                  //
                                   //
                                   //
                                   //Text Log in
@@ -351,6 +389,8 @@ class _LoginState extends State<Login> {
 
                                   //
                                   //
+                                  //
+                                  //
                                   //Input Phone Number
                                   if (_isCheckTelAndEmail)
                                     Column(
@@ -384,6 +424,9 @@ class _LoginState extends State<Login> {
                                         ),
                                       ],
                                     ),
+
+                                  //
+                                  //
                                   //
                                   //
                                   //Input Email
@@ -400,7 +443,8 @@ class _LoginState extends State<Login> {
                                         SizedBox(
                                           height: 1.h, //5
                                         ),
-                                        SimpleTextFieldWithIconRight(
+                                        TextFieldEmailWithIconRight(
+                                          textController: _emailController,
                                           keyboardType:
                                               TextInputType.emailAddress,
                                           changed: (value) {
@@ -408,7 +452,6 @@ class _LoginState extends State<Login> {
                                               _email = value;
                                             });
                                           },
-                                          textController: _emailController,
                                           hintText: "email".tr,
                                           suffixIcon:
                                               Icon(Icons.email_outlined),
@@ -419,6 +462,8 @@ class _LoginState extends State<Login> {
                                     height: 2.5.h, //20
                                   ),
 
+                                  //
+                                  //
                                   //
                                   //
                                   //Password
@@ -435,6 +480,7 @@ class _LoginState extends State<Login> {
                                         height: 2.w, //5
                                       ),
                                       TextFieldPassword(
+                                        codeController: _passwordController,
                                         isObscure: _isObscure,
                                         changed: (value) {
                                           setState(() {
@@ -444,7 +490,7 @@ class _LoginState extends State<Login> {
                                         hintText: 'password'.tr,
                                         hintTextFontWeight: FontWeight.bold,
                                         suffixIcon: IconButton(
-                                          iconSize: 20,
+                                          iconSize: IconSize.sIcon,
                                           icon: Icon(
                                             _isObscure
                                                 ? Icons.visibility_off
@@ -469,11 +515,18 @@ class _LoginState extends State<Login> {
 
                                   //
                                   //
+                                  //
+                                  //
                                   //Forgot Password
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: GestureDetector(
                                       onTap: () {
+                                        resetFormValidation();
+
+                                        FocusScope.of(context)
+                                            .requestFocus(focusNode);
+
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -496,22 +549,21 @@ class _LoginState extends State<Login> {
 
                                   //
                                   //
+                                  //
+                                  //
                                   //Button Log in
                                   SimpleButton(
                                     text: "login".tr,
                                     fontWeight: FontWeight.bold,
                                     press: () {
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) => Home(),
-                                      //   ),
-                                      // );
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
+
+                                      _autoValidateMode =
+                                          AutovalidateMode.always;
+
                                       if (formkey.currentState!.validate()) {
                                         login();
-                                        // print("success");
-                                      } else {
-                                        // print("false");
                                       }
                                     },
                                   ),
@@ -521,9 +573,13 @@ class _LoginState extends State<Login> {
 
                                   //
                                   //
+                                  //
+                                  //
                                   //Text Log in with Phone Number or Email
                                   GestureDetector(
                                     onTap: () {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
                                       SiginWith();
                                     },
                                     child: Text(
@@ -546,7 +602,7 @@ class _LoginState extends State<Login> {
                                         flex: 1,
                                         child: Divider(
                                           height: 1,
-                                          color: AppColors.borderSecondary,
+                                          color: AppColors.borderGrey,
                                         ),
                                       ),
                                       Flexible(
@@ -561,7 +617,7 @@ class _LoginState extends State<Login> {
                                         flex: 1,
                                         child: Divider(
                                           height: 1,
-                                          color: AppColors.borderSecondary,
+                                          color: AppColors.borderGrey,
                                         ),
                                       ),
                                     ],
@@ -642,6 +698,8 @@ class _LoginState extends State<Login> {
 
                                   //
                                   //
+                                  //
+                                  //
                                   //Click to Register
                                   Container(
                                     // height: 50,
@@ -658,6 +716,12 @@ class _LoginState extends State<Login> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
+                                            resetFormValidation();
+                                            setEmptryFormLoginValue();
+
+                                            FocusScope.of(context)
+                                                .requestFocus(focusNode);
+
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(

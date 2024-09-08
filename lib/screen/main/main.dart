@@ -119,7 +119,11 @@ class _MainBodyState extends State<MainBody> {
                   //Change Language Lao-Eng
                   Expanded(
                     flex: 2,
-                    child: ChangeLanguage(),
+                    child: ChangeLanguage(callBackSetLanguage: (val) {
+                      if (val == "Set Language Success") {
+                        print("call back set language");
+                      }
+                    }),
                   ),
 
                   //

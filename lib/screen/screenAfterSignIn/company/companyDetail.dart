@@ -1372,87 +1372,87 @@ class _CompanyDetailState extends State<CompanyDetail>
                                             //
                                             //
                                             //Email
-                                            if (_email != "")
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 10),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              3),
-                                                      child: FaIcon(
-                                                        FontAwesomeIcons.at,
-                                                        color:
-                                                            AppColors.iconDark,
-                                                        size: IconSize.xsIcon,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Flexible(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          launchInBrowser(
-                                                              Uri.parse(
-                                                                  _email));
-                                                        },
-                                                        child: Text(
-                                                          "${_email}",
-                                                          style: bodyTextNormal(
-                                                              null, null),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
+                                            // if (_email != "")
+                                            //   Padding(
+                                            //     padding: const EdgeInsets.only(
+                                            //         bottom: 10),
+                                            //     child: Row(
+                                            //       crossAxisAlignment:
+                                            //           CrossAxisAlignment.start,
+                                            //       children: [
+                                            //         Padding(
+                                            //           padding:
+                                            //               const EdgeInsets.all(
+                                            //                   3),
+                                            //           child: FaIcon(
+                                            //             FontAwesomeIcons.at,
+                                            //             color:
+                                            //                 AppColors.iconDark,
+                                            //             size: IconSize.xsIcon,
+                                            //           ),
+                                            //         ),
+                                            //         SizedBox(
+                                            //           width: 10,
+                                            //         ),
+                                            //         Flexible(
+                                            //           child: GestureDetector(
+                                            //             onTap: () {
+                                            //               launchInBrowser(
+                                            //                   Uri.parse(
+                                            //                       _email));
+                                            //             },
+                                            //             child: Text(
+                                            //               "${_email}",
+                                            //               style: bodyTextNormal(
+                                            //                   null, null),
+                                            //             ),
+                                            //           ),
+                                            //         )
+                                            //       ],
+                                            //     ),
+                                            //   ),
 
                                             //
                                             //
                                             //Phone
-                                            if (_phone != "")
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 10),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              3),
-                                                      child: FaIcon(
-                                                        FontAwesomeIcons.phone,
-                                                        color:
-                                                            AppColors.iconDark,
-                                                        size: IconSize.xsIcon,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Flexible(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          launchPhoneCall(
-                                                              _phone);
-                                                        },
-                                                        child: Text(
-                                                          "${_phone}",
-                                                          style: bodyTextNormal(
-                                                              null, null),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
+                                            // if (_phone != "")
+                                            //   Padding(
+                                            //     padding: const EdgeInsets.only(
+                                            //         bottom: 10),
+                                            //     child: Row(
+                                            //       crossAxisAlignment:
+                                            //           CrossAxisAlignment.start,
+                                            //       children: [
+                                            //         Padding(
+                                            //           padding:
+                                            //               const EdgeInsets.all(
+                                            //                   3),
+                                            //           child: FaIcon(
+                                            //             FontAwesomeIcons.phone,
+                                            //             color:
+                                            //                 AppColors.iconDark,
+                                            //             size: IconSize.xsIcon,
+                                            //           ),
+                                            //         ),
+                                            //         SizedBox(
+                                            //           width: 10,
+                                            //         ),
+                                            //         Flexible(
+                                            //           child: GestureDetector(
+                                            //             onTap: () {
+                                            //               launchPhoneCall(
+                                            //                   _phone);
+                                            //             },
+                                            //             child: Text(
+                                            //               "${_phone}",
+                                            //               style: bodyTextNormal(
+                                            //                   null, null),
+                                            //             ),
+                                            //           ),
+                                            //         )
+                                            //       ],
+                                            //     ),
+                                            //   ),
 
                                             //
                                             //

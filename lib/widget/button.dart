@@ -16,12 +16,15 @@ class ButtonDefault extends StatefulWidget {
     this.fontWeight,
     this.buttonBorderColor,
     this.boxDecBorderRadius,
+    this.paddingButton,
   }) : super(key: key);
   final String? text;
   final Color? colorButton, buttonBorderColor;
   final Color? colorText;
   final FontWeight? fontWeight;
   final BorderRadiusGeometry? boxDecBorderRadius;
+  final WidgetStateProperty<EdgeInsetsGeometry?>? paddingButton;
+
   final Function()? press;
 
   @override
@@ -42,9 +45,10 @@ class _ButtonDefaultState extends State<ButtonDefault> {
               ); // Default border color
             },
           ),
-          padding: WidgetStateProperty.all<EdgeInsets>(
-            EdgeInsets.symmetric(horizontal: 20),
-          ),
+          padding: widget.paddingButton ??
+              WidgetStateProperty.all<EdgeInsets>(
+                EdgeInsets.symmetric(horizontal: 20),
+              ),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius:

@@ -5,6 +5,7 @@ import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
@@ -36,7 +37,7 @@ class _TextFormFieldTextRightState extends State<TextFormFieldTextRight> {
         contentPadding: EdgeInsets.all(10),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.inputColor),
-          borderRadius: BorderRadius.circular(1.w),
+          borderRadius: BorderRadius.circular(8),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.primary),
@@ -116,7 +117,9 @@ class _TextFieldMultiValidateState extends State<TextFieldMultiValidate> {
           : widget.keyboardType,
       // textAlign: TextAlign.center,
       decoration: InputDecoration(
-        border: OutlineInputBorder(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
         // contentPadding: EdgeInsets.symmetric(horizontal: 2.5.w),
 
         fillColor: AppColors.inputColor,
@@ -240,7 +243,9 @@ class _SimpleTextFieldWithIconLeftState
             ],
           ),
 
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
           contentPadding:
               // EdgeInsets.symmetric(horizontal: 3.5.w, vertical: 3.5.w),
               EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -279,6 +284,8 @@ class _SimpleTextFieldWithIconLeftState
   }
 }
 
+//
+//
 //
 //
 //SimpleTextFieldWithIconRight
@@ -368,7 +375,9 @@ class _SimpleTextFieldWithIconRightState
           //   ],
           // ),
 
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
           contentPadding:
               // EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
               EdgeInsets.symmetric(vertical: 15, horizontal: 15),
@@ -511,7 +520,9 @@ class _SimpleTextFieldSingleValidateState
         // textAlign: TextAlign.center,
         decoration: InputDecoration(
             prefixIcon: widget.prefixIcon,
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
             contentPadding: widget.contenPadding == null
                 // ? EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w)
                 ? EdgeInsets.symmetric(vertical: 15, horizontal: 15)
@@ -618,7 +629,7 @@ class _TextFieldTextCenterState extends State<TextFieldTextCenter> {
         ),
         decoration: InputDecoration(
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(1.5.w),
+            borderRadius: BorderRadius.circular(8),
           ),
 
           contentPadding:
@@ -714,7 +725,10 @@ class _TextFieldPhoneNumberState extends State<TextFieldPhoneNumber> {
         controller: widget.textController,
         enabled: widget.enabled == null ? true : widget.enabled,
         obscureText: widget.isObscure ?? false,
-        // maxLength: 8,
+        //inputFormatters ບໍ່ໃຫ້ພິມຕົວເລກບໍ່ເກີນ 8ຕົວ
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(8),
+        ],
         toolbarOptions: ToolbarOptions(
           paste: true,
           cut: true,
@@ -754,7 +768,9 @@ class _TextFieldPhoneNumberState extends State<TextFieldPhoneNumber> {
               ],
             ),
           ),
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
           contentPadding:
               // EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
               EdgeInsets.symmetric(vertical: 15, horizontal: 15),
@@ -781,11 +797,158 @@ class _TextFieldPhoneNumberState extends State<TextFieldPhoneNumber> {
           ),
         ),
         validator: (String? value) {
-          if (value == null || value.isEmpty || value.length != 8) {
+          if (value == null || value.isEmpty) {
+            return "required".tr;
+          } else if (value.length != 8) {
             return "enter8number".tr;
           }
           return null;
         },
+      ),
+    );
+  }
+}
+
+//
+//
+//
+//
+//TextFieldEmailWithIconRight
+class TextFieldEmailWithIconRight extends StatefulWidget {
+  TextFieldEmailWithIconRight({
+    Key? key,
+    this.hintText,
+    this.hintStyleColor,
+    this.textController,
+    required this.suffixIcon,
+    this.changed,
+    this.press,
+    this.valueValidator,
+    this.fontIcon,
+    this.iconFontSize,
+    this.suffixIconColor,
+    this.keyboardType,
+    this.textAlign,
+    this.enabled,
+    this.hintTextFontWeight,
+    this.isObscure,
+    this.inputColor,
+  }) : super(key: key);
+  final String? hintText, valueValidator;
+  // final TextStyle? hintStyleColor;
+  final Color? hintStyleColor;
+  final FontWeight? hintTextFontWeight;
+  final TextEditingController? textController;
+  final String? fontIcon;
+  final Color? suffixIconColor, inputColor;
+  final double? iconFontSize;
+  final Function(String)? changed;
+  final TextInputType? keyboardType;
+  final Function()? press;
+  final bool? enabled;
+  final dynamic textAlign;
+  final Widget suffixIcon;
+  final bool? isObscure;
+
+  @override
+  State<TextFieldEmailWithIconRight> createState() =>
+      _TextFieldEmailWithIconRightState();
+}
+
+class _TextFieldEmailWithIconRightState
+    extends State<TextFieldEmailWithIconRight> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // height: 50,
+      child: TextFormField(
+        onTap: widget.press,
+        onChanged: widget.changed,
+        controller: widget.textController,
+        enabled: widget.enabled == null
+            ? true
+            : widget
+                .enabled, //enable = true ສາມາດໃຊ້ປົກກະຕິ / enable = false ບໍ່ສາມາດກົດໄດ້
+        obscureText: widget.isObscure ?? false,
+        textAlign:
+            widget.textAlign == null ? TextAlign.start : widget.textAlign,
+        style: TextStyle(color: AppColors.fontDark),
+        keyboardType: widget.keyboardType == null
+            ? TextInputType.text
+            : widget.keyboardType,
+        toolbarOptions: ToolbarOptions(
+          paste: true,
+          cut: true,
+          copy: true,
+          selectAll: true,
+        ),
+        decoration: InputDecoration(
+          // prefixIcon: Icon(
+          //   widget.icon,
+          //   color:
+          //       widget.iconColor == null ? AppColors.black : widget.iconColor,
+          //   size: 12.sp,
+          // ),
+          // prefixIcon: Column(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     Text(
+          //       '${widget.icon}',
+          //       style: sIcon(null, null),
+          //     ),
+          //   ],
+          // ),
+
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          contentPadding:
+              // EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
+              EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+
+          fillColor: widget.inputColor == null
+              ? AppColors.inputLight
+              : widget.inputColor,
+          filled: true,
+          enabledBorder: enableOutlineBorder(
+            AppColors.borderSecondary,
+          ),
+          focusedBorder: focusOutlineBorder(
+            AppColors.borderPrimary,
+          ),
+          hintText: "${widget.hintText}",
+          hintStyle: bodyTextNormal(
+            widget.hintStyleColor == null
+                ? AppColors.fontGreyOpacity
+                : widget.hintStyleColor,
+            widget.hintTextFontWeight,
+          ),
+
+          //suffixIcon ແບບ String(FontAwesome)
+          // suffixIcon: Column(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     Text(
+          //       '${widget.suffixIcon}',
+          //       style: sIcon(null, null),
+          //     ),
+          //   ],
+          // ),
+
+          suffixIcon: IconButton(
+            icon: widget.suffixIcon,
+            color: widget.suffixIconColor,
+            iconSize: IconSize.mIcon,
+            onPressed: () {},
+          ),
+        ),
+
+        validator: MultiValidator([
+          RequiredValidator(
+            errorText: "required".tr,
+          ),
+          EmailValidator(errorText: "example@mail.com")
+        ]),
       ),
     );
   }
@@ -942,7 +1105,9 @@ class _DropdownButtonMenuState extends State<DropdownButtonMenu> {
             menuMaxHeight: 40.h, //Height ຂອງ dropdown ຫຼັງຈາກກົດເພື່ອເລືອກ item
             decoration: InputDecoration(
               prefixIcon: widget.widgetPrefixIcon,
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
               contentPadding:
                   // EdgeInsets.symmetric(vertical: 3.5.w, horizontal: 3.5.w),
                   EdgeInsets.symmetric(vertical: 15, horizontal: 15),

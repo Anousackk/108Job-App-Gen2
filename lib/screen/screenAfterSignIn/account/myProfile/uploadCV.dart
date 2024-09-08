@@ -319,7 +319,7 @@ class _UploadCVState extends State<UploadCV> {
         context: context,
         builder: (context) {
           return CustomAlertDialogErrorWithoutButton(
-            title: "invalid".tr,
+            title: "incorrect".tr,
             text: res['message'],
           );
         },

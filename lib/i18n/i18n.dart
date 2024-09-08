@@ -169,7 +169,7 @@ class LocalString extends Translations {
       "en": "You haven't login yet",
       "la": "ທ່ານຍັງບໍ່ໄດ້ເຂົ້າສູ່ລະບົບ"
     },
-    {"key": "phone", "en": "Phone", "la": "ເບີໂທລະສັບ"},
+    {"key": "phone", "en": "Phone Number", "la": "ເບີໂທລະສັບ"},
     {"key": "email", "en": "Email", "la": "ອີເມວ"},
     {"key": "password", "en": "Password", "la": "ລະຫັດຜ່ານ"},
     {"key": "change password", "en": "Change Password", "la": "ປ່ຽນລະຫັດຜ່ານ"},
@@ -234,12 +234,12 @@ class LocalString extends Translations {
     {"key": "job description", "en": "Job Description", "la": "ລາຍລະອຽດວຽກ"},
     {
       "key": "don't receive code",
-      "en": "Didn't receive code?",
+      "en": "Didn't receive code",
       "la": "ຍັງບໍ່ໄດ້ຮັບລະຫັດຢືນຢັນ"
     },
     {
       "key": "don't receive otp",
-      "en": "Didn't receive OTP?",
+      "en": "Didn't receive OTP",
       "la": "ຍັງບໍ່ໄດ້ຮັບລະຫັດ OTP"
     },
     {"key": "resend", "en": "Resend New", "la": "ສົ່ງອີກຄັ້ງ"},
@@ -379,8 +379,8 @@ class LocalString extends Translations {
           "ເພື່ອປ້ອງກັນບັນຊີຂອງທ່ານ,\n ພວກເຮົາຈຳເປັນຕ້ອງຢືນຢັນຕົວຕົນຂອງທ່ານກ່ອນ\n ກະລຸນາເລືອກວິທີການກວດສອບ",
     },
     {
-      "key": "invalid",
-      "en": "Invalid",
+      "key": "incorrect",
+      "en": "Incorrect",
       "la": "ບໍ່ຖືກຕ້ອງ",
     },
     {
@@ -415,7 +415,7 @@ class LocalString extends Translations {
     },
     {
       "key": "excludePhone",
-      "en": "Phone number exclude enter 020",
+      "en": "Phone number exclude 020",
       "la": "ເບີໂທລະສັບບໍ່ຕ້ອງໃສ່ 020",
     },
     {
@@ -921,8 +921,34 @@ class LocalString extends Translations {
           "This job vacancy will no longer be visible on this page after being hidden",
       "la": "ຫຼັງຈາກເຊື່ອງວຽກ ວຽກດັ່ງກ່າວຈະບໍ່ສະແດງຢູ່ໜ້ານີ້ອີກ",
     },
+    {
+      "key": "system_error",
+      "en": "Verify system error",
+      "la": "ລະບົບຢືນຢັນມີບັນຫາ",
+    },
 
-    //Valid until
+    {
+      "key": "phone_register_already",
+      "en": "This phone number has register already",
+      "la": "ເບີໂທລະສັບ ຫຼື ອີເມວ ໄດ້ລົງທະບຽນແລ້ວ",
+    },
+    {
+      "key": "phone_not_register",
+      "en": "This phone number has not register yet",
+      "la": "ເບີໂທລະສັບ ຫຼື ອີເມວ ຍັງບໍ່ໄດ້ລົງທະບຽນ",
+    },
+    {
+      "key": "phone_used",
+      "en": "This phone number is used",
+      "la": "ເບີໂທລະສັບ ຫຼື ອີເມວ ໄດ້ຖືກໃຊ້ແລ້ວ",
+    },
+    {
+      "key": "otp_code_incorrect",
+      "en": "OTP code is incorrect",
+      "la": "ລະຫັດ OTP ບໍ່ຖືກຕ້ອງ",
+    },
+
+    //Valid until system_error this mobile is not register yet
   ];
   @override
   Map<String, Map<String, String>> get keys {

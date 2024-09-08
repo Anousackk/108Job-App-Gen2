@@ -4,7 +4,7 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
-import 'package:app/screen/securityVerify/addPhoneNumOrMail.dart';
+import 'package:app/screen/securityVerify/securityPhoneOrMail.dart';
 import 'package:app/screen/securityVerify/verificationCode.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/boxDecorationIcon.dart';
@@ -168,8 +168,9 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddPhoneNumberOrEmail(
-                                      addPhoneNumOrEmail: 'email'),
+                                  builder: (context) =>
+                                      SecurityPhoneNumberOrEmail(
+                                          addPhoneNumOrEmail: 'email'),
                                 ),
                               );
                             },
@@ -197,8 +198,9 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddPhoneNumberOrEmail(
-                                      addPhoneNumOrEmail: 'phoneNumber'),
+                                  builder: (context) =>
+                                      SecurityPhoneNumberOrEmail(
+                                          addPhoneNumOrEmail: 'phoneNumber'),
                                 ),
                               );
                             },
@@ -299,7 +301,7 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
         context: context,
         builder: (context) {
           return CustomAlertDialogErrorWithoutButton(
-            title: "invalid".tr,
+            title: "incorrect".tr,
             text: res['message'],
           );
         },

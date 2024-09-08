@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_final_fields, unused_field, prefer_const_literals_to_create_immutables, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, unused_element, prefer_is_empty, sized_box_for_whitespace, unnecessary_import, unnecessary_null_in_if_null_operators, avoid_init_to_null, avoid_unnecessary_containers, unnecessary_string_interpolations
 
+import 'dart:io';
+
 import 'package:app/MyUpgraderMessages.dart';
 import 'package:app/firebase_options.dart';
 import 'package:app/functions/api.dart';
@@ -44,6 +46,7 @@ class _HomeState extends State<Home> {
   String _typeString = "";
   String _totalNotiUnRead = "";
   String _totalMessageUnRead = "";
+  bool _isShowBannerHome = true;
 
   int _currentIndex = 0;
 
@@ -61,6 +64,9 @@ class _HomeState extends State<Home> {
         // Reset the style and color if index is not 4
         _systemOverlayStyle = SystemUiOverlayStyle.dark;
         _backgroundColor = AppColors.backgroundWhite;
+      }
+      if (_currentIndex == 0) {
+        _isShowBannerHome = false;
       }
       if (_currentIndex == 0 ||
           _currentIndex == 2 ||
@@ -117,30 +123,36 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _screen = <Widget>[
-      MainHome(callBackToJobSearchProvince: (val) {
-        setState(() {
-          _topWorkLocation = val;
+      MainHome(
+        callBackToJobSearchProvince: (val) {
+          setState(() {
+            _topWorkLocation = val;
+            _currentIndex = 1;
+            _onTapBottomNav(1);
+          });
+        },
+        callBackToJobSearchTopIndustry: (val) {
+          setState(() {
+            _topIndustry = val;
+            _currentIndex = 1;
+            _onTapBottomNav(1);
+          });
+        },
+        callBackToHiringCompany: (valHiring) {
+          setState(() {
+            _companyType = valHiring;
+            _currentIndex = 2;
+            _onTapBottomNav(2);
+          });
+        },
+        callBackSelectedIndustryProvince: (valString, valSelectedItems) {
+          _typeString = valString;
+          _selectedListItem = valSelectedItems;
           _currentIndex = 1;
           _onTapBottomNav(1);
-        });
-      }, callBackToJobSearchTopIndustry: (val) {
-        setState(() {
-          _topIndustry = val;
-          _currentIndex = 1;
-          _onTapBottomNav(1);
-        });
-      }, callBackToHiringCompany: (valHiring) {
-        setState(() {
-          _companyType = valHiring;
-          _currentIndex = 2;
-          _onTapBottomNav(2);
-        });
-      }, callBackSelectedIndustryProvince: (valString, valSelectedItems) {
-        _typeString = valString;
-        _selectedListItem = valSelectedItems;
-        _currentIndex = 1;
-        _onTapBottomNav(1);
-      }),
+        },
+        isShowBanner: _isShowBannerHome,
+      ),
       JobSearch(
         topWorkLocation: _topWorkLocation,
         topIndustry: _topIndustry,
@@ -357,11 +369,13 @@ class MainHome extends StatefulWidget {
     this.callBackToJobSearchProvince,
     this.callBackToJobSearchTopIndustry,
     this.callBackSelectedIndustryProvince,
+    this.isShowBanner,
   }) : super(key: key);
   final Function(dynamic)? callBackToHiringCompany;
   final Function(dynamic)? callBackToJobSearchProvince;
   final Function(dynamic)? callBackToJobSearchTopIndustry;
   final Function(String, dynamic)? callBackSelectedIndustryProvince;
+  final isShowBanner;
 
   @override
   State<MainHome> createState() => _MainHomeState();
@@ -384,6 +398,8 @@ class _MainHomeState extends State<MainHome> {
   List _listHirings = [];
   List _listProvinces = [];
   List _listIndustries = [];
+  List _listPopupBanner = [];
+
   bool _isLoading = true;
 
   List _selectedWorkLocations = [];
@@ -408,6 +424,9 @@ class _MainHomeState extends State<MainHome> {
   String _localeLanguageApi = "EN";
   String _totalNotiUnRead = "";
   String _totalMessageUnRead = "";
+  String _imagePopupBanner = "";
+  String _urlPopupBanner = "";
+  bool _showBanner = true;
 
   //error setState() called after dispose(). it can help!!!
   @override
@@ -428,15 +447,6 @@ class _MainHomeState extends State<MainHome> {
       setState(() {});
     }
   }
-
-  // refreshFCM() async {
-  //   var value = await putData(refreshFCMToken, {
-  //     "employeeToken": _employeeToken,
-  //     "managerToken": _managerToken,
-  //     "fcmToken": _fcmToken,
-  //   });
-  //   var messages = value["messages"];
-  // }
 
   getTokenSharedPre() async {
     final prefs = await SharedPreferences.getInstance();
@@ -472,6 +482,22 @@ class _MainHomeState extends State<MainHome> {
     var res = await postData(getTopBannerEmployee, {});
     _listTopBanners = res['info'];
 
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  fetchPopupBanner() async {
+    var res = await postData(getPopupBanner, {});
+    _listPopupBanner = res['info'];
+    if (_listPopupBanner.length > 0) {
+      _imagePopupBanner = _listPopupBanner[0]['image'];
+      _urlPopupBanner = _listPopupBanner[0]['url'];
+
+      if (_showBanner && _imagePopupBanner != "") {
+        showFullScreenDialogBanner(context);
+      }
+    }
     if (mounted) {
       setState(() {});
     }
@@ -552,17 +578,6 @@ class _MainHomeState extends State<MainHome> {
         _localeLanguageApi, _listIndustries, "industry");
   }
 
-  fetchDataApi() {
-    getSharedPreferences();
-    getTokenSharedPre();
-    getProfileSeeker();
-    fetchTopBanner();
-    fetchSpotLight();
-    fetchHiring();
-    fetchNotifications();
-    fetchMessages();
-  }
-
   fetchNotifications() async {
     var res = await postData(getNotificationsSeeker,
         {"page": 1, "perPage": 10, "type": "Notification_Page"});
@@ -587,9 +602,107 @@ class _MainHomeState extends State<MainHome> {
     }
   }
 
+  // checkBanner() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  //   dynamic hasShownDialog = await prefs.getBool('hasShownDialog');
+
+  //   print("hasShownDialog: " + hasShownDialog.toString());
+
+  //   if (hasShownDialog) {
+  //     await prefs.setBool('hasShownDialog', true);
+  //     setState(() {
+  //       _showBanner = true;
+  //     });
+  //   }
+  // }
+
+  showFullScreenDialogBanner(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: AppColors.backgroundWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
+          insetPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 80),
+          child: Container(
+            child: Stack(
+              children: [
+                AspectRatio(
+                  aspectRatio: 3 / 5,
+                  child: GestureDetector(
+                    onTap: () {
+                      launchInBrowser(
+                        Uri.parse(_urlPopupBanner),
+                      );
+                    },
+                    child: Container(
+                      child: ClipRRect(
+                        child: _imagePopupBanner == ""
+                            ? Image.asset(
+                                'assets/image/no-image-available.png',
+                                fit: BoxFit.contain,
+                              )
+                            : Image.network(
+                                "${_imagePopupBanner}",
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    'assets/image/no-image-available.png',
+                                    fit: BoxFit.contain,
+                                  ); // Display an error message
+                                },
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: Icon(Icons.close),
+                    iconSize: 30,
+                    onPressed: () async {
+                      // SharedPreferences prefs =
+                      //     await SharedPreferences.getInstance();
+                      // await prefs.setBool('hasShownDialog', false);
+                      setState(() {
+                        _showBanner = false;
+                      });
+
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  fetchDataApi() {
+    getSharedPreferences();
+    getTokenSharedPre();
+    getProfileSeeker();
+    fetchTopBanner();
+    fetchSpotLight();
+    fetchHiring();
+    fetchNotifications();
+    fetchMessages();
+  }
+
   @override
   void initState() {
     super.initState();
+    _showBanner = widget.isShowBanner ?? true;
+
+    fetchPopupBanner();
     fetchDataApi();
   }
 
@@ -607,13 +720,17 @@ class _MainHomeState extends State<MainHome> {
                   child: Center(child: CircularProgressIndicator()),
                 )
               : UpgradeAlert(
+                  showIgnore: false,
+                  showLater: false,
+                  barrierDismissible: false,
+                  showReleaseNotes: false,
+                  dialogStyle: Platform.isIOS
+                      ? UpgradeDialogStyle.cupertino
+                      : UpgradeDialogStyle.material,
                   upgrader: Upgrader(
                     durationUntilAlertAgain: Duration(days: 1),
-                    storeController: UpgraderStoreController(
-                      onAndroid: () => UpgraderPlayStore(),
-                      oniOS: () => UpgraderAppStore(),
-                    ),
                     messages: MyUpgraderMessages(),
+                    upgraderDevice: UpgraderDevice(),
                   ),
                   child: Container(
                     width: double.infinity,
@@ -823,6 +940,11 @@ class _MainHomeState extends State<MainHome> {
                               children: [
                                 //
                                 //
+                                //
+                                //
+                                //
+                                //
+                                //
                                 //Top banner image
                                 if (_listTopBanners.length > 0)
                                   Column(
@@ -865,7 +987,7 @@ class _MainHomeState extends State<MainHome> {
                                                 },
                                               ),
                                               items: _listTopBanners
-                                                  .map((imagePath) {
+                                                  .map((objTopBanner) {
                                                 return Builder(
                                                     builder: (context) {
                                                   return Container(
@@ -880,23 +1002,27 @@ class _MainHomeState extends State<MainHome> {
                                                       onTap: () {
                                                         launchInBrowser(
                                                           Uri.parse(
-                                                              imagePath['url']),
+                                                              objTopBanner[
+                                                                  'url']),
                                                         );
                                                       },
                                                       child: ClipRRect(
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(8),
-                                                        child: imagePath[
-                                                                    'image'] ==
-                                                                ""
+                                                        child: objTopBanner[
+                                                                        'image'] ==
+                                                                    "" ||
+                                                                objTopBanner[
+                                                                        'image'] ==
+                                                                    null
                                                             ? Image.asset(
                                                                 'assets/image/no-image-available.png',
                                                                 fit: BoxFit
                                                                     .contain,
                                                               )
                                                             : Image.network(
-                                                                "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${imagePath['image']}",
+                                                                "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${objTopBanner['image']}",
                                                                 fit: BoxFit
                                                                     .contain,
                                                                 errorBuilder:
@@ -1183,7 +1309,7 @@ class _MainHomeState extends State<MainHome> {
                                                                             BorderRadius.circular(8),
                                                                         child:
                                                                             Center(
-                                                                          child: logoProvince['logo'] == ""
+                                                                          child: logoProvince['logo'] == "" || logoProvince['logo'] == null
                                                                               ? Image.asset(
                                                                                   'assets/image/no-image-available.png',
                                                                                   fit: BoxFit.contain,
@@ -1512,7 +1638,7 @@ class _MainHomeState extends State<MainHome> {
                                                                                 BorderRadius.circular(8),
                                                                             child:
                                                                                 Center(
-                                                                              child: logoTopIndustry['logo'] == ""
+                                                                              child: logoTopIndustry['logo'] == "" || logoTopIndustry['logo'] == null
                                                                                   ? Image.asset(
                                                                                       'assets/image/no-image-available.png',
                                                                                       fit: BoxFit.contain,
@@ -1745,8 +1871,11 @@ class _MainHomeState extends State<MainHome> {
                                                               BorderRadius
                                                                   .circular(8),
                                                           child: imagePath[
-                                                                      'image'] ==
-                                                                  ""
+                                                                          'image'] ==
+                                                                      "" ||
+                                                                  imagePath[
+                                                                          'image'] ==
+                                                                      null
                                                               ? Image.asset(
                                                                   'assets/image/no-image-available.png',
                                                                   fit: BoxFit
@@ -1982,7 +2111,9 @@ class _MainHomeState extends State<MainHome> {
                                                                           8),
                                                                 ),
                                                                 child: i['cardCover'] ==
-                                                                        ""
+                                                                            "" ||
+                                                                        i['cardCover'] ==
+                                                                            null
                                                                     ? Center(
                                                                         child:
                                                                             Container(
@@ -2305,8 +2436,10 @@ class _MainHomeState extends State<MainHome> {
                                                                     borderRadius:
                                                                         BorderRadius
                                                                             .circular(8),
-                                                                    child: _logo ==
-                                                                            ""
+                                                                    child: i['logo'] ==
+                                                                                "" ||
+                                                                            i['logo'] ==
+                                                                                null
                                                                         ? Image
                                                                             .asset(
                                                                             'assets/image/no-image-available.png',

@@ -600,7 +600,7 @@ class CustomAlertDialogWarningWithoutButton extends StatefulWidget {
     Key? key,
     this.text,
     this.title,
-    this.press,
+    // this.press,
     this.colorButton,
     this.colorTextButton,
     this.textButton,
@@ -608,7 +608,7 @@ class CustomAlertDialogWarningWithoutButton extends StatefulWidget {
   final String? text, textButton;
   final String? title;
   final Color? colorButton, colorTextButton;
-  final Function()? press;
+  // final Function()? press;
 
   @override
   State<CustomAlertDialogWarningWithoutButton> createState() =>
@@ -896,12 +896,12 @@ class _CustomAlertDialogErrorWithoutButtonState
             ),
             Positioned(
               child: CircleAvatar(
-                backgroundColor: AppColors.red,
+                backgroundColor: AppColors.lightDanger,
                 radius: 40,
                 child: FaIcon(
                   FontAwesomeIcons.xmark,
                   size: IconSize.lIcon,
-                  color: AppColors.iconLight,
+                  color: AppColors.iconDanger,
                 ),
                 // child: Text(
                 //   'xmark',

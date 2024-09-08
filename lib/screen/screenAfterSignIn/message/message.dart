@@ -309,7 +309,8 @@ class _MessagesState extends State<Messages> {
                                                               style:
                                                                   bodyTextMaxNormal(
                                                                       null,
-                                                                      null),
+                                                                      FontWeight
+                                                                          .bold),
                                                               overflow:
                                                                   TextOverflow
                                                                       .ellipsis,

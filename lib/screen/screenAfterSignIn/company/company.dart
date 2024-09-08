@@ -374,7 +374,7 @@ class _CompanyState extends State<Company> {
                         ),
                         SizedBox(
                           height: 20,
-                        ), //
+                        ),
 
                         Expanded(
                           child: CustomScrollView(
@@ -842,13 +842,18 @@ class _CompanyState extends State<Company> {
                               SliverPersistentHeader(
                                 pinned: true,
                                 delegate: _SliverAppBarDelegate(
+                                  maxHeight: 65,
+                                  minHeight: 65,
                                   child: Column(
                                     children: [
                                       Container(
                                         color: AppColors.background,
-                                        height: 50,
+                                        // height: 30,
                                         margin: EdgeInsets.symmetric(
-                                            horizontal: 20),
+                                          horizontal: 20,
+                                        ),
+                                        padding: EdgeInsets.only(bottom: 15),
+
                                         width: double.infinity,
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
@@ -885,7 +890,10 @@ class _CompanyState extends State<Company> {
                                                                 .fontWhite
                                                             : AppColors
                                                                 .fontGreyOpacity,
-                                                        FontWeight.bold),
+                                                        _searchType ==
+                                                                "AllCompanies"
+                                                            ? FontWeight.bold
+                                                            : null),
                                                   ),
                                                 ),
                                               ),
@@ -918,7 +926,9 @@ class _CompanyState extends State<Company> {
                                                                 .fontWhite
                                                             : AppColors
                                                                 .fontGreyOpacity,
-                                                        FontWeight.bold),
+                                                        _searchType == "Hiring"
+                                                            ? FontWeight.bold
+                                                            : null),
                                                   ),
                                                 ),
                                               ),
@@ -953,7 +963,10 @@ class _CompanyState extends State<Company> {
                                                                 .fontWhite
                                                             : AppColors
                                                                 .fontGreyOpacity,
-                                                        FontWeight.bold),
+                                                        _searchType ==
+                                                                "Following"
+                                                            ? FontWeight.bold
+                                                            : null),
                                                   ),
                                                 ),
                                               ),
@@ -988,7 +1001,10 @@ class _CompanyState extends State<Company> {
                                                                 .fontWhite
                                                             : AppColors
                                                                 .fontGreyOpacity,
-                                                        FontWeight.bold),
+                                                        _searchType ==
+                                                                "SubmittedCV"
+                                                            ? FontWeight.bold
+                                                            : null),
                                                   ),
                                                 ),
                                               )

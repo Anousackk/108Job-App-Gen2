@@ -16,6 +16,7 @@ class AppColors {
   static Color lightGrayishCyan = HexColor("#E1FCFC");
   static Color lightOrange = HexColor("#FFF0E5");
   static Color lightGreen = HexColor("#E2EEE1");
+  static Color lightDanger = HexColor("#FFEBEE");
 
   static Color inputLight = Color(0xffF1F3F6);
   static Color inputColor = Color(0xffEAEAEA);
