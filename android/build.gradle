@@ -5,13 +5,17 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        // Check that you have the following line (if not, add it) 
+		maven { url 'https://developer.huawei.com/repo/' } // HUAWEI Maven repository 
     }
 
     dependencies {
         // classpath 'com.google.gms:google-services:4.3.3'
         classpath 'com.google.gms:google-services:4.3.13'
         classpath 'com.android.tools.build:gradle:8.5.1'
+        classpath 'com.google.firebase:firebase-dynamic-links:22.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.huawei.agconnect:agcp:1.6.2.300'   // HUAWEI agcp plugin 
     }
 }
 
@@ -19,6 +23,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        // Check that you have the following line (if not, add it): 
+		maven { url 'https://developer.huawei.com/repo/' } // HUAWEI Maven repository 
     }
 }
 

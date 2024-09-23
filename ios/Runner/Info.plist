@@ -31,10 +31,15 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>org.cenixoft.OneHundredEightJobs</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>fb729771102607675</string>
 				<string>com.googleusercontent.apps.1012689313058-sb6ljqkt07h0ktu9n73egj35qmouljh8</string>
+				<string>https</string>
+				<string>org.cenixoft.OneHundredEightJobs</string>
+				<string>applinks:app108jobsjobsearchdetail.page.link</string>
 			</array>
 		</dict>
 	</array>

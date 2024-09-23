@@ -7,6 +7,8 @@ import 'package:app/routes.dart';
 import 'package:app/screen/login/login.dart';
 import 'package:app/screen/screenAfterSignIn/Notifications/notification.dart';
 import 'package:app/screen/screenAfterSignIn/message/message.dart';
+import 'package:app/src/services/dynamicLinkService.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -16,6 +18,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 //Background messages
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -36,7 +39,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   //1. Initialize the firebase app
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   //2. Initialize firebase messaging
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -86,6 +91,7 @@ Future<void> main() async {
     iOS: initializationSettingsDarwin,
     macOS: initializationSettingsDarwin,
   );
+
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
   );
@@ -132,7 +138,7 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   String? getLanguageSharePref;
 
-  Future<void> _initializeFCM() async {
+  Future<void> initializeFCM() async {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Received a message while in the foreground!');
       print('Message data: ${message.data}');
@@ -240,6 +246,15 @@ class MyAppState extends State<MyApp> {
     print('getLanguageSharePref: ' + getLanguageSharePref.toString());
   }
 
+  Future<void> firebaseAnalytics() async {
+    await FirebaseAnalytics.instance.logEvent(
+      name: "Pao-kun",
+      parameters: {
+        "full_text": "Hello World!!!",
+      },
+    );
+  }
+
   //error setState() called after dispose(). it can help!!!
   @override
   void setState(fn) {
@@ -252,8 +267,11 @@ class MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
+    print("main screen initstate");
+    DynamicLinkService.dynamicLinkPushScreen;
     checkLanguage();
-    _initializeFCM();
+    initializeFCM();
 
     // foregroundLocalNoti();
   }

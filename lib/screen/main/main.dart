@@ -8,7 +8,7 @@ import 'package:app/screen/main/changeLanguage.dart';
 import 'package:app/screen/register/register.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

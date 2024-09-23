@@ -3,19 +3,19 @@ import Flutter
 import Firebase
 import FirebaseMessaging
 import FirebaseCore
- import FBSDKCoreKit
+import FBSDKCoreKit
 // import FirebaseFirestore
 // import FirebaseAuth
 // import flutter_local_notifications
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate {
     override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     FirebaseApp.configure()
-    // GeneratedPluginRegistrant.register(with: self)
+//    GeneratedPluginRegistrant.register(with: self)
 
     ApplicationDelegate.shared.application(
     application,

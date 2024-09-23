@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
    <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
@@ -55,6 +56,10 @@
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="729771102607675"/>
    	    <meta-data android:name="com.facebook.sdk.ClientToken" android:value="7eef109fb1d30ca724d80ea5db2cb251"/>
 
+        <!-- <meta-data
+            android:name="com.google.firebase.dynamiclinks.DynamicLinksReceiver"
+            android:value="true" /> -->
+
 
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
@@ -69,7 +74,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="fb_login_protocol_scheme" />
                 <data android:scheme="http" />
-                <data android:scheme="https" />
+                <data
+                    android:scheme="https"
+                    android:host="https://app108jobsjobsearchdetail.page.link"/>
             </intent-filter>
         </activity>
     </application>

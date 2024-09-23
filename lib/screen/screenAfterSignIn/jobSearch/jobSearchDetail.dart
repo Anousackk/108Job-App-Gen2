@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names, use_full_hex_values_for_flutter_colors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names, use_full_hex_values_for_flutter_colors, deprecated_member_use
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -8,12 +8,14 @@ import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/screenAfterSignIn/company/companyDetail.dart';
+import 'package:app/src/services/dynamicLinkService.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sizer/sizer.dart';
 
 class JobSearchDetail extends StatefulWidget {
@@ -298,6 +300,49 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     }
   }
 
+  shareFileImage(BuildContext context, String jobSearchId) async {
+    final box = context.findRenderObject() as RenderBox?;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    dynamic dynamicLink =
+        await DynamicLinkService.createDynamicLink(jobSearchId);
+
+    final resultShare = await Share.share(dynamicLink.toString(),
+        subject: _companyName.toString(),
+        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+
+    // Step 1: Download the file
+    // final response = await http.get(Uri.parse(
+    //     'https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}'));
+    // final directory = await getApplicationDocumentsDirectory();
+    // final file = File('${directory.path}/logo.png');
+    // await file.writeAsBytes(response.bodyBytes);
+
+    // Step 2: Share the file
+    // final resultShare = await Share.shareXFiles(
+    //   [
+    //     XFile(file.path) // Using the local file path
+    //   ],
+    //   subject: "${_companyName}",
+    // );
+
+    // scaffoldMessenger.showSnackBar(getResultSnackBar(resultShare));
+    // print("${resultShare}");
+  }
+
+  SnackBar getResultSnackBar(ShareResult result) {
+    return SnackBar(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Link copied"),
+          // if (result.status == ShareResultStatus.success)
+          //   Text("Shared to: ${result.raw}")
+        ],
+      ),
+    );
+  }
+
   //
   //api ໃຊ້ກວດ isNew(status of new jobsearch) ຖ້າເປັນຄ່າ true ໃຫ້ເຊັດເປັນ false
   // fetchCheckNewJobSearch(id) async {
@@ -333,18 +378,6 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
-        // appBar: AppBarDefault(
-        //   backgroundColor: AppColors.background,
-        //   textTitle: "",
-        //   // fontWeight: FontWeight.bold,
-        //   leadingIcon: Icon(
-        //     Icons.arrow_back,
-        //     color: AppColors.iconDark,
-        //   ),
-        //   leadingPress: () {
-        //     Navigator.of(context).pop(_checkStatusCallBack);
-        //   },
-        // ),
         body: SafeArea(
           child: _isLoading
               ? Container(
@@ -395,6 +428,15 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                             Padding(
                               padding: const EdgeInsets.only(right: 20),
                               child: Text("valid_until".tr + ": ${_closeDate}"),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                shareFileImage(context, _id);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 20),
+                                child: Text("Share"),
+                              ),
                             )
                           ],
                         ),

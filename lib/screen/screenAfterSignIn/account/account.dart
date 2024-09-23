@@ -249,6 +249,7 @@ class _AccountState extends State<Account> {
                               "${_firstName} ${_lastName}",
                               style: bodyTextMedium(
                                   AppColors.fontWhite, FontWeight.bold),
+                              textAlign: TextAlign.center,
                             ),
                             SizedBox(
                               height: 5,

@@ -7,6 +7,7 @@ import 'package:app/firebase_options.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/src/services/dynamicLinkService.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/login/login.dart';
@@ -19,8 +20,6 @@ import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearch.dart';
 import 'package:app/screen/screenAfterSignIn/message/message.dart';
 import 'package:app/screen/screenAfterSignIn/myJob/myJob.dart';
 import 'package:app/widget/listMultiSelectedAlertDialog.dart';
-import 'package:carousel_slider/carousel_controller.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -490,6 +489,7 @@ class _MainHomeState extends State<MainHome> {
   fetchPopupBanner() async {
     var res = await postData(getPopupBanner, {});
     _listPopupBanner = res['info'];
+    print(_listPopupBanner.toString());
     if (_listPopupBanner.length > 0) {
       _imagePopupBanner = _listPopupBanner[0]['image'];
       _urlPopupBanner = _listPopupBanner[0]['url'];
@@ -700,6 +700,7 @@ class _MainHomeState extends State<MainHome> {
   @override
   void initState() {
     super.initState();
+
     _showBanner = widget.isShowBanner ?? true;
 
     fetchPopupBanner();
@@ -760,6 +761,13 @@ class _MainHomeState extends State<MainHome> {
                                     ),
                                   ),
                                 ),
+
+                                //
+                                //
+                                //
+                                //
+                                //
+                                //Home Header
                                 Expanded(
                                   child: Container(
                                     child: Row(
@@ -829,7 +837,10 @@ class _MainHomeState extends State<MainHome> {
                                                     ),
                                                     child: Center(
                                                       child: Text(
-                                                        "${_totalNotiUnRead}",
+                                                        int.parse(_totalNotiUnRead) >=
+                                                                1000
+                                                            ? "1..."
+                                                            : "${_totalNotiUnRead}",
                                                         style: TextStyle(
                                                             fontSize: 10,
                                                             color: AppColors
@@ -896,7 +907,10 @@ class _MainHomeState extends State<MainHome> {
                                                     ),
                                                     child: Center(
                                                       child: Text(
-                                                        "${_totalMessageUnRead}",
+                                                        int.parse(_totalMessageUnRead) >=
+                                                                1000
+                                                            ? "1..."
+                                                            : "${_totalMessageUnRead}",
                                                         style: TextStyle(
                                                             fontSize: 10,
                                                             color: AppColors
