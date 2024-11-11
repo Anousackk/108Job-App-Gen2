@@ -133,7 +133,7 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
                 ),
                 Text(
                   "account protection".tr,
-                  style: bodyTextMedium(null, FontWeight.bold),
+                  style: bodyTextMedium(null, null, FontWeight.bold),
                 ),
                 SizedBox(
                   height: 10,
@@ -295,16 +295,6 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
             email: email,
           ),
         ),
-      );
-    } else if (res['message'] != null) {
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return CustomAlertDialogErrorWithoutButton(
-            title: "incorrect".tr,
-            text: res['message'],
-          );
-        },
       );
     }
   }

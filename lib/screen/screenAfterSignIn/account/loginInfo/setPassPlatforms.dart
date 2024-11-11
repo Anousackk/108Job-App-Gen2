@@ -1,4 +1,4 @@
-// ignore_for_file: unused_field, unused_local_variable
+// ignore_for_file: unused_field, unused_local_variable, prefer_const_constructors, prefer_final_fields, avoid_print
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -33,9 +33,9 @@ class _SetPasswordPlatformsState extends State<SetPasswordPlatforms> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertDialogSuccessButtonConfirm(
+        return NewVer2CustAlertDialogSuccessBtnConfirm(
           title: "successful".tr,
-          text: "${res['message']}",
+          contentText: "${res['message']}",
           textButton: "ok".tr,
           press: () {
             Navigator.of(context).pop("set password platform successful");
@@ -48,7 +48,6 @@ class _SetPasswordPlatformsState extends State<SetPasswordPlatforms> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _passwordController.text = _password;
   }

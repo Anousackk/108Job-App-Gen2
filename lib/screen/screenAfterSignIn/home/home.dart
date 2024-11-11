@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_final_fields, unused_field, prefer_const_literals_to_create_immutables, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, unused_element, prefer_is_empty, sized_box_for_whitespace, unnecessary_import, unnecessary_null_in_if_null_operators, avoid_init_to_null, avoid_unnecessary_containers, unnecessary_string_interpolations
+// ignore_for_file: prefer_const_constructors, prefer_final_fields, unused_field, prefer_const_literals_to_create_immutables, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, unused_element, prefer_is_empty, sized_box_for_whitespace, unnecessary_import, unnecessary_null_in_if_null_operators, avoid_init_to_null, avoid_unnecessary_containers, unnecessary_string_interpolations, prefer_typing_uninitialized_variables, await_only_futures
 
 import 'dart:io';
 
@@ -7,7 +7,6 @@ import 'package:app/firebase_options.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
-import 'package:app/src/services/dynamicLinkService.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/login/login.dart';
@@ -20,6 +19,9 @@ import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearch.dart';
 import 'package:app/screen/screenAfterSignIn/message/message.dart';
 import 'package:app/screen/screenAfterSignIn/myJob/myJob.dart';
 import 'package:app/widget/listMultiSelectedAlertDialog.dart';
+import 'package:apple_product_name/apple_product_name.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -46,13 +48,15 @@ class _HomeState extends State<Home> {
   String _totalNotiUnRead = "";
   String _totalMessageUnRead = "";
   bool _isShowBannerHome = true;
+  String _modelName = "";
 
   int _currentIndex = 0;
 
   SystemUiOverlayStyle _systemOverlayStyle = SystemUiOverlayStyle.dark;
   Color _backgroundColor = AppColors.backgroundWhite;
 
-  _onTapBottomNav(int index) {
+  _onTapBottomNav(int index) async {
+    await getProfileSeeker();
     // Update the selected tab index when a tab is tapped
     setState(() {
       _currentIndex = index;
@@ -91,6 +95,86 @@ class _HomeState extends State<Home> {
     });
   }
 
+  loadInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      print('iOS-running name: ${iosInfo.name}');
+      print('iOS-running systemVersion: '
+              '${iosInfo.systemName}' +
+          ' ' +
+          '${iosInfo.systemVersion}');
+      var name = iosInfo.name;
+      var systemName = iosInfo.systemName;
+      var systemVersion = iosInfo.systemVersion;
+      var productName = iosInfo.utsname.productName;
+      setState(() {
+        _modelName = productName.toString();
+      });
+    } else if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      print('Running on version.release: ${androidInfo.version.release}');
+      print('Running on model: ' "${androidInfo.brand}" +
+          ' ' +
+          "${androidInfo.model}");
+
+      var brand = androidInfo.brand.toString();
+      var model = androidInfo.model.toString();
+      var versionRelease = androidInfo.version.release.toString();
+      setState(() {
+        _modelName = brand.toString() + ' ' + model.toString();
+      });
+    }
+  }
+
+  logOut() async {
+    await loadInfo();
+    var res = await postData(apiLogoutSeeker, {
+      "notifyToken": [
+        {"model": _modelName}
+      ]
+    });
+
+    print("logout: " + res);
+  }
+
+  removeSharedPreTokenAndLogOut() async {
+    final prefs = await SharedPreferences.getInstance();
+    await logOut();
+
+    var removeEmployeeToken = await prefs.remove('employeeToken');
+    AuthService().facebookSignOut();
+    AuthService().googleSignOut();
+
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => Login()), (route) => false);
+  }
+
+  getProfileSeeker() async {
+    var res = await fetchData(getProfileSeekerApi);
+
+    print("eiei: " + res.toString());
+
+    // if (res == "Unauthorized") {
+    //   print("body == Unauthorized");
+    //   await removeSharedPreTokenAndLogOut();
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //       MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    // }
+
+    if (res == 401) {
+      print("statusCode == 401");
+      await removeSharedPreTokenAndLogOut();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   // fetchNotifications() async {
   //   var res = await postData(getNotificationsSeeker,
   //       {"page": 1, "perPage": 10, "type": "Notification_Page"});
@@ -114,6 +198,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    getProfileSeeker();
     // fetchNotifications();
     // fetchMessages();
     // print("${_totalNotiUnRead}");
@@ -182,6 +267,7 @@ class _HomeState extends State<Home> {
         });
       }),
     ];
+
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
@@ -381,9 +467,11 @@ class MainHome extends StatefulWidget {
 }
 
 class _MainHomeState extends State<MainHome> {
-  final CarouselController _controllerTopBanner = CarouselController();
+  final CarouselSliderController _controllerTopBanner =
+      CarouselSliderController();
   int _currentTopBannerIndex = 0;
-  final CarouselController _controllerSpotLights = CarouselController();
+  final CarouselSliderController _controllerSpotLights =
+      CarouselSliderController();
   int _currentSpotLightsIndex = 0;
 
   //
@@ -453,28 +541,6 @@ class _MainHomeState extends State<MainHome> {
     fcm();
 
     print("employeeToken: " + "${employeeToken}");
-  }
-
-  getProfileSeeker() async {
-    var res = await fetchData(getProfileSeekerApi);
-
-    if (res == 'Unauthorized') {
-      removeSharedPreToken();
-    }
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  removeSharedPreToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    var removeEmployeeToken = await prefs.remove('employeeToken');
-    AuthService().facebookSignOut();
-    AuthService().googleSignOut();
-
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => Login()), (route) => false);
   }
 
   fetchTopBanner() async {
@@ -661,21 +727,31 @@ class _MainHomeState extends State<MainHome> {
                   ),
                 ),
                 Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: Icon(Icons.close),
-                    iconSize: 30,
-                    onPressed: () async {
-                      // SharedPreferences prefs =
-                      //     await SharedPreferences.getInstance();
-                      // await prefs.setBool('hasShownDialog', false);
-                      setState(() {
-                        _showBanner = false;
-                      });
-
-                      Navigator.of(context).pop(); // Close the dialog
-                    },
+                  top: 5,
+                  right: 5,
+                  child: Container(
+                    height: 35,
+                    width: 35,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundWhite.withOpacity(0.5),
+                      shape: BoxShape.circle,
+                    ),
+                    child: GestureDetector(
+                      onTap: () async {
+                        // SharedPreferences prefs =
+                        //     await SharedPreferences.getInstance();
+                        // await prefs.setBool('hasShownDialog', false);
+                        setState(() {
+                          _showBanner = false;
+                        });
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      child: Text(
+                        "\uf00d",
+                        style: fontAwesomeRegular(null, 30, null, null),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -689,7 +765,7 @@ class _MainHomeState extends State<MainHome> {
   fetchDataApi() {
     getSharedPreferences();
     getTokenSharedPre();
-    getProfileSeeker();
+    // getProfileSeeker();
     fetchTopBanner();
     fetchSpotLight();
     fetchHiring();
@@ -1167,7 +1243,7 @@ class _MainHomeState extends State<MainHome> {
                                           },
                                           child: Text(
                                             "seemore".tr,
-                                            style: bodyTextMinNormal(
+                                            style: bodyTextMinNormal(null,
                                                 AppColors.fontPrimary, null),
                                           ),
                                         )
@@ -1233,6 +1309,7 @@ class _MainHomeState extends State<MainHome> {
                                                           style:
                                                               bodyTextMaxNormal(
                                                                   null,
+                                                                  null,
                                                                   FontWeight
                                                                       .bold),
                                                           overflow: TextOverflow
@@ -1247,6 +1324,7 @@ class _MainHomeState extends State<MainHome> {
                                                           Text(
                                                             "${i['jobArvairiable'].toString()} ",
                                                             style: bodyTextMinNormal(
+                                                                null,
                                                                 AppColors
                                                                     .fontPrimary,
                                                                 null),
@@ -1255,7 +1333,9 @@ class _MainHomeState extends State<MainHome> {
                                                             "job available".tr,
                                                             style:
                                                                 bodyTextMinNormal(
-                                                                    null, null),
+                                                                    null,
+                                                                    null,
+                                                                    null),
                                                           ),
                                                         ],
                                                       ),
@@ -1384,7 +1464,7 @@ class _MainHomeState extends State<MainHome> {
                                                           //         children: [
                                                           //           Text(
                                                           //             "${_listCompaniesAssignedProvince.length - 3}",
-                                                          //             style: bodyTextMaxNormal(
+                                                          //             style: bodyTextMaxNormal(null,
                                                           //                 AppColors
                                                           //                     .fontPrimary,
                                                           //                 null),
@@ -1492,7 +1572,7 @@ class _MainHomeState extends State<MainHome> {
                                           },
                                           child: Text(
                                             "seemore".tr,
-                                            style: bodyTextMinNormal(
+                                            style: bodyTextMinNormal(null,
                                                 AppColors.fontPrimary, null),
                                           ),
                                         )
@@ -1520,7 +1600,6 @@ class _MainHomeState extends State<MainHome> {
                                                   _listTopIndustry[index];
                                               _listCompaniesAssignedTopIndustry =
                                                   i['companiesAssigned'] ?? [];
-
                                               return Padding(
                                                 padding: EdgeInsets.only(
                                                   left:
@@ -1561,6 +1640,7 @@ class _MainHomeState extends State<MainHome> {
                                                             style:
                                                                 bodyTextNormal(
                                                                     null,
+                                                                    null,
                                                                     FontWeight
                                                                         .bold),
                                                             overflow:
@@ -1576,6 +1656,7 @@ class _MainHomeState extends State<MainHome> {
                                                             Text(
                                                               "${i['jobArvairiable'].toString()} ",
                                                               style: bodyTextMinNormal(
+                                                                  null,
                                                                   AppColors
                                                                       .fontPrimary,
                                                                   null),
@@ -1585,6 +1666,7 @@ class _MainHomeState extends State<MainHome> {
                                                                   .tr,
                                                               style:
                                                                   bodyTextMinNormal(
+                                                                      null,
                                                                       null,
                                                                       null),
                                                             ),
@@ -1714,7 +1796,7 @@ class _MainHomeState extends State<MainHome> {
                                                             //         children: [
                                                             //           Text(
                                                             //             "${_listCompaniesAssignedTopIndustry.length - 3}",
-                                                            //             style: bodyTextMaxNormal(
+                                                            //             style: bodyTextMaxNormal(null,
                                                             //                 AppColors
                                                             //                     .fontPrimary,
                                                             //                 null),
@@ -2005,12 +2087,13 @@ class _MainHomeState extends State<MainHome> {
                                                 Text(
                                                   "seemore".tr,
                                                   style: bodyTextMinNormal(
+                                                      null,
                                                       AppColors.fontPrimary,
                                                       null),
                                                 ),
                                                 // Text(
                                                 //   "all company".tr,
-                                                //   style: bodyTextNormal(
+                                                //   style: bodyTextNormal(null,
                                                 //       AppColors.fontPrimary,
                                                 //       FontWeight.bold),
                                                 // ),
@@ -2189,7 +2272,7 @@ class _MainHomeState extends State<MainHome> {
                                                           //     child: Row(children: [
                                                           //       Text(
                                                           //         "${_jobsOpening}",
-                                                          //         style: bodyTextNormal(
+                                                          //         style: bodyTextNormal(null,
                                                           //             AppColors
                                                           //                 .fontPrimary,
                                                           //             FontWeight
@@ -2200,7 +2283,7 @@ class _MainHomeState extends State<MainHome> {
                                                           //       ),
                                                           //       Text(
                                                           //         "job open".tr,
-                                                          //         style: bodyTextNormal(
+                                                          //         style: bodyTextNormal(null,
                                                           //             AppColors
                                                           //                 .fontPrimary,
                                                           //             null),
@@ -2273,6 +2356,7 @@ class _MainHomeState extends State<MainHome> {
                                                                           "${_companyName}",
                                                                           style: bodyTextMaxNormal(
                                                                               null,
+                                                                              null,
                                                                               FontWeight.bold),
                                                                           textAlign:
                                                                               TextAlign.center,
@@ -2317,7 +2401,7 @@ class _MainHomeState extends State<MainHome> {
                                                                             child:
                                                                                 Text(
                                                                               "${_industry}",
-                                                                              style: bodyTextSmall(null),
+                                                                              style: bodyTextSmall(null, null, null),
                                                                               overflow: TextOverflow.ellipsis,
                                                                             ),
                                                                           ),
@@ -2351,7 +2435,7 @@ class _MainHomeState extends State<MainHome> {
                                                                             child:
                                                                                 Text(
                                                                               "${_address}",
-                                                                              style: bodyTextSmall(null),
+                                                                              style: bodyTextSmall(null, null, null),
                                                                               overflow: TextOverflow.ellipsis,
                                                                             ),
                                                                           ),
@@ -2381,6 +2465,7 @@ class _MainHomeState extends State<MainHome> {
                                                                           "position"
                                                                               .tr,
                                                                       style: bodyTextNormal(
+                                                                          null,
                                                                           AppColors
                                                                               .fontPrimary,
                                                                           null),
@@ -2400,14 +2485,14 @@ class _MainHomeState extends State<MainHome> {
                                                                   //         Text(
                                                                   //           "${_follower} ",
                                                                   //           style:
-                                                                  //               bodyTextSmall(
+                                                                  //               bodyTextSmall(null,null,
                                                                   //                   null),
                                                                   //         ),
                                                                   //         Text(
                                                                   //           "follower"
                                                                   //               .tr,
                                                                   //           style:
-                                                                  //               bodyTextSmall(
+                                                                  //               bodyTextSmall(null,null,
                                                                   //                   null),
                                                                   //         ),
                                                                   //       ],
@@ -2505,7 +2590,7 @@ class _MainHomeState extends State<MainHome> {
                                 //         //title hiring now
                                 //         Text(
                                 //           "HIRING NOW",
-                                //           style: bodyTextMaxNormal(
+                                //           style: bodyTextMaxNormal(null,
                                 //               null, FontWeight.bold),
                                 //         ),
 
@@ -2527,7 +2612,7 @@ class _MainHomeState extends State<MainHome> {
                                 //             children: [
                                 //               Text(
                                 //                 "Explore all company",
-                                //                 style: bodyTextNormal(
+                                //                 style: bodyTextNormal(null,
                                 //                     AppColors.fontPrimary,
                                 //                     FontWeight.bold),
                                 //               ),

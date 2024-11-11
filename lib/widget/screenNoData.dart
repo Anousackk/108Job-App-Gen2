@@ -56,6 +56,7 @@ class _ScreenNoDataState extends State<ScreenNoData> {
           Text(
             '${widget.text}',
             style: bodyTextNormal(
+                null,
                 widget.colorText == null
                     ? AppColors.fontDark
                     : widget.colorText,

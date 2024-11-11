@@ -94,6 +94,49 @@ class AppColors {
   static Color buttonGrey = Color(0xEBEBEBEB);
   static Color buttonWhite = Color(0xffFFFFFF);
   static Color buttonBG = Color(0xf5f5f5f5);
+
+  //warning
+  static Color warning600 = HexColor("#FDB913");
+  static Color warning500 = HexColor("#FDC843");
+  static Color warning400 = HexColor("#FEDD89");
+  static Color warning300 = HexColor("#FEDD89");
+  static Color warning200 = HexColor("#FEF1D0");
+  static Color warning100 = HexColor("#FFF8E7");
+
+  //success
+  static Color success600 = HexColor("#006A43");
+  static Color success500 = HexColor("#76C49E");
+  static Color success400 = HexColor("#C6EFB6");
+  static Color success300 = HexColor("#D7FEC8");
+  static Color success200 = HexColor("#E8FEDF");
+  static Color success100 = HexColor("#F9FFF6");
+
+  //cyan
+  static Color cyan600 = HexColor("#00E2E2");
+  static Color cyan500 = HexColor("#5FEEEE");
+  static Color cyan400 = HexColor("#92F4F4");
+  static Color cyan300 = HexColor("#ADF7F7");
+  static Color cyan200 = HexColor("#C8F9F9");
+  static Color cyan100 = HexColor("#E3FCFC");
+
+  //primary
+  static Color primary600 = HexColor("#0067BC");
+  static Color primary500 = HexColor("#97CDFF");
+  static Color primary400 = HexColor("#B5DBFF");
+  static Color primary300 = HexColor("#D3EAFF");
+  static Color primary200 = HexColor("#E1F1FF");
+  static Color primary100 = HexColor("#F0F8FF");
+
+  //dark 900-100
+  static Color dark900 = HexColor("#070707");
+  static Color dark800 = HexColor("#333333");
+  static Color dark700 = HexColor("#333333");
+  static Color dark600 = HexColor("#666666");
+  static Color dark500 = HexColor("#808080");
+  static Color dark400 = HexColor("#999999");
+  static Color dark300 = HexColor("#CFCFCF");
+  static Color dark200 = HexColor("#E7E7E7");
+  static Color dark100 = HexColor("#F1F1F1");
 }
 
 class TextSize {

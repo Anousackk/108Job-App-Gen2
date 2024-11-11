@@ -97,6 +97,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  carousel_slider:
+    dependency: "direct main"
+    description:
+      name: carousel_slider
+      sha256: "7b006ec356205054af5beaef62e2221160ea36b90fb70a35e4deacd49d0349ae"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0"
   characters:
     dependency: transitive
     description:
@@ -1433,10 +1441,10 @@ packages:
     dependency: "direct main"
     description:
       name: sizer
-      sha256: "50bf5f2ea676d1509532ccb2196b45cfb3921d80c71620e9e7cb61dc0b501b88"
+      sha256: d2b3cb6cbc4a637f508dacd786bae55df31e5fc088044248a43e4fd1e050c117
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "2.0.15"
   sky_engine:
     dependency: transitive
     description: flutter

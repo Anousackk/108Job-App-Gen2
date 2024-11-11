@@ -207,8 +207,8 @@ class _AccountState extends State<Account> {
                                       ),
                                       child: Text(
                                         _memberLevel,
-                                        style:
-                                            bodyTextSmall(AppColors.fontWhite),
+                                        style: bodyTextSmall(
+                                            null, AppColors.fontWhite, null),
                                       ),
                                     ),
                                   ),
@@ -248,7 +248,7 @@ class _AccountState extends State<Account> {
                             Text(
                               "${_firstName} ${_lastName}",
                               style: bodyTextMedium(
-                                  AppColors.fontWhite, FontWeight.bold),
+                                  null, AppColors.fontWhite, FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
                             SizedBox(
@@ -258,7 +258,8 @@ class _AccountState extends State<Account> {
                               _currentJobTitle == ""
                                   ? "- -"
                                   : "${_currentJobTitle}",
-                              style: bodyTextNormal(AppColors.fontWhite, null),
+                              style: bodyTextNormal(
+                                  null, AppColors.fontWhite, null),
                               textAlign: TextAlign.center,
                             ),
                             SizedBox(
@@ -292,7 +293,8 @@ class _AccountState extends State<Account> {
                             //Profile Statisics
                             Text(
                               "profile".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
+                              style:
+                                  bodyTextNormal(null, null, FontWeight.bold),
                             ),
                             SizedBox(height: 10),
                             Row(
@@ -362,7 +364,8 @@ class _AccountState extends State<Account> {
                             //Account Setting
                             Text(
                               "account setting".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
+                              style:
+                                  bodyTextNormal(null, null, FontWeight.bold),
                             ),
                             SizedBox(height: 10),
 
@@ -507,7 +510,7 @@ class StatisicBox extends StatelessWidget {
         children: [
           Text(
             "${amount}",
-            style: bodyTextMaxMedium(null, FontWeight.bold),
+            style: bodyTextMaxMedium(null, null, FontWeight.bold),
           ),
           Text(
             "${text}",

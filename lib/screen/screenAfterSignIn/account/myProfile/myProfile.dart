@@ -318,11 +318,16 @@ class _MyProfileState extends State<MyProfile>
             : SafeArea(
                 child: Container(
                   color: AppColors.backgroundWhite,
-                  // padding: EdgeInsets.symmetric(horizontal: 20),
                   child: SingleChildScrollView(
                     physics: ClampingScrollPhysics(),
                     child: Column(
                       children: [
+                        //
+                        //
+                        //
+                        //
+                        //
+                        //Processing profile
                         Container(
                           width: double.infinity,
                           padding: EdgeInsets.symmetric(
@@ -334,19 +339,26 @@ class _MyProfileState extends State<MyProfile>
                             Text(
                               "your profile is review".tr,
                               style: bodyTextNormal(
-                                  AppColors.fontWaring, FontWeight.bold),
+                                  null, AppColors.fontWaring, FontWeight.bold),
                             ),
                             Text(
                               "it takeup to process".tr,
-                              style: bodyTextSmall(AppColors.fontGreyOpacity),
+                              style: bodyTextSmall(
+                                null,
+                                AppColors.fontGreyOpacity,
+                                null,
+                              ),
                             )
                           ]),
                         ),
+
+                        //
+                        //
+                        //
                         //
                         //
                         //Profile Image
                         Container(
-                          // color: AppColors.primary,
                           width: double.infinity,
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Column(
@@ -357,9 +369,11 @@ class _MyProfileState extends State<MyProfile>
                               ),
 
                               //
+                              //
                               //Press show modal bottom to view or upload image profile
                               GestureDetector(
                                 onTap: () {
+                                  //
                                   //
                                   //show modal bottom view profile image, upload image profile
                                   showModalBottomSheet(
@@ -400,8 +414,6 @@ class _MyProfileState extends State<MyProfile>
                                 },
                                 child: Container(
                                   child: Stack(
-                                    // textDirection: TextDirection.rtl,
-                                    // fit: StackFit.loose,
                                     clipBehavior: Clip.none,
                                     alignment: Alignment.center,
                                     children: <Widget>[
@@ -430,35 +442,6 @@ class _MyProfileState extends State<MyProfile>
                                             : Container(
                                                 width: 150,
                                                 height: 150,
-                                                // decoration: _image != null
-                                                //     ? BoxDecoration(
-                                                //         shape: BoxShape.circle,
-                                                //         color: AppColors
-                                                //             .greyOpacity,
-                                                //         image: DecorationImage(
-                                                //           image: FileImage(
-                                                //               _image!),
-                                                //           fit: BoxFit.cover,
-                                                //         ),
-                                                //       )
-                                                //     : BoxDecoration(
-                                                //         shape: BoxShape.circle,
-                                                //         color: AppColors
-                                                //             .greyOpacity,
-                                                //         image: _imageSrc == ""
-                                                //             ? DecorationImage(
-                                                //                 image: AssetImage(
-                                                //                     'assets/image/def-profile.png'),
-                                                //                 fit: BoxFit
-                                                //                     .cover,
-                                                //               )
-                                                //             : DecorationImage(
-                                                //                 image: NetworkImage(
-                                                //                     _imageSrc),
-                                                //                 fit: BoxFit
-                                                //                     .cover,
-                                                //               ),
-                                                //       ),
                                                 child: _image != null
                                                     ? ClipRRect(
                                                         borderRadius:
@@ -514,17 +497,20 @@ class _MyProfileState extends State<MyProfile>
                                           child: Text(
                                             _memberLevel,
                                             style: bodyTextSmall(
-                                                AppColors.fontWhite),
+                                              null,
+                                              AppColors.fontWhite,
+                                              null,
+                                            ),
                                           ),
                                         ),
                                       ),
 
                                       //
                                       //
-                                      //Camera icon at the bottom right corner
+                                      //Camera/Gallery image icon at the bottom right corner
                                       Positioned(
                                         bottom: 0,
-                                        right: 0,
+                                        right: 5,
                                         child: GestureDetector(
                                           onTap: () {
                                             pickImageGallery(
@@ -534,13 +520,14 @@ class _MyProfileState extends State<MyProfile>
                                             alignment: Alignment.center,
                                             padding: EdgeInsets.all(10),
                                             decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: AppColors.grey,
-                                              border: Border.all(
-                                                  color: AppColors.borderWhite),
-                                            ),
+                                                shape: BoxShape.circle,
+                                                color: AppColors.dark
+                                                    .withOpacity(0.5),
+                                                border: Border.all(
+                                                    color:
+                                                        AppColors.borderWhite)),
                                             child: FaIcon(
-                                              FontAwesomeIcons.camera,
+                                              FontAwesomeIcons.image,
                                               color: AppColors.iconLight,
                                               size: 15,
                                             ),
@@ -554,22 +541,25 @@ class _MyProfileState extends State<MyProfile>
                               SizedBox(
                                 height: 10,
                               ),
-
                               //
                               //
                               //Profile Name
                               Text(
                                 "${_firstName}  ${_lastName}",
-                                style: bodyTextMedium(null, FontWeight.bold),
+                                style:
+                                    bodyTextMedium(null, null, FontWeight.bold),
                               ),
                               SizedBox(
                                 height: 5,
                               ),
+                              //
+                              //
+                              //Current JobTitle
                               Text(
                                 _currentJobTitle == ""
                                     ? "- -"
                                     : "${_currentJobTitle}",
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                                 textAlign: TextAlign.center,
                               ),
                               SizedBox(
@@ -579,6 +569,9 @@ class _MyProfileState extends State<MyProfile>
                           ),
                         ),
 
+                        //
+                        //
+                        //
                         //
                         //
                         //ProfileDetail
@@ -843,7 +836,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             //
-            // Job Seeker Area
+            //
+            //
+            //
+            //Job Seeker Area
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Column(
@@ -854,21 +850,21 @@ class _ProfileDetailState extends State<ProfileDetail> {
                   ),
                   Text(
                     "Basic Job Seeker",
-                    style: bodyTextMaxNormal(null, FontWeight.bold),
+                    style: bodyTextMaxNormal(null, null, FontWeight.bold),
                   ),
                   SizedBox(
                     height: 5,
                   ),
                   Text(
                     "complete section your profile".tr,
-                    style: bodyTextNormal(null, null),
+                    style: bodyTextNormal(null, null, null),
                     overflow: TextOverflow.fade,
                   ),
                   Row(
                     children: [
                       Text(
                         "to the next level".tr + ": ",
-                        style: bodyTextNormal(null, null),
+                        style: bodyTextNormal(null, null, null),
                       ),
                       Text(
                         _memberLevel == "Basic Member" || _memberLevel == ""
@@ -877,25 +873,11 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 ? "Expert Job Seeker"
                                 : "Expert Job Seeker",
                         style: bodyTextNormal(
-                            AppColors.fontSuccess, FontWeight.bold),
+                            null, AppColors.fontSuccess, FontWeight.bold),
                       ),
                     ],
                   ),
-                  // SizedBox(
-                  //   height: 5,
-                  // ),
-                  // Row(
-                  //   children: [
-                  //     Text(
-                  //       "what is profile level ",
-                  //       style: bodyTextSmall(null),
-                  //     ),
-                  //     Text(
-                  //       "Learn more",
-                  //       style: bodyTextSmall(AppColors.fontPrimary),
-                  //     )
-                  //   ],
-                  // ),
+
                   SizedBox(
                     height: 20,
                   ),
@@ -928,11 +910,12 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             children: [
                               Text(
                                 "address".tr + ":",
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                               ),
                               Text(
                                 _address,
-                                style: bodyTextNormal(null, FontWeight.bold),
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                               ),
                               SizedBox(
                                 height: 8,
@@ -944,39 +927,43 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     ", " +
                                     "marital status".tr +
                                     ":",
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                               ),
                               Text(
                                 "$_dateOfBirth " +
                                     "$_genDerName " +
                                     "$_maritalStatusName ",
-                                style: bodyTextNormal(null, FontWeight.bold),
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
                               Text(
                                 "email".tr + ":",
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                               ),
                               Text(
                                 _email,
-                                style: bodyTextNormal(null, FontWeight.bold),
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
                               Text(
                                 "phone".tr + ":",
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                               ),
                               Text(
                                 _mobile,
-                                style: bodyTextNormal(null, FontWeight.bold),
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                               ),
                             ],
                           ),
 
+                          //
                           //
                           //Button Left For Update
                           statusLeft: "have",
@@ -1025,70 +1012,77 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             children: [
                               Text(
                                 "salary".tr + ":",
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                               ),
                               Text(
                                 _salary,
-                                style: bodyTextNormal(null, FontWeight.bold),
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
                               Text(
                                 "job title".tr + ":",
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                               ),
                               Text(
                                 _currentJobTitle,
-                                style: bodyTextNormal(null, FontWeight.bold),
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
                               Text(
                                 "job function".tr + ":",
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                               ),
                               Text(
                                 _jobFunctions,
-                                style: bodyTextNormal(null, FontWeight.bold),
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
                               Text(
                                 "work province".tr,
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                               ),
                               Text(
                                 _workProvinces,
-                                style: bodyTextNormal(null, FontWeight.bold),
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
                               Text(
                                 "job level".tr + ":",
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                               ),
                               Text(
                                 _jobLevel,
-                                style: bodyTextNormal(null, FontWeight.bold),
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
                               Text(
                                 "benefit".tr + ":",
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                               ),
                               Text(
                                 _benefits,
-                                style: bodyTextNormal(null, FontWeight.bold),
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                               ),
                             ],
                           ),
 
+                          //
                           //
                           //Status Left For Update
                           statusLeft: "have",
@@ -1148,17 +1142,19 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             children: [
                               Text(
                                 "${_cvName}",
-                                style: bodyTextNormal(null, FontWeight.bold),
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
                                 "uploaded".tr + " ${_cvUploadDate}",
-                                style: bodyTextNormal(null, null),
+                                style: bodyTextNormal(null, null, null),
                               ),
                             ],
                           ),
 
+                          //
                           //
                           //Button Right ellipsis function(Upload, Preview, Download)
                           widgetFaIconRight: FaIcon(
@@ -1168,11 +1164,13 @@ class _ProfileDetailState extends State<ProfileDetail> {
                           statusRight: "have",
                           pressRight: () {
                             //
+                            //
                             //show modal bottom upload new cv, preview, download
                             showModalBottomSheet(
                               context: context,
                               builder: (builder) {
                                 return ModalBottomUploadCV(
+                                  //
                                   //
                                   //button upload new resume
                                   () {
@@ -1189,6 +1187,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                   "upload new CV".tr,
 
                                   //
+                                  //
                                   //button preview cv
                                   () {
                                     launchInWebView(Uri.parse(_cvSrc));
@@ -1196,6 +1195,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                   null,
                                   "view".tr,
 
+                                  //
                                   //
                                   //button download cv
                                   () {
@@ -1238,6 +1238,9 @@ class _ProfileDetailState extends State<ProfileDetail> {
 
             //
             //
+            //
+            //
+            //
             //Expert Job Seeker Area
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -1249,26 +1252,26 @@ class _ProfileDetailState extends State<ProfileDetail> {
                   ),
                   Text(
                     "Expert Job Seeker",
-                    style: bodyTextMaxNormal(null, FontWeight.bold),
+                    style: bodyTextMaxNormal(null, null, FontWeight.bold),
                   ),
                   SizedBox(
                     height: 5,
                   ),
                   Text(
                     "complete section your profile".tr,
-                    style: bodyTextNormal(null, null),
+                    style: bodyTextNormal(null, null, null),
                     overflow: TextOverflow.fade,
                   ),
                   Row(
                     children: [
                       Text(
                         "to the next level".tr + ": ",
-                        style: bodyTextNormal(null, null),
+                        style: bodyTextNormal(null, null, null),
                       ),
                       Text(
                         "Expert Job Seeker",
                         style: bodyTextNormal(
-                            AppColors.fontSuccess, FontWeight.bold),
+                            null, AppColors.fontSuccess, FontWeight.bold),
                       ),
                     ],
                   ),
@@ -1289,12 +1292,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             Text(
                               "work history".tr,
                               style: bodyTextMedium(
-                                  AppColors.fontPrimary, FontWeight.bold),
+                                  null, AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
                               "details employment history".tr,
                               style: bodyTextSmall(
+                                null,
                                 AppColors.fontGreyOpacity,
+                                null,
                               ),
                             ),
                             SizedBox(
@@ -1351,12 +1356,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                           children: [
                                             Text(
                                               "${_startYearWorkHistory}",
-                                              style: bodyTextNormal(null, null),
+                                              style: bodyTextNormal(
+                                                  null, null, null),
                                             ),
                                             Text(" - "),
                                             Text(
                                               "${_endYearWorkHistory ?? 'Now'}",
-                                              style: bodyTextNormal(null, null),
+                                              style: bodyTextNormal(
+                                                  null, null, null),
                                             )
                                           ],
                                         ),
@@ -1366,7 +1373,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                         Text(
                                           _position,
                                           style: bodyTextNormal(
-                                              null, FontWeight.bold),
+                                              null, null, FontWeight.bold),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1375,13 +1382,15 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                         ),
                                         Text(
                                           _company,
-                                          style: bodyTextNormal(null, null),
+                                          style:
+                                              bodyTextNormal(null, null, null),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ],
                                     ),
 
+                                    //
                                     //
                                     //Button Left For Update
                                     statusLeft: "have",
@@ -1398,24 +1407,21 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     },
 
                                     //
+                                    //
                                     //Button Right For Delete
                                     statusRight: "have",
                                     pressRight: () async {
                                       var result = await showDialog(
                                           context: context,
                                           builder: (context) {
-                                            return AlertDialogButtonConfirmCancelBetween(
-                                              title: "delete".tr +
-                                                  " " +
-                                                  "work history".tr,
-                                              contentText: "delete".tr +
-                                                  " " +
-                                                  "work history".tr +
-                                                  ": ${i['position']} / ${i['company']}",
-                                              textLeft: 'cancel'.tr,
-                                              textRight: 'delete'.tr,
-                                              colorTextRight:
-                                                  AppColors.fontDanger,
+                                            return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                              title: "delete_this_info".tr,
+                                              contentText: "work history".tr +
+                                                  ": ${i['position']}",
+                                              textButtonLeft: 'cancel'.tr,
+                                              textButtonRight: 'confirm'.tr,
+                                              textButtonRightColor:
+                                                  AppColors.fontWhite,
                                             );
                                           });
                                       if (result == 'Ok') {
@@ -1486,12 +1492,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             Text(
                               "education".tr,
                               style: bodyTextMedium(
-                                  AppColors.fontPrimary, FontWeight.bold),
+                                  null, AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
                               "details education".tr,
                               style: bodyTextSmall(
+                                null,
                                 AppColors.fontGreyOpacity,
+                                null,
                               ),
                             ),
                             SizedBox(
@@ -1558,7 +1566,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                           _startYearEducation +
                                               " - " +
                                               _endYearWorkEducation,
-                                          style: bodyTextNormal(null, null),
+                                          style:
+                                              bodyTextNormal(null, null, null),
                                         ),
                                         SizedBox(
                                           height: 5,
@@ -1566,7 +1575,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                         Text(
                                           _qualificationName,
                                           style: bodyTextNormal(
-                                              null, FontWeight.bold),
+                                              null, null, FontWeight.bold),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1575,7 +1584,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                         ),
                                         Text(
                                           _subject,
-                                          style: bodyTextNormal(null, null),
+                                          style:
+                                              bodyTextNormal(null, null, null),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1584,13 +1594,15 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                         ),
                                         Text(
                                           _collage,
-                                          style: bodyTextNormal(null, null),
+                                          style:
+                                              bodyTextNormal(null, null, null),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ],
                                     ),
 
+                                    //
                                     //
                                     //Button Left For Update
                                     statusLeft: "have",
@@ -1607,24 +1619,21 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     },
 
                                     //
+                                    //
                                     //Button Right For Delete
                                     statusRight: "have",
                                     pressRight: () async {
                                       var result = await showDialog(
                                           context: context,
                                           builder: (context) {
-                                            return AlertDialogButtonConfirmCancelBetween(
-                                              title: "delete".tr +
-                                                  " " +
-                                                  "education".tr,
-                                              contentText: "delete".tr +
-                                                  " " +
-                                                  "education".tr +
-                                                  ': ${i['subject']} / ${i['qualifications']['name']} / ${i['school']}',
-                                              textLeft: 'cancel'.tr,
-                                              textRight: 'delete'.tr,
-                                              colorTextRight:
-                                                  AppColors.fontDanger,
+                                            return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                              title: "delete_this_info".tr,
+                                              contentText: "education".tr +
+                                                  ": ${i['qualifications']['name']}",
+                                              textButtonLeft: 'cancel'.tr,
+                                              textButtonRight: 'confirm'.tr,
+                                              textButtonRightColor:
+                                                  AppColors.fontWhite,
                                             );
                                           });
                                       if (result == 'Ok') {
@@ -1695,12 +1704,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             Text(
                               "language".tr,
                               style: bodyTextMedium(
-                                  AppColors.fontPrimary, FontWeight.bold),
+                                  null, AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
                               "add all languages".tr,
                               style: bodyTextSmall(
+                                null,
                                 AppColors.fontGreyOpacity,
+                                null,
                               ),
                             ),
                             SizedBox(
@@ -1728,7 +1739,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                         Text(
                                           _languageName,
                                           style: bodyTextNormal(
-                                              null, FontWeight.bold),
+                                              null, null, FontWeight.bold),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1737,7 +1748,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                         ),
                                         Text(
                                           _languageLevelName,
-                                          style: bodyTextNormal(null, null),
+                                          style:
+                                              bodyTextNormal(null, null, null),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1765,18 +1777,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                       var result = await showDialog(
                                           context: context,
                                           builder: (context) {
-                                            return AlertDialogButtonConfirmCancelBetween(
-                                              title: "delete".tr +
-                                                  " " +
-                                                  "language".tr,
-                                              contentText: "delete".tr +
-                                                  " " +
-                                                  "language".tr +
+                                            return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                              title: "delete_this_info".tr,
+                                              contentText: "language".tr +
                                                   ': ${i['LanguageId']['name']}',
-                                              textLeft: 'cancel'.tr,
-                                              textRight: 'delete'.tr,
-                                              colorTextRight:
-                                                  AppColors.fontDanger,
+                                              textButtonLeft: 'cancel'.tr,
+                                              textButtonRight: 'confirm'.tr,
+                                              textButtonRightColor:
+                                                  AppColors.fontWhite,
                                             );
                                           });
                                       if (result == 'Ok') {
@@ -1846,12 +1854,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             Text(
                               "skill".tr,
                               style: bodyTextMedium(
-                                  AppColors.fontPrimary, FontWeight.bold),
+                                  null, AppColors.fontPrimary, FontWeight.bold),
                             ),
                             Text(
                               "you should list skills".tr,
                               style: bodyTextSmall(
+                                null,
                                 AppColors.fontGreyOpacity,
+                                null,
                               ),
                             ),
                             SizedBox(
@@ -1877,7 +1887,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                         Text(
                                           _skillName,
                                           style: bodyTextNormal(
-                                              null, FontWeight.bold),
+                                              null, null, FontWeight.bold),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1886,7 +1896,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                         ),
                                         Text(
                                           _skillLevelName,
-                                          style: bodyTextNormal(null, null),
+                                          style:
+                                              bodyTextNormal(null, null, null),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1913,18 +1924,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                       var result = await showDialog(
                                           context: context,
                                           builder: (context) {
-                                            return AlertDialogButtonConfirmCancelBetween(
-                                              title: 'delete'.tr +
-                                                  " " +
-                                                  "skill".tr,
-                                              contentText: 'delete'.tr +
-                                                  " " +
-                                                  "skill".tr +
-                                                  ': ${i['keySkillId']['name']}',
-                                              textLeft: 'cancel'.tr,
-                                              textRight: 'delete'.tr,
-                                              colorTextRight:
-                                                  AppColors.fontDanger,
+                                            return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                              title: "delete_this_info".tr,
+                                              contentText: "skill".tr +
+                                                  ": ${i['keySkillId']['name']}",
+                                              textButtonLeft: 'cancel'.tr,
+                                              textButtonRight: 'confirm'.tr,
+                                              textButtonRightColor:
+                                                  AppColors.fontWhite,
                                             );
                                           });
                                       if (result == 'Ok') {

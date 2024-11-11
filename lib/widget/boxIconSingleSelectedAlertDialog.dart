@@ -62,7 +62,7 @@ class _BoxIconSingleSelectedAlertDialogState
                 ),
                 Text(
                   "${widget.title}",
-                  style: bodyTextMedium(null, FontWeight.bold),
+                  style: bodyTextMedium(null, null, FontWeight.bold),
                 ),
                 Text("")
               ],

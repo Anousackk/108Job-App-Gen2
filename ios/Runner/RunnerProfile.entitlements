@@ -10,7 +10,7 @@
 	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:app108jobsjobsearchdetail.page.link</string>
+		<string>applinks:108jobs.page.link</string>
 	</array>
 	<key>keychain-access-groups</key>
 	<array/>

@@ -69,6 +69,7 @@ class LocalString extends Translations {
           "ໃຊ້ງານງ່າຍ ພຽງແຕ່ສ້າງໂປຣໄຟລ, ຮັບການແຈ້ງເຕືອນ ແລະ ສະໝັກວຽກພຽງແຕ່ຄຣິກດຽວເທິງແອັບ 108Jobs"
     },
     {"key": "follow", "en": "Follow", "la": "ຕິດຕາມ"},
+    {"key": "unfollow", "en": "Unfollow", "la": "ຍົກເລີກຕິດຕາມ"},
     {"key": "following", "en": "Following", "la": "ກຳລັງຕິດຕາມ"},
     {"key": "follower", "en": "Followers", "la": "ຄົນຕິດຕາມ"},
     {"key": "followed", "en": "Followed", "la": "ຕິດຕາມແລ້ວ"},
@@ -79,7 +80,7 @@ class LocalString extends Translations {
     {"key": "saved", "en": "Saved", "la": "ບັນທຶກແລ້ວ"},
     {"key": "save", "en": "Save", "la": "ບັນທຶກ"},
     {"key": "hide job", "en": "Hide Job", "la": "ເຊື່ອງວຽກ"},
-    {"key": "unhide job", "en": "Unhide Job", "la": "ຍົກເລີກເຊື່ອງວຽກ"},
+    {"key": "unhide job", "en": "Unhide this Job", "la": "ຍົກເລີກເຊື່ອງວຽກ"},
     {"key": "unhide", "en": "Unhide", "la": "ຍົກເລີກເຊື່ອງ"},
     {"key": "hide", "en": "Hide", "la": "ເຊື່ອງ"},
     {"key": "hidded", "en": "Hidded", "la": "ເຊື່ອງແລ້ວ"},
@@ -838,7 +839,6 @@ class LocalString extends Translations {
       "en": "Hide your profile from these companies",
       "la": "ເຊື່ອງໂປຣໄຟລ໌ຂອງທ່ານຈາກບໍລິສັດເຫຼົ່ານີ້",
     },
-
     {
       "key": "delete account",
       "en": "Delete account",
@@ -849,7 +849,6 @@ class LocalString extends Translations {
       "en": "Continue",
       "la": "ສືບຕໍ່",
     },
-
     {
       "key": "account_delete_title",
       "en":
@@ -903,30 +902,21 @@ class LocalString extends Translations {
       "en": "Are you sure to delete disconnect?",
       "la": "ທ່ານແນ່ໃຈບໍ່ທີ່ຈະຍົກເລີກການເຊື່ອມຕໍ່?",
     },
-
     {
       "key": "valid_until",
       "en": "Valid until",
       "la": "ປິດຮັບສະໝັກ",
     },
-
     {
       "key": "hide_job_post",
-      "en": "Hide the job posting",
+      "en": "Hide this Job",
       "la": "ເຊື່ອງປະກາດວຽກ",
-    },
-    {
-      "key": "after_hide",
-      "en":
-          "This job vacancy will no longer be visible on this page after being hidden",
-      "la": "ຫຼັງຈາກເຊື່ອງວຽກ ວຽກດັ່ງກ່າວຈະບໍ່ສະແດງຢູ່ໜ້ານີ້ອີກ",
     },
     {
       "key": "system_error",
       "en": "Verify system error",
       "la": "ລະບົບຢືນຢັນມີບັນຫາ",
     },
-
     {
       "key": "phone_register_already",
       "en": "This phone number has register already",
@@ -947,8 +937,126 @@ class LocalString extends Translations {
       "en": "OTP code is incorrect",
       "la": "ລະຫັດ OTP ບໍ່ຖືກຕ້ອງ",
     },
-
-    //Valid until system_error this mobile is not register yet
+    {
+      "key": "hide_job_explain",
+      "en": "Once you hide this job, it will disappear from this page.",
+      "la": "ຫຼັງຈາກເຊື່ອງວຽກ ວຽກດັ່ງກ່າວຈະບໍ່ສະແດງຢູ່ໜ້ານີ້ອີກ",
+    },
+    {
+      "key": "unhide_job_explain",
+      "en": "Unhiding this job will make it visible again.",
+      "la": "ຖ້າກົດຢືນຢັນ ວຽກນີ້ຈະກັບໄປສະແດງຢູ່ໜ້າຄົ້ນຫາວຽກ",
+    },
+    {
+      "key": "apply_job_modal_title",
+      "en": "You are about to apply for this job.",
+      "la": "ທ່ານກຳລັງຈະສະໝັກວຽກນີ້",
+    },
+    {
+      "key": "delete_this_info",
+      "en": "Delete This Information?",
+      "la": "ຕ້ອງລົບຂໍ້ມູນນີ້ແທ້ບໍ່?",
+    },
+    {
+      "key": "express_interest_explain",
+      "en": "The company will notice your profile and may contact you.",
+      "la": "ບໍລິສັດຈະເຫັນໂປຮໄຟສຂອງທ່ານ ແລະ ອາດຈະຕິດຕໍ່ກັບຫາທ່ານ",
+    },
+    {
+      "key": "Current password doesn't match in database",
+      "en": "Current password doesn't match.",
+      "la": "ລະຫັດປະຈຸບັນບໍ່ຖືກຕ້ອງ",
+    },
+    {
+      "key": "Password does not match",
+      "en": "Password mismatch.",
+      "la": "ລະຫັດບໍ່ກົງກັນ",
+    },
+    {
+      "key": "Password has changed",
+      "en": "Password has been changed.",
+      "la": "ປ່ຽນລະຫັດແລ້ວ",
+    },
+    {
+      "key": "Invalid code",
+      "en": "Invalid code.",
+      "la": "ລະຫັດ OTP ບໍ່ຖືກຕ້ອງ",
+    },
+    {
+      "key": "Your verify succeed",
+      "en": "Verification successful.",
+      "la": "ການຢືນຢັນສຳເລັດ",
+    },
+    {
+      "key": "Mobile does not match",
+      "en": "Current password doesn't match.",
+      "la": "ເບີໂທບໍ່ຖືກຕ້ອງ",
+    },
+    {
+      "key": "Mobile does not exist",
+      "en": "Mobile number not found.",
+      "la": "ບໍ່ພົບເບີໂທນີ້",
+    },
+    {
+      "key": "Email does not exist",
+      "en": "Email not found.",
+      "la": "ບໍ່ພົບອີເມວນີ້",
+    },
+    {
+      "key": "You are not a Seeker",
+      "en": "This account is not registered as a job seeker.",
+      "la": "ບັນຊີນີ້ບໍ່ແມ່ນຜູ້ຊອກວຽກ",
+    },
+    {
+      "key": "Incorrect email or mobile",
+      "en": "Incorrect email or mobile number.",
+      "la": "ອີເມວ ຫຼື ເບີໂທ ບໍ່ຖືກຕ້ອງ",
+    },
+    {
+      "key": "Incorrect password",
+      "en": "Incorrect password.",
+      "la": "ລະຫັດບໍ່ຖືກຕ້ອງ",
+    },
+    {
+      "key": "This email has register already...!",
+      "en": "This email is already registered.",
+      "la": "ອີເມວນີ້ໄດ້ລົງທະບຽນແລ້ວ",
+    },
+    {
+      "key": "This mobile has register already...!",
+      "en": "Mobile number already registered.",
+      "la": "ເບີໂທນີ້ໄດ້ລົງທະບຽນແລ້ວ",
+    },
+    {
+      "key": "This email already synced another account",
+      "en": "This email is already synced with another account.",
+      "la": "ອີເມວນີ້ເຊື່ອມຕໍ່ກັບບັນຊີອື່ນແລ້ວ",
+    },
+    {
+      "key": "Sync successfully",
+      "en": "Sync successful.",
+      "la": "ເຊື່ອມຕໍ່ສຳເລັດ",
+    },
+    {
+      "key": "Can not disConnect",
+      "en": "Cannot disconnect.",
+      "la": "ບໍ່ສາມາດຍົກເລີກການເຊື່ອມຕໍ່ໄດ້",
+    },
+    {
+      "key": "User does not exist",
+      "en": "User not found.",
+      "la": "ບໍ່ພົບຜູ້ໃຊ້ງານນີ້",
+    },
+    {
+      "key": "disConnected",
+      "en": "Successfully disconnected.",
+      "la": "ຍົກເລີກການເຊື່ອມຕໍ່ສຳເລັດແລ້ວ.",
+    },
+    {
+      "key": "Changed",
+      "en": "Your password has changed.",
+      "la": "ປ່ຽນລະຫັດສຳເລັດແລ້ວ.",
+    },
   ];
   @override
   Map<String, Map<String, String>> get keys {

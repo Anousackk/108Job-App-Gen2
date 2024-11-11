@@ -139,7 +139,7 @@ class _LoginState extends State<Login> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -172,16 +172,35 @@ class _LoginState extends State<Login> {
       });
 
       print("add token success: ${resAddToken}");
-
       Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(builder: (context) => Home()), (route) => false);
-    } else if (res['message'] != null) {
+    } else if (res['message'] == "You are not a Seeker") {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogErrorWithoutButton(
-            title: "Invalid",
-            text: res['message'],
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "You are not a Seeker".tr,
+          );
+        },
+      );
+    } else if (res['message'] == "Incorrect email or mobile") {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "Incorrect email or mobile".tr,
+          );
+        },
+      );
+    } else if (res['message'] == "Incorrect password") {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "Incorrect password".tr,
           );
         },
       );
@@ -295,7 +314,7 @@ class _LoginState extends State<Login> {
                       //         ),
                       //         Text(
                       //           "Log in to your account\nwith Phone Number",
-                      //           style: bodyTextMedium(null, FontWeight.bold),
+                      //           style: bodyTextMedium(null,null, FontWeight.bold),
                       //         )
                       //       ],
                       //     ),
@@ -378,7 +397,7 @@ class _LoginState extends State<Login> {
                                                   " " +
                                                   "email".tr,
                                           style: bodyTextMedium(
-                                              null, FontWeight.bold),
+                                              null, null, FontWeight.bold),
                                         )
                                       ],
                                     ),
@@ -400,7 +419,7 @@ class _LoginState extends State<Login> {
                                         Text(
                                           "phone".tr,
                                           style: bodyTextNormal(
-                                              null, FontWeight.bold),
+                                              null, null, FontWeight.bold),
                                         ),
                                         SizedBox(
                                           height: 1.h, //5
@@ -438,7 +457,7 @@ class _LoginState extends State<Login> {
                                         Text(
                                           "email".tr,
                                           style: bodyTextNormal(
-                                              null, FontWeight.bold),
+                                              null, null, FontWeight.bold),
                                         ),
                                         SizedBox(
                                           height: 1.h, //5
@@ -474,7 +493,7 @@ class _LoginState extends State<Login> {
                                       Text(
                                         "password".tr,
                                         style: bodyTextNormal(
-                                            null, FontWeight.bold),
+                                            null, null, FontWeight.bold),
                                       ),
                                       SizedBox(
                                         height: 2.w, //5
@@ -537,7 +556,7 @@ class _LoginState extends State<Login> {
                                       },
                                       child: Text(
                                         "forgot pass".tr,
-                                        style: bodyTextNormal(
+                                        style: bodyTextNormal(null,
                                             AppColors.fontGreyOpacity, null),
                                         textAlign: TextAlign.end,
                                       ),
@@ -586,8 +605,8 @@ class _LoginState extends State<Login> {
                                       _isCheckTelAndEmail
                                           ? "login with".tr + " " + "email".tr
                                           : "login with".tr + " " + "phone".tr,
-                                      style:
-                                          bodyTextNormal(null, FontWeight.bold),
+                                      style: bodyTextNormal(
+                                          null, null, FontWeight.bold),
                                     ),
                                   ),
                                   SizedBox(
@@ -609,8 +628,8 @@ class _LoginState extends State<Login> {
                                         flex: 1,
                                         child: Text(
                                           "or".tr + " " + "login with".tr,
-                                          style:
-                                              bodyTextSmall(AppColors.fontGrey),
+                                          style: bodyTextSmall(
+                                              null, AppColors.fontGrey, null),
                                         ),
                                       ),
                                       Flexible(
@@ -712,7 +731,8 @@ class _LoginState extends State<Login> {
                                       children: [
                                         Text(
                                           "don't have ac".tr + "? ",
-                                          style: bodyTextNormal(null, null),
+                                          style:
+                                              bodyTextNormal(null, null, null),
                                         ),
                                         GestureDetector(
                                           onTap: () {
@@ -734,6 +754,7 @@ class _LoginState extends State<Login> {
                                           child: Text(
                                             "register".tr,
                                             style: bodyTextNormal(
+                                              null,
                                               AppColors.fontPrimary,
                                               FontWeight.bold,
                                             ),
@@ -761,7 +782,7 @@ class _LoginState extends State<Login> {
                       //       children: [
                       //         Text(
                       //           "Don't have account? ",
-                      //           style: bodyTextNormal(null, null),
+                      //           style: bodyTextNormal(null,null, null),
                       //         ),
                       //         GestureDetector(
                       //           onTap: () {
@@ -776,7 +797,7 @@ class _LoginState extends State<Login> {
                       //           },
                       //           child: Text(
                       //             "Register",
-                      //             style: bodyTextNormal(
+                      //             style: bodyTextNormal(null,
                       //                 AppColors.fontPrimary, FontWeight.bold),
                       //           ),
                       //         ),

@@ -60,79 +60,123 @@ TextStyle bodyTitleNormal(Color? textColor, FontWeight? fontWeight) {
 //
 //
 //
+//
+//
 //body
-TextStyle bodyTextSmall(Color? textColor) {
+TextStyle bodyTextSmall(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 12,
   );
 }
 
-TextStyle bodyTextMaxSmall(Color? textColor) {
+TextStyle bodyTextMaxSmall(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 13,
   );
 }
 
-TextStyle bodyTextMinNormal(Color? textColor, FontWeight? fontWeight) {
+TextStyle bodyTextMinNormal(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 14,
   );
 }
 
-TextStyle bodyTextNormal(Color? textColor, FontWeight? fontWeight) {
+TextStyle bodyTextNormal(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 15,
   );
 }
 
-TextStyle bodyTextMaxNormal(Color? textColor, FontWeight? fontWeight) {
+TextStyle bodyTextMaxNormal(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 16,
   );
 }
 
-TextStyle bodyTextSuperMaxNormal(Color? textColor, FontWeight? fontWeight) {
+TextStyle bodyTextSuperMaxNormal(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 17,
   );
 }
 
-TextStyle bodyTextMedium(Color? textColor, FontWeight? fontWeight) {
+TextStyle bodyTextMiniMedium(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 18,
+  );
+}
+
+TextStyle bodyTextMedium(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 20,
   );
 }
 
-TextStyle bodyTextMaxMedium(Color? textColor, FontWeight? fontWeight) {
+TextStyle bodyTextMaxMedium(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 25,
   );
 }
 
-TextStyle bodyTextLarge(Color? textColor, FontWeight? fontWeight) {
+TextStyle bodyTextSuperMaxMedium(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 30,
+  );
+}
+
+TextStyle bodyTextLarge(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 35,
   );
 }
 
-TextStyle bodyTextMaxLarge(Color? textColor, FontWeight? fontWeight) {
+TextStyle bodyTextMaxLarge(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 45,
@@ -153,12 +197,116 @@ TextStyle botderTextNormal(Color? textColor) {
 //
 //
 //
+//
+//
 //button
-TextStyle buttonTextNormal(Color? textColor, FontWeight? fontWeight) {
+TextStyle buttonTextSmall(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 12,
+  );
+}
+
+TextStyle buttonTextMaxSmall(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 13,
+  );
+}
+
+TextStyle buttonTextMinNormal(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 14,
+  );
+}
+
+TextStyle buttonTextNormal(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 15,
+  );
+}
+
+TextStyle buttonTextMaxNormal(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 16,
+  );
+}
+
+TextStyle buttonTextSuperMaxNormal(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 17,
+  );
+}
+
+TextStyle buttonTextMiniMedium(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 18,
+  );
+}
+
+TextStyle buttonTextMedium(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 20,
+  );
+}
+
+TextStyle buttonTextMaxMedium(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 25,
+  );
+}
+
+TextStyle buttonTextLarge(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 35,
+  );
+}
+
+TextStyle buttonTextMaxLarge(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 45,
   );
 }
 

@@ -128,7 +128,8 @@ class _SecurityPhoneNumberOrEmailState
                                   widget.addPhoneNumOrEmail == 'phoneNumber'
                                       ? "enter your".tr + "phone".tr
                                       : "enter your".tr + "email".tr,
-                                  style: bodyTextNormal(null, FontWeight.bold),
+                                  style: bodyTextNormal(
+                                      null, null, FontWeight.bold),
                                 ),
                                 SizedBox(
                                   height: 20,
@@ -214,7 +215,7 @@ class _SecurityPhoneNumberOrEmailState
                                                 " " +
                                                 "email".tr,
                                         style: bodyTextNormal(
-                                            AppColors.fontGrey, null),
+                                            null, AppColors.fontGrey, null),
                                       ),
 
                                       //
@@ -256,7 +257,8 @@ class _SecurityPhoneNumberOrEmailState
                                               "enter your".tr +
                                                   " " +
                                                   "password".tr,
-                                              style: bodyTextNormal(null, null),
+                                              style: bodyTextNormal(
+                                                  null, null, null),
                                             ),
                                           ],
                                         ),
@@ -324,7 +326,7 @@ class _SecurityPhoneNumberOrEmailState
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
     var res = await postData(requestOTPCodeApiSeeker, {
@@ -354,19 +356,19 @@ class _SecurityPhoneNumberOrEmailState
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogErrorWithoutButton(
-            title: "incorrect".tr,
-            text: "phone_not_register".tr,
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "Mobile does not exist".tr,
           );
         },
       );
-    } else {
+    } else if (res['message'] == "Email does not exist") {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogErrorWithoutButton(
-            title: "incorrect".tr,
-            text: res['message'],
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "Email does not exist".tr,
           );
         },
       );
@@ -401,7 +403,7 @@ class _SecurityPhoneNumberOrEmailState
   //     await showDialog(
   //       context: context,
   //       builder: (context) {
-  //         return CustomAlertDialogErrorWithoutButton(
+  //         return CustAlertDialogErrorWithoutBtn(
   //           title: "incorrect".tr,
   //           text: "${res["message"]}",
   //         );

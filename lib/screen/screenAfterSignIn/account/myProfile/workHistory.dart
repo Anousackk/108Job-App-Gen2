@@ -51,7 +51,6 @@ class _WorkHistoryState extends State<WorkHistory> {
   bool _isCurrentJob = false;
 
   DateTime _dateTimeNow = DateTime.now();
-  //
 
   setValueGetById() {
     setState(() {
@@ -151,7 +150,6 @@ class _WorkHistoryState extends State<WorkHistory> {
         child: Scaffold(
           appBar: AppBarDefault(
             textTitle: "work history".tr,
-            // fontWeight: FontWeight.bold,
             leadingIcon: Icon(Icons.arrow_back),
             leadingPress: () {
               Navigator.pop(context);
@@ -162,7 +160,6 @@ class _WorkHistoryState extends State<WorkHistory> {
               height: double.infinity,
               width: double.infinity,
               color: AppColors.backgroundWhite,
-              padding: EdgeInsets.symmetric(horizontal: 20),
               child: Form(
                 key: formkey,
                 child: Column(
@@ -171,468 +168,465 @@ class _WorkHistoryState extends State<WorkHistory> {
                       flex: 15,
                       child: SingleChildScrollView(
                         physics: ClampingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Text("${_language}"),
-                            // Text("${_proficiencyLanguage}"),
-                            SizedBox(
-                              height: 30,
-                            ),
-
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //Company
-                            Text(
-                              "company".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            SimpleTextFieldWithIconRight(
-                              textController: _companyController,
-                              changed: (value) {
-                                setState(() {
-                                  _company = value;
-                                });
-                              },
-                              inputColor: AppColors.inputWhite,
-                              hintText: "enter".tr + " " + "company name".tr,
-                              hintTextFontWeight: FontWeight.bold,
-                              suffixIcon: Icon(
-                                Icons.business,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 30,
                               ),
-                              suffixIconColor: AppColors.iconGrayOpacity,
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
 
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //Job Title
-                            Text(
-                              "job title".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            SimpleTextFieldWithIconRight(
-                              textController: _jobTitleController,
-                              changed: (value) {
-                                setState(() {
-                                  _jobTitle = value;
-                                });
-                              },
-                              inputColor: AppColors.inputWhite,
-                              hintText: "enter".tr + " " + "job title".tr,
-                              hintTextFontWeight: FontWeight.bold,
-                              suffixIcon: Icon(
-                                Icons.work,
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //Company
+                              Text(
+                                "company".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
                               ),
-                              suffixIconColor: AppColors.iconGrayOpacity,
-                            ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              SimpleTextFieldWithIconRight(
+                                textController: _companyController,
+                                changed: (value) {
+                                  setState(() {
+                                    _company = value;
+                                  });
+                                },
+                                inputColor: AppColors.inputWhite,
+                                hintText: "enter".tr + " " + "company name".tr,
+                                hintTextFontWeight: FontWeight.bold,
+                                suffixIcon: Icon(
+                                  Icons.business,
+                                ),
+                                suffixIconColor: AppColors.iconGrayOpacity,
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
 
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              // mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                // Checkbox(
-                                //   checkColor: Colors.white,
-                                //   fillColor: MaterialStateProperty.resolveWith(
-                                //       getColor),
-                                //   value: _isCurrentJob,
-                                //   onChanged: (bool? value) {
-                                //     if (mounted) {
-                                //       setState(() {
-                                //         _isCurrentJob = value!;
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //Job Title
+                              Text(
+                                "job title".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              SimpleTextFieldWithIconRight(
+                                textController: _jobTitleController,
+                                changed: (value) {
+                                  setState(() {
+                                    _jobTitle = value;
+                                  });
+                                },
+                                inputColor: AppColors.inputWhite,
+                                hintText: "enter".tr + " " + "job title".tr,
+                                hintTextFontWeight: FontWeight.bold,
+                                suffixIcon: Icon(
+                                  Icons.work,
+                                ),
+                                suffixIconColor: AppColors.iconGrayOpacity,
+                              ),
 
-                                //         print(_isCurrentJob);
-                                //       });
-                                //     }
-                                //   },
-                                // ),
-                                GestureDetector(
-                                  onTap: () {
-                                    pressCheckBox();
-                                  },
-                                  child: Container(
-                                    height: 20,
-                                    width: 20,
-                                    decoration: BoxDecoration(
-                                      color: _isCurrentJob
-                                          ? AppColors.iconPrimary
-                                          : AppColors.iconLight,
-                                      border: Border.all(
-                                          color: AppColors.borderDark),
-                                      borderRadius: BorderRadius.circular(3),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      pressCheckBox();
+                                    },
+                                    child: Container(
+                                      height: 20,
+                                      width: 20,
+                                      decoration: BoxDecoration(
+                                        color: _isCurrentJob
+                                            ? AppColors.iconPrimary
+                                            : AppColors.iconLight,
+                                        border: Border.all(
+                                            color: _isCurrentJob
+                                                ? AppColors.borderPrimary
+                                                : AppColors.borderDark),
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
+                                      child: _isCurrentJob
+                                          ? Align(
+                                              alignment: Alignment.center,
+                                              child: FaIcon(
+                                                FontAwesomeIcons.check,
+                                                size: 15,
+                                                color: AppColors.iconLight,
+                                              ),
+                                            )
+                                          : Container(),
                                     ),
-                                    child: _isCurrentJob
-                                        ? Align(
-                                            alignment: Alignment.center,
-                                            child: FaIcon(
-                                              FontAwesomeIcons.check,
-                                              size: 15,
-                                              color: AppColors.iconLight,
-                                            ),
-                                          )
-                                        : Container(),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text("my current job".tr),
-                              ],
-                            ),
-
-                            SizedBox(
-                              height: 20,
-                            ),
-
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //From DateTime(Month)
-                            Text(
-                              "from".tr + " " + "month".tr + "/" + "year".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            BoxDecorationInput(
-                              mainAxisAlignmentTextIcon:
-                                  MainAxisAlignment.start,
-                              colorInput: AppColors.backgroundWhite,
-                              colorBorder: _isValidateValue == true &&
-                                      _fromMonthYear == null
-                                  ? AppColors.borderDanger
-                                  : AppColors.borderSecondary,
-                              paddingFaIcon:
-                                  EdgeInsets.symmetric(horizontal: 1.7.w),
-                              fontWeight: _fromMonthYear == null
-                                  ? FontWeight.bold
-                                  : null,
-                              widgetIconActive: FaIcon(
-                                FontAwesomeIcons.calendar,
-                                color: AppColors.iconGrayOpacity,
-                                size: IconSize.sIcon,
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("my current job".tr),
+                                ],
                               ),
-                              press: () {
-                                FocusScope.of(context).requestFocus(focusNode);
 
-                                //
-                                // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
-                                var formatDateTimeNow = DateFormat("yyyy-MM-dd")
-                                    .parse(_dateTimeNow.toString());
-                                setState(() {
-                                  _fromMonthYear == null
-                                      ? _fromMonthYear = formatDateTimeNow
-                                      : _fromMonthYear;
-                                });
+                              SizedBox(
+                                height: 20,
+                              ),
 
-                                showDialogDateTime(
-                                    context,
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //From DateTime(Month)
+                              Text(
+                                "from".tr + " " + "month".tr + "/" + "year".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              BoxDecorationInput(
+                                mainAxisAlignmentTextIcon:
+                                    MainAxisAlignment.start,
+                                colorInput: AppColors.backgroundWhite,
+                                colorBorder: _isValidateValue == true &&
+                                        _fromMonthYear == null
+                                    ? AppColors.borderDanger
+                                    : AppColors.borderSecondary,
+                                paddingFaIcon:
+                                    EdgeInsets.symmetric(horizontal: 1.7.w),
+                                fontWeight: _fromMonthYear == null
+                                    ? FontWeight.bold
+                                    : null,
+                                widgetIconActive: FaIcon(
+                                  FontAwesomeIcons.calendar,
+                                  color: AppColors.iconGrayOpacity,
+                                  size: IconSize.sIcon,
+                                ),
+                                press: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(focusNode);
+
+                                  //
+                                  // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
+                                  var formatDateTimeNow =
+                                      DateFormat("yyyy-MM-dd")
+                                          .parse(_dateTimeNow.toString());
+                                  setState(() {
+                                    _fromMonthYear == null
+                                        ? _fromMonthYear = formatDateTimeNow
+                                        : _fromMonthYear;
+                                  });
+
+                                  showDialogDateTime(
+                                      context,
+                                      Text(
+                                        "from".tr +
+                                            " " +
+                                            "month".tr +
+                                            "/" +
+                                            "year".tr,
+                                        style: bodyTextMedium(
+                                            null, null, FontWeight.bold),
+                                      ),
+                                      CupertinoDatePicker(
+                                        initialDateTime: _fromMonthYear == null
+                                            ? formatDateTimeNow
+                                            : _fromMonthYear,
+                                        mode: CupertinoDatePickerMode.monthYear,
+                                        // dateOrder: DatePickerDateOrder.dmy,
+                                        maximumDate: formatDateTimeNow,
+                                        use24hFormat: true,
+                                        onDateTimeChanged: (DateTime newDate) {
+                                          setState(() {
+                                            _fromMonthYear = newDate;
+
+                                            if (_toMonthYear != null &&
+                                                _toMonthYear
+                                                    .isBefore(_fromMonthYear)) {
+                                              // If toDate is before fromDate, set toDate to null
+                                              _toMonthYear = null;
+                                            }
+                                          });
+                                        },
+                                      )
+                                      // SimpleButton(
+                                      //   text: 'Cancel',
+                                      //   colorButton: AppColors.buttonSecondary,
+                                      //   colorText: AppColors.fontWhite,
+                                      //   press: () {
+                                      //     Navigator.of(context).pop();
+                                      //   },
+                                      // ),
+                                      // SimpleButton(
+                                      //   text: 'Confirm',
+                                      //   press: () {
+                                      //     Navigator.of(context).pop();
+                                      //   },
+                                      // ),
+                                      );
+                                },
+                                text: _fromMonthYear == null
+                                    ? "from".tr +
+                                        " " +
+                                        "month".tr +
+                                        "/" +
+                                        "year".tr
+                                    : "${_fromMonthYear?.month}-${_fromMonthYear?.year}",
+                                colorText: _fromMonthYear == null
+                                    ? AppColors.fontGreyOpacity
+                                    : AppColors.fontDark,
+                                validateText: _isValidateValue == true &&
+                                        _fromMonthYear == null
+                                    ? Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.only(
+                                          left: 15,
+                                          top: 5,
+                                        ),
+                                        child: Text(
+                                          "required".tr,
+                                          style: bodyTextSmall(
+                                              null, AppColors.fontDanger, null),
+                                        ),
+                                      )
+                                    : Container(),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //To DateTime(Month)
+                              if (!_isCurrentJob)
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
                                     Text(
-                                      "from".tr +
+                                      "to".tr +
                                           " " +
                                           "month".tr +
                                           "/" +
                                           "year".tr,
-                                      style:
-                                          bodyTextMedium(null, FontWeight.bold),
+                                      style: bodyTextNormal(
+                                          null, null, FontWeight.bold),
                                     ),
-                                    CupertinoDatePicker(
-                                      initialDateTime: _fromMonthYear == null
-                                          ? formatDateTimeNow
-                                          : _fromMonthYear,
-                                      mode: CupertinoDatePickerMode.monthYear,
-                                      // dateOrder: DatePickerDateOrder.dmy,
-                                      maximumDate: formatDateTimeNow,
-                                      use24hFormat: true,
-                                      onDateTimeChanged: (DateTime newDate) {
-                                        setState(() {
-                                          _fromMonthYear = newDate;
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    _fromMonthYear != null
+                                        ? BoxDecorationInput(
+                                            mainAxisAlignmentTextIcon:
+                                                MainAxisAlignment.start,
+                                            colorInput:
+                                                AppColors.backgroundWhite,
+                                            colorBorder:
+                                                _isValidateValue == true &&
+                                                        _toMonthYear == null
+                                                    ? AppColors.borderDanger
+                                                    : AppColors.borderSecondary,
+                                            paddingFaIcon: EdgeInsets.symmetric(
+                                                horizontal: 1.7.w),
+                                            fontWeight: _toMonthYear == null
+                                                ? FontWeight.bold
+                                                : null,
+                                            widgetIconActive: FaIcon(
+                                              FontAwesomeIcons.calendar,
+                                              color: AppColors.iconGrayOpacity,
+                                              size: IconSize.sIcon,
+                                            ),
+                                            press: () {
+                                              FocusScope.of(context)
+                                                  .requestFocus(focusNode);
 
-                                          if (_toMonthYear != null &&
-                                              _toMonthYear
-                                                  .isBefore(_fromMonthYear)) {
-                                            // If toDate is before fromDate, set toDate to null
-                                            _toMonthYear = null;
-                                          }
-                                        });
-                                      },
-                                    )
-                                    // SimpleButton(
-                                    //   text: 'Cancel',
-                                    //   colorButton: AppColors.buttonSecondary,
-                                    //   colorText: AppColors.fontWhite,
-                                    //   press: () {
-                                    //     Navigator.of(context).pop();
-                                    //   },
-                                    // ),
-                                    // SimpleButton(
-                                    //   text: 'Confirm',
-                                    //   press: () {
-                                    //     Navigator.of(context).pop();
-                                    //   },
-                                    // ),
-                                    );
-                              },
-                              text: _fromMonthYear == null
-                                  ? "from".tr +
-                                      " " +
-                                      "month".tr +
-                                      "/" +
-                                      "year".tr
-                                  : "${_fromMonthYear?.month}-${_fromMonthYear?.year}",
-                              colorText: _fromMonthYear == null
-                                  ? AppColors.fontGreyOpacity
-                                  : AppColors.fontDark,
-                              validateText: _isValidateValue == true &&
-                                      _fromMonthYear == null
-                                  ? Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.only(
-                                        left: 15,
-                                        top: 5,
-                                      ),
-                                      child: Text(
-                                        "required".tr,
-                                        style: bodyTextSmall(
-                                          AppColors.fontDanger,
-                                        ),
-                                      ),
-                                    )
-                                  : Container(),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
+                                              setState(() {
+                                                _toMonthYear == null
+                                                    ? _toMonthYear =
+                                                        _fromMonthYear
+                                                    : _toMonthYear;
+                                              });
 
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //To DateTime(Month)
-                            if (!_isCurrentJob)
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "to".tr +
-                                        " " +
-                                        "month".tr +
-                                        "/" +
-                                        "year".tr,
-                                    style:
-                                        bodyTextNormal(null, FontWeight.bold),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  _fromMonthYear != null
-                                      ? BoxDecorationInput(
-                                          mainAxisAlignmentTextIcon:
-                                              MainAxisAlignment.start,
-                                          colorInput: AppColors.backgroundWhite,
-                                          colorBorder:
-                                              _isValidateValue == true &&
-                                                      _toMonthYear == null
-                                                  ? AppColors.borderDanger
-                                                  : AppColors.borderSecondary,
-                                          paddingFaIcon: EdgeInsets.symmetric(
-                                              horizontal: 1.7.w),
-                                          fontWeight: _toMonthYear == null
-                                              ? FontWeight.bold
-                                              : null,
-                                          widgetIconActive: FaIcon(
-                                            FontAwesomeIcons.calendar,
-                                            color: AppColors.iconGrayOpacity,
-                                            size: IconSize.sIcon,
-                                          ),
-                                          press: () {
-                                            FocusScope.of(context)
-                                                .requestFocus(focusNode);
-
-                                            setState(() {
-                                              _toMonthYear == null
-                                                  ? _toMonthYear =
-                                                      _fromMonthYear
-                                                  : _toMonthYear;
-                                            });
-
-                                            showDialogDateTime(
-                                                context,
-                                                Text(
-                                                  "to".tr +
-                                                      " " +
-                                                      "month".tr +
-                                                      "/" +
-                                                      "year".tr,
-                                                  style: bodyTextMedium(
-                                                      null, FontWeight.bold),
-                                                ),
-                                                CupertinoDatePicker(
-                                                  initialDateTime:
-                                                      _toMonthYear == null
-                                                          ? _fromMonthYear
-                                                          : _toMonthYear,
-                                                  mode: CupertinoDatePickerMode
-                                                      .monthYear,
-                                                  // dateOrder: DatePickerDateOrder.dmy,
-                                                  minimumDate: _fromMonthYear,
-                                                  use24hFormat: true,
-                                                  onDateTimeChanged:
-                                                      (DateTime newDate) {
-                                                    setState(() {
-                                                      _toMonthYear = newDate;
-                                                    });
-                                                  },
-                                                )
-                                                // SimpleButton(
-                                                //   text: 'Cancel',
-                                                //   colorButton: AppColors.buttonSecondary,
-                                                //   colorText: AppColors.fontWhite,
-                                                //   press: () {
-                                                //     Navigator.of(context).pop();
-                                                //   },
-                                                // ),
-                                                // SimpleButton(
-                                                //   text: 'Confirm',
-                                                //   press: () {
-                                                //     Navigator.of(context).pop();
-                                                //   },
-                                                // ),
-                                                );
-                                          },
-                                          text: _toMonthYear == null
-                                              ? "to".tr +
-                                                  " " +
-                                                  "month".tr +
-                                                  "/" +
-                                                  "year".tr
-                                              : "${_toMonthYear?.month}-${_toMonthYear?.year}",
-                                          colorText: _toMonthYear == null
-                                              ? AppColors.fontGreyOpacity
-                                              : AppColors.fontDark,
-                                          validateText:
-                                              _isValidateValue == true &&
-                                                      _toMonthYear == null
-                                                  ? Container(
-                                                      width: double.infinity,
-                                                      padding: EdgeInsets.only(
-                                                        left: 10,
-                                                        top: 5,
-                                                      ),
-                                                      child: Text(
-                                                        "required".tr,
-                                                        style: bodyTextSmall(
+                                              showDialogDateTime(
+                                                  context,
+                                                  Text(
+                                                    "to".tr +
+                                                        " " +
+                                                        "month".tr +
+                                                        "/" +
+                                                        "year".tr,
+                                                    style: bodyTextMedium(null,
+                                                        null, FontWeight.bold),
+                                                  ),
+                                                  CupertinoDatePicker(
+                                                    initialDateTime:
+                                                        _toMonthYear == null
+                                                            ? _fromMonthYear
+                                                            : _toMonthYear,
+                                                    mode:
+                                                        CupertinoDatePickerMode
+                                                            .monthYear,
+                                                    // dateOrder: DatePickerDateOrder.dmy,
+                                                    minimumDate: _fromMonthYear,
+                                                    use24hFormat: true,
+                                                    onDateTimeChanged:
+                                                        (DateTime newDate) {
+                                                      setState(() {
+                                                        _toMonthYear = newDate;
+                                                      });
+                                                    },
+                                                  )
+                                                  // SimpleButton(
+                                                  //   text: 'Cancel',
+                                                  //   colorButton: AppColors.buttonSecondary,
+                                                  //   colorText: AppColors.fontWhite,
+                                                  //   press: () {
+                                                  //     Navigator.of(context).pop();
+                                                  //   },
+                                                  // ),
+                                                  // SimpleButton(
+                                                  //   text: 'Confirm',
+                                                  //   press: () {
+                                                  //     Navigator.of(context).pop();
+                                                  //   },
+                                                  // ),
+                                                  );
+                                            },
+                                            text: _toMonthYear == null
+                                                ? "to".tr +
+                                                    " " +
+                                                    "month".tr +
+                                                    "/" +
+                                                    "year".tr
+                                                : "${_toMonthYear?.month}-${_toMonthYear?.year}",
+                                            colorText: _toMonthYear == null
+                                                ? AppColors.fontGreyOpacity
+                                                : AppColors.fontDark,
+                                            validateText: _isValidateValue ==
+                                                        true &&
+                                                    _toMonthYear == null
+                                                ? Container(
+                                                    width: double.infinity,
+                                                    padding: EdgeInsets.only(
+                                                      left: 10,
+                                                      top: 5,
+                                                    ),
+                                                    child: Text(
+                                                      "required".tr,
+                                                      style: bodyTextSmall(
+                                                          null,
                                                           AppColors.fontDanger,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Container(),
-                                        )
-                                      : BoxDecorationInput(
-                                          mainAxisAlignmentTextIcon:
-                                              MainAxisAlignment.start,
-                                          colorBorder:
-                                              _isValidateValue == true &&
-                                                      _toMonthYear == null
-                                                  ? AppColors.borderDanger
-                                                  : AppColors.borderSecondary,
-                                          paddingFaIcon: EdgeInsets.symmetric(
-                                              horizontal: 1.7.w),
-                                          fontWeight: FontWeight.bold,
-                                          colorText: AppColors.fontGreyOpacity,
-                                          widgetIconActive: FaIcon(
-                                            FontAwesomeIcons.calendar,
-                                            color: AppColors.iconGrayOpacity,
-                                            size: IconSize.sIcon,
-                                          ),
-                                          text: "to".tr +
-                                              " " +
-                                              "month".tr +
-                                              "/" +
-                                              "year".tr,
-                                          validateText:
-                                              _isValidateValue == true &&
-                                                      _toMonthYear == null
-                                                  ? Container(
-                                                      width: double.infinity,
-                                                      padding: EdgeInsets.only(
-                                                        left: 10,
-                                                        top: 5,
-                                                      ),
-                                                      child: Text(
-                                                        "required".tr,
-                                                        style: bodyTextSmall(
+                                                          null),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          )
+                                        : BoxDecorationInput(
+                                            mainAxisAlignmentTextIcon:
+                                                MainAxisAlignment.start,
+                                            colorBorder:
+                                                _isValidateValue == true &&
+                                                        _toMonthYear == null
+                                                    ? AppColors.borderDanger
+                                                    : AppColors.borderSecondary,
+                                            paddingFaIcon: EdgeInsets.symmetric(
+                                                horizontal: 1.7.w),
+                                            fontWeight: FontWeight.bold,
+                                            colorText:
+                                                AppColors.fontGreyOpacity,
+                                            widgetIconActive: FaIcon(
+                                              FontAwesomeIcons.calendar,
+                                              color: AppColors.iconGrayOpacity,
+                                              size: IconSize.sIcon,
+                                            ),
+                                            text: "to".tr +
+                                                " " +
+                                                "month".tr +
+                                                "/" +
+                                                "year".tr,
+                                            validateText: _isValidateValue ==
+                                                        true &&
+                                                    _toMonthYear == null
+                                                ? Container(
+                                                    width: double.infinity,
+                                                    padding: EdgeInsets.only(
+                                                      left: 10,
+                                                      top: 5,
+                                                    ),
+                                                    child: Text(
+                                                      "required".tr,
+                                                      style: bodyTextSmall(
+                                                          null,
                                                           AppColors.fontDanger,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Container(),
-                                        ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
+                                                          null),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                ),
+
+                              //
+                              //
+                              //
+                              //
+                              //
+                              // Responsibility
+                              Text(
+                                "responsibility".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              SimpleTextFieldSingleValidate(
+                                heightCon: 300,
+                                maxLines: 20,
+                                enabledBorder: enableOutlineBorder(
+                                  AppColors.borderSecondary,
+                                ),
+                                inputColor: AppColors.backgroundWhite,
+                                codeController: _responsibilityController,
+                                changed: (value) {
+                                  setState(() {
+                                    _responsibility = value;
+                                  });
+                                },
+                                hintText: "",
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "required".tr;
+                                  }
+                                  return null;
+                                },
                               ),
 
-                            //
-                            //
-                            //
-                            //
-                            //
-                            // Responsibility
-                            Text(
-                              "responsibility".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            SimpleTextFieldSingleValidate(
-                              heightCon: 300,
-                              maxLines: 20,
-                              enabledBorder: enableOutlineBorder(
-                                AppColors.borderSecondary,
+                              SizedBox(
+                                height: 30,
                               ),
-                              inputColor: AppColors.backgroundWhite,
-                              codeController: _responsibilityController,
-                              changed: (value) {
-                                setState(() {
-                                  _responsibility = value;
-                                });
-                              },
-                              hintText: "",
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "required".tr;
-                                }
-                                return null;
-                              },
-                            ),
-
-                            SizedBox(
-                              height: 30,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -643,6 +637,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                       text: "save".tr,
                       fontWeight: FontWeight.bold,
                       press: () {
+                        FocusScope.of(context).requestFocus(focusNode);
                         if (formkey.currentState!.validate()) {
                           setState(() {
                             _isValidateValue = false;
@@ -675,7 +670,7 @@ class _WorkHistoryState extends State<WorkHistory> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -700,9 +695,10 @@ class _WorkHistoryState extends State<WorkHistory> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "save".tr + "work history".tr + "successful".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "save".tr + " " + "successful".tr,
+            contentText:
+                "save".tr + " " + "work history".tr + " " + "successful".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);

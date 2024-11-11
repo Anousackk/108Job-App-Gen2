@@ -188,7 +188,8 @@ class _EducationState extends State<Education> {
                             //Subject
                             Text(
                               "subject".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
+                              style:
+                                  bodyTextNormal(null, null, FontWeight.bold),
                             ),
                             SizedBox(
                               height: 5,
@@ -220,7 +221,8 @@ class _EducationState extends State<Education> {
                             //School/Collage
                             Text(
                               "collage".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
+                              style:
+                                  bodyTextNormal(null, null, FontWeight.bold),
                             ),
                             SizedBox(
                               height: 5,
@@ -252,7 +254,8 @@ class _EducationState extends State<Education> {
                             //Qualifications
                             Text(
                               "qualifications".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
+                              style:
+                                  bodyTextNormal(null, null, FontWeight.bold),
                             ),
                             SizedBox(
                               height: 5,
@@ -322,8 +325,7 @@ class _EducationState extends State<Education> {
                                       child: Text(
                                         "required".tr,
                                         style: bodyTextSmall(
-                                          AppColors.fontDanger,
-                                        ),
+                                            null, AppColors.fontDanger, null),
                                       ),
                                     )
                                   : Container(),
@@ -340,7 +342,8 @@ class _EducationState extends State<Education> {
                             //From DateTime(Year)
                             Text(
                               "from".tr + " " + "year".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
+                              style:
+                                  bodyTextNormal(null, null, FontWeight.bold),
                             ),
                             SizedBox(
                               height: 5,
@@ -377,8 +380,8 @@ class _EducationState extends State<Education> {
                                     context,
                                     Text(
                                       "from".tr + " " + "year".tr,
-                                      style:
-                                          bodyTextNormal(null, FontWeight.bold),
+                                      style: bodyTextNormal(
+                                          null, null, FontWeight.bold),
                                     ),
                                     CupertinoDatePicker(
                                       initialDateTime: _fromYear == null
@@ -422,22 +425,21 @@ class _EducationState extends State<Education> {
                               colorText: _fromYear == null
                                   ? AppColors.fontGreyOpacity
                                   : AppColors.fontDark,
-                              validateText:
-                                  _isValidateValue == true && _fromYear == null
-                                      ? Container(
-                                          width: double.infinity,
-                                          padding: EdgeInsets.only(
-                                            left: 15,
-                                            top: 5,
-                                          ),
-                                          child: Text(
-                                            "required".tr,
-                                            style: bodyTextSmall(
-                                              AppColors.fontDanger,
-                                            ),
-                                          ),
-                                        )
-                                      : Container(),
+                              validateText: _isValidateValue == true &&
+                                      _fromYear == null
+                                  ? Container(
+                                      width: double.infinity,
+                                      padding: EdgeInsets.only(
+                                        left: 15,
+                                        top: 5,
+                                      ),
+                                      child: Text(
+                                        "required".tr,
+                                        style: bodyTextSmall(
+                                            null, AppColors.fontDanger, null),
+                                      ),
+                                    )
+                                  : Container(),
                             ),
                             SizedBox(
                               height: 20,
@@ -451,7 +453,8 @@ class _EducationState extends State<Education> {
                             //To DateTime(Month)
                             Text(
                               "to".tr + " " + "year".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
+                              style:
+                                  bodyTextNormal(null, null, FontWeight.bold),
                             ),
                             SizedBox(
                               height: 5,
@@ -495,7 +498,7 @@ class _EducationState extends State<Education> {
                                           Text(
                                             "to".tr + " " + "year".tr,
                                             style: bodyTextNormal(
-                                                null, FontWeight.bold),
+                                                null, null, FontWeight.bold),
                                           ),
                                           CupertinoDatePicker(
                                             initialDateTime: _toYear == null
@@ -546,9 +549,8 @@ class _EducationState extends State<Education> {
                                             ),
                                             child: Text(
                                               "required".tr,
-                                              style: bodyTextSmall(
-                                                AppColors.fontDanger,
-                                              ),
+                                              style: bodyTextSmall(null,
+                                                  AppColors.fontDanger, null),
                                             ),
                                           )
                                         : Container(),
@@ -580,9 +582,8 @@ class _EducationState extends State<Education> {
                                             ),
                                             child: Text(
                                               "required".tr,
-                                              style: bodyTextSmall(
-                                                AppColors.fontDanger,
-                                              ),
+                                              style: bodyTextSmall(null,
+                                                  AppColors.fontDanger, null),
                                             ),
                                           )
                                         : Container(),
@@ -601,6 +602,7 @@ class _EducationState extends State<Education> {
                       text: "save".tr,
                       fontWeight: FontWeight.bold,
                       press: () {
+                        FocusScope.of(context).requestFocus(focusNode);
                         if (formkey.currentState!.validate()) {
                           print("check for formkey.currentState!.validate()");
                           setState(() {
@@ -654,7 +656,7 @@ class _EducationState extends State<Education> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -675,9 +677,10 @@ class _EducationState extends State<Education> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "save".tr + " " + "education".tr + " " + "successful".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "save".tr + " " + "successful".tr,
+            contentText:
+                "save".tr + " " + "education".tr + " " + "successful".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);

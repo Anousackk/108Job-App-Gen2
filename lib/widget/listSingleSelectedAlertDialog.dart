@@ -60,7 +60,7 @@ class _ListSingleSelectedAlertDialogState
                 // ),
                 Text(
                   "${widget.title}",
-                  style: bodyTextMedium(null, FontWeight.bold),
+                  style: bodyTextMedium(null, null, FontWeight.bold),
                 ),
                 Text("")
               ],
@@ -111,6 +111,7 @@ class _ListSingleSelectedAlertDialogState
                                     child: Text(
                                       '${name}',
                                       style: bodyTextNormal(
+                                          null,
                                           _selectedString == i['_id']
                                               ? AppColors.iconPrimary
                                               : null,

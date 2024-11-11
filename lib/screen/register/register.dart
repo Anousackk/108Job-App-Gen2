@@ -259,7 +259,7 @@ class _RegisterState extends State<Register> {
                               //     Text(
                               //       "fullname".tr,
                               //       style:
-                              //           bodyTextNormal(null, FontWeight.bold),
+                              //           bodyTextNormal(null,null, FontWeight.bold),
                               //     ),
                               //     SizedBox(
                               //       height: 2.w, //5
@@ -298,8 +298,8 @@ class _RegisterState extends State<Register> {
                                   children: [
                                     Text(
                                       "phone".tr,
-                                      style:
-                                          bodyTextNormal(null, FontWeight.bold),
+                                      style: bodyTextNormal(
+                                          null, null, FontWeight.bold),
                                     ),
                                     SizedBox(
                                       height: 2.w, //5
@@ -337,8 +337,8 @@ class _RegisterState extends State<Register> {
                                   children: [
                                     Text(
                                       "email".tr,
-                                      style:
-                                          bodyTextNormal(null, FontWeight.bold),
+                                      style: bodyTextNormal(
+                                          null, null, FontWeight.bold),
                                     ),
                                     SizedBox(
                                       height: 2.w, //5
@@ -371,8 +371,8 @@ class _RegisterState extends State<Register> {
                                 children: [
                                   Text(
                                     "password".tr,
-                                    style:
-                                        bodyTextNormal(null, FontWeight.bold),
+                                    style: bodyTextNormal(
+                                        null, null, FontWeight.bold),
                                   ),
                                   SizedBox(
                                     height: 2.w, //5
@@ -411,7 +411,7 @@ class _RegisterState extends State<Register> {
                               //   width: double.infinity,
                               //   child: Text(
                               //     "Forgot Password",
-                              //     style: bodyTextNormal(
+                              //     style: bodyTextNormal(null,
                               //         AppColors.fontGreyOpacity, null),
                               //     textAlign: TextAlign.end,
                               //   ),
@@ -475,7 +475,8 @@ class _RegisterState extends State<Register> {
                                   _isCheckTelAndEmail
                                       ? "register with".tr + " " + "email".tr
                                       : "register with".tr + " " + "phone".tr,
-                                  style: bodyTextNormal(null, FontWeight.bold),
+                                  style: bodyTextNormal(
+                                      null, null, FontWeight.bold),
                                 ),
                               ),
                               SizedBox(
@@ -496,7 +497,8 @@ class _RegisterState extends State<Register> {
                                     flex: 1,
                                     child: Text(
                                       "or".tr + " " + "register with".tr,
-                                      style: bodyTextSmall(AppColors.fontGrey),
+                                      style: bodyTextSmall(
+                                          null, AppColors.fontGrey, null),
                                     ),
                                   ),
                                   Flexible(
@@ -600,7 +602,7 @@ class _RegisterState extends State<Register> {
                                   children: [
                                     Text(
                                       "already have ac".tr + "? ",
-                                      style: bodyTextNormal(null, null),
+                                      style: bodyTextNormal(null, null, null),
                                     ),
                                     GestureDetector(
                                       onTap: () {
@@ -626,6 +628,7 @@ class _RegisterState extends State<Register> {
                                       child: Text(
                                         "login".tr,
                                         style: bodyTextNormal(
+                                            null,
                                             AppColors.fontPrimary,
                                             FontWeight.bold),
                                       ),
@@ -655,7 +658,7 @@ class _RegisterState extends State<Register> {
                   //     children: [
                   //       Text(
                   //         "Already have an account? ",
-                  //         style: bodyTextNormal(null, null),
+                  //         style: bodyTextNormal(null,null, null),
                   //       ),
                   //       GestureDetector(
                   //         onTap: () {
@@ -672,7 +675,7 @@ class _RegisterState extends State<Register> {
                   //         },
                   //         child: Text(
                   //           "Log in",
-                  //           style: bodyTextNormal(
+                  //           style: bodyTextNormal(null,
                   //               AppColors.fontPrimary, FontWeight.bold),
                   //         ),
                   //       ),
@@ -693,7 +696,7 @@ class _RegisterState extends State<Register> {
   //     context: context,
   //     barrierDismissible: false,
   //     builder: (context) {
-  //       return CustomAlertLoading();
+  //       return CustAlertLoading();
   //     },
   //   );
   //   await postData(apiRegisterSeeker, {

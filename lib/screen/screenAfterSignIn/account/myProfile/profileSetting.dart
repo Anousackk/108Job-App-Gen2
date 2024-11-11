@@ -92,7 +92,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustomAlertLoading();
+          return CustAlertLoading();
         },
       );
     }
@@ -226,6 +226,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                 Text(
                                   "profile status".tr,
                                   style: bodyTextNormal(
+                                    null,
                                     AppColors.fontPrimary,
                                     FontWeight.bold,
                                   ),
@@ -233,8 +234,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                 Text(
                                   "how to set profile status".tr,
                                   style: bodyTextSmall(
-                                    AppColors.fontGreyOpacity,
-                                  ),
+                                      null, AppColors.fontGreyOpacity, null),
                                 ),
                                 SizedBox(
                                   height: 10,
@@ -253,7 +253,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                       Text(
                                         "searchable profile".tr,
                                         style: bodyTextNormal(
-                                            null, FontWeight.bold),
+                                            null, null, FontWeight.bold),
                                       ),
                                       GestureDetector(
                                         onTap: () {
@@ -285,6 +285,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                                     Text(
                                                       "on".tr,
                                                       style: bodyTextNormal(
+                                                          null,
                                                           AppColors.fontWhite,
                                                           FontWeight.bold),
                                                     ),
@@ -317,6 +318,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                                     Text(
                                                       "off".tr,
                                                       style: bodyTextNormal(
+                                                          null,
                                                           AppColors.fontPrimary,
                                                           FontWeight.bold),
                                                     ),
@@ -399,7 +401,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                           child: Text(
                                             "hide profile from companies".tr,
                                             style: bodyTextNormal(
-                                                null, FontWeight.bold),
+                                                null, null, FontWeight.bold),
                                           ),
                                         ),
                                         // SizedBox(
@@ -552,6 +554,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                                   Text(
                                                     "${_listSeekerSearchableCompanies.length - 3}",
                                                     style: bodyTextMaxNormal(
+                                                        null,
                                                         AppColors.fontPrimary,
                                                         null),
                                                   ),

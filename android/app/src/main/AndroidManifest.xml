@@ -10,6 +10,7 @@
    <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
    <uses-permission android:name="android.permission.USE_EXACT_ALARM" /> -->
+
     <application
         android:label="108 Jobs"
         android:icon="@mipmap/ic_launcher"
@@ -76,7 +77,7 @@
                 <data android:scheme="http" />
                 <data
                     android:scheme="https"
-                    android:host="https://app108jobsjobsearchdetail.page.link"/>
+                    android:host="108jobs.page.link"/>
             </intent-filter>
         </activity>
     </application>

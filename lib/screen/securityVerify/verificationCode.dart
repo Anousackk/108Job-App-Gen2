@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_final_fields, sized_box_for_whitespace, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, unnecessary_null_in_if_null_operators, unused_local_variable, unnecessary_string_interpolations, file_names
+// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_final_fields, sized_box_for_whitespace, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, unnecessary_null_in_if_null_operators, unused_local_variable, unnecessary_string_interpolations, file_names, prefer_if_null_operators, prefer_adjacent_string_concatenation
 
 import 'dart:async';
 
@@ -8,7 +8,6 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/securityVerify/verificationSuccess.dart';
 import 'package:app/widget/appbar.dart';
-import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -58,27 +57,28 @@ class _VerificationCodeState extends State<VerificationCode> {
       setState(() {
         _token = res['token'].toString();
       });
-    } else if (res['message'] != null) {
+    } else if (res['message'] == "This email has register already...!") {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarningWithoutButton(
+          return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            text: res['message'],
+            contentText: "This email has register already...!".tr,
           );
         },
       );
       Navigator.pop(context);
-    } else {
+    } else if (res['message'] == "This mobile has register already...!") {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarningWithoutButton(
+          return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            text: "incorrect".tr,
+            contentText: "This mobile has register already...!".tr,
           );
         },
       );
+      Navigator.pop(context);
     }
   }
 
@@ -160,7 +160,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                           widget.verifyCode == 'verifyPhoneNum'
                               ? "verify your phone".tr
                               : "verify your email".tr,
-                          style: bodyTextMedium(null, FontWeight.bold),
+                          style: bodyTextMedium(null, null, FontWeight.bold),
                         ),
                         SizedBox(
                           height: 10,
@@ -203,7 +203,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                         //
                         //
                         //
-                        //pin code textfield
+                        //PIN code textfield
                         Container(
                           width: 60.w,
                           child: PinCodeTextField(
@@ -296,7 +296,8 @@ class _VerificationCodeState extends State<VerificationCode> {
                               },
                               child: Text(
                                 "resend".tr,
-                                style: bodyTextNormal(AppColors.primary, null),
+                                style: bodyTextNormal(
+                                    null, AppColors.primary, null),
                               ),
                             )
                           ],
@@ -344,7 +345,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -369,7 +370,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -394,7 +395,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -419,7 +420,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -445,24 +446,24 @@ class _VerificationCodeState extends State<VerificationCode> {
           ),
         ),
       );
-    } else if (res['message'] != null) {
+    } else if (res['message'] == "Invalid code") {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogErrorWithoutButton(
-            title: "incorrect".tr,
-            text: "otp_code_incorrect".tr,
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "Invalid code".tr,
           );
         },
       );
       otpCodeClearValue();
-    } else {
+    } else if (res['message'] == "User does not exist") {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarningWithoutButton(
+          return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            text: "system_error".tr,
+            contentText: "User does not exist".tr,
           );
         },
       );
@@ -475,7 +476,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -510,24 +511,13 @@ class _VerificationCodeState extends State<VerificationCode> {
           );
         }
       });
-    } else if (res['message'] != null) {
+    } else if (res['message'] == "Invalid code") {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogErrorWithoutButton(
-            title: "incorrect".tr,
-            text: "otp_code_incorrect".tr,
-          );
-        },
-      );
-      otpCodeClearValue();
-    } else {
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return CustomAlertDialogWarningWithoutButton(
+          return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            text: "system_error".tr,
+            contentText: "Invalid code".tr,
           );
         },
       );
@@ -540,7 +530,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -557,12 +547,12 @@ class _VerificationCodeState extends State<VerificationCode> {
     print(res.toString());
 
     if (res["message"] == "Your verify succeed") {
-      var changed = await postData(changePhoneEmailLoginInfoSeekerApi, {
+      var res = await postData(changePhoneEmailLoginInfoSeekerApi, {
         "email": widget.email,
         "mobile": widget.phoneNumber,
       });
 
-      if (changed['message'] == "Changed") {
+      if (res['message'] == "Changed") {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -572,15 +562,24 @@ class _VerificationCodeState extends State<VerificationCode> {
             ),
           ),
         );
-      } else {
+      } else if (res['message'] == "This email has register already...!") {
         await showDialog(
           context: context,
           builder: (context) {
-            return CustomAlertDialogErrorWithoutButton(
-              title: "incorrect".tr,
-              text: changed['message'] == null
-                  ? "incorrect".tr
-                  : changed['message'],
+            return CustAlertDialogWarningWithoutBtn(
+              title: "warning".tr,
+              contentText: "This email has register already...!".tr,
+            );
+          },
+        );
+        otpCodeClearValue();
+      } else if (res['message'] == "This mobile has register already...!") {
+        await showDialog(
+          context: context,
+          builder: (context) {
+            return CustAlertDialogWarningWithoutBtn(
+              title: "warning".tr,
+              contentText: "This mobile has register already...!".tr,
             );
           },
         );
@@ -590,20 +589,31 @@ class _VerificationCodeState extends State<VerificationCode> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogErrorWithoutButton(
-            title: "incorrect".tr,
-            text: "otp_code_incorrect".tr,
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "Invalid code".tr,
           );
         },
       );
       otpCodeClearValue();
-    } else {
+    } else if (res["message"] == "Mobile does not match") {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarningWithoutButton(
+          return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            text: "system_error".tr,
+            contentText: "Mobile does not match".tr,
+          );
+        },
+      );
+      otpCodeClearValue();
+    } else if (res["message"] == "Email does not match") {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "Email does not match".tr,
           );
         },
       );

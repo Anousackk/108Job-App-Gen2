@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: unused_local_variable, prefer_const_constructors, use_full_hex_values_for_flutter_colors
 
 import 'dart:io';
 
@@ -294,11 +294,11 @@ class _DeleteAccountState extends State<DeleteAccount> {
                           var result = await showDialog(
                               context: context,
                               builder: (context) {
-                                return SimpleAlertDialog(
+                                return NewVer2CustAlertDialogWarningBtnConfirmCancel(
                                   title: "delete account".tr,
                                   contentText: "are u sure delete account".tr,
-                                  textLeft: "cancel".tr,
-                                  textRight: 'confirm'.tr,
+                                  textButtonLeft: "cancel".tr,
+                                  textButtonRight: 'confirm'.tr,
                                 );
                               });
                           if (result == 'Ok') {

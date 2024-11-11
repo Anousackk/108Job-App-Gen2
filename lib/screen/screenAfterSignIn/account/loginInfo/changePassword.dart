@@ -36,7 +36,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -54,9 +54,9 @@ class _ChangePasswordState extends State<ChangePassword> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
             title: "successful".tr,
-            text: res['message'],
+            contentText: "Password has changed".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -65,18 +65,27 @@ class _ChangePasswordState extends State<ChangePassword> {
         },
       );
       Navigator.pop(context);
-    } else {
+    } else if (res["message"] == "Current password doesn't match in database") {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogErrorWithoutButton(
-            title: "incorrect".tr,
-            text: res['message'],
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "Current password doesn't match in database".tr,
+          );
+        },
+      );
+    } else if (res["message"] == "Password does not match") {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "Password does not match".tr,
           );
         },
       );
     }
-    ;
   }
 
   resetFormValidation() {
@@ -182,6 +191,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                       child: Text(
                                         "reset pass".tr,
                                         style: bodyTextNormal(
+                                          null,
                                           AppColors.fontWaring,
                                           null,
                                         ),
@@ -328,7 +338,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       //               Text(
                       //                 "Change Passwod Successful",
                       //                 style:
-                      //                     bodyTextMedium(null, FontWeight.bold),
+                      //                     bodyTextMedium(null,null, FontWeight.bold),
                       //               ),
                       //               SizedBox(
                       //                 height: 30,

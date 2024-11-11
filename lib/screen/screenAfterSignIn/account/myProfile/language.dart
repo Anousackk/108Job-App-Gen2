@@ -138,7 +138,8 @@ class _LanguageState extends State<Language> {
                             //Language
                             Text(
                               "language".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
+                              style:
+                                  bodyTextNormal(null, null, FontWeight.bold),
                             ),
                             SizedBox(
                               height: 5,
@@ -207,8 +208,7 @@ class _LanguageState extends State<Language> {
                                       child: Text(
                                         "required".tr,
                                         style: bodyTextSmall(
-                                          AppColors.fontDanger,
-                                        ),
+                                            null, AppColors.fontDanger, null),
                                       ),
                                     )
                                   : Container(),
@@ -222,7 +222,8 @@ class _LanguageState extends State<Language> {
                             //Proficiency Language / Language level
                             Text(
                               "proficiency".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
+                              style:
+                                  bodyTextNormal(null, null, FontWeight.bold),
                             ),
                             SizedBox(
                               height: 5,
@@ -290,8 +291,7 @@ class _LanguageState extends State<Language> {
                                       child: Text(
                                         "required".tr,
                                         style: bodyTextSmall(
-                                          AppColors.fontDanger,
-                                        ),
+                                            null, AppColors.fontDanger, null),
                                       ),
                                     )
                                   : Container(),
@@ -358,7 +358,7 @@ class _LanguageState extends State<Language> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -376,9 +376,9 @@ class _LanguageState extends State<Language> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "save".tr + " " + "language".tr + "successful".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "save".tr + " " + "successful".tr,
+            contentText: "save".tr + " " + "language".tr + "successful".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);

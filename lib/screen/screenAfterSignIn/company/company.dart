@@ -28,6 +28,8 @@ class Company extends StatefulWidget {
 class _CompanyState extends State<Company> {
   TextEditingController _searchCompanyNameController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+  FocusScopeNode _currentFocus = FocusScopeNode();
+  FocusNode focusNode = FocusNode();
 
   List _companies = [];
   List _companiesFeatured = [];
@@ -64,7 +66,7 @@ class _CompanyState extends State<Company> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustomAlertLoading();
+          return CustAlertLoading();
         },
       );
     }
@@ -176,7 +178,7 @@ class _CompanyState extends State<Company> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -194,9 +196,10 @@ class _CompanyState extends State<Company> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$companyName " + "followed".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            strIcon: "\uf004",
+            title: "follow".tr + " " + "successful".tr,
+            contentText: "$companyName ",
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -211,10 +214,16 @@ class _CompanyState extends State<Company> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$companyName " + "unfollowed".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            strIcon: "\uf7a9",
+            boxCircleColor: AppColors.warning200,
+            iconColor: AppColors.warning600,
+            title: "unfollow".tr + " " + "successful".tr,
+            contentText: "$companyName",
             textButton: "ok".tr,
+            buttonColor: AppColors.warning200,
+            textButtonColor: AppColors.warning600,
+            widgetBottomColor: AppColors.warning200,
             press: () {
               Navigator.pop(context);
             },
@@ -272,17 +281,13 @@ class _CompanyState extends State<Company> {
 
   @override
   Widget build(BuildContext context) {
-    FocusScopeNode currentFocus = FocusScopeNode();
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: GestureDetector(
         onTap: () {
-          currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-            // setState(() {
-            //   _isFocusIconColorTelAndEmail = false;
-            // });
+          _currentFocus = FocusScope.of(context);
+          if (!_currentFocus.hasPrimaryFocus) {
+            _currentFocus.unfocus();
           }
         },
         child: Scaffold(
@@ -372,6 +377,7 @@ class _CompanyState extends State<Company> {
                             ],
                           ),
                         ),
+
                         SizedBox(
                           height: 20,
                         ),
@@ -408,7 +414,7 @@ class _CompanyState extends State<Company> {
                                             Text(
                                               "Sponsored companies",
                                               style: bodyTextMedium(
-                                                  null, FontWeight.bold),
+                                                  null, null, FontWeight.bold),
                                             ),
                                           ],
                                         ),
@@ -443,6 +449,8 @@ class _CompanyState extends State<Company> {
                                             //Featured card
                                             return GestureDetector(
                                               onTap: () {
+                                                FocusScope.of(context)
+                                                    .requestFocus(focusNode);
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -471,8 +479,6 @@ class _CompanyState extends State<Company> {
                                                 ),
                                                 child: Column(
                                                   children: [
-                                                    //
-                                                    //
                                                     //
                                                     //
                                                     //Featured card cover
@@ -607,6 +613,7 @@ class _CompanyState extends State<Company> {
                                                                         "${_companyName}",
                                                                         style: bodyTextMaxNormal(
                                                                             null,
+                                                                            null,
                                                                             FontWeight.bold),
                                                                         textAlign:
                                                                             TextAlign.center,
@@ -629,6 +636,8 @@ class _CompanyState extends State<Company> {
                                                                     Text(
                                                                       "${_industry}",
                                                                       style: bodyTextSmall(
+                                                                          null,
+                                                                          null,
                                                                           null),
                                                                       overflow:
                                                                           TextOverflow
@@ -643,6 +652,8 @@ class _CompanyState extends State<Company> {
                                                                     Text(
                                                                       "${_address}",
                                                                       style: bodyTextSmall(
+                                                                          null,
+                                                                          null,
                                                                           null),
                                                                       overflow:
                                                                           TextOverflow
@@ -668,23 +679,30 @@ class _CompanyState extends State<Company> {
                                                                       children: [
                                                                         Text(
                                                                           "${_followerTotals} ",
-                                                                          style:
-                                                                              bodyTextSmall(null),
+                                                                          style: bodyTextSmall(
+                                                                              null,
+                                                                              null,
+                                                                              null),
                                                                         ),
                                                                         Text(
                                                                           "follower"
                                                                               .tr,
-                                                                          style:
-                                                                              bodyTextSmall(null),
+                                                                          style: bodyTextSmall(
+                                                                              null,
+                                                                              null,
+                                                                              null),
                                                                         ),
                                                                       ],
                                                                     ),
 
                                                                     //
+                                                                    //
                                                                     //Following / Follow
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () {
+                                                                        FocusScope.of(context)
+                                                                            .requestFocus(focusNode);
                                                                         setState(
                                                                             () {
                                                                           i['follow'] =
@@ -715,7 +733,7 @@ class _CompanyState extends State<Company> {
                                                                                   ),
                                                                                   Text(
                                                                                     "following".tr,
-                                                                                    style: bodyTextSmall(AppColors.fontWhite),
+                                                                                    style: bodyTextSmall(null, AppColors.fontWhite, null),
                                                                                   ),
                                                                                 ],
                                                                               ),
@@ -739,7 +757,7 @@ class _CompanyState extends State<Company> {
                                                                                   ),
                                                                                   Text(
                                                                                     "follow".tr,
-                                                                                    style: bodyTextSmall(null),
+                                                                                    style: bodyTextSmall(null, null, null),
                                                                                   ),
                                                                                 ],
                                                                               ),
@@ -864,6 +882,8 @@ class _CompanyState extends State<Company> {
                                             children: [
                                               GestureDetector(
                                                 onTap: () {
+                                                  FocusScope.of(context)
+                                                      .requestFocus(focusNode);
                                                   pressTapMyJobType(
                                                       "AllCompanies");
                                                 },
@@ -884,6 +904,7 @@ class _CompanyState extends State<Company> {
                                                   child: Text(
                                                     "all company".tr,
                                                     style: bodyTextNormal(
+                                                        null,
                                                         _searchType ==
                                                                 "AllCompanies"
                                                             ? AppColors
@@ -921,6 +942,7 @@ class _CompanyState extends State<Company> {
                                                   child: Text(
                                                     "hiring now".tr,
                                                     style: bodyTextNormal(
+                                                        null,
                                                         _searchType == "Hiring"
                                                             ? AppColors
                                                                 .fontWhite
@@ -957,6 +979,7 @@ class _CompanyState extends State<Company> {
                                                   child: Text(
                                                     "following".tr,
                                                     style: bodyTextNormal(
+                                                        null,
                                                         _searchType ==
                                                                 "Following"
                                                             ? AppColors
@@ -995,6 +1018,7 @@ class _CompanyState extends State<Company> {
                                                   child: Text(
                                                     "applied".tr,
                                                     style: bodyTextNormal(
+                                                        null,
                                                         _searchType ==
                                                                 "SubmittedCV"
                                                             ? AppColors
@@ -1046,34 +1070,6 @@ class _CompanyState extends State<Company> {
                                                   // child: Text("Loading"),
                                                   ),
                                             )
-
-                                          // Padding(
-                                          //     padding: const EdgeInsets
-                                          //         .symmetric(
-                                          //         horizontal: 20,
-                                          //         vertical: 8),
-                                          //     child: ElevatedButton(
-                                          //       style: ButtonStyle(
-                                          //           backgroundColor:
-                                          //               MaterialStatePropertyAll(
-                                          //                   AppColors
-                                          //                       .lightPrimary)),
-                                          //       onPressed: () => {
-                                          //         setState(() {
-                                          //           _isLoadingMoreData =
-                                          //               true;
-                                          //         }),
-                                          //         fetchCompanies(
-                                          //             _searchType),
-                                          //       },
-                                          //       child: Text(
-                                          //         'view more'.tr,
-                                          //         style: TextStyle(
-                                          //             color: AppColors
-                                          //                 .fontPrimary),
-                                          //       ),
-                                          //     ),
-                                          //   )
                                           : Padding(
                                               padding:
                                                   const EdgeInsets.all(8.0),
@@ -1096,6 +1092,8 @@ class _CompanyState extends State<Company> {
                                       children: [
                                         GestureDetector(
                                           onTap: () {
+                                            FocusScope.of(context)
+                                                .requestFocus(focusNode);
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -1210,6 +1208,7 @@ class _CompanyState extends State<Company> {
                                                                 "${_companyName}",
                                                                 style: bodyTextNormal(
                                                                     null,
+                                                                    null,
                                                                     FontWeight
                                                                         .bold),
                                                                 overflow:
@@ -1218,6 +1217,8 @@ class _CompanyState extends State<Company> {
                                                             Text("${_industry}",
                                                                 style:
                                                                     bodyTextSmall(
+                                                                        null,
+                                                                        null,
                                                                         null),
                                                                 overflow:
                                                                     TextOverflow
@@ -1225,6 +1226,8 @@ class _CompanyState extends State<Company> {
                                                             Text("${_address}",
                                                                 style:
                                                                     bodyTextSmall(
+                                                                        null,
+                                                                        null,
                                                                         null),
                                                                 overflow:
                                                                     TextOverflow
@@ -1235,6 +1238,8 @@ class _CompanyState extends State<Company> {
                                                                         .tr,
                                                                 style:
                                                                     bodyTextSmall(
+                                                                        null,
+                                                                        null,
                                                                         null))
                                                           ],
                                                         ),
@@ -1251,6 +1256,9 @@ class _CompanyState extends State<Company> {
                                                 //Button follow / following
                                                 GestureDetector(
                                                   onTap: () {
+                                                    FocusScope.of(context)
+                                                        .requestFocus(
+                                                            focusNode);
                                                     setState(() {
                                                       i['follow'] =
                                                           !i['follow'];
@@ -1294,9 +1302,13 @@ class _CompanyState extends State<Company> {
                                                               Text(
                                                                   "following"
                                                                       .tr,
-                                                                  style: bodyTextSmall(
-                                                                      AppColors
-                                                                          .fontWhite)),
+                                                                  style:
+                                                                      bodyTextSmall(
+                                                                    null,
+                                                                    AppColors
+                                                                        .fontWhite,
+                                                                    null,
+                                                                  )),
                                                             ],
                                                           ),
                                                         )
@@ -1329,6 +1341,8 @@ class _CompanyState extends State<Company> {
                                                               Text("follow".tr,
                                                                   style:
                                                                       bodyTextSmall(
+                                                                          null,
+                                                                          null,
                                                                           null)),
                                                             ],
                                                           ),

@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, body_might_complete_normally_nullable, prefer_const_constructors, avoid_print
+// ignore_for_file: unused_local_variable, body_might_complete_normally_nullable, prefer_const_constructors, avoid_print, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_adjacent_string_concatenation, unnecessary_string_interpolations, await_only_futures
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -23,11 +23,11 @@ class AuthService {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustomAlertLoading();
+          return CustAlertLoading();
         },
       );
       FacebookAuth.instance.login().then((value) {
-        print(value);
+        print("eiei: " + value.toString());
 
         if (value.status == LoginStatus.success) {
           print("LoginStatus.success");
@@ -92,7 +92,7 @@ class AuthService {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustomAlertLoading();
+          return CustAlertLoading();
         },
       );
       print("try");
@@ -184,7 +184,7 @@ class AuthService {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustomAlertLoading();
+          return CustAlertLoading();
         },
       );
 
@@ -306,77 +306,87 @@ class AuthService {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustomAlertLoading();
+          return CustAlertLoading();
         },
       );
 
       FacebookAuth.instance
-          .login(permissions: ["public_profile", "email"]).then((value) {
-        print(value);
+          .login(permissions: ["public_profile", "email"]).then(
+        (value) {
+          print(value);
 
-        if (value.status == LoginStatus.success) {
-          print("LoginStatus.success");
+          if (value.status == LoginStatus.success) {
+            print("LoginStatus.success");
 
-          FacebookAuth.instance.getUserData().then(
-            (userData) async {
-              print("Display Facebook sign in");
-              print(userData);
-              print(userData['id']);
-              print(userData['email']);
-              print(userData['name']);
-              var fSignInId = userData['id'];
-              var fSignInEmail = userData['email'];
-              var fSignInDisplayName = userData['name'];
+            FacebookAuth.instance.getUserData().then(
+              (userData) async {
+                print("Display Facebook sign in");
+                print(userData);
+                print(userData['id']);
+                print(userData['email']);
+                print(userData['name']);
+                var fSignInId = userData['id'];
+                var fSignInEmail = userData['email'];
+                var fSignInDisplayName = userData['name'];
 
-              var res = await postData(apiSyncGoogleFacebookAip, {
-                "id": fSignInId,
-                "email": fSignInEmail,
-                "type": "facebook",
-              });
-              callBack(res['message']);
+                var res = await postData(apiSyncGoogleFacebookAip, {
+                  "id": fSignInId,
+                  "email": fSignInEmail,
+                  "type": "facebook",
+                });
+                callBack("Sync successfully");
 
-              //close alert dialog loading
-              if (res != null) {
-                Navigator.pop(context);
-              }
+                //close alert dialog loading
+                if (res != null) {
+                  Navigator.pop(context);
+                }
 
-              if (res["message"] == "Sync successful") {
-                await showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) {
-                    return CustomAlertDialogSuccessButtonConfirm(
-                      title: "Connect Facebook Success",
-                      text: res["message"],
-                      textButton: "ok".tr,
-                      press: () {
-                        Navigator.pop(context);
-                      },
-                    );
-                  },
-                );
-              } else {
-                await showDialog(
-                  context: context,
-                  builder: (context) {
-                    return CustomAlertDialogWarningWithoutButton(
-                      title: "Warning",
-                      text: res["message"],
-                      textButton: "ok".tr,
-                      // press: () {
-                      //   Navigator.pop(context);
-                      // },
-                    );
-                  },
-                );
-              }
-            },
-          );
-        } else if (value.status == LoginStatus.cancelled) {
-          Navigator.pop(context);
-          print("LoginStatus.cancelled");
-        }
-      });
+                if (res["message"] == "Sync successfully") {
+                  await showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return NewVer2CustAlertDialogSuccessBtnConfirm(
+                        title: "Facebook",
+                        contentText: "Sync successfully".tr,
+                        textButton: "ok".tr,
+                        press: () {
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  );
+                } else if (res["message"] == "Not found user info") {
+                  await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return CustAlertDialogWarningWithoutBtn(
+                        title: "warning".tr,
+                        contentText: "Not found user info".tr,
+                      );
+                    },
+                  );
+                } else if (res["message"] ==
+                    "This email already synced another account") {
+                  await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return CustAlertDialogWarningWithoutBtn(
+                        title: "warning".tr,
+                        contentText:
+                            "This email already synced another account".tr,
+                      );
+                    },
+                  );
+                }
+              },
+            );
+          } else if (value.status == LoginStatus.cancelled) {
+            Navigator.pop(context);
+            print("LoginStatus.cancelled");
+          }
+        },
+      );
     }
 
     //
@@ -391,7 +401,7 @@ class AuthService {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustomAlertLoading();
+          return CustAlertLoading();
         },
       );
 
@@ -429,21 +439,21 @@ class AuthService {
             "email": gSignInEmail,
             "type": "google",
           });
-          callBack(res['message']);
+          callBack("Sync successfully");
 
           //close alert dialog loading
           if (res != null) {
             Navigator.pop(context);
           }
 
-          if (res["message"] == "Sync successful") {
+          if (res["message"] == "Sync successfully") {
             await showDialog(
               barrierDismissible: false,
               context: context,
               builder: (context) {
-                return CustomAlertDialogSuccessButtonConfirm(
-                  title: "Connect Google Success",
-                  text: res["message"],
+                return NewVer2CustAlertDialogSuccessBtnConfirm(
+                  title: "Google",
+                  contentText: "Sync successfully".tr,
                   textButton: "ok".tr,
                   press: () {
                     Navigator.pop(context);
@@ -451,16 +461,24 @@ class AuthService {
                 );
               },
             );
-          } else {
+          } else if (res["message"] == "Not found user info") {
             await showDialog(
               context: context,
               builder: (context) {
-                return CustomAlertDialogWarningWithoutButton(
-                  title: "Warning",
-                  text: res["message"],
-                  // press: () {
-                  //   Navigator.pop(context);
-                  // },
+                return CustAlertDialogWarningWithoutBtn(
+                  title: "warning".tr,
+                  contentText: "Not found user info".tr,
+                );
+              },
+            );
+          } else if (res["message"] ==
+              "This email already synced another account") {
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return CustAlertDialogWarningWithoutBtn(
+                  title: "warning".tr,
+                  contentText: "This email already synced another account".tr,
                 );
               },
             );
@@ -488,7 +506,7 @@ class AuthService {
           context: context,
           barrierDismissible: false,
           builder: (context) {
-            return CustomAlertLoading();
+            return CustAlertLoading();
           },
         );
 
@@ -539,21 +557,21 @@ class AuthService {
             "email": appleSigninEmail,
             "type": "apple",
           });
-          callBack(res['message']);
+          callBack("Sync successfully");
 
           //close alert dialog loading
           if (res != null) {
             Navigator.pop(context);
           }
 
-          if (res["message"] == "Sync successful") {
+          if (res["message"] == "Sync successfully") {
             await showDialog(
               barrierDismissible: false,
               context: context,
               builder: (context) {
-                return CustomAlertDialogSuccessButtonConfirm(
-                  title: "Connect Apple Success",
-                  text: res["message"],
+                return NewVer2CustAlertDialogSuccessBtnConfirm(
+                  title: "Apple",
+                  contentText: "Sync successfully".tr,
                   textButton: "ok".tr,
                   press: () {
                     Navigator.pop(context);
@@ -561,16 +579,24 @@ class AuthService {
                 );
               },
             );
-          } else {
+          } else if (res["message"] == "Not found user info") {
             await showDialog(
               context: context,
               builder: (context) {
-                return CustomAlertDialogWarningWithoutButton(
-                  title: "Warning",
-                  text: res["message"],
-                  // press: () {
-                  //   Navigator.pop(context);
-                  // },
+                return CustAlertDialogWarningWithoutBtn(
+                  title: "warning".tr,
+                  contentText: "Not found user info".tr,
+                );
+              },
+            );
+          } else if (res["message"] ==
+              "This email already synced another account") {
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return CustAlertDialogWarningWithoutBtn(
+                  title: "warning".tr,
+                  contentText: "This email already synced another account".tr,
                 );
               },
             );
@@ -584,5 +610,3 @@ class AuthService {
     }
   }
 }
-
-//"Sync successful"

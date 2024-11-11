@@ -8,7 +8,6 @@ import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:app/widget/button.dart';
-import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter/services.dart';
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
@@ -146,7 +145,7 @@ class _CompanyDetailState extends State<CompanyDetail>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -163,9 +162,10 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$companyName " + "followed".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            strIcon: "\uf004",
+            title: "follow".tr + " " + "successful".tr,
+            contentText: "$companyName",
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -178,15 +178,20 @@ class _CompanyDetailState extends State<CompanyDetail>
       );
     } else if (message == "Unfollow") {
       Navigator.pop(context);
-
       await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$companyName " + "unfollowed".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            strIcon: "\uf7a9",
+            boxCircleColor: AppColors.warning200,
+            iconColor: AppColors.warning600,
+            title: "unfollow".tr + " " + "successful".tr,
+            contentText: "$companyName",
             textButton: "ok".tr,
+            buttonColor: AppColors.warning200,
+            textButtonColor: AppColors.warning600,
+            widgetBottomColor: AppColors.warning200,
             press: () {
               Navigator.pop(context);
               setState(() {
@@ -206,7 +211,7 @@ class _CompanyDetailState extends State<CompanyDetail>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -223,9 +228,9 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$companyName " + "submitted cv".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "submit cv".tr + " " + "successful".tr,
+            contentText: "$companyName",
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -239,9 +244,9 @@ class _CompanyDetailState extends State<CompanyDetail>
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarningWithoutButton(
+          return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            text: "$message",
+            contentText: "$message",
           );
         },
       );
@@ -252,9 +257,9 @@ class _CompanyDetailState extends State<CompanyDetail>
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarningWithoutButton(
+          return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            text: "$message",
+            contentText: "$message",
           );
         },
       );
@@ -268,7 +273,7 @@ class _CompanyDetailState extends State<CompanyDetail>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -287,9 +292,10 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$jobTitle " + "save job".tr + "successful".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            strIcon: "\uf004",
+            title: "save job".tr + " " + "successful".tr,
+            contentText: "$jobTitle",
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -302,10 +308,16 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$jobTitle " + "unsave job".tr + "successful".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            strIcon: "\uf7a9",
+            boxCircleColor: AppColors.warning200,
+            iconColor: AppColors.warning600,
+            title: "unsave job".tr + " " + "successful".tr,
+            contentText: "$jobTitle",
             textButton: "ok".tr,
+            buttonColor: AppColors.warning200,
+            textButtonColor: AppColors.warning600,
+            widgetBottomColor: AppColors.warning200,
             press: () {
               Navigator.pop(context);
             },
@@ -354,13 +366,13 @@ class _CompanyDetailState extends State<CompanyDetail>
         appBar: AppBar(
           toolbarHeight: 0,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
-          backgroundColor: AppColors.background,
+          // backgroundColor: AppColors.background,
         ),
         body: SafeArea(
           child: Container(
             height: double.infinity,
             width: double.infinity,
-            color: AppColors.background,
+            // color: AppColors.background,
             child: _isLoading
                 ? Center(
                     child: Container(
@@ -639,7 +651,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         child: Text(
                                           _companyName,
                                           style: bodyTextMedium(
-                                              null, FontWeight.bold),
+                                              null, null, FontWeight.bold),
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
@@ -665,10 +677,12 @@ class _CompanyDetailState extends State<CompanyDetail>
                               SliverPersistentHeader(
                                 pinned: true,
                                 delegate: _SliverAppBarDelegate(
+                                  // maxHeight: 62,
+                                  // minHeight: 62,
                                   child: Container(
                                     width: double.infinity,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 20),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
                                     decoration: BoxDecoration(
                                       color: AppColors.backgroundWhite,
                                       // color: AppColors.red,
@@ -681,14 +695,14 @@ class _CompanyDetailState extends State<CompanyDetail>
                                           //
                                           //
                                           //
-                                          //About Tapxw
+                                          //About Tap
                                           GestureDetector(
                                             onTap: () {
                                               pressTapCompanyDetail('about');
                                             },
                                             child: Container(
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 10),
+                                                  horizontal: 17, vertical: 8),
                                               decoration: BoxDecoration(
                                                 color: _typeTapCompanyDetail ==
                                                         "about"
@@ -708,6 +722,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                               child: Text(
                                                 "about".tr,
                                                 style: bodyTextNormal(
+                                                    null,
                                                     _typeTapCompanyDetail ==
                                                             "about"
                                                         ? AppColors.fontPrimary
@@ -732,7 +747,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                             },
                                             child: Container(
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 10),
+                                                  horizontal: 17, vertical: 8),
                                               decoration: BoxDecoration(
                                                 color: _typeTapCompanyDetail ==
                                                         "jobOpening"
@@ -752,6 +767,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                               child: Text(
                                                 "job open".tr,
                                                 style: bodyTextNormal(
+                                                    null,
                                                     _typeTapCompanyDetail ==
                                                             "jobOpening"
                                                         ? AppColors.fontPrimary
@@ -775,7 +791,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                             },
                                             child: Container(
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 10),
+                                                  horizontal: 17, vertical: 8),
                                               decoration: BoxDecoration(
                                                 color: _typeTapCompanyDetail ==
                                                         "video"
@@ -795,6 +811,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                               child: Text(
                                                 "video".tr,
                                                 style: bodyTextNormal(
+                                                    null,
                                                     _typeTapCompanyDetail ==
                                                             "video"
                                                         ? AppColors.fontPrimary
@@ -818,7 +835,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                             },
                                             child: Container(
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 10),
+                                                  horizontal: 17, vertical: 8),
                                               decoration: BoxDecoration(
                                                 color: _typeTapCompanyDetail ==
                                                         "photo"
@@ -838,6 +855,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                               child: Text(
                                                 "photo gallery".tr,
                                                 style: bodyTextNormal(
+                                                    null,
                                                     _typeTapCompanyDetail ==
                                                             "photo"
                                                         ? AppColors.fontPrimary
@@ -861,7 +879,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                             },
                                             child: Container(
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 10),
+                                                  horizontal: 17, vertical: 8),
                                               decoration: BoxDecoration(
                                                 color: _typeTapCompanyDetail ==
                                                         "benefit"
@@ -881,6 +899,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                               child: Text(
                                                 "benefit".tr,
                                                 style: bodyTextNormal(
+                                                    null,
                                                     _typeTapCompanyDetail ==
                                                             "benefit"
                                                         ? AppColors.fontPrimary
@@ -904,7 +923,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                             },
                                             child: Container(
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 10),
+                                                  horizontal: 17, vertical: 8),
                                               decoration: BoxDecoration(
                                                 color: _typeTapCompanyDetail ==
                                                         "contact"
@@ -924,6 +943,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                               child: Text(
                                                 "contact".tr,
                                                 style: bodyTextNormal(
+                                                    null,
                                                     _typeTapCompanyDetail ==
                                                             "contact"
                                                         ? AppColors.fontPrimary
@@ -962,9 +982,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                     physics: ClampingScrollPhysics(),
                                     child: Container(
                                       padding: EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                      ),
+                                          left: 20, right: 20, bottom: 20),
                                       child: HtmlWidget(
                                         '$_aboutCompany',
                                         onTapUrl: (url) {
@@ -1090,6 +1108,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                     "${_jobOpeningName}",
                                                                     style: bodyTextNormal(
                                                                         null,
+                                                                        null,
                                                                         FontWeight
                                                                             .bold),
                                                                     overflow:
@@ -1112,6 +1131,8 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                       child: Text(
                                                                           "${_jobOpeningWorkingLocation}",
                                                                           style: bodyTextSmall(
+                                                                              null,
+                                                                              null,
                                                                               null),
                                                                           overflow:
                                                                               TextOverflow.ellipsis),
@@ -1131,6 +1152,8 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                     Text(
                                                                       "${_jobOpeningOpeningDate} - ${_jobOpeningClosingDate}",
                                                                       style: bodyTextSmall(
+                                                                          null,
+                                                                          null,
                                                                           null),
                                                                     )
                                                                   ],
@@ -1174,9 +1197,13 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                   ),
                                                                   Text(
                                                                     "saved".tr,
-                                                                    style: bodyTextSmall(
-                                                                        AppColors
-                                                                            .fontPrimary),
+                                                                    style:
+                                                                        bodyTextSmall(
+                                                                      null,
+                                                                      AppColors
+                                                                          .fontPrimary,
+                                                                      null,
+                                                                    ),
                                                                   ),
                                                                 ],
                                                               ),
@@ -1194,9 +1221,10 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                   ),
                                                                   Text(
                                                                     "save".tr,
-                                                                    style:
-                                                                        bodyTextSmall(
-                                                                            null),
+                                                                    style: bodyTextSmall(
+                                                                        null,
+                                                                        null,
+                                                                        null),
                                                                   ),
                                                                 ],
                                                               ),
@@ -1318,7 +1346,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                     child: Text(
                                                       "${_benefitName}",
                                                       style: bodyTextNormal(
-                                                          null, null),
+                                                          null, null, null),
                                                     ),
                                                   ),
                                                 ],
@@ -1359,11 +1387,12 @@ class _CompanyDetailState extends State<CompanyDetail>
                                             Text(
                                               "${_companyName}",
                                               style: bodyTextNormal(
-                                                  null, FontWeight.bold),
+                                                  null, null, FontWeight.bold),
                                             ),
                                             Text(
                                               "${_address}",
-                                              style: bodyTextNormal(null, null),
+                                              style: bodyTextNormal(
+                                                  null, null, null),
                                             ),
                                             SizedBox(
                                               height: 10,
@@ -1403,7 +1432,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                             //             },
                                             //             child: Text(
                                             //               "${_email}",
-                                            //               style: bodyTextNormal(
+                                            //               style: bodyTextNormal(null,
                                             //                   null, null),
                                             //             ),
                                             //           ),
@@ -1445,7 +1474,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                             //             },
                                             //             child: Text(
                                             //               "${_phone}",
-                                            //               style: bodyTextNormal(
+                                            //               style: bodyTextNormal(null,
                                             //                   null, null),
                                             //             ),
                                             //           ),
@@ -1493,7 +1522,9 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                             "${_website}",
                                                             style:
                                                                 bodyTextNormal(
-                                                                    null, null),
+                                                                    null,
+                                                                    null,
+                                                                    null),
                                                           ),
                                                         ),
                                                       )
@@ -1538,7 +1569,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                         child: Text(
                                                           "${_facebook}",
                                                           style: bodyTextNormal(
-                                                              null, null),
+                                                              null, null, null),
                                                         ),
                                                       ),
                                                     )
@@ -1582,7 +1613,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                         child: Text(
                                                           "${_youtube}",
                                                           style: bodyTextNormal(
-                                                              null, null),
+                                                              null, null, null),
                                                         ),
                                                       ),
                                                     )
@@ -1625,7 +1656,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                         child: Text(
                                                           "${_tiktok}",
                                                           style: bodyTextNormal(
-                                                              null, null),
+                                                              null, null, null),
                                                         ),
                                                       ),
                                                     )
@@ -1669,7 +1700,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                         child: Text(
                                                           "${_linkIn}",
                                                           style: bodyTextNormal(
-                                                              null, null),
+                                                              null, null, null),
                                                         ),
                                                       ),
                                                     )
@@ -1788,11 +1819,60 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         EdgeInsets.all(10),
                                       ),
                                       text: "submit cv".tr,
-                                      // fontWeight:
-                                      //     FontWeight.bold,
-                                      press: () {
-                                        submittedCV(
-                                            _companyName, widget.companyId);
+                                      // press: () async {
+                                      //   var result = await showDialog(
+                                      //       context: context,
+                                      //       builder: (context) {
+                                      //         return AlertDialogBtnConfirmCancelBetween(
+                                      //           title: "submit cv".tr,
+                                      //           contentText: "${_companyName}" +
+                                      //               "\n" +
+                                      //               "are_you_sure_sent_cv".tr,
+                                      //           textLeft: 'cancel'.tr,
+                                      //           textRight: 'confirm'.tr,
+                                      //           colorTextRight:
+                                      //               AppColors.fontPrimary,
+                                      //           borderColorButtonRight:
+                                      //               AppColors.borderPrimary,
+                                      //         );
+                                      //       });
+                                      //   if (result == 'Ok') {
+                                      //     print("confirm submit cv");
+                                      //     submittedCV(
+                                      //       _companyName,
+                                      //       widget.companyId,
+                                      //     );
+                                      //   }
+                                      // },
+
+                                      press: () async {
+                                        var result = await showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel(
+                                                boxCircleColor:
+                                                    AppColors.primary200,
+                                                iconColor: AppColors.primary600,
+                                                title: "submit cv".tr,
+                                                smallText:
+                                                    "express_interest_explain"
+                                                        .tr,
+                                                contentText: "${_companyName}",
+                                                textButtonLeft: 'cancel'.tr,
+                                                textButtonRight: 'confirm'.tr,
+                                                buttonRightColor:
+                                                    AppColors.primary600,
+                                                widgetBottomColor:
+                                                    AppColors.primary200,
+                                              );
+                                            });
+                                        if (result == 'Ok') {
+                                          print("confirm submit cv");
+                                          submittedCV(
+                                            _companyName,
+                                            widget.companyId,
+                                          );
+                                        }
                                       },
                                     )
                                   : Button(
@@ -1801,13 +1881,13 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         EdgeInsets.all(10),
                                       ),
                                       text: "submitted cv".tr,
-                                      colorText: AppColors.fontDark,
-                                      // fontWeight:
-                                      //     FontWeight.bold,
                                       colorButton: AppColors.buttonGreyWhite,
+                                      colorText: AppColors.fontDark,
                                       press: () {
                                         submittedCV(
-                                            _companyName, widget.companyId);
+                                          _companyName,
+                                          widget.companyId,
+                                        );
                                       },
                                     ),
                             )
@@ -1835,15 +1915,15 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
 
   @override
-  double get minExtent => minHeight ?? 70;
+  double get minExtent => minHeight ?? 62;
 
   @override
-  double get maxExtent => maxHeight ?? 70;
+  double get maxExtent => maxHeight ?? 62;
 
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
+    return SizedBox.expand(child: child);
   }
 
   @override
@@ -1851,5 +1931,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return maxHeight != oldDelegate.maxHeight ||
         minHeight != oldDelegate.minHeight ||
         child != oldDelegate.child;
+    // return true;
   }
 }

@@ -57,14 +57,14 @@ class _VerificationSuccessState extends State<VerificationSuccess> {
                 widget.verifySuccess == 'verifyPhoneNum'
                     ? "phone".tr
                     : "email".tr,
-                style: bodyTextMedium(null, FontWeight.bold),
+                style: bodyTextMedium(null, null, FontWeight.bold),
               ),
               SizedBox(
                 height: 10,
               ),
               Text(
                 "verify".tr + " " + "successful".tr,
-                style: bodyTextMedium(null, FontWeight.bold),
+                style: bodyTextMedium(null, null, FontWeight.bold),
               ),
               SizedBox(
                 height: 30,

@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 //
 //
@@ -24,7 +25,7 @@ class MainBody extends StatefulWidget {
 }
 
 class _MainBodyState extends State<MainBody> {
-  final CarouselController _controller = CarouselController();
+  final CarouselSliderController _controller = CarouselSliderController();
 
   int _currentImageIndex = 0;
   bool _isLoading = true;
@@ -194,7 +195,7 @@ class _MainBodyState extends State<MainBody> {
                                             children: [
                                               Text(
                                                 imagePath['title'],
-                                                style: bodyTextMedium(
+                                                style: bodyTextMedium(null,
                                                     null, FontWeight.bold),
                                               ),
                                               SizedBox(
@@ -203,7 +204,7 @@ class _MainBodyState extends State<MainBody> {
                                               Text(
                                                 imagePath['text'],
                                                 style: bodyTextMaxNormal(
-                                                    null, null),
+                                                    null, null, null),
                                                 textAlign: TextAlign.center,
                                               ),
                                             ],
@@ -296,8 +297,8 @@ class _MainBodyState extends State<MainBody> {
                           },
                           child: Text(
                             "alreadyHaveAccount".tr,
-                            style:
-                                bodyTextMaxNormal(AppColors.fontPrimary, null),
+                            style: bodyTextMaxNormal(
+                                null, AppColors.fontPrimary, null),
                           ),
                         )
                       ],

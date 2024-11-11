@@ -139,7 +139,8 @@ class _NotificationsState extends State<Notifications> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   "notification".tr,
-                                  style: bodyTextMedium(null, FontWeight.bold),
+                                  style: bodyTextMedium(
+                                      null, null, FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -200,8 +201,8 @@ class _NotificationsState extends State<Notifications> {
                                     }
                                     dynamic i = _listNotifications[index];
                                     _title = i['title'];
-                                    _openingDate = i['openingDate'] ?? null;
-                                    _closingDate = i['closingDate'] ?? null;
+                                    _openingDate = i['openingDate'];
+                                    _closingDate = i['closingDate'];
                                     _status = i['status'];
                                     // _status = true;
 
@@ -323,6 +324,7 @@ class _NotificationsState extends State<Notifications> {
                                                               style:
                                                                   bodyTextMaxNormal(
                                                                       null,
+                                                                      null,
                                                                       FontWeight
                                                                           .bold),
                                                               overflow:
@@ -356,14 +358,18 @@ class _NotificationsState extends State<Notifications> {
                                                             "opening date".tr +
                                                                 ": ",
                                                             style: bodyTextSmall(
+                                                                null,
                                                                 AppColors
-                                                                    .fontGreyOpacity),
+                                                                    .fontGreyOpacity,
+                                                                null),
                                                           ),
                                                           Text(
                                                             "${_openingDate}",
                                                             style: bodyTextSmall(
+                                                                null,
                                                                 AppColors
-                                                                    .fontGreyOpacity),
+                                                                    .fontGreyOpacity,
+                                                                null),
                                                           ),
                                                         ],
                                                       ),
@@ -373,14 +379,18 @@ class _NotificationsState extends State<Notifications> {
                                                             "closing date".tr +
                                                                 ": ",
                                                             style: bodyTextSmall(
+                                                                null,
                                                                 AppColors
-                                                                    .fontGreyOpacity),
+                                                                    .fontGreyOpacity,
+                                                                null),
                                                           ),
                                                           Text(
                                                             "${_closingDate}",
                                                             style: bodyTextSmall(
+                                                                null,
                                                                 AppColors
-                                                                    .fontGreyOpacity),
+                                                                    .fontGreyOpacity,
+                                                                null),
                                                           ),
                                                         ],
                                                       )

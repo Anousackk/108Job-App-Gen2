@@ -232,6 +232,7 @@ class _BoxDecorationImageAndTextState extends State<BoxDecorationImageAndText> {
               Text(
                 '${widget.text}',
                 style: bodyTextNormal(
+                  null,
                   widget.textColor == null
                       ? AppColors.fontDark
                       : widget.textColor,

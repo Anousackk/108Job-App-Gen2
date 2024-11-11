@@ -63,7 +63,6 @@ class _SkillState extends State<Skill> {
       _skill = i['name'];
       _selectedSkillLevel = i['skillLevelId']['_id'];
       _skillLevelName = i['skillLevelId']['name'];
-
       _skillController.text = _skill;
     });
   }
@@ -92,7 +91,8 @@ class _SkillState extends State<Skill> {
       print("id != null");
       print("${_id}");
 
-      getKeySkillSeeker(_skill);
+      setValueGetById();
+      // getKeySkillSeeker(_skill);
     }
 
     _scrollController.addListener(() {
@@ -118,8 +118,6 @@ class _SkillState extends State<Skill> {
 
   @override
   Widget build(BuildContext context) {
-    FocusScopeNode _currentFocus = FocusScopeNode();
-
     return GestureDetector(
       onTap: () {
         _currentFocus = FocusScope.of(context);
@@ -166,7 +164,8 @@ class _SkillState extends State<Skill> {
                             //Skill
                             Text(
                               "skill".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
+                              style:
+                                  bodyTextNormal(null, null, FontWeight.bold),
                             ),
                             SizedBox(
                               height: 5,
@@ -281,7 +280,8 @@ class _SkillState extends State<Skill> {
                             //Proficiency Skill / Skill level
                             Text(
                               "proficiency".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
+                              style:
+                                  bodyTextNormal(null, null, FontWeight.bold),
                             ),
                             SizedBox(
                               height: 5,
@@ -353,8 +353,7 @@ class _SkillState extends State<Skill> {
                                       child: Text(
                                         "required".tr,
                                         style: bodyTextSmall(
-                                          AppColors.fontDanger,
-                                        ),
+                                            null, AppColors.fontDanger, null),
                                       ),
                                     )
                                   : Container(),
@@ -370,6 +369,7 @@ class _SkillState extends State<Skill> {
                       text: "save".tr,
                       fontWeight: FontWeight.bold,
                       press: () {
+                        FocusScope.of(context).requestFocus(focusNode);
                         if (formkey.currentState!.validate()) {
                           print("personal information success");
                           if (_selectedSkillLevel == "") {
@@ -457,7 +457,7 @@ class _SkillState extends State<Skill> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
     var res = await postData(addSkillSeekerApi, {
@@ -477,9 +477,9 @@ class _SkillState extends State<Skill> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful",
-            text: "save".tr + " " + "skill".tr + "successful".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "save".tr + " " + "successful".tr,
+            contentText: "save".tr + " " + "skill".tr + "successful".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);

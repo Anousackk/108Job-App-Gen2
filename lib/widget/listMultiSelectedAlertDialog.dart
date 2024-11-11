@@ -63,7 +63,7 @@ class _ListMultiSelectedAlertDialogState
                 // ),
                 Text(
                   "${widget.title}",
-                  style: bodyTextMedium(null, FontWeight.bold),
+                  style: bodyTextMedium(null, null, FontWeight.bold),
                 ),
                 Text("")
               ],
@@ -128,6 +128,7 @@ class _ListMultiSelectedAlertDialogState
                                     child: Text(
                                       '${name}',
                                       style: bodyTextNormal(
+                                          null,
                                           _selectedArray.contains(i['_id'])
                                               ? AppColors.fontPrimary
                                               : null,

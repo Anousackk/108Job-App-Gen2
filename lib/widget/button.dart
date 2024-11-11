@@ -63,6 +63,7 @@ class _ButtonDefaultState extends State<ButtonDefault> {
         child: Text(
           '${widget.text}',
           style: buttonTextNormal(
+            null,
             widget.colorText == null ? AppColors.white : widget.colorText,
             widget.fontWeight,
           ),
@@ -134,11 +135,16 @@ class _ButtonWithIconLeftState extends State<ButtonWithIconLeft> {
             SizedBox(
               width: 8,
             ),
-            Text(
-              '${widget.text}',
-              style: buttonTextNormal(
-                widget.colorText == null ? AppColors.white : widget.colorText,
-                widget.fontWeight,
+            Flexible(
+              child: Text(
+                '${widget.text}',
+                style: buttonTextNormal(
+                  null,
+                  widget.colorText == null ? AppColors.white : widget.colorText,
+                  widget.fontWeight,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ],
@@ -159,8 +165,9 @@ class Button extends StatefulWidget {
     this.buttonBorderColor,
     this.height,
     this.paddingButton,
+    this.fontFamily,
   }) : super(key: key);
-  final String? text;
+  final String? text, fontFamily;
   final Color? colorButton, buttonBorderColor;
   final Color? colorText;
   final FontWeight? fontWeight;
@@ -206,6 +213,7 @@ class _ButtonState extends State<Button> {
         child: Text(
           '${widget.text}',
           style: buttonTextNormal(
+            widget.fontFamily == null ? null : widget.fontFamily,
             widget.colorText == null ? AppColors.white : widget.colorText,
             widget.fontWeight,
           ),
@@ -269,6 +277,7 @@ class _SimpleButtonState extends State<SimpleButton> {
         onPressed: widget.press,
         child: Text("${widget.text}",
             style: bodyTextMaxNormal(
+                null,
                 widget.colorText == null
                     ? AppColors.fontWhite
                     : widget.colorText,
@@ -350,9 +359,12 @@ class _CustomButtonIconTextState extends State<CustomButtonIconText> {
                 child: Text(
                   "${widget.text}",
                   overflow: TextOverflow.ellipsis,
-                  style: bodyTextSmall(widget.colorText == null
-                      ? AppColors.fontDark
-                      : widget.colorText),
+                  style: bodyTextSmall(
+                      null,
+                      widget.colorText == null
+                          ? AppColors.fontDark
+                          : widget.colorText,
+                      null),
                 ),
               ),
             ),
@@ -433,6 +445,7 @@ class _ButtonLauncherState extends State<ButtonLauncher> {
               //       : widget.colorText,
               // ),
               style: bodyTextNormal(
+                  null,
                   widget.colorText == null ? AppColors.white : widget.colorText,
                   widget.fontWeight == null
                       ? FontWeight.normal

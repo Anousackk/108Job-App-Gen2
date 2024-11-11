@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, unnecessary_null_comparison
+// ignore_for_file: deprecated_member_use, unnecessary_null_comparison, unnecessary_brace_in_string_interps, avoid_print, unused_local_variable, prefer_const_constructors, await_only_futures
 
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -32,22 +32,16 @@ class DynamicLinkService {
 
   static Future<dynamic> createDynamicLink(jobSearchId) async {
     final parameters = await DynamicLinkParameters(
-      uriPrefix:
-          'https://app108jobsjobsearchdetail.page.link', // Replace with your Firebase Dynamic Link URI
-      link: Uri.parse(
-        // 'https://app108jobsjobsearchdetail.page.link/app-site-afk/job_detail/${jobSearchId}',
-        // 'https://108.jobs/job_detail/${jobSearchId}',
-        'https://app108jobsjobsearchdetail.page.link/app-site-afk',
-      ), // Link to specific content
+      uriPrefix: 'https://108jobs.page.link',
+      link: Uri.parse('https://108.jobs/job_detail/${jobSearchId}'),
       androidParameters: AndroidParameters(
-        packageName:
-            "com.onehundredeightjobs.app", // Replace with your app package name
+        packageName: "com.onehundredeightjobs.app",
         minimumVersion: 23,
       ),
       iosParameters: IOSParameters(
-        bundleId:
-            "org.cenixoft.OneHundredEightJobs", //org.cenixoft.OneHundredEightJobs // Replace with your iOS app bundle ID
-        minimumVersion: "2.3.1",
+        bundleId: "org.cenixoft.OneHundredEightJobs",
+        // minimumVersion: '3.3.1',
+        appStoreId: '1169598302',
       ),
     );
 
@@ -62,7 +56,7 @@ class DynamicLinkService {
       // If there’s an error, print it and return a long URL instead
       print('Error generating short link: $e');
 
-      // https://app108jobsjobsearchdetail.page.link
+      // https://108jobs.page.link.page.link
       //Return long URL if short URL generation fails
       return parameters.link.toString();
     }

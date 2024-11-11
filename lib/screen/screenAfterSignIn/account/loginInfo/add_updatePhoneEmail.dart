@@ -73,7 +73,7 @@ class _AddUpdatePhoneNumberEmailState extends State<AddUpdatePhoneNumberEmail> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -106,9 +106,9 @@ class _AddUpdatePhoneNumberEmailState extends State<AddUpdatePhoneNumberEmail> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarningWithoutButton(
+          return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            text: "phone_used".tr,
+            contentText: "phone_used".tr,
           );
         },
       );
@@ -185,7 +185,8 @@ class _AddUpdatePhoneNumberEmailState extends State<AddUpdatePhoneNumberEmail> {
                                   widget.addPhoneNumOrEmail == 'phoneNumber'
                                       ? "enter your".tr + "phone".tr
                                       : "enter your".tr + "email".tr,
-                                  style: bodyTextNormal(null, FontWeight.bold),
+                                  style: bodyTextNormal(
+                                      null, null, FontWeight.bold),
                                 ),
                                 SizedBox(
                                   height: 20,
@@ -271,7 +272,7 @@ class _AddUpdatePhoneNumberEmailState extends State<AddUpdatePhoneNumberEmail> {
                                                 " " +
                                                 "email".tr,
                                         style: bodyTextNormal(
-                                            AppColors.fontGrey, null),
+                                            null, AppColors.fontGrey, null),
                                       ),
                                     ],
                                   ),

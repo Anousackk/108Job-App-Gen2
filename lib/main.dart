@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace, body_might_complete_normally_nullable
+// ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace, body_might_complete_normally_nullable, prefer_final_fields
 import 'dart:io';
 import 'package:app/firebase_options.dart';
 import 'package:app/functions/colors.dart';
@@ -6,10 +6,10 @@ import 'package:app/i18n/i18n.dart';
 import 'package:app/routes.dart';
 import 'package:app/screen/login/login.dart';
 import 'package:app/screen/screenAfterSignIn/Notifications/notification.dart';
+import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:app/screen/screenAfterSignIn/message/message.dart';
-import 'package:app/src/services/dynamicLinkService.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 //Background messages
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -135,8 +134,11 @@ class MyApp extends StatefulWidget {
   MyAppState createState() => MyAppState();
 }
 
-class MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   String? getLanguageSharePref;
+
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  bool _isDynamicLinkHandled = false;
 
   Future<void> initializeFCM() async {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -193,6 +195,15 @@ class MyAppState extends State<MyApp> {
     });
   }
 
+  // Future<void> firebaseAnalytics() async {
+  //   await FirebaseAnalytics.instance.logEvent(
+  //     name: "Pao-kun",
+  //     parameters: {
+  //       "full_text": "Hello World!!!",
+  //     },
+  //   );
+  // }
+
   handleMessage(RemoteMessage message) async {
     print("message ${message}");
     //Screen: Notification_Page
@@ -246,13 +257,47 @@ class MyAppState extends State<MyApp> {
     print('getLanguageSharePref: ' + getLanguageSharePref.toString());
   }
 
-  Future<void> firebaseAnalytics() async {
-    await FirebaseAnalytics.instance.logEvent(
-      name: "Pao-kun",
-      parameters: {
-        "full_text": "Hello World!!!",
-      },
-    );
+  handleDynamicLinks() async {
+    print("Main handleDynamicLinks");
+
+    FirebaseDynamicLinks.instance.onLink
+        .listen((PendingDynamicLinkData? dynamicLinkData) {
+      if (!_isDynamicLinkHandled && dynamicLinkData != null) {
+        handleDeepLink(dynamicLinkData);
+        setState(() {
+          _isDynamicLinkHandled = true; // Mark link as handled
+        });
+      }
+    }).onError((error) {
+      print('Dynamic Link Failed: $error');
+    });
+  }
+
+  handleDeepLink(PendingDynamicLinkData dynamicLinkData) async {
+    print("Main handleDeepLink");
+
+    final Uri deepLink = await dynamicLinkData.link;
+    // Parse the jobSearchId from the URL, for example: https://108.jobs/job_detail/12345
+    final jobSearchId = deepLink.pathSegments.contains('job_detail')
+        ? deepLink.pathSegments.last
+        : null;
+    print(deepLink.toString());
+    print(jobSearchId.toString());
+
+    if (jobSearchId != null) {
+      print("Have jobSearchId: ${jobSearchId}");
+      // Navigate to the job detail screen with the extracted jobSearchId
+
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => JobSearchDetail(
+            jobId: jobSearchId.toString(),
+            newJob: false,
+            status: false,
+          ),
+        ),
+      );
+    }
   }
 
   //error setState() called after dispose(). it can help!!!
@@ -267,21 +312,32 @@ class MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
-    print("main screen initstate");
-    DynamicLinkService.dynamicLinkPushScreen;
+    WidgetsBinding.instance.addObserver(this);
+    // DynamicLinkService.dynamicLinkPushScreen;
     checkLanguage();
     initializeFCM();
+    handleDynamicLinks();
+  }
 
-    // foregroundLocalNoti();
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      print("Main App Resumed");
+      _isDynamicLinkHandled = false;
+      handleDynamicLinks();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     //Get.deviceLocale
     print("Main locale: " + '${Get.locale}');
-
-    const primaryColor = Color(0xFF151026);
     FocusScopeNode currentFocus = FocusScopeNode();
 
     return Sizer(
@@ -306,7 +362,7 @@ class MyAppState extends State<MyApp> {
               textTheme: TextTheme(),
 
               fontFamily: Get.locale == Locale('lo', 'LA') || Get.locale == null
-                  ? 'NotoSansLaoRegular'
+                  ? 'NotoSansLaoLoopedRegular'
                   : 'SatoshiMedium',
               // primaryColor: primaryColor,
               appBarTheme: AppBarTheme(

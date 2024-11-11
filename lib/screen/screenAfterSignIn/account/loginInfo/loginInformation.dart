@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, prefer_adjacent_string_concatenation, non_constant_identifier_names, unnecessary_string_interpolations, prefer_final_fields, unused_field, prefer_if_null_operators, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names
+// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, prefer_adjacent_string_concatenation, non_constant_identifier_names, unnecessary_string_interpolations, prefer_final_fields, unused_field, prefer_if_null_operators, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names, unrelated_type_equality_checks
 
 import 'dart:io';
 
@@ -181,7 +181,8 @@ class _LoginInformationState extends State<LoginInformation> {
                                     left: 20, right: 20, bottom: 10),
                                 child: Text(
                                   "general info".tr,
-                                  style: bodyTextNormal(null, FontWeight.bold),
+                                  style: bodyTextNormal(
+                                      null, null, FontWeight.bold),
                                 ),
                               ),
                               Divider(
@@ -341,7 +342,8 @@ class _LoginInformationState extends State<LoginInformation> {
                                     left: 20, right: 20, bottom: 10),
                                 child: Text(
                                   "connect platforms".tr,
-                                  style: bodyTextNormal(null, FontWeight.bold),
+                                  style: bodyTextNormal(
+                                      null, null, FontWeight.bold),
                                 ),
                               ),
                               Divider(
@@ -360,7 +362,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                     AuthService().loginSyncGoogleFacebook(
                                         context, "google", (val) {
                                       print(val);
-                                      if (val == "Sync successful") {
+                                      if (val == "Sync successfully") {
                                         checkSeekerInfo();
                                       }
                                     });
@@ -372,12 +374,13 @@ class _LoginInformationState extends State<LoginInformation> {
                                     var result = await showDialog(
                                         context: context,
                                         builder: (context) {
-                                          return SimpleAlertDialog(
-                                            title: "disconnect".tr,
-                                            contentText:
-                                                "are u sure disconnect".tr,
-                                            textLeft: "cancel".tr,
-                                            textRight: 'confirm'.tr,
+                                          return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                            title: "disconnect".tr +
+                                                " " +
+                                                "Google",
+                                            contentText: _googleEmail,
+                                            textButtonLeft: "cancel".tr,
+                                            textButtonRight: 'confirm'.tr,
                                           );
                                         });
                                     if (result == 'Ok') {
@@ -387,19 +390,41 @@ class _LoginInformationState extends State<LoginInformation> {
                                         "email": _googleEmail,
                                         "type": "google",
                                       });
-                                      if (res["message"] != null) {
+                                      if (res["message"] == "disConnected") {
                                         await checkSeekerInfo();
                                         await showDialog(
                                           barrierDismissible: false,
                                           context: context,
                                           builder: (context) {
-                                            return CustomAlertDialogSuccessButtonConfirm(
-                                              title: "Disconnect Google",
-                                              text: "Disconnect google success",
+                                            return NewVer2CustAlertDialogSuccessBtnConfirm(
+                                              boxCircleColor:
+                                                  AppColors.warning200,
+                                              iconColor: AppColors.warning600,
+                                              title: "Google",
+                                              contentText: "disConnected".tr,
                                               textButton: "ok".tr,
+                                              buttonColor: AppColors.warning200,
+                                              textButtonColor:
+                                                  AppColors.warning600,
+                                              widgetBottomColor:
+                                                  AppColors.warning200,
                                               press: () {
                                                 Navigator.pop(context);
                                               },
+                                            );
+                                          },
+                                        );
+                                      } else if (res["message"] ==
+                                          "Can not disConnect") {
+                                        await checkSeekerInfo();
+                                        await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return CustAlertDialogWarningWithoutBtn(
+                                              title: "warning".tr,
+                                              contentText:
+                                                  "Can not disConnect".tr,
                                             );
                                           },
                                         );
@@ -433,10 +458,10 @@ class _LoginInformationState extends State<LoginInformation> {
                                   if (_facebookId == "" &&
                                       _facebookEmail == "") {
                                     AuthService().loginSyncGoogleFacebook(
-                                        context, "facebook", (val) {
+                                        context, "facebook", (val) async {
                                       print(val);
-                                      if (val == "Sync successful") {
-                                        checkSeekerInfo();
+                                      if (val == "Sync successfully") {
+                                        await checkSeekerInfo();
                                       }
                                     });
                                   } else if (_facebookId != "" &&
@@ -447,12 +472,13 @@ class _LoginInformationState extends State<LoginInformation> {
                                     var result = await showDialog(
                                         context: context,
                                         builder: (context) {
-                                          return SimpleAlertDialog(
-                                            title: "disconnect".tr,
-                                            contentText:
-                                                "are u sure disconnect".tr,
-                                            textLeft: "cancel".tr,
-                                            textRight: 'confirm'.tr,
+                                          return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                            title: "disconnect".tr +
+                                                " " +
+                                                "Facebook",
+                                            contentText: _facebookEmail,
+                                            textButtonLeft: "cancel".tr,
+                                            textButtonRight: 'confirm'.tr,
                                           );
                                         });
                                     if (result == 'Ok') {
@@ -462,20 +488,41 @@ class _LoginInformationState extends State<LoginInformation> {
                                         "email": _facebookEmail,
                                         "type": "facebook",
                                       });
-                                      if (res["message"] != null) {
+                                      if (res["message"] == "disConnected") {
                                         await checkSeekerInfo();
                                         await showDialog(
                                           barrierDismissible: false,
                                           context: context,
                                           builder: (context) {
-                                            return CustomAlertDialogSuccessButtonConfirm(
-                                              title: "Disconnect Facebook",
-                                              text:
-                                                  "Disconnect facebook success",
+                                            return NewVer2CustAlertDialogSuccessBtnConfirm(
+                                              boxCircleColor:
+                                                  AppColors.warning200,
+                                              iconColor: AppColors.warning600,
+                                              title: "Facebook",
+                                              contentText: "disConnected".tr,
                                               textButton: "ok".tr,
+                                              buttonColor: AppColors.warning200,
+                                              textButtonColor:
+                                                  AppColors.warning600,
+                                              widgetBottomColor:
+                                                  AppColors.warning200,
                                               press: () {
                                                 Navigator.pop(context);
                                               },
+                                            );
+                                          },
+                                        );
+                                      } else if (res["message"] ==
+                                          "Can not disConnect") {
+                                        await checkSeekerInfo();
+                                        await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return CustAlertDialogWarningWithoutBtn(
+                                              title: "warning".tr,
+                                              contentText:
+                                                  "Can not disConnect".tr,
                                             );
                                           },
                                         );
@@ -509,10 +556,10 @@ class _LoginInformationState extends State<LoginInformation> {
                                   onTap: () async {
                                     if (_appleId == "" && _appleEmail == "") {
                                       AuthService().loginSyncGoogleFacebook(
-                                          context, "apple", (val) {
+                                          context, "apple", (val) async {
                                         print(val);
-                                        if (val == "Sync successful") {
-                                          checkSeekerInfo();
+                                        if (val == "Sync successfully") {
+                                          await checkSeekerInfo();
                                         }
                                       });
                                     } else if (_appleEmail != "" &&
@@ -523,12 +570,13 @@ class _LoginInformationState extends State<LoginInformation> {
                                       var result = await showDialog(
                                           context: context,
                                           builder: (context) {
-                                            return SimpleAlertDialog(
-                                              title: "disconnect".tr,
-                                              contentText:
-                                                  "are u sure disconnect".tr,
-                                              textLeft: "cancel".tr,
-                                              textRight: 'confirm'.tr,
+                                            return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                              title: "disconnect".tr +
+                                                  " " +
+                                                  "Apple",
+                                              contentText: _appleEmail,
+                                              textButtonLeft: "cancel".tr,
+                                              textButtonRight: 'confirm'.tr,
                                             );
                                           });
                                       if (result == 'Ok') {
@@ -538,20 +586,42 @@ class _LoginInformationState extends State<LoginInformation> {
                                           "email": _appleEmail,
                                           "type": "apple",
                                         });
-                                        if (res["message"] != null) {
+                                        if (res["message"] == "disConnected") {
                                           await checkSeekerInfo();
                                           await showDialog(
                                             barrierDismissible: false,
                                             context: context,
                                             builder: (context) {
-                                              return CustomAlertDialogSuccessButtonConfirm(
-                                                title: "Disconnect Apple",
-                                                text:
-                                                    "Disconnect apple success",
+                                              return NewVer2CustAlertDialogSuccessBtnConfirm(
+                                                boxCircleColor:
+                                                    AppColors.warning200,
+                                                iconColor: AppColors.warning600,
+                                                title: "Apple",
+                                                contentText: "disConnected".tr,
                                                 textButton: "ok".tr,
+                                                buttonColor:
+                                                    AppColors.warning200,
+                                                textButtonColor:
+                                                    AppColors.warning600,
+                                                widgetBottomColor:
+                                                    AppColors.warning200,
                                                 press: () {
                                                   Navigator.pop(context);
                                                 },
+                                              );
+                                            },
+                                          );
+                                        } else if (res["message"] ==
+                                            "Can not disConnect") {
+                                          await checkSeekerInfo();
+                                          await showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (context) {
+                                              return CustAlertDialogWarningWithoutBtn(
+                                                title: "warning".tr,
+                                                contentText:
+                                                    "Can not disConnect".tr,
                                               );
                                             },
                                           );
@@ -593,11 +663,11 @@ class _LoginInformationState extends State<LoginInformation> {
                             var result = await showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return SimpleAlertDialog(
+                                  return NewVer2CustAlertDialogWarningBtnConfirmCancel(
                                     title: "logout".tr,
                                     contentText: "are u sure logout".tr,
-                                    textLeft: "cancel".tr,
-                                    textRight: 'confirm'.tr,
+                                    textButtonLeft: "cancel".tr,
+                                    textButtonRight: 'confirm'.tr,
                                   );
                                 });
                             if (result == 'Ok') {
@@ -616,7 +686,8 @@ class _LoginInformationState extends State<LoginInformation> {
                                 ),
                                 Text(
                                   "logout".tr,
-                                  style: bodyTextNormal(null, FontWeight.bold),
+                                  style: bodyTextNormal(
+                                      null, null, FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -664,7 +735,7 @@ class _AddGeneralInformationState extends State<AddGeneralInformation> {
               children: [
                 Text(
                   "${widget.title}",
-                  style: bodyTextNormal(null, null),
+                  style: bodyTextNormal(null, null, null),
                 ),
                 Row(
                   children: [
@@ -673,6 +744,7 @@ class _AddGeneralInformationState extends State<AddGeneralInformation> {
                       child: Text(
                         "${widget.text}",
                         style: bodyTextNormal(
+                            null,
                             widget.textColor == null
                                 ? AppColors.fontDark
                                 : widget.textColor,
@@ -733,7 +805,7 @@ class _ConnectOtherPlatformState extends State<ConnectOtherPlatform> {
                     ),
                     Text(
                       "${widget.title}",
-                      style: bodyTextNormal(null, null),
+                      style: bodyTextNormal(null, null, null),
                     ),
                   ],
                 ),
@@ -744,7 +816,7 @@ class _ConnectOtherPlatformState extends State<ConnectOtherPlatform> {
                       borderRadius: BorderRadius.circular(5)),
                   child: Text(
                     "${widget.text}",
-                    style: bodyTextNormal(AppColors.fontGrey, null),
+                    style: bodyTextNormal(null, AppColors.fontGrey, null),
                   ),
                 )
               ],

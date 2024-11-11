@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, unused_local_variable, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print, unused_field, unnecessary_string_interpolations, file_names
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, unused_local_variable, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print, unused_field, unnecessary_string_interpolations, file_names, prefer_is_empty
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -103,7 +103,7 @@ class _JobAlertState extends State<JobAlert> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -126,9 +126,10 @@ class _JobAlertState extends State<JobAlert> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
             title: "successful".tr,
-            text: "save".tr + " " + "job alert".tr + " " + "successful".tr,
+            contentText:
+                "save".tr + " " + "job alert".tr + " " + "successful".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -283,7 +284,7 @@ class _JobAlertState extends State<JobAlert> {
                                       //Job Function
                                       Text(
                                         "job function".tr,
-                                        style: bodyTextNormal(null, null),
+                                        style: bodyTextNormal(null, null, null),
                                       ),
                                       SizedBox(
                                         height: 5,
@@ -291,7 +292,7 @@ class _JobAlertState extends State<JobAlert> {
                                       Text(
                                         "${_jobFunctionJobAlert != 'Any' ? _jobFunctionJobAlert : ''}",
                                         style: bodyTextNormal(
-                                            null, FontWeight.bold),
+                                            null, null, FontWeight.bold),
                                       ),
                                       SizedBox(
                                         height: 15,
@@ -302,7 +303,7 @@ class _JobAlertState extends State<JobAlert> {
                                       //Working Province
                                       Text(
                                         "work province".tr,
-                                        style: bodyTextNormal(null, null),
+                                        style: bodyTextNormal(null, null, null),
                                       ),
                                       SizedBox(
                                         height: 5,
@@ -310,7 +311,7 @@ class _JobAlertState extends State<JobAlert> {
                                       Text(
                                         "${_workLocationJobAlert != 'Any' ? _workLocationJobAlert : ''}",
                                         style: bodyTextNormal(
-                                            null, FontWeight.bold),
+                                            null, null, FontWeight.bold),
                                       ),
                                       SizedBox(
                                         height: 15,
@@ -321,7 +322,7 @@ class _JobAlertState extends State<JobAlert> {
                                       //Industry
                                       Text(
                                         "industry".tr,
-                                        style: bodyTextNormal(null, null),
+                                        style: bodyTextNormal(null, null, null),
                                       ),
                                       SizedBox(
                                         height: 5,
@@ -329,7 +330,7 @@ class _JobAlertState extends State<JobAlert> {
                                       Text(
                                         "${_industryJobAlert != 'Any' ? _industryJobAlert : ''}",
                                         style: bodyTextNormal(
-                                            null, FontWeight.bold),
+                                            null, null, FontWeight.bold),
                                       ),
                                       SizedBox(
                                         height: 15,
@@ -340,7 +341,7 @@ class _JobAlertState extends State<JobAlert> {
                                       //Job level
                                       Text(
                                         "job level".tr,
-                                        style: bodyTextNormal(null, null),
+                                        style: bodyTextNormal(null, null, null),
                                       ),
                                       SizedBox(
                                         height: 5,
@@ -348,7 +349,7 @@ class _JobAlertState extends State<JobAlert> {
                                       Text(
                                         "${_jobLevelJobAlert != 'Any' ? _jobLevelJobAlert : ''}",
                                         style: bodyTextNormal(
-                                            null, FontWeight.bold),
+                                            null, null, FontWeight.bold),
                                       ),
                                     ],
                                   ),
@@ -427,7 +428,7 @@ class _JobAlertState extends State<JobAlert> {
                                             child: Center(
                                               child: Text(
                                                 "job alert".tr,
-                                                style: bodyTextMedium(
+                                                style: bodyTextMedium(null,
                                                     null, FontWeight.bold),
                                               ),
                                             ),
@@ -472,7 +473,7 @@ class _JobAlertState extends State<JobAlert> {
                                             Text(
                                               "job function".tr,
                                               style: bodyTextNormal(
-                                                  null, FontWeight.bold),
+                                                  null, null, FontWeight.bold),
                                             ),
                                             SizedBox(
                                               height: 5,
@@ -589,8 +590,10 @@ class _JobAlertState extends State<JobAlert> {
                                                       child: Text(
                                                         "required".tr,
                                                         style: bodyTextSmall(
-                                                          AppColors.fontDanger,
-                                                        ),
+                                                            null,
+                                                            AppColors
+                                                                .fontDanger,
+                                                            null),
                                                       ),
                                                     )
                                                   : Container(),
@@ -608,7 +611,7 @@ class _JobAlertState extends State<JobAlert> {
                                                   vertical: 10),
                                               child: Text(
                                                 "work province".tr,
-                                                style: bodyTextNormal(
+                                                style: bodyTextNormal(null,
                                                     null, FontWeight.bold),
                                               ),
                                             ),
@@ -694,7 +697,7 @@ class _JobAlertState extends State<JobAlert> {
                                                   vertical: 10),
                                               child: Text(
                                                 "industry".tr,
-                                                style: bodyTextNormal(
+                                                style: bodyTextNormal(null,
                                                     null, FontWeight.bold),
                                               ),
                                             ),
@@ -781,7 +784,7 @@ class _JobAlertState extends State<JobAlert> {
                                                   vertical: 10),
                                               child: Text(
                                                 "job level".tr,
-                                                style: bodyTextNormal(
+                                                style: bodyTextNormal(null,
                                                     null, FontWeight.bold),
                                               ),
                                             ),

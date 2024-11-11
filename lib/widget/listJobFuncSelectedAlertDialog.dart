@@ -115,7 +115,7 @@ class _ListJobFuncSelectedAlertDialogState
                 // ),
                 Text(
                   "${widget.title}",
-                  style: bodyTextMedium(null, FontWeight.bold),
+                  style: bodyTextMedium(null, null, FontWeight.bold),
                 ),
                 Text("")
               ],
@@ -352,6 +352,7 @@ class _ListJobFuncSelectedAlertDialogState
                                       child: Text(
                                         '${name}',
                                         style: bodyTextNormal(
+                                            null,
                                             _selectedListItemsChilds
                                                     .contains(i['_id'])
                                                 ? AppColors.iconPrimary
@@ -407,7 +408,7 @@ class _ListJobFuncSelectedAlertDialogState
                                     //   ),
                                     //   child: Text(
                                     //     "${_selectedStrItemsParentName} == ${_selectedStrItemsParentId}",
-                                    //     style: bodyTextNormal(
+                                    //     style: bodyTextNormal(null,
                                     //         null, FontWeight.bold),
                                     //   ),
                                     // ),
@@ -500,6 +501,7 @@ class _ListJobFuncSelectedAlertDialogState
                                                   child: Text(
                                                     '${name}',
                                                     style: bodyTextNormal(
+                                                        null,
                                                         _selectedListItemsChilds
                                                                 .contains(
                                                                     pe['_id'])

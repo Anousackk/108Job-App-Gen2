@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_if_null_operators, unnecessary_null_comparison
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_if_null_operators, unnecessary_null_comparison, camel_case_types, unnecessary_null_in_if_null_operators
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
@@ -51,11 +51,11 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
         // contentPadding: EdgeInsets.zero,
         title: Text(
           '${widget.title}',
-          style: bodyTextMedium(null, FontWeight.bold),
+          style: bodyTextMedium(null, null, FontWeight.bold),
         ),
         // content: Text(
         //   '${widget.contentText}',
-        //   style: bodyTextNormal(null, null),
+        //   style: bodyTextNormal(null,null, null),
         // ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -67,7 +67,7 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
               width: MediaQuery.of(context).size.width,
               child: Text(
                 '${widget.contentText}',
-                style: bodyTextNormal(null, null),
+                style: bodyTextNormal(null, null, null),
               ),
             ),
           ],
@@ -80,6 +80,7 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
             child: Text(
               '${widget.textLeft}',
               style: bodyTextNormal(
+                  null,
                   widget.colorTextLeft == null
                       ? AppColors.fontGrey
                       : widget.colorTextLeft,
@@ -93,6 +94,7 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
             child: Text(
               '${widget.textRight}',
               style: bodyTextNormal(
+                  null,
                   widget.colorTextRight == null
                       ? AppColors.primary
                       : widget.colorTextRight,
@@ -105,8 +107,8 @@ class _SimpleAlertDialogState extends State<SimpleAlertDialog> {
   }
 }
 
-class AlertDialogButtonConfirmCancelBetween extends StatefulWidget {
-  const AlertDialogButtonConfirmCancelBetween({
+class AlertDialogBtnConfirmCancelBetween extends StatefulWidget {
+  const AlertDialogBtnConfirmCancelBetween({
     Key? key,
     this.title,
     this.contentText,
@@ -115,20 +117,24 @@ class AlertDialogButtonConfirmCancelBetween extends StatefulWidget {
     this.colorTilte,
     this.colorTextLeft,
     this.colorTextRight,
+    this.borderColorButtonRight,
   }) : super(key: key);
   final String? title;
-  final Color? colorTilte, colorTextLeft, colorTextRight;
+  final Color? colorTilte,
+      colorTextLeft,
+      colorTextRight,
+      borderColorButtonRight;
   final String? contentText;
   final String? textLeft;
   final String? textRight;
 
   @override
-  State<AlertDialogButtonConfirmCancelBetween> createState() =>
-      _AlertDialogButtonConfirmCancelBetweenState();
+  State<AlertDialogBtnConfirmCancelBetween> createState() =>
+      _AlertDialogBtnConfirmCancelBetweenState();
 }
 
-class _AlertDialogButtonConfirmCancelBetweenState
-    extends State<AlertDialogButtonConfirmCancelBetween> {
+class _AlertDialogBtnConfirmCancelBetweenState
+    extends State<AlertDialogBtnConfirmCancelBetween> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
@@ -138,13 +144,13 @@ class _AlertDialogButtonConfirmCancelBetweenState
         //
         // titlePadding: EdgeInsets.zero,
         // contentPadding: EdgeInsets.zero,
+
         actionsPadding: EdgeInsets.all(20),
         insetPadding: EdgeInsets.symmetric(horizontal: 20),
         backgroundColor: AppColors.backgroundWhite,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        //contentPadding: EdgeInsets.zero,
 
         //
         //
@@ -153,9 +159,10 @@ class _AlertDialogButtonConfirmCancelBetweenState
           child: Text(
             '${widget.title}',
             style: bodyTextMedium(
+                null,
                 widget.colorTilte == null ? AppColors.black : widget.colorTilte,
                 FontWeight.bold),
-            // textAlign: TextAlign.center,
+            textAlign: TextAlign.center,
           ),
         ),
 
@@ -165,11 +172,10 @@ class _AlertDialogButtonConfirmCancelBetweenState
         content: Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           width: MediaQuery.of(context).size.width,
-          child: Text(
-            '${widget.contentText}',
-            style: TextStyle(fontSize: 10.sp),
-            // textAlign: TextAlign.center,
-          ),
+          child: Text('${widget.contentText}',
+              style: bodyTextMaxSmall(null, null, null)
+              // textAlign: TextAlign.center,
+              ),
         ),
 
         //
@@ -193,16 +199,16 @@ class _AlertDialogButtonConfirmCancelBetweenState
                       : widget.colorTextLeft,
                 ),
               ),
-
               SizedBox(
                 width: 10,
               ),
-
               Expanded(
                 flex: 1,
                 child: Button(
                   colorButton: AppColors.buttonWhite,
-                  buttonBorderColor: AppColors.borderDanger,
+                  buttonBorderColor: widget.borderColorButtonRight == null
+                      ? AppColors.borderDanger
+                      : widget.borderColorButtonRight,
                   press: () {
                     Navigator.of(context).pop('Ok');
                   },
@@ -212,32 +218,6 @@ class _AlertDialogButtonConfirmCancelBetweenState
                       : widget.colorTextRight,
                 ),
               ),
-              // TextButton(
-              //   onPressed: () {
-              //     Navigator.of(context).pop('Cancel');
-              //   },
-              //   child: Text(
-              //     '${widget.textLeft}',
-              //     style: TextStyle(
-              //         fontSize: 10.sp,
-              //         color: widget.colorTextLeft == null
-              //             ? AppColors.fontGrey
-              //             : widget.colorTextLeft),
-              //   ),
-              // ),
-              // TextButton(
-              //   onPressed: () {
-              //     Navigator.of(context).pop('Ok');
-              //   },
-              //   child: Text(
-              //     '${widget.textRight}',
-              //     style: TextStyle(
-              //         fontSize: 10.sp,
-              //         color: widget.colorTextRight == null
-              //             ? AppColors.primary
-              //             : widget.colorTextRight),
-              //   ),
-              // ),
             ],
           )
         ],
@@ -450,25 +430,15 @@ class _AlertDialogBoxDecorationState extends State<AlertDialogBoxDecoration> {
     );
   }
 }
-// Future<dynamic> CustomAlertDialogSuccessButtonConfirm(BuildContext context) {
-//   return showDialog(
-//       context: context,
-//       builder: (context) {
-//         Future.delayed(Duration(seconds: 1), () {
-//           Navigator.of(context).pop(true);
-//         });
-//         return AlertDialog(
-//           title: Text(
-//             'Success',
-//             textAlign: TextAlign.center,
-//             style: TextStyle(color: AppColors.green),
-//           ),
-//         );
-//       });
-// }
 
-class CustomAlertDialogSuccessButtonConfirm extends StatefulWidget {
-  const CustomAlertDialogSuccessButtonConfirm({
+//
+//
+//
+//
+//
+//Alert Success
+class CustAlertDialogSuccessBtnConfirm extends StatefulWidget {
+  const CustAlertDialogSuccessBtnConfirm({
     Key? key,
     this.text,
     this.title,
@@ -482,12 +452,12 @@ class CustomAlertDialogSuccessButtonConfirm extends StatefulWidget {
   final Function()? press;
 
   @override
-  State<CustomAlertDialogSuccessButtonConfirm> createState() =>
-      _CustomAlertDialogSuccessButtonConfirmState();
+  State<CustAlertDialogSuccessBtnConfirm> createState() =>
+      _CustAlertDialogSuccessBtnConfirmState();
 }
 
-class _CustomAlertDialogSuccessButtonConfirmState
-    extends State<CustomAlertDialogSuccessButtonConfirm> {
+class _CustAlertDialogSuccessBtnConfirmState
+    extends State<CustAlertDialogSuccessBtnConfirm> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
@@ -508,70 +478,71 @@ class _CustomAlertDialogSuccessButtonConfirmState
               child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(),
+                    Container(
+                      child: SizedBox(
+                        height: 20,
+                      ),
+                    ),
                     // SizedBox(height: MediaQuery.of(context).size.height / 50),
 
-                    Column(
-                      children: [
-                        //
-                        //
-                        //Title
-                        Text(
-                          '${widget.title}',
-                          style: bodyTextMedium(
-                              AppColors.fontSuccess, FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              //
+                              //
+                              //Title
+                              Text(
+                                '${widget.title}',
+                                style: bodyTextMedium(null,
+                                    AppColors.fontSuccess, FontWeight.bold),
+                              ),
 
-                        //
-                        //
-                        //Text
-                        Text(
-                          '${widget.text}',
-                          style: bodyTextNormal(null, null),
-                          textAlign: TextAlign.center,
-                          // style: TextStyle(fontSize: 10.sp),
-                        ),
-                      ],
-                    ),
+                              //
+                              //
+                              //Text
+                              Text(
+                                '${widget.text}',
+                                style: bodyTextNormal(null, null, null),
+                                textAlign: TextAlign.center,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
 
-                    // SizedBox(
-                    //   width: 40.w,
-                    //   child: Button(
-                    //     press: widget.press,
-                    //     text: "${widget.textButton}",
-                    //   ),
-                    // )
-
-                    //
-                    //
-                    //Button
-                    GestureDetector(
-                      onTap: widget.press,
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: widget.colorButton == null
-                              ? AppColors.buttonPrimary
-                              : widget.colorButton,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Text(
-                          "${widget.textButton}",
-                          style: bodyTextNormal(
-                              widget.colorTextButton == null
-                                  ? AppColors.white
-                                  : widget.colorTextButton,
-                              null),
-                        ),
+                          //
+                          //
+                          //Button
+                          GestureDetector(
+                            onTap: widget.press,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 40, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: widget.colorButton == null
+                                    ? AppColors.buttonPrimary
+                                    : widget.colorButton,
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Text(
+                                "${widget.textButton}",
+                                style: bodyTextNormal(
+                                    null,
+                                    widget.colorTextButton == null
+                                        ? AppColors.white
+                                        : widget.colorTextButton,
+                                    null),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -595,28 +566,216 @@ class _CustomAlertDialogSuccessButtonConfirmState
   }
 }
 
-class CustomAlertDialogWarningWithoutButton extends StatefulWidget {
-  const CustomAlertDialogWarningWithoutButton({
+//
+//
+//
+//
+//
+//New Alert Success
+class NewVer2CustAlertDialogSuccessBtnConfirm extends StatefulWidget {
+  const NewVer2CustAlertDialogSuccessBtnConfirm({
     Key? key,
-    this.text,
+    this.contentText,
     this.title,
-    // this.press,
+    this.textButton,
+    this.press,
+    this.buttonColor,
+    this.textButtonColor,
+    this.boxCircleColor,
+    this.iconColor,
+    this.widgetBottomColor,
+    this.strIcon,
+  }) : super(key: key);
+  final String? strIcon, title, contentText, textButton;
+  final Color? boxCircleColor,
+      iconColor,
+      buttonColor,
+      textButtonColor,
+      widgetBottomColor;
+  final Function()? press;
+
+  @override
+  State<NewVer2CustAlertDialogSuccessBtnConfirm> createState() =>
+      _NewVer2CustAlertDialogSuccessBtnConfirmState();
+}
+
+class _NewVer2CustAlertDialogSuccessBtnConfirmState
+    extends State<NewVer2CustAlertDialogSuccessBtnConfirm> {
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
+      child: Dialog(
+        backgroundColor: AppColors.backgroundWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        insetPadding: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              flex: 1,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    // height: 280,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.borderWhite),
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Padding(
+                      padding: EdgeInsets.all(30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            child: SizedBox(
+                              height:
+                                  30, //15 ຄວາມຫ່າງລະວ່າງ top box alert & bottom circle
+                            ),
+                          ),
+
+                          //
+                          //
+                          //Title
+                          Text(
+                            "${widget.title}",
+                            style: bodyTextMedium(
+                                "NotoSansLaoLoopedBold", null, FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          //
+                          //
+                          //Text
+                          Text(
+                            "${widget.contentText}",
+                            style: bodyTextMiniMedium(
+                                "NotoSansLaoLoopedMedium", null, null),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          //
+                          //
+                          //Button
+                          GestureDetector(
+                            onTap: widget.press,
+                            child: Container(
+                              width: 170,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: widget.buttonColor == null
+                                    ? AppColors.primary200
+                                    : widget.buttonColor,
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "${widget.textButton}",
+                                  style: bodyTextMaxNormal(
+                                      "NotoSansLaoLoopedMedium",
+                                      widget.textButtonColor == null
+                                          ? AppColors.primary600
+                                          : widget.textButtonColor,
+                                      null),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            color: widget.boxCircleColor == null
+                                ? AppColors.primary200
+                                : widget.boxCircleColor),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            widget.strIcon ?? "\uf00c",
+                            style: fontAwesomeSolid(
+                                null,
+                                36,
+                                widget.iconColor == null
+                                    ? AppColors.primary600
+                                    : widget.iconColor,
+                                null),
+                          ),
+                        ),
+                      ),
+                    ),
+                    top: -50,
+                  ),
+                  Positioned(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10)),
+                      child: Container(
+                        width: 70.w,
+                        height: 10,
+                        decoration: BoxDecoration(
+                            color: widget.widgetBottomColor == null
+                                ? AppColors.primary200
+                                : widget.widgetBottomColor),
+                      ),
+                    ),
+                    bottom: -10,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//
+//
+//
+//
+//
+//Alert Warning
+class CustAlertDialogWarningWithoutBtn extends StatefulWidget {
+  const CustAlertDialogWarningWithoutBtn({
+    Key? key,
+    this.contentText,
+    this.title,
     this.colorButton,
     this.colorTextButton,
     this.textButton,
   }) : super(key: key);
-  final String? text, textButton;
+  final String? contentText, textButton;
   final String? title;
   final Color? colorButton, colorTextButton;
-  // final Function()? press;
 
   @override
-  State<CustomAlertDialogWarningWithoutButton> createState() =>
-      _CustomAlertDialogWarningWithoutButtonState();
+  State<CustAlertDialogWarningWithoutBtn> createState() =>
+      _CustAlertDialogWarningWithoutBtnState();
 }
 
-class _CustomAlertDialogWarningWithoutButtonState
-    extends State<CustomAlertDialogWarningWithoutButton> {
+class _CustAlertDialogWarningWithoutBtnState
+    extends State<CustAlertDialogWarningWithoutBtn> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
@@ -643,17 +802,24 @@ class _CustomAlertDialogWarningWithoutButtonState
                     SizedBox(
                       height: 10,
                     ),
+
+                    //
+                    //
+                    //Title
                     Text(
                       '${widget.title}',
-                      style:
-                          bodyTextMedium(AppColors.fontWaring, FontWeight.bold),
+                      style: bodyTextMedium(null, null, FontWeight.bold),
                     ),
                     SizedBox(
                       height: 10,
                     ),
+
+                    //
+                    //
+                    //Content text
                     Text(
-                      '${widget.text}',
-                      style: bodyTextNormal(null, null),
+                      '${widget.contentText}',
+                      style: bodyTextNormal(null, null, null),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -662,7 +828,7 @@ class _CustomAlertDialogWarningWithoutButtonState
             ),
             Positioned(
               child: CircleAvatar(
-                backgroundColor: AppColors.lightOrange,
+                backgroundColor: AppColors.warning200,
                 radius: 40,
                 // child: Text(
                 //   'exclamation',
@@ -671,7 +837,7 @@ class _CustomAlertDialogWarningWithoutButtonState
                 child: FaIcon(
                   FontAwesomeIcons.exclamation,
                   size: IconSize.lIcon,
-                  color: AppColors.iconWarning,
+                  color: AppColors.warning600,
                 ),
               ),
               top: -40,
@@ -683,32 +849,45 @@ class _CustomAlertDialogWarningWithoutButtonState
   }
 }
 
-class newAlertDialogWarningConfirmCancelBetween extends StatefulWidget {
-  const newAlertDialogWarningConfirmCancelBetween({
+class NewCustAlertDialogWarningBtnConfirmCancel extends StatefulWidget {
+  const NewCustAlertDialogWarningBtnConfirmCancel({
     Key? key,
     this.text,
     this.title,
     this.press,
-    this.colorButton,
+    this.buttonLeftColor,
     this.textTop,
-    this.textLeft,
-    this.textRight,
-    this.colorTilte,
-    this.colorTextLeft,
-    this.colorTextRight,
+    this.textButtonLeft,
+    this.textButtonRight,
+    this.titleColor,
+    this.textButtonLeftColor,
+    this.textButtonRightColor,
+    this.buttonRightColor,
+    this.textTopColor,
+    this.textColor,
+    this.boxCircleColor,
+    this.iconColor,
   }) : super(key: key);
 
-  final String? textTop, text, title, textLeft, textRight;
-  final Color? colorButton, colorTilte, colorTextLeft, colorTextRight;
+  final String? textTop, text, title, textButtonLeft, textButtonRight;
+  final Color? boxCircleColor,
+      iconColor,
+      textTopColor,
+      titleColor,
+      textColor,
+      buttonLeftColor,
+      buttonRightColor,
+      textButtonLeftColor,
+      textButtonRightColor;
   final Function()? press;
 
   @override
-  State<newAlertDialogWarningConfirmCancelBetween> createState() =>
-      _newAlertDialogWarningConfirmCancelBetweenState();
+  State<NewCustAlertDialogWarningBtnConfirmCancel> createState() =>
+      _NewCustAlertDialogWarningBtnConfirmCancelState();
 }
 
-class _newAlertDialogWarningConfirmCancelBetweenState
-    extends State<newAlertDialogWarningConfirmCancelBetween> {
+class _NewCustAlertDialogWarningBtnConfirmCancelState
+    extends State<NewCustAlertDialogWarningBtnConfirmCancel> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
@@ -717,116 +896,345 @@ class _newAlertDialogWarningConfirmCancelBetweenState
         backgroundColor: AppColors.backgroundWhite,
         insetPadding: EdgeInsets.symmetric(horizontal: 20),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(30),
         ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 260,
-              width: double.infinity,
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(),
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: 10,
-                        ),
-                        //
-                        //
-                        //TextTop
-                        Text(
-                          '${widget.textTop}',
-                          style: bodyTextNormal(null, null),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
+            Flexible(
+              flex: 1,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    // height: 260,
+                    width: double.infinity,
+                    child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            child: SizedBox(
+                              height: 30,
+                            ),
+                          ),
 
-                        //
-                        //
-                        //Title
-                        Text(
-                          '${widget.title}',
-                          style: bodyTextMedium(
-                              AppColors.fontPrimary, FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
+                          //
+                          //
+                          //TextTop
+                          Text(
+                            '${widget.textTop}',
+                            style: bodyTextNormal(
+                                null, widget.textTopColor ?? null, null),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
 
-                        //
-                        //
-                        //Text
-                        Text(
-                          '${widget.text}',
-                          style: bodyTextNormal(null, null),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                          //
+                          //
+                          //Title
+                          Text(
+                            '${widget.title}',
+                            style: bodyTextMedium(
+                                null,
+                                widget.titleColor ?? AppColors.fontPrimary,
+                                FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+
+                          //
+                          //
+                          //Text
+                          Text(
+                            '${widget.text}',
+                            style: bodyTextNormal(
+                                null, widget.textColor ?? null, null),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          //
+                          //
+                          //Button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: Button(
+                                  colorButton: widget.buttonLeftColor == null
+                                      ? AppColors.buttonBG
+                                      : widget.buttonLeftColor,
+                                  buttonBorderColor: AppColors.borderBG,
+                                  press: () {
+                                    Navigator.of(context).pop('Cancel');
+                                  },
+                                  text: '${widget.textButtonLeft}',
+                                  colorText: widget.textButtonLeftColor == null
+                                      ? AppColors.fontDark
+                                      : widget.textButtonLeftColor,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Button(
+                                  colorButton: widget.buttonRightColor == null
+                                      ? AppColors.buttonPrimary
+                                      : widget.buttonRightColor,
+                                  buttonBorderColor: AppColors.borderPrimary,
+                                  press: () {
+                                    Navigator.of(context).pop('Ok');
+                                  },
+                                  text: '${widget.textButtonRight}',
+                                  colorText: widget.textButtonRightColor == null
+                                      ? AppColors.fontWhite
+                                      : widget.textButtonRightColor,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-
-                    //
-                    //
-                    //Button
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Button(
-                            colorButton: AppColors.buttonBG,
-                            buttonBorderColor: AppColors.borderBG,
-                            press: () {
-                              Navigator.of(context).pop('Cancel');
-                            },
-                            text: '${widget.textLeft}',
-                            colorText: widget.colorTextLeft == null
-                                ? AppColors.fontDark
-                                : widget.colorTextLeft,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Button(
-                            colorButton: AppColors.buttonPrimary,
-                            buttonBorderColor: AppColors.borderPrimary,
-                            press: () {
-                              Navigator.of(context).pop('Ok');
-                            },
-                            text: '${widget.textRight}',
-                            colorText: widget.colorTextRight == null
-                                ? AppColors.fontWhite
-                                : widget.colorTextRight,
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
+                  ),
+                  Positioned(
+                    child: CircleAvatar(
+                      backgroundColor:
+                          widget.boxCircleColor ?? AppColors.lightOrange,
+                      radius: 40,
+                      child: FaIcon(
+                        FontAwesomeIcons.ban,
+                        size: IconSize.lIcon,
+                        color: widget.iconColor ?? AppColors.iconWarning,
+                      ),
+                    ),
+                    top: -40,
+                  )
+                ],
               ),
             ),
-            Positioned(
-              child: CircleAvatar(
-                backgroundColor: AppColors.lightOrange,
-                radius: 40,
-                child: FaIcon(
-                  FontAwesomeIcons.ban,
-                  size: IconSize.lIcon,
-                  color: AppColors.iconWarning,
-                ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//
+//
+//
+//
+//
+//New Alert Warning
+class NewVer2CustAlertDialogWarningBtnConfirmCancel extends StatefulWidget {
+  const NewVer2CustAlertDialogWarningBtnConfirmCancel({
+    Key? key,
+    this.contentText,
+    this.title,
+    this.press,
+    this.textButtonLeft,
+    this.textButtonRight,
+    this.boxCircleColor,
+    this.iconColor,
+    this.titleColor,
+    this.textColor,
+    this.buttonLeftColor,
+    this.buttonRightColor,
+    this.textButtonLeftColor,
+    this.textButtonRightColor,
+    this.widgetBottomColor,
+  }) : super(key: key);
+  final String? title, contentText, textButtonLeft, textButtonRight;
+  final Color? boxCircleColor,
+      iconColor,
+      titleColor,
+      textColor,
+      buttonLeftColor,
+      buttonRightColor,
+      textButtonLeftColor,
+      textButtonRightColor,
+      widgetBottomColor;
+  final Function()? press;
+
+  @override
+  State<NewVer2CustAlertDialogWarningBtnConfirmCancel> createState() =>
+      _NewVer2CustAlertDialogWarningBtnConfirmCancelState();
+}
+
+class _NewVer2CustAlertDialogWarningBtnConfirmCancelState
+    extends State<NewVer2CustAlertDialogWarningBtnConfirmCancel> {
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
+      child: Dialog(
+        backgroundColor: AppColors.backgroundWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        insetPadding: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              flex: 1,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    // height: 280,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.borderWhite),
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Padding(
+                      padding: EdgeInsets.all(30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height:
+                                30, //10 ຄວາມຫ່າງລະວ່າງ top box alert & bottom circle
+                          ),
+                          //
+                          //
+                          //Title
+                          Text(
+                            '${widget.title}',
+                            style: bodyTextMedium("NotoSansLaoLoopedBold",
+                                widget.titleColor ?? null, FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          //
+                          //
+                          //Text
+                          Text(
+                            "${widget.contentText}",
+                            style: bodyTextMiniMedium("NotoSansLaoLoopedMedium",
+                                widget.textColor ?? null, null),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          //
+                          //
+                          //Button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              //
+                              //
+                              //Button left
+                              Expanded(
+                                flex: 1,
+                                child: Button(
+                                  height: 50,
+                                  colorButton: widget.buttonLeftColor ??
+                                      AppColors.buttonBG,
+                                  press: () {
+                                    Navigator.of(context).pop('Cancel');
+                                  },
+                                  text: '${widget.textButtonLeft}',
+                                  fontFamily: "NotoSansLaoLoopedMedium",
+                                  colorText: widget.textButtonLeftColor == null
+                                      ? AppColors.fontDark
+                                      : widget.textButtonLeftColor,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              //
+                              //
+                              //Button right
+                              Expanded(
+                                flex: 1,
+                                child: Button(
+                                  height: 50,
+                                  colorButton: widget.buttonRightColor ??
+                                      AppColors.warning600,
+                                  press: () {
+                                    Navigator.of(context).pop('Ok');
+                                  },
+                                  text: '${widget.textButtonRight}',
+                                  fontFamily: "NotoSansLaoLoopedMedium",
+                                  colorText: widget.textButtonRightColor == null
+                                      ? AppColors.fontWhite
+                                      : widget.textButtonRightColor,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  //
+                  //
+                  //Box circle with icon
+                  Positioned(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            color:
+                                widget.boxCircleColor ?? AppColors.warning200),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: FaIcon(
+                            FontAwesomeIcons.exclamation,
+                            size: 36,
+                            color: widget.iconColor ?? AppColors.warning600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    top: -50,
+                  ),
+
+                  //
+                  //
+                  //Widget bottom
+                  Positioned(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10)),
+                      child: Container(
+                        width: 70.w,
+                        height: 10,
+                        decoration: BoxDecoration(
+                            color: widget.widgetBottomColor ??
+                                AppColors.warning200),
+                      ),
+                    ),
+                    bottom: -10,
+                  ),
+                ],
               ),
-              top: -40,
             )
           ],
         ),
@@ -835,22 +1243,43 @@ class _newAlertDialogWarningConfirmCancelBetweenState
   }
 }
 
-class CustomAlertDialogErrorWithoutButton extends StatefulWidget {
-  const CustomAlertDialogErrorWithoutButton({
+class NewVer3CustAlertDialogWarningPictrueBtnConfirmCancel
+    extends StatefulWidget {
+  const NewVer3CustAlertDialogWarningPictrueBtnConfirmCancel({
     Key? key,
-    this.text,
+    this.contentText,
     this.title,
+    this.press,
+    this.logo,
+    this.textButtonLeft,
+    this.textButtonRight,
+    this.boxCircleBorderColor,
+    this.titleColor,
+    this.textColor,
+    this.buttonLeftColor,
+    this.buttonRightColor,
+    this.textButtonLeftColor,
+    this.textButtonRightColor,
+    this.widgetBottomColor,
   }) : super(key: key);
-  final String? text;
-  final String? title;
+  final String? logo, title, contentText, textButtonLeft, textButtonRight;
+  final Color? boxCircleBorderColor,
+      titleColor,
+      textColor,
+      buttonLeftColor,
+      buttonRightColor,
+      textButtonLeftColor,
+      textButtonRightColor,
+      widgetBottomColor;
+  final Function()? press;
 
   @override
-  State<CustomAlertDialogErrorWithoutButton> createState() =>
-      _CustomAlertDialogErrorWithoutButtonState();
+  State<NewVer3CustAlertDialogWarningPictrueBtnConfirmCancel> createState() =>
+      _NewVer3CustAlertDialogWarningPictrueBtnConfirmCancelState();
 }
 
-class _CustomAlertDialogErrorWithoutButtonState
-    extends State<CustomAlertDialogErrorWithoutButton> {
+class _NewVer3CustAlertDialogWarningPictrueBtnConfirmCancelState
+    extends State<NewVer3CustAlertDialogWarningPictrueBtnConfirmCancel> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
@@ -858,58 +1287,524 @@ class _CustomAlertDialogErrorWithoutButtonState
       child: Dialog(
         backgroundColor: AppColors.backgroundWhite,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(30),
         ),
         insetPadding: EdgeInsets.symmetric(horizontal: 20),
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 150,
-              width: double.infinity,
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 10,
+            Flexible(
+              flex: 1,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    // height: 280,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.borderWhite),
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Padding(
+                      padding: EdgeInsets.all(30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            child: SizedBox(
+                              height:
+                                  30, //15 ຄວາມຫ່າງລະວ່າງ top box alert & bottom circle
+                            ),
+                          ),
+                          //
+                          //
+                          //Title
+                          Text(
+                            '${widget.title}',
+                            style: bodyTextMedium("NotoSansLaoLoopedBold",
+                                widget.titleColor ?? null, FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          //
+                          //
+                          //Text
+                          Text(
+                            "${widget.contentText}",
+                            style: bodyTextMiniMedium("NotoSansLaoLoopedMedium",
+                                widget.textColor ?? null, null),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          //
+                          //
+                          //Button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              //
+                              //
+                              //Button left
+                              Expanded(
+                                flex: 1,
+                                child: Button(
+                                  height: 50,
+                                  colorButton: widget.buttonLeftColor ??
+                                      AppColors.buttonBG,
+                                  press: () {
+                                    Navigator.of(context).pop('Cancel');
+                                  },
+                                  text: "${widget.textButtonLeft}",
+                                  fontFamily: "NotoSansLaoLoopedMedium",
+                                  colorText: widget.textButtonLeftColor == null
+                                      ? AppColors.fontDark
+                                      : widget.textButtonLeftColor,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+
+                              //
+                              //
+                              //Button right
+                              Expanded(
+                                flex: 1,
+                                child: Button(
+                                  height: 50,
+                                  colorButton: widget.buttonRightColor ??
+                                      AppColors.primary200,
+                                  press: () {
+                                    Navigator.of(context).pop('Ok');
+                                  },
+                                  text: "${widget.textButtonRight}",
+                                  fontFamily: "NotoSansLaoLoopedMedium",
+                                  colorText: widget.textButtonRightColor == null
+                                      ? AppColors.primary600
+                                      : widget.textButtonRightColor,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                    Text(
-                      '${widget.title}',
-                      style:
-                          bodyTextMedium(AppColors.fontDanger, FontWeight.bold),
+                  ),
+
+                  //
+                  //
+                  //Box circle logo image
+                  Positioned(
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        color: AppColors.backgroundWhite,
+                        border: Border.all(
+                            color: widget.boxCircleBorderColor ??
+                                AppColors.primary200,
+                            width: 5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Center(
+                            child: widget.logo == ""
+                                ? Image.asset(
+                                    'assets/image/no-image-available.png',
+                                    fit: BoxFit.contain,
+                                  )
+                                : Image.network(
+                                    "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${widget.logo}",
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        'assets/image/no-image-available.png',
+                                        fit: BoxFit.contain,
+                                      ); // Display an error message
+                                    },
+                                  ),
+                          ),
+                        ),
+                      ),
                     ),
-                    SizedBox(
-                      height: 10,
+                    top: -50,
+                  ),
+
+                  //
+                  //
+                  //Widget bottom
+                  Positioned(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
+                      ),
+                      child: Container(
+                        width: 70.w,
+                        height: 10,
+                        decoration: BoxDecoration(
+                            color: widget.widgetBottomColor ??
+                                AppColors.primary200),
+                      ),
                     ),
-                    Text(
-                      '${widget.text}',
-                      style: bodyTextNormal(null, null),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+                    bottom: -10,
+                  ),
+                ],
               ),
             ),
-            Positioned(
-              child: CircleAvatar(
-                backgroundColor: AppColors.lightDanger,
-                radius: 40,
-                child: FaIcon(
-                  FontAwesomeIcons.xmark,
-                  size: IconSize.lIcon,
-                  color: AppColors.iconDanger,
-                ),
-                // child: Text(
-                //   'xmark',
-                //   style: lIcon('FontAwesomePro-Solid', AppColors.fontWhite),
-                // ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel extends StatefulWidget {
+  const NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel({
+    Key? key,
+    this.contentText,
+    this.title,
+    this.press,
+    this.textButtonLeft,
+    this.textButtonRight,
+    this.smallText,
+    this.buttonLeftColor,
+    this.buttonRightColor,
+    this.boxCircleColor,
+    this.iconColor,
+    this.widgetBottomColor,
+    this.titleColor,
+    this.textButtonLeftColor,
+    this.textButtonRightColor,
+  }) : super(key: key);
+  final String? contentText, smallText, title, textButtonLeft, textButtonRight;
+  final Color? boxCircleColor,
+      titleColor,
+      iconColor,
+      buttonLeftColor,
+      buttonRightColor,
+      textButtonLeftColor,
+      textButtonRightColor,
+      widgetBottomColor;
+  final Function()? press;
+
+  @override
+  State<NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel> createState() =>
+      _NewVer4CustAlertDialogWarning3TxtBtnConfirmCancelState();
+}
+
+class _NewVer4CustAlertDialogWarning3TxtBtnConfirmCancelState
+    extends State<NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel> {
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
+      child: Dialog(
+        backgroundColor: AppColors.backgroundWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        insetPadding: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              flex: 1,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    // height: 280,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.borderWhite),
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Padding(
+                      padding: EdgeInsets.all(30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            child: SizedBox(
+                              height:
+                                  30, //10 ຄວາມຫ່າງລະວ່າງ top box alert & bottom circle
+                            ),
+                          ),
+                          //
+                          //
+                          //Title
+                          Text(
+                            '${widget.title}',
+                            style: bodyTextMedium(
+                                "NotoSansLaoLoopedBold", null, FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+
+                          //
+                          //
+                          //Small Text
+                          Text(
+                            "${widget.smallText}",
+                            style: bodyTextMinNormal("NotoSansLaoLoopedMedium",
+                                AppColors.dark500, null),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          //
+                          //
+                          //Text
+                          Text(
+                            "${widget.contentText}",
+                            style: bodyTextMiniMedium(
+                                "NotoSansLaoLoopedMedium", null, null),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          //
+                          //
+                          //Button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              //
+                              //
+                              //Button left
+                              Expanded(
+                                flex: 1,
+                                child: Button(
+                                  height: 50,
+                                  colorButton: widget.buttonLeftColor == null
+                                      ? AppColors.buttonBG
+                                      : widget.buttonLeftColor,
+                                  // buttonBorderColor: AppColors.borderBG,
+                                  press: () {
+                                    Navigator.of(context).pop('Cancel');
+                                  },
+                                  text: '${widget.textButtonLeft}',
+                                  fontFamily: "NotoSansLaoLoopedMedium",
+                                  colorText: widget.textButtonLeftColor == null
+                                      ? AppColors.fontDark
+                                      : widget.textButtonLeftColor,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+
+                              //
+                              //
+                              //Button right
+                              Expanded(
+                                flex: 1,
+                                child: Button(
+                                  height: 50,
+                                  colorButton: widget.buttonRightColor == null
+                                      ? AppColors.warning600
+                                      : widget.buttonRightColor,
+                                  press: () {
+                                    Navigator.of(context).pop('Ok');
+                                  },
+                                  text: '${widget.textButtonRight}',
+                                  fontFamily: "NotoSansLaoLoopedMedium",
+                                  colorText: widget.textButtonRightColor == null
+                                      ? AppColors.fontWhite
+                                      : widget.textButtonRightColor,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  //
+                  //
+                  //Box circle icon
+                  Positioned(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            color: widget.boxCircleColor == null
+                                ? AppColors.warning200
+                                : widget.boxCircleColor),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: FaIcon(
+                            FontAwesomeIcons.exclamation,
+                            size: 36,
+                            color: widget.iconColor == null
+                                ? AppColors.warning600
+                                : widget.iconColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    top: -50,
+                  ),
+
+                  //
+                  //
+                  //Widget bottom
+                  Positioned(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10)),
+                      child: Container(
+                        width: 70.w,
+                        height: 10,
+                        decoration: BoxDecoration(
+                            color: widget.widgetBottomColor == null
+                                ? AppColors.warning200
+                                : widget.widgetBottomColor),
+                      ),
+                    ),
+                    bottom: -10,
+                  ),
+                ],
               ),
-              top: -40,
             )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//
+//
+//
+//
+//
+//Alert Error
+class CustAlertDialogErrorWithoutBtn extends StatefulWidget {
+  const CustAlertDialogErrorWithoutBtn({
+    Key? key,
+    this.text,
+    this.title,
+    this.boxCircleColor,
+    this.iconColor,
+    this.titleColor,
+    this.textColor,
+  }) : super(key: key);
+  final String? title, text;
+  final Color? boxCircleColor, iconColor, titleColor, textColor;
+
+  @override
+  State<CustAlertDialogErrorWithoutBtn> createState() =>
+      _CustAlertDialogErrorWithoutBtnState();
+}
+
+class _CustAlertDialogErrorWithoutBtnState
+    extends State<CustAlertDialogErrorWithoutBtn> {
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
+      child: Dialog(
+        backgroundColor: AppColors.backgroundWhite,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        insetPadding: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              flex: 1,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    // height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.borderWhite),
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Padding(
+                      padding: EdgeInsets.all(30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height:
+                                30, //10 ຄວາມຫ່າງລະວ່າງ top box alert & bottom circle
+                          ),
+                          //
+                          //
+                          //Title
+                          Text(
+                            '${widget.title}',
+                            style: bodyTextMedium(
+                                null,
+                                widget.titleColor ?? AppColors.fontDanger,
+                                FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          //
+                          //
+                          //Text
+                          Text(
+                            '${widget.text}',
+                            style: bodyTextNormal(
+                                null, widget.textColor ?? null, null),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  //
+                  //
+                  //Box circle with icon
+                  Positioned(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            color:
+                                widget.boxCircleColor ?? AppColors.warning200),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: FaIcon(
+                            FontAwesomeIcons.xmark,
+                            size: 36,
+                            color: widget.iconColor ?? AppColors.iconDanger,
+                          ),
+                        ),
+                      ),
+                    ),
+                    top: -50,
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -957,14 +1852,14 @@ Future<dynamic> CustomAlertDialogLoading(BuildContext context) {
   );
 }
 
-class CustomAlertLoading extends StatefulWidget {
-  const CustomAlertLoading({Key? key}) : super(key: key);
+class CustAlertLoading extends StatefulWidget {
+  const CustAlertLoading({Key? key}) : super(key: key);
 
   @override
-  State<CustomAlertLoading> createState() => _CustomAlertLoadingState();
+  State<CustAlertLoading> createState() => _CustAlertLoadingState();
 }
 
-class _CustomAlertLoadingState extends State<CustomAlertLoading> {
+class _CustAlertLoadingState extends State<CustAlertLoading> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
@@ -993,7 +1888,7 @@ class _CustomAlertLoadingState extends State<CustomAlertLoading> {
                   // 'ກະລຸນາລໍຖ້າ...',
                   'waiting'.tr,
                   // textAlign: TextAlign.center,
-                  style: bodyTextNormal(null, null),
+                  style: bodyTextNormal(null, null, null),
                 ),
               )
             ],

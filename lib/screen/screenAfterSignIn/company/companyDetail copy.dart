@@ -144,7 +144,7 @@ class _CompanyDetailState extends State<CompanyDetail>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -161,7 +161,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
+          return CustAlertDialogSuccessBtnConfirm(
             title: "successful".tr,
             text: "$companyName " + "followed".tr,
             textButton: "ok".tr,
@@ -181,7 +181,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
+          return CustAlertDialogSuccessBtnConfirm(
             title: "successful".tr,
             text: "$companyName " + "unfollowed".tr,
             textButton: "ok".tr,
@@ -204,7 +204,7 @@ class _CompanyDetailState extends State<CompanyDetail>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -221,7 +221,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
+          return CustAlertDialogSuccessBtnConfirm(
             title: "successful".tr,
             text: "$companyName " + "submitted cv".tr,
             textButton: "ok".tr,
@@ -237,9 +237,9 @@ class _CompanyDetailState extends State<CompanyDetail>
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarningWithoutButton(
+          return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            text: "$message",
+            contentText: "$message",
           );
         },
       );
@@ -250,9 +250,9 @@ class _CompanyDetailState extends State<CompanyDetail>
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarningWithoutButton(
+          return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            text: "$message",
+            contentText: "$message",
           );
         },
       );
@@ -266,7 +266,7 @@ class _CompanyDetailState extends State<CompanyDetail>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -285,7 +285,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
+          return CustAlertDialogSuccessBtnConfirm(
             title: "successful".tr,
             text: "$jobTitle " + "save job".tr + "successful".tr,
             textButton: "ok".tr,
@@ -300,7 +300,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
+          return CustAlertDialogSuccessBtnConfirm(
             title: "successful".tr,
             text: "$jobTitle " + "unsave job".tr + "successful".tr,
             textButton: "ok".tr,
@@ -482,8 +482,8 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         horizontal: 20),
                                     child: Text(
                                       _companyName,
-                                      style:
-                                          bodyTextMedium(null, FontWeight.bold),
+                                      style: bodyTextMedium(
+                                          null, null, FontWeight.bold),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -556,6 +556,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                     child: Text(
                                                       "about".tr,
                                                       style: bodyTextNormal(
+                                                          null,
                                                           _tabController
                                                                       .index ==
                                                                   0
@@ -596,6 +597,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                     child: Text(
                                                       "job open".tr,
                                                       style: bodyTextNormal(
+                                                          null,
                                                           _tabController
                                                                       .index ==
                                                                   1
@@ -636,6 +638,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                     child: Text(
                                                       "video".tr,
                                                       style: bodyTextNormal(
+                                                          null,
                                                           _tabController
                                                                       .index ==
                                                                   2
@@ -676,6 +679,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                     child: Text(
                                                       "photo gallery".tr,
                                                       style: bodyTextNormal(
+                                                          null,
                                                           _tabController
                                                                       .index ==
                                                                   3
@@ -716,6 +720,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                     child: Text(
                                                       "benefit".tr,
                                                       style: bodyTextNormal(
+                                                          null,
                                                           _tabController
                                                                       .index ==
                                                                   4
@@ -756,6 +761,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                     child: Text(
                                                       "contact".tr,
                                                       style: bodyTextNormal(
+                                                          null,
                                                           _tabController
                                                                       .index ==
                                                                   5
@@ -959,7 +965,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                                         child: Column(
                                                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                                                           children: [
-                                                                                            Text("${_jobOpeningName}", style: bodyTextNormal(null, FontWeight.bold), overflow: TextOverflow.ellipsis),
+                                                                                            Text("${_jobOpeningName}", style: bodyTextNormal(null, null, FontWeight.bold), overflow: TextOverflow.ellipsis),
                                                                                             SizedBox(
                                                                                               height: 5,
                                                                                             ),
@@ -973,7 +979,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                                                   width: 5,
                                                                                                 ),
                                                                                                 Flexible(
-                                                                                                  child: Text("${_jobOpeningWorkingLocation}", style: bodyTextSmall(null), overflow: TextOverflow.ellipsis),
+                                                                                                  child: Text("${_jobOpeningWorkingLocation}", style: bodyTextSmall(null, null, null), overflow: TextOverflow.ellipsis),
                                                                                                 ),
                                                                                               ],
                                                                                             ),
@@ -988,7 +994,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                                                 ),
                                                                                                 Text(
                                                                                                   "${_jobOpeningOpeningDate} - ${_jobOpeningClosingDate}",
-                                                                                                  style: bodyTextSmall(null),
+                                                                                                  style: bodyTextSmall(null, null, null),
                                                                                                 )
                                                                                               ],
                                                                                             ),
@@ -1026,7 +1032,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                                               ),
                                                                                               Text(
                                                                                                 "saved".tr,
-                                                                                                style: bodyTextSmall(AppColors.fontPrimary),
+                                                                                                style: bodyTextSmall(null, AppColors.fontPrimary, null),
                                                                                               ),
                                                                                             ],
                                                                                           ),
@@ -1041,7 +1047,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                                               SizedBox(
                                                                                                 width: 8,
                                                                                               ),
-                                                                                              Text("save".tr, style: bodyTextSmall(null)),
+                                                                                              Text("save".tr, style: bodyTextSmall(null, null, null)),
                                                                                             ],
                                                                                           ),
                                                                                         ),
@@ -1236,7 +1242,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                             child:
                                                                                 Text(
                                                                               "${_benefitName}",
-                                                                              style: bodyTextNormal(null, null),
+                                                                              style: bodyTextNormal(null, null, null),
                                                                             ),
                                                                           ),
                                                                         ],
@@ -1288,6 +1294,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                               style:
                                                                   bodyTextNormal(
                                                                       null,
+                                                                      null,
                                                                       FontWeight
                                                                           .bold),
                                                             ),
@@ -1295,6 +1302,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                               "${_address}",
                                                               style:
                                                                   bodyTextNormal(
+                                                                      null,
                                                                       null,
                                                                       null),
                                                             ),
@@ -1347,6 +1355,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                             Text(
                                                                           "${_email}",
                                                                           style: bodyTextNormal(
+                                                                              null,
                                                                               null,
                                                                               null),
                                                                         ),
@@ -1402,6 +1411,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                           "${_phone}",
                                                                           style: bodyTextNormal(
                                                                               null,
+                                                                              null,
                                                                               null),
                                                                         ),
                                                                       ),
@@ -1455,8 +1465,10 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                           child:
                                                                               Text(
                                                                             "${_website}",
-                                                                            style:
-                                                                                bodyTextNormal(null, null),
+                                                                            style: bodyTextNormal(
+                                                                                null,
+                                                                                null,
+                                                                                null),
                                                                           ),
                                                                         ),
                                                                       )
@@ -1510,6 +1522,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                             Text(
                                                                           "${_facebook}",
                                                                           style: bodyTextNormal(
+                                                                              null,
                                                                               null,
                                                                               null),
                                                                         ),
@@ -1565,6 +1578,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                           "${_youtube}",
                                                                           style: bodyTextNormal(
                                                                               null,
+                                                                              null,
                                                                               null),
                                                                         ),
                                                                       ),
@@ -1617,6 +1631,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                             Text(
                                                                           "${_tiktok}",
                                                                           style: bodyTextNormal(
+                                                                              null,
                                                                               null,
                                                                               null),
                                                                         ),
@@ -1671,6 +1686,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                             Text(
                                                                           "${_linkIn}",
                                                                           style: bodyTextNormal(
+                                                                              null,
                                                                               null,
                                                                               null),
                                                                         ),

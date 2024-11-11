@@ -93,7 +93,8 @@ class _MessageDetailState extends State<MessageDetail> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   "message detail".tr,
-                                  style: bodyTextMedium(null, FontWeight.bold),
+                                  style: bodyTextMedium(
+                                      null, null, FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -110,7 +111,7 @@ class _MessageDetailState extends State<MessageDetail> {
                               launchInBrowser(Uri.parse(url));
                               return true;
                             },
-                            // textStyle: bodyTextNormal(
+                            // textStyle: bodyTextNormal(null,
                             //     null, null),
                           ),
                         ),

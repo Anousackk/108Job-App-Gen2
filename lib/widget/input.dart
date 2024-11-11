@@ -260,6 +260,7 @@ class _SimpleTextFieldWithIconLeftState
           ),
           hintText: "${widget.hintText}",
           hintStyle: bodyTextNormal(
+            null,
             widget.hintStyleColor == null
                 ? AppColors.fontGreyOpacity
                 : widget.hintStyleColor,
@@ -394,6 +395,7 @@ class _SimpleTextFieldWithIconRightState
           ),
           hintText: "${widget.hintText}",
           hintStyle: bodyTextNormal(
+            null,
             widget.hintStyleColor == null
                 ? AppColors.fontGreyOpacity
                 : widget.hintStyleColor,
@@ -541,6 +543,7 @@ class _SimpleTextFieldSingleValidateState
             ),
             hintText: "${widget.hintText}",
             hintStyle: bodyTextNormal(
+              null,
               widget.hintStyleColor == null
                   ? AppColors.fontGreyOpacity
                   : widget.hintStyleColor,
@@ -761,7 +764,7 @@ class _TextFieldPhoneNumberState extends State<TextFieldPhoneNumber> {
                     child: Text(
                       '${widget.preFix}',
                       style: bodyTextNormal(
-                          widget.preFixColor, widget.preFixFontWeight),
+                          null, widget.preFixColor, widget.preFixFontWeight),
                     ),
                   ),
                 ),
@@ -784,6 +787,7 @@ class _TextFieldPhoneNumberState extends State<TextFieldPhoneNumber> {
           ),
           hintText: "${widget.hintText}",
           hintStyle: bodyTextNormal(
+            null,
             widget.hintStyleColor == null
                 ? AppColors.fontGreyOpacity
                 : widget.hintStyleColor,
@@ -918,6 +922,7 @@ class _TextFieldEmailWithIconRightState
           ),
           hintText: "${widget.hintText}",
           hintStyle: bodyTextNormal(
+            null,
             widget.hintStyleColor == null
                 ? AppColors.fontGreyOpacity
                 : widget.hintStyleColor,
@@ -1037,6 +1042,7 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
           ),
           hintText: "${widget.hintText}",
           hintStyle: bodyTextNormal(
+            null,
             widget.hintStyleColor == null
                 ? AppColors.fontGreyOpacity
                 : widget.hintStyleColor,
@@ -1129,6 +1135,7 @@ class _DropdownButtonMenuState extends State<DropdownButtonMenu> {
             hint: Text(
               "${widget.hintText}",
               style: bodyTextNormal(
+                null,
                 widget.hintStyleColor == null
                     ? AppColors.fontGreyOpacity
                     : widget.hintStyleColor,
@@ -1394,7 +1401,7 @@ class _SimpleBoxDecorationState extends State<SimpleBoxDecoration> {
               child: Text(
                 "${widget.text}",
                 textAlign: TextAlign.center,
-                // style: bodyTextNormal(
+                // style: bodyTextNormal(null,
                 //   widget.colorText == null ? AppColors.black : widget.colorText,
                 // ),
                 style: TextStyle(
@@ -1564,6 +1571,7 @@ class _BoxDecorationInputState extends State<BoxDecorationInput> {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: bodyTextNormal(
+                              null,
                               widget.colorText == null
                                   ? AppColors.fontDark
                                   : widget.colorText,

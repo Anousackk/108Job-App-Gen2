@@ -143,7 +143,8 @@ class _MessagesState extends State<Messages> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   "message".tr,
-                                  style: bodyTextMedium(null, FontWeight.bold),
+                                  style: bodyTextMedium(
+                                      null, null, FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -309,6 +310,7 @@ class _MessagesState extends State<Messages> {
                                                               style:
                                                                   bodyTextMaxNormal(
                                                                       null,
+                                                                      null,
                                                                       FontWeight
                                                                           .bold),
                                                               overflow:
@@ -341,14 +343,18 @@ class _MessagesState extends State<Messages> {
                                                           Text(
                                                             "date".tr + ": ",
                                                             style: bodyTextSmall(
+                                                                null,
                                                                 AppColors
-                                                                    .fontGreyOpacity),
+                                                                    .fontGreyOpacity,
+                                                                null),
                                                           ),
                                                           Text(
                                                             "${_createdAt}",
                                                             style: bodyTextSmall(
+                                                                null,
                                                                 AppColors
-                                                                    .fontGreyOpacity),
+                                                                    .fontGreyOpacity,
+                                                                null),
                                                           ),
                                                         ],
                                                       ),

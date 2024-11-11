@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names, use_full_hex_values_for_flutter_colors, deprecated_member_use
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names, use_full_hex_values_for_flutter_colors, deprecated_member_use, prefer_adjacent_string_concatenation
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -60,8 +60,6 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
   String _checkStatusCallBack = "";
 
   fetchJobSearchDetail(dynamic jobId) async {
-    print("2" + jobId.toString());
-
     var res = await fetchData(getJobSearchDetailSeekerApi + jobId);
     // print("${res}");
     dynamic _jobDetail = res['jobDetail'];
@@ -136,7 +134,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -155,13 +153,13 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$_title " + "save job".tr + "successful".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            strIcon: "\uf004",
+            title: "save job".tr + " " + "successful".tr,
+            contentText: "$_title",
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
-              // Navigator.of(context).pop('Success');
               setState(() {
                 _checkStatusCallBack = "Success";
               });
@@ -174,13 +172,18 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$_title " + "unsave job".tr + "successful".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            strIcon: "\uf7a9",
+            boxCircleColor: AppColors.warning200,
+            iconColor: AppColors.warning600,
+            title: "unsave job".tr + " " + "successful".tr,
+            contentText: "$_title",
             textButton: "ok".tr,
+            buttonColor: AppColors.warning200,
+            textButtonColor: AppColors.warning600,
+            widgetBottomColor: AppColors.warning200,
             press: () {
               Navigator.pop(context);
-              // Navigator.of(context).pop('Success');
               setState(() {
                 _checkStatusCallBack = "Success";
               });
@@ -198,7 +201,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -219,9 +222,9 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$_title ".tr + "apply".tr + "successful".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "apply".tr + " " + "successful".tr,
+            contentText: "$_title",
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -239,9 +242,9 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogWarningWithoutButton(
+          return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            text: "$message",
+            contentText: "$message",
           );
         },
       );
@@ -255,7 +258,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -270,9 +273,9 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$companyName " + "followed".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "followed".tr + " " + "successful".tr,
+            contentText: "$companyName",
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -287,9 +290,9 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "$companyName " + "unfollowed".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "unfollowed".tr + " " + "successful".tr,
+            contentText: "$companyName",
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -300,24 +303,46 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     }
   }
 
-  shareFileImage(BuildContext context, String jobSearchId) async {
-    final box = context.findRenderObject() as RenderBox?;
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-    dynamic dynamicLink =
-        await DynamicLinkService.createDynamicLink(jobSearchId);
+  sharePlusDynamiclink(BuildContext context, String jobSearchId) async {
+    //
+    //ສະແດງ AlertDialog Loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustAlertLoading();
+      },
+    );
 
-    final resultShare = await Share.share(dynamicLink.toString(),
+    try {
+      final box = context.findRenderObject() as RenderBox?;
+      dynamic dynamicLink =
+          await DynamicLinkService.createDynamicLink(jobSearchId);
+
+      final resultShare = await Share.share(
+        dynamicLink.toString(),
         subject: _companyName.toString(),
-        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+      );
+    } catch (e) {
+      print("error share plus ${e}");
+    } finally {
+      Navigator.pop(context);
+    }
 
-    // Step 1: Download the file
+    // final resultShare = await Share.shareUri(
+    //   Uri.parse(dynamicLink.toString()),
+    //   sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+    // );
+
+    // // Step 1: Download the file
     // final response = await http.get(Uri.parse(
     //     'https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}'));
     // final directory = await getApplicationDocumentsDirectory();
     // final file = File('${directory.path}/logo.png');
     // await file.writeAsBytes(response.bodyBytes);
 
-    // Step 2: Share the file
+    // // Step 2: Share the file
     // final resultShare = await Share.shareXFiles(
     //   [
     //     XFile(file.path) // Using the local file path
@@ -399,14 +424,22 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                       //
                       //
                       //
-                      //Button back
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //Header Appbar
                       Container(
-                        // padding: EdgeInsets.symmetric(
-                        //   horizontal: 20,
-                        // ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            //
+                            //
+                            //Button back
                             GestureDetector(
                               onTap: () {
                                 Navigator.of(context).pop([
@@ -429,18 +462,41 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                               padding: const EdgeInsets.only(right: 20),
                               child: Text("valid_until".tr + ": ${_closeDate}"),
                             ),
+
+                            //
+                            //
+                            //Share jobdetail
                             GestureDetector(
                               onTap: () async {
-                                shareFileImage(context, _id);
+                                sharePlusDynamiclink(context, _id);
                               },
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 20),
-                                child: Text("Share"),
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                color: AppColors.backgroundWhite,
+                                child: Text(
+                                  "\uf064",
+                                  style: fontAwesomeSolid(null, 20, null, null),
+                                ),
                               ),
                             )
                           ],
                         ),
                       ),
+
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //Body Content
                       Expanded(
                         flex: 15,
                         child: SingleChildScrollView(
@@ -465,7 +521,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                         Text(
                                           "${_title}",
                                           style: bodyTextMedium(
-                                              null, FontWeight.bold),
+                                              null, null, FontWeight.bold),
                                           textAlign: TextAlign.center,
                                         ),
                                         SizedBox(
@@ -475,7 +531,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                         //Job Title
                                         Text(
                                           "${_jobFunction}",
-                                          style: bodyTextNormal(
+                                          style: bodyTextNormal(null,
                                               AppColors.fontGreyOpacity, null),
                                           textAlign: TextAlign.center,
                                         ),
@@ -512,7 +568,8 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                                   horizontal: 10, vertical: 8),
                                               child: Text(
                                                 "${_workLocation}",
-                                                style: bodyTextSmall(null),
+                                                style: bodyTextSmall(
+                                                    null, null, null),
                                               ),
                                             ),
                                           ),
@@ -529,7 +586,8 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                                   horizontal: 10, vertical: 8),
                                               child: Text(
                                                 "${_education}",
-                                                style: bodyTextSmall(null),
+                                                style: bodyTextSmall(
+                                                    null, null, null),
                                               ),
                                             ),
                                           ),
@@ -546,7 +604,8 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                                   horizontal: 10, vertical: 8),
                                               child: Text(
                                                 "${_experience}",
-                                                style: bodyTextSmall(null),
+                                                style: bodyTextSmall(
+                                                    null, null, null),
                                               ),
                                             ),
                                           ),
@@ -565,7 +624,8 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                                     vertical: 8),
                                                 child: Text(
                                                   "${_salary}",
-                                                  style: bodyTextSmall(null),
+                                                  style: bodyTextSmall(
+                                                      null, null, null),
                                                 ),
                                               ),
                                             ),
@@ -579,7 +639,8 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                                 horizontal: 10, vertical: 8),
                                             child: Text(
                                               "${_openDate} - ${_closeDate}",
-                                              style: bodyTextSmall(null),
+                                              style: bodyTextSmall(
+                                                  null, null, null),
                                             ),
                                           ),
                                         ],
@@ -620,7 +681,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                       Text(
                                         "job description".tr,
                                         style: bodyTextMaxNormal(
-                                            null, FontWeight.bold),
+                                            null, null, FontWeight.bold),
                                       ),
                                       SizedBox(
                                         height: 20,
@@ -635,7 +696,8 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                           launchInBrowser(Uri.parse(url));
                                           return true;
                                         },
-                                        textStyle: bodyTextNormal(null, null),
+                                        textStyle:
+                                            bodyTextNormal(null, null, null),
                                       ),
                                     ],
                                   ),
@@ -673,6 +735,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                     child: Row(
                                       children: [
                                         //
+                                        //
                                         //Profile Image
                                         Container(
                                           width: 80,
@@ -685,23 +748,27 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                                   color: AppColors.borderBG)),
                                           child: Padding(
                                             padding: const EdgeInsets.all(5),
-                                            child: Center(
-                                              child: _logo == ""
-                                                  ? Image.asset(
-                                                      'assets/image/no-image-available.png',
-                                                      fit: BoxFit.contain,
-                                                    )
-                                                  : Image.network(
-                                                      "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
-                                                      fit: BoxFit.contain,
-                                                      errorBuilder: (context,
-                                                          error, stackTrace) {
-                                                        return Image.asset(
-                                                          'assets/image/no-image-available.png',
-                                                          fit: BoxFit.contain,
-                                                        ); // Display an error message
-                                                      },
-                                                    ),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: Center(
+                                                child: _logo == ""
+                                                    ? Image.asset(
+                                                        'assets/image/no-image-available.png',
+                                                        fit: BoxFit.contain,
+                                                      )
+                                                    : Image.network(
+                                                        "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                        fit: BoxFit.contain,
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return Image.asset(
+                                                            'assets/image/no-image-available.png',
+                                                            fit: BoxFit.contain,
+                                                          ); // Display an error message
+                                                        },
+                                                      ),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -715,11 +782,12 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 //
+                                                //
                                                 //Company Name
                                                 Text(
                                                   "${_companyName}",
                                                   style: bodyTextNormal(
-                                                      null, null),
+                                                      null, null, null),
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
@@ -728,23 +796,28 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                                 ),
 
                                                 //
+                                                //
                                                 //Industry
                                                 Text(
                                                   "${_industry}",
-                                                  style: bodyTextSmall(null),
+                                                  style: bodyTextSmall(
+                                                      null, null, null),
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
 
                                                 //
+                                                //
                                                 //Address
                                                 Text(
                                                   "${_address}",
-                                                  style: bodyTextSmall(null),
+                                                  style: bodyTextSmall(
+                                                      null, null, null),
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
 
+                                                //
                                                 //
                                                 //Job Opening
                                                 Row(
@@ -753,13 +826,13 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                                   children: [
                                                     Text(
                                                       "${_allOnlineJob.length} ",
-                                                      style:
-                                                          bodyTextSmall(null),
+                                                      style: bodyTextSmall(
+                                                          null, null, null),
                                                     ),
                                                     Text(
                                                       "follower".tr,
-                                                      style:
-                                                          bodyTextSmall(null),
+                                                      style: bodyTextSmall(
+                                                          null, null, null),
                                                     ),
                                                   ],
                                                 ),
@@ -812,7 +885,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                         //               ),
                                         //               Text(
                                         //                 "following".tr,
-                                        //                 style: bodyTextSmall(
+                                        //                 style: bodyTextSmall(null,null,
                                         //                     AppColors
                                         //                         .fontWhite),
                                         //               ),
@@ -842,7 +915,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                         //               Text(
                                         //                 "follow".tr,
                                         //                 style:
-                                        //                     bodyTextSmall(null),
+                                        //                     bodyTextSmall(null,null,null),
                                         //               ),
                                         //             ],
                                         //           ),
@@ -977,8 +1050,24 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                       colorText: AppColors.fontWhite,
                                       // fontWeight: FontWeight.bold,
                                       text: "apply".tr,
-                                      press: () {
-                                        applyJob();
+
+                                      press: () async {
+                                        var result = await showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return NewVer3CustAlertDialogWarningPictrueBtnConfirmCancel(
+                                                logo: _logo,
+                                                title:
+                                                    "apply_job_modal_title".tr,
+                                                contentText: "${_title}",
+                                                textButtonLeft: 'cancel'.tr,
+                                                textButtonRight: 'confirm'.tr,
+                                              );
+                                            });
+                                        if (result == 'Ok') {
+                                          print("confirm apply");
+                                          applyJob();
+                                        }
                                       },
                                     )
                                   : ButtonWithIconLeft(

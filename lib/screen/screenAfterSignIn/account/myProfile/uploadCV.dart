@@ -41,7 +41,7 @@ class _UploadCVState extends State<UploadCV> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustomAlertLoading();
+          return CustAlertLoading();
         },
       );
 
@@ -155,7 +155,7 @@ class _UploadCVState extends State<UploadCV> {
                     //Trips
                     Text(
                       "tips".tr,
-                      style: bodyTextNormal(null, FontWeight.bold),
+                      style: bodyTextNormal(null, null, FontWeight.bold),
                     ),
                     SizedBox(
                       height: 10,
@@ -175,7 +175,7 @@ class _UploadCVState extends State<UploadCV> {
                     //Question ask?
                     // Text(
                     //   "question you my ask".tr,
-                    //   style: bodyTextNormal(null, FontWeight.bold),
+                    //   style: bodyTextNormal(null,null, FontWeight.bold),
                     // ),
                     // SizedBox(
                     //   height: 10,
@@ -256,9 +256,9 @@ class _UploadCVState extends State<UploadCV> {
                       await showDialog(
                         context: context,
                         builder: (context) {
-                          return CustomAlertDialogWarningWithoutButton(
+                          return CustAlertDialogWarningWithoutBtn(
                             title: "warning".tr,
-                            text: "plz select".tr,
+                            contentText: "plz select".tr,
                           );
                         },
                       );
@@ -282,7 +282,7 @@ class _UploadCVState extends State<UploadCV> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -303,9 +303,9 @@ class _UploadCVState extends State<UploadCV> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "sccessful".tr,
-            text: res['message'],
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "upload cv".tr + " " + "sccessful".tr,
+            contentText: res['message'],
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -318,7 +318,7 @@ class _UploadCVState extends State<UploadCV> {
       await showDialog(
         context: context,
         builder: (context) {
-          return CustomAlertDialogErrorWithoutButton(
+          return CustAlertDialogErrorWithoutBtn(
             title: "incorrect".tr,
             text: res['message'],
           );

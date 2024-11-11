@@ -229,7 +229,7 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                     ),
                     Text(
                       "set pass".tr + " " + "successful".tr,
-                      style: bodyTextMedium(null, FontWeight.bold),
+                      style: bodyTextMedium(null, null, FontWeight.bold),
                     ),
                     SizedBox(
                       height: 30,
@@ -260,13 +260,23 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
             );
           },
         );
-      } else {
+      } else if (value["message"] == "Password does not match") {
         await showDialog(
           context: context,
           builder: (context) {
-            return CustomAlertDialogErrorWithoutButton(
-              title: "incorrect".tr,
-              text: value['message'],
+            return CustAlertDialogWarningWithoutBtn(
+              title: "warning".tr,
+              contentText: "Password does not match".tr,
+            );
+          },
+        );
+      } else if (value["message"] == "User does not exist") {
+        await showDialog(
+          context: context,
+          builder: (context) {
+            return CustAlertDialogWarningWithoutBtn(
+              title: "warning".tr,
+              contentText: "User does not exist".tr,
             );
           },
         );

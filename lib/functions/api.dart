@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use
+// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use, prefer_if_null_operators, prefer_if_null_operators, deprecated_member_use, avoid_print, avoid_print, avoid_print
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
@@ -180,7 +180,7 @@ fetchData(url) async {
 
   var res = await http.get(Uri.parse(url), headers: {
     "content-type": "application/json",
-    "authorization": "$employeeToken" == null ? "" : "$employeeToken",
+    "authorization": "$employeeToken" ?? "",
   });
   if (res.statusCode == 200) {
     return jsonDecode(res.body);
@@ -189,7 +189,10 @@ fetchData(url) async {
   } else if (res.statusCode == 409) {
     return jsonDecode(res.body);
   } else if (res.statusCode == 401) {
-    return res.body;
+    return jsonDecode(res.statusCode.toString());
+    // return jsonDecode(res.body);
+  } else {
+    throw Exception('Failed to load data');
   }
 }
 
@@ -201,7 +204,7 @@ postData(url, bodyJsonDecode) async {
     Uri.parse(url),
     headers: <String, String>{
       "content-type": "application/json",
-      "authorization": "$employeeToken" == null ? "" : "$employeeToken",
+      "authorization": "$employeeToken" ?? "",
     },
     body: jsonEncode(bodyJsonDecode),
   );
@@ -240,7 +243,7 @@ putData(url, bodyJsonDecode) async {
     Uri.parse(url),
     headers: <String, String>{
       "content-type": "application/json",
-      "authorization": "$employeeToken" == null ? "" : "$employeeToken",
+      "authorization": "$employeeToken" ?? "",
     },
     body: jsonEncode(bodyJsonDecode),
   );
@@ -263,7 +266,7 @@ deleteData(url) async {
     Uri.parse(url),
     headers: <String, String>{
       "content-type": "application/json",
-      "authorization": "$employeeToken" == null ? "" : "$employeeToken",
+      "authorization": "$employeeToken" ?? "",
     },
   );
   if (res.statusCode == 200) {
@@ -299,7 +302,7 @@ upLoadFile(String fileName, String url) async {
       data: formData,
       options: Options(headers: {
         "content-type": "application/json",
-        "authorization": "$employeeToken" == null ? "" : "$employeeToken",
+        "authorization": "$employeeToken" ?? "",
       }),
     );
     if (res.statusCode == 201) {
@@ -314,6 +317,7 @@ upLoadFile(String fileName, String url) async {
   } catch (e) {
     if (e is DioError && e.response != null && e.response?.statusCode == 413) {
       // Handle 413 error (Payload Too Large)
+      // ignore: avoid_print
       print('File size exceeds the allowed limit');
     }
   }

@@ -230,7 +230,6 @@ class _WorkPreferencesState extends State<WorkPreferences> {
               height: double.infinity,
               width: double.infinity,
               color: AppColors.backgroundWhite,
-              padding: EdgeInsets.symmetric(horizontal: 20),
               child: Form(
                 key: formkey,
                 child: Column(
@@ -238,794 +237,817 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                     Expanded(
                       flex: 15,
                       child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 30,
-                            ),
-
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //Expected Work Position
-                            Text(
-                              "position".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            SimpleTextFieldWithIconRight(
-                              textController: _workPositionController,
-                              changed: (value) {
-                                setState(() {
-                                  _workPosition = value;
-                                });
-                              },
-                              inputColor: AppColors.inputWhite,
-                              hintText: "enter".tr + " " + "position".tr,
-                              hintTextFontWeight: FontWeight.bold,
-                              suffixIcon: Icon(
-                                Icons.keyboard,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 30,
                               ),
-                              suffixIconColor: AppColors.iconGrayOpacity,
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
 
-                            //
-                            //
-                            //
-                            //
-                            // Text(
-                            //   'Formatted Value: $_formattedValue',
-                            //   style: TextStyle(fontSize: 20.0),
-                            // ),
-                            // TextField(
-                            //   controller: _controller,
-                            //   keyboardType: TextInputType.number,
-                            //   decoration: InputDecoration(
-                            //     labelText: 'Enter a number',
-                            //   ),
-                            //   onChanged: (value) {
-                            //     setState(() {
-                            //       // Parse the input value as an integer
-                            //       int inputValue = int.tryParse(value) ?? 0;
-                            //       print(inputValue);
-                            //       // Format the integer value with commas
-                            //       _formattedValue =
-                            //           NumberFormat.decimalPattern()
-                            //               .format(inputValue);
-                            //       print(_formattedValue);
-                            //     });
-                            //   },
-                            // ),
-                            //
-                            //
-                            //
-                            //
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //Expected Work Position
+                              Text(
+                                "position".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              SimpleTextFieldWithIconRight(
+                                textController: _workPositionController,
+                                changed: (value) {
+                                  setState(() {
+                                    _workPosition = value;
+                                  });
+                                },
+                                inputColor: AppColors.inputWhite,
+                                hintText: "enter".tr + " " + "position".tr,
+                                hintTextFontWeight: FontWeight.bold,
+                                suffixIcon: Icon(
+                                  Icons.keyboard,
+                                ),
+                                suffixIconColor: AppColors.iconGrayOpacity,
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
 
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //Expected Salary
-                            Text(
-                              "salary".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
+                              //
+                              //
+                              //
+                              //
+                              // Text(
+                              //   'Formatted Value: $_formattedValue',
+                              //   style: TextStyle(fontSize: 20.0),
+                              // ),
+                              // TextField(
+                              //   controller: _controller,
+                              //   keyboardType: TextInputType.number,
+                              //   decoration: InputDecoration(
+                              //     labelText: 'Enter a number',
+                              //   ),
+                              //   onChanged: (value) {
+                              //     setState(() {
+                              //       // Parse the input value as an integer
+                              //       int inputValue = int.tryParse(value) ?? 0;
+                              //       print(inputValue);
+                              //       // Format the integer value with commas
+                              //       _formattedValue =
+                              //           NumberFormat.decimalPattern()
+                              //               .format(inputValue);
+                              //       print(_formattedValue);
+                              //     });
+                              //   },
+                              // ),
+                              //
+                              //
+                              //
+                              //
 
-                            SimpleTextFieldSingleValidate(
-                              codeController: _salaryController,
-                              changed: (value) {
-                                // String cleanedString =
-                                //     value.replaceAll(",", "");
-                                // dynamic valDouble = cleanedString;
-                                // MoneyFormatter fmf =
-                                //     MoneyFormatter(amount: valDouble);
-                                setState(() {
-                                  // _salary = fmf.output.withoutFractionDigits;
-                                  _salary = value;
-                                });
-                              },
-                              // heightCon: 12.5.w,
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //Expected Salary
+                              Text(
+                                "salary".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
 
-                              keyboardType: TextInputType.number,
-                              // keyboardType: TextInputType.numberWithOptions(
-                              //     decimal: true),
-                              inputFormat: [ThousandsSeparatorInputFormatter()],
-                              inputColor: AppColors.inputWhite,
-                              hintText: "0",
-                              hintTextFontWeight: FontWeight.bold,
-                              suffixIcon: Container(
-                                // margin: EdgeInsets.only(right: 1),
-                                width: 150,
-                                height: 55,
-                                decoration: BoxDecoration(
-                                  color: AppColors.greyOpacity,
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(1.w),
-                                    bottomRight: Radius.circular(1.w),
-                                  ),
-                                  border: Border.all(
+                              SimpleTextFieldSingleValidate(
+                                codeController: _salaryController,
+                                changed: (value) {
+                                  // String cleanedString =
+                                  //     value.replaceAll(",", "");
+                                  // dynamic valDouble = cleanedString;
+                                  // MoneyFormatter fmf =
+                                  //     MoneyFormatter(amount: valDouble);
+                                  setState(() {
+                                    // _salary = fmf.output.withoutFractionDigits;
+                                    _salary = value;
+                                  });
+                                },
+                                // heightCon: 12.5.w,
+
+                                keyboardType: TextInputType.number,
+                                // keyboardType: TextInputType.numberWithOptions(
+                                //     decimal: true),
+                                inputFormat: [
+                                  ThousandsSeparatorInputFormatter()
+                                ],
+                                inputColor: AppColors.inputWhite,
+                                hintText: "0",
+                                hintTextFontWeight: FontWeight.bold,
+                                suffixIcon: Container(
+                                  // margin: EdgeInsets.only(right: 1),
+                                  width: 150,
+                                  height: 55,
+                                  decoration: BoxDecoration(
                                     color: AppColors.greyOpacity,
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(1.w),
+                                      bottomRight: Radius.circular(1.w),
+                                    ),
+                                    border: Border.all(
+                                      color: AppColors.greyOpacity,
+                                    ),
                                   ),
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    showModalBottomCurrency(context, _currency);
-                                  },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          if (_currency == r"$")
-                                            Text(
-                                              "usd".tr + "/" + "month".tr,
-                                              style: bodyTextNormal(null, null),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showModalBottomCurrency(
+                                          context, _currency);
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            if (_currency == r"$")
+                                              Text(
+                                                "usd".tr + "/" + "month".tr,
+                                                style: bodyTextNormal(
+                                                    null, null, null),
+                                              ),
+                                            if (_currency == "₭")
+                                              Text(
+                                                "kip".tr + "/" + "month".tr,
+                                                style: bodyTextNormal(
+                                                    null, null, null),
+                                              ),
+                                            SizedBox(
+                                              width: 8,
                                             ),
-                                          if (_currency == "₭")
-                                            Text(
-                                              "kip".tr + "/" + "month".tr,
-                                              style: bodyTextNormal(null, null),
-                                            ),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          FaIcon(
-                                            FontAwesomeIcons.caretDown,
-                                            color: AppColors.iconDark,
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              validator: (value) {
-                                if (value == null || value == "") {
-                                  return "required".tr;
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //Job Level
-                            Text(
-                              "job level".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-
-                            BoxDecorationInput(
-                              mainAxisAlignmentTextIcon:
-                                  MainAxisAlignment.start,
-                              colorInput: AppColors.backgroundWhite,
-                              colorBorder: _selectedJobLevel == "" &&
-                                      _isValidateValue == true
-                                  ? AppColors.borderDanger
-                                  : AppColors.borderSecondary,
-                              paddingFaIcon:
-                                  EdgeInsets.symmetric(horizontal: 1.7.w),
-                              fontWeight: _selectedJobLevel != ""
-                                  ? null
-                                  : FontWeight.bold,
-                              widgetIconActive: FaIcon(
-                                FontAwesomeIcons.caretDown,
-                                color: AppColors.iconGrayOpacity,
-                                size: IconSize.sIcon,
-                              ),
-                              press: () async {
-                                FocusScope.of(context).requestFocus(focusNode);
-
-                                var result = await showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) {
-                                      return ListSingleSelectedAlertDialog(
-                                        title: "job level".tr,
-                                        listItems: _listJobLevels,
-                                        selectedListItem: _selectedJobLevel,
-                                      );
-                                    }).then(
-                                  (value) {
-                                    //value = "_id"
-                                    //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                    setState(() {
-                                      if (value != "") {
-                                        //
-                                        //ເອົາ _listJobLevels ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
-                                        dynamic findValue =
-                                            _listJobLevels.firstWhere(
-                                                (i) => i["_id"] == value);
-
-                                        setState(() {
-                                          _selectedJobLevel = findValue['_id'];
-                                          _joblevelName = findValue['name'];
-                                        });
-                                        print(_joblevelName);
-                                      }
-                                    });
-                                  },
-                                );
-                              },
-                              text: _selectedJobLevel != ""
-                                  ? "${_joblevelName}"
-                                  : "select".tr + "job level".tr,
-                              colorText: _selectedJobLevel == ""
-                                  ? AppColors.fontGreyOpacity
-                                  : AppColors.fontDark,
-                              validateText: _isValidateValue == true &&
-                                      _selectedJobLevel == ""
-                                  ? Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.only(
-                                        left: 15,
-                                        top: 5,
-                                      ),
-                                      child: Text(
-                                        "required".tr,
-                                        style: bodyTextSmall(
-                                          AppColors.fontDanger,
+                                            FaIcon(
+                                              FontAwesomeIcons.caretDown,
+                                              color: AppColors.iconDark,
+                                            )
+                                          ],
                                         ),
-                                      ),
-                                    )
-                                  : Container(),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //Job Function
-                            Text(
-                              "job function".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-
-                            BoxDecorationInput(
-                              mainAxisAlignmentTextIcon:
-                                  MainAxisAlignment.start,
-                              colorInput: AppColors.backgroundWhite,
-                              colorBorder: _selectedJobFunctionsItems.isEmpty &&
-                                      _isValidateValue == true
-                                  ? AppColors.borderDanger
-                                  : AppColors.borderSecondary,
-                              paddingFaIcon:
-                                  EdgeInsets.symmetric(horizontal: 1.7.w),
-                              fontWeight: _selectedJobFunctionsItems.isEmpty
-                                  ? FontWeight.bold
-                                  : null,
-                              widgetIconActive: FaIcon(
-                                FontAwesomeIcons.caretDown,
-                                color: AppColors.iconGrayOpacity,
-                                size: IconSize.sIcon,
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value == "") {
+                                    return "required".tr;
+                                  }
+                                  return null;
+                                },
                               ),
-                              press: () async {
-                                FocusScope.of(context).requestFocus(focusNode);
+                              SizedBox(
+                                height: 20,
+                              ),
 
-                                var result = await showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) {
-                                      return ListJobFuncSelectedAlertDialog(
-                                        title: "job function".tr,
-                                        listItems: _listJobFunctions,
-                                        selectedListItems:
-                                            _selectedJobFunctionsItems,
-                                      );
-                                    }).then(
-                                  (value) {
-                                    print(value);
-                                    setState(() {
-                                      _selectedJobFunctionsItems = value;
-                                      List pName = [];
-                                      List chName = [];
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //Job Level
+                              Text(
+                                "job level".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
 
-                                      //value = [_selectedListItemsChilds]
+                              BoxDecorationInput(
+                                mainAxisAlignmentTextIcon:
+                                    MainAxisAlignment.start,
+                                colorInput: AppColors.backgroundWhite,
+                                colorBorder: _selectedJobLevel == "" &&
+                                        _isValidateValue == true
+                                    ? AppColors.borderDanger
+                                    : AppColors.borderSecondary,
+                                paddingFaIcon:
+                                    EdgeInsets.symmetric(horizontal: 1.7.w),
+                                fontWeight: _selectedJobLevel != ""
+                                    ? null
+                                    : FontWeight.bold,
+                                widgetIconActive: FaIcon(
+                                  FontAwesomeIcons.caretDown,
+                                  color: AppColors.iconGrayOpacity,
+                                  size: IconSize.sIcon,
+                                ),
+                                press: () async {
+                                  FocusScope.of(context)
+                                      .requestFocus(focusNode);
+
+                                  var result = await showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return ListSingleSelectedAlertDialog(
+                                          title: "job level".tr,
+                                          listItems: _listJobLevels,
+                                          selectedListItem: _selectedJobLevel,
+                                        );
+                                      }).then(
+                                    (value) {
+                                      //value = "_id"
                                       //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                      if (value != null) {
-                                        print("value != null");
-                                        _selectedJobFunctionsItems = value;
-                                        _jobFunctionItemName =
-                                            []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
-
-                                        for (var pItem in _listJobFunctions) {
+                                      setState(() {
+                                        if (value != "") {
                                           //
-                                          //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedJobFunctionsItems ກົງກັບ _listJobFunctions ບໍ່
-                                          if (_selectedJobFunctionsItems
-                                              .contains(pItem["_id"])) {
-                                            setState(() {
-                                              _jobFunctionItemName
-                                                  .add(pItem["name"]);
-                                            });
-                                          }
-                                          for (var chItem in pItem["item"]) {
+                                          //ເອົາ _listJobLevels ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
+                                          dynamic findValue =
+                                              _listJobLevels.firstWhere(
+                                                  (i) => i["_id"] == value);
+
+                                          setState(() {
+                                            _selectedJobLevel =
+                                                findValue['_id'];
+                                            _joblevelName = findValue['name'];
+                                          });
+                                          print(_joblevelName);
+                                        }
+                                      });
+                                    },
+                                  );
+                                },
+                                text: _selectedJobLevel != ""
+                                    ? "${_joblevelName}"
+                                    : "select".tr + "job level".tr,
+                                colorText: _selectedJobLevel == ""
+                                    ? AppColors.fontGreyOpacity
+                                    : AppColors.fontDark,
+                                validateText: _isValidateValue == true &&
+                                        _selectedJobLevel == ""
+                                    ? Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.only(
+                                          left: 15,
+                                          top: 5,
+                                        ),
+                                        child: Text(
+                                          "required".tr,
+                                          style: bodyTextSmall(
+                                              null, AppColors.fontDanger, null),
+                                        ),
+                                      )
+                                    : Container(),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //Job Function
+                              Text(
+                                "job function".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+
+                              BoxDecorationInput(
+                                mainAxisAlignmentTextIcon:
+                                    MainAxisAlignment.start,
+                                colorInput: AppColors.backgroundWhite,
+                                colorBorder:
+                                    _selectedJobFunctionsItems.isEmpty &&
+                                            _isValidateValue == true
+                                        ? AppColors.borderDanger
+                                        : AppColors.borderSecondary,
+                                paddingFaIcon:
+                                    EdgeInsets.symmetric(horizontal: 1.7.w),
+                                fontWeight: _selectedJobFunctionsItems.isEmpty
+                                    ? FontWeight.bold
+                                    : null,
+                                widgetIconActive: FaIcon(
+                                  FontAwesomeIcons.caretDown,
+                                  color: AppColors.iconGrayOpacity,
+                                  size: IconSize.sIcon,
+                                ),
+                                press: () async {
+                                  FocusScope.of(context)
+                                      .requestFocus(focusNode);
+
+                                  var result = await showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return ListJobFuncSelectedAlertDialog(
+                                          title: "job function".tr,
+                                          listItems: _listJobFunctions,
+                                          selectedListItems:
+                                              _selectedJobFunctionsItems,
+                                        );
+                                      }).then(
+                                    (value) {
+                                      print(value);
+                                      setState(() {
+                                        _selectedJobFunctionsItems = value;
+                                        List pName = [];
+                                        List chName = [];
+
+                                        //value = [_selectedListItemsChilds]
+                                        //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                        if (value != null) {
+                                          print("value != null");
+                                          _selectedJobFunctionsItems = value;
+                                          _jobFunctionItemName =
+                                              []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+
+                                          for (var pItem in _listJobFunctions) {
+                                            //
+                                            //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedJobFunctionsItems ກົງກັບ _listJobFunctions ບໍ່
                                             if (_selectedJobFunctionsItems
-                                                .contains(chItem["_id"])) {
+                                                .contains(pItem["_id"])) {
                                               setState(() {
                                                 _jobFunctionItemName
-                                                    .add(chItem["name"]);
+                                                    .add(pItem["name"]);
+                                              });
+                                            }
+                                            for (var chItem in pItem["item"]) {
+                                              if (_selectedJobFunctionsItems
+                                                  .contains(chItem["_id"])) {
+                                                setState(() {
+                                                  _jobFunctionItemName
+                                                      .add(chItem["name"]);
+                                                });
+                                              }
+                                            }
+                                          }
+
+                                          // print(pName);
+                                          // print(chName);
+                                          print(_jobFunctionItemName);
+                                        }
+                                      });
+                                    },
+                                  );
+                                },
+                                text: _selectedJobFunctionsItems.isNotEmpty
+                                    ? "${_jobFunctionItemName.join(', ')}"
+                                    : "select".tr + " " + "job function".tr,
+                                colorText: _selectedJobFunctionsItems.isEmpty
+                                    ? AppColors.fontGreyOpacity
+                                    : AppColors.fontDark,
+                                validateText: _isValidateValue == true &&
+                                        _selectedJobFunctionsItems.isEmpty
+                                    ? Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.only(
+                                          left: 15,
+                                          top: 5,
+                                        ),
+                                        child: Text(
+                                          "required".tr,
+                                          style: bodyTextSmall(
+                                              null, AppColors.fontDanger, null),
+                                        ),
+                                      )
+                                    : Container(),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //Expected Work Provinces
+                              Text(
+                                "province".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              BoxDecorationInput(
+                                mainAxisAlignmentTextIcon:
+                                    MainAxisAlignment.start,
+                                colorInput: AppColors.backgroundWhite,
+                                colorBorder:
+                                    _selectedProvincesListItem.isEmpty &&
+                                            _isValidateValue == true
+                                        ? AppColors.borderDanger
+                                        : AppColors.borderSecondary,
+                                paddingFaIcon:
+                                    EdgeInsets.symmetric(horizontal: 1.7.w),
+                                fontWeight: _selectedProvincesListItem.isEmpty
+                                    ? FontWeight.bold
+                                    : null,
+                                widgetIconActive: FaIcon(
+                                  FontAwesomeIcons.caretDown,
+                                  color: AppColors.iconGrayOpacity,
+                                  size: IconSize.sIcon,
+                                ),
+                                press: () async {
+                                  FocusScope.of(context)
+                                      .requestFocus(focusNode);
+
+                                  var result = await showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return ListMultiSelectedAlertDialog(
+                                          title: "province".tr,
+                                          listItems: _listProvinces,
+                                          selectedListItem:
+                                              _selectedProvincesListItem,
+                                        );
+                                      }).then(
+                                    (value) {
+                                      setState(() {
+                                        //value = []
+                                        //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                        if (value.length > 0) {
+                                          _selectedProvincesListItem = value;
+                                          _provinceName =
+                                              []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+
+                                          for (var item in _listProvinces) {
+                                            //
+                                            //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedProvincesListItem ກົງກັບ _listProvinces ບໍ່
+                                            if (_selectedProvincesListItem
+                                                .contains(item['_id'])) {
+                                              //
+                                              //add Provinces Name ເຂົ້າໃນ _provinceName
+                                              setState(() {
+                                                _provinceName.add(item['name']);
                                               });
                                             }
                                           }
+                                          print(_provinceName);
                                         }
-
-                                        // print(pName);
-                                        // print(chName);
-                                        print(_jobFunctionItemName);
-                                      }
-                                    });
-                                  },
-                                );
-                              },
-                              text: _selectedJobFunctionsItems.isNotEmpty
-                                  ? "${_jobFunctionItemName.join(', ')}"
-                                  : "select".tr + " " + "job function".tr,
-                              colorText: _selectedJobFunctionsItems.isEmpty
-                                  ? AppColors.fontGreyOpacity
-                                  : AppColors.fontDark,
-                              validateText: _isValidateValue == true &&
-                                      _selectedJobFunctionsItems.isEmpty
-                                  ? Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.only(
-                                        left: 15,
-                                        top: 5,
-                                      ),
-                                      child: Text(
-                                        "required".tr,
-                                        style: bodyTextSmall(
-                                          AppColors.fontDanger,
+                                      });
+                                    },
+                                  );
+                                },
+                                text: _selectedProvincesListItem.isEmpty
+                                    ? "province".tr
+                                    : "${_provinceName.join(', ')}",
+                                colorText: _selectedProvincesListItem.isEmpty
+                                    ? AppColors.fontGreyOpacity
+                                    : AppColors.fontDark,
+                                validateText: _isValidateValue == true &&
+                                        _selectedProvincesListItem.isEmpty
+                                    ? Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.only(
+                                          left: 15,
+                                          top: 5,
                                         ),
-                                      ),
-                                    )
-                                  : Container(),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //Expected Work Provinces
-                            Text(
-                              "province".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            BoxDecorationInput(
-                              mainAxisAlignmentTextIcon:
-                                  MainAxisAlignment.start,
-                              colorInput: AppColors.backgroundWhite,
-                              colorBorder: _selectedProvincesListItem.isEmpty &&
-                                      _isValidateValue == true
-                                  ? AppColors.borderDanger
-                                  : AppColors.borderSecondary,
-                              paddingFaIcon:
-                                  EdgeInsets.symmetric(horizontal: 1.7.w),
-                              fontWeight: _selectedProvincesListItem.isEmpty
-                                  ? FontWeight.bold
-                                  : null,
-                              widgetIconActive: FaIcon(
-                                FontAwesomeIcons.caretDown,
-                                color: AppColors.iconGrayOpacity,
-                                size: IconSize.sIcon,
+                                        child: Text(
+                                          "required".tr,
+                                          style: bodyTextSmall(
+                                              null, AppColors.fontDanger, null),
+                                        ),
+                                      )
+                                    : Container(),
                               ),
-                              press: () async {
-                                FocusScope.of(context).requestFocus(focusNode);
+                              SizedBox(
+                                height: 20,
+                              ),
 
-                                var result = await showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) {
-                                      return ListMultiSelectedAlertDialog(
-                                        title: "province".tr,
-                                        listItems: _listProvinces,
-                                        selectedListItem:
-                                            _selectedProvincesListItem,
-                                      );
-                                    }).then(
-                                  (value) {
-                                    setState(() {
+                              //
+                              //
+                              //
+                              //
+                              //
+                              //Expected Work Industry
+                              Text(
+                                "industry".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              BoxDecorationInput(
+                                mainAxisAlignmentTextIcon:
+                                    MainAxisAlignment.start,
+                                colorInput: AppColors.backgroundWhite,
+                                colorBorder:
+                                    _selectedIndustriesListItem.isEmpty &&
+                                            _isValidateValue == true
+                                        ? AppColors.borderDanger
+                                        : AppColors.borderSecondary,
+                                paddingFaIcon:
+                                    EdgeInsets.symmetric(horizontal: 1.7.w),
+                                fontWeight: _selectedIndustriesListItem.isEmpty
+                                    ? FontWeight.bold
+                                    : null,
+                                widgetIconActive: FaIcon(
+                                  FontAwesomeIcons.caretDown,
+                                  color: AppColors.iconGrayOpacity,
+                                  size: IconSize.sIcon,
+                                ),
+                                press: () async {
+                                  FocusScope.of(context)
+                                      .requestFocus(focusNode);
+
+                                  var result = await showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return ListMultiSelectedAlertDialog(
+                                          title: "industry".tr,
+                                          listItems: _listIndustries,
+                                          selectedListItem:
+                                              _selectedIndustriesListItem,
+                                        );
+                                      }).then(
+                                    (value) {
+                                      setState(() {
+                                        print(value);
+                                        //value = []
+                                        //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                        if (value.length > 0) {
+                                          _selectedIndustriesListItem = value;
+                                          _industryName =
+                                              []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+
+                                          for (var item in _listIndustries) {
+                                            //
+                                            //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedIndustriesListItem ກົງກັບ _listIndustries ບໍ່
+                                            if (_selectedIndustriesListItem
+                                                .contains(item['_id'])) {
+                                              //
+                                              //add Provinces Name ເຂົ້າໃນ _industryName
+                                              setState(() {
+                                                _industryName.add(item['name']);
+                                              });
+                                            }
+                                          }
+                                          print(_industryName);
+                                        }
+                                      });
+                                    },
+                                  );
+                                },
+                                text: _selectedIndustriesListItem.isEmpty
+                                    ? "select".tr + " " + "industry".tr
+                                    : "${_industryName.join(', ')}",
+                                colorText: _selectedIndustriesListItem.isEmpty
+                                    ? AppColors.fontGreyOpacity
+                                    : AppColors.fontDark,
+                                validateText: _isValidateValue == true &&
+                                        _selectedIndustriesListItem.isEmpty
+                                    ? Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.only(
+                                          left: 15,
+                                          top: 5,
+                                        ),
+                                        child: Text(
+                                          "required".tr,
+                                          style: bodyTextSmall(
+                                              null, AppColors.fontDanger, null),
+                                        ),
+                                      )
+                                    : Container(),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+
+                              //
+                              //
+                              //
+                              //
+                              //Expected Benefits
+                              Text(
+                                "benefit".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              BoxDecorationInput(
+                                mainAxisAlignmentTextIcon:
+                                    MainAxisAlignment.start,
+                                colorInput: AppColors.backgroundWhite,
+                                colorBorder:
+                                    _selectedBenefitsListItem.isEmpty &&
+                                            _isValidateValue == true
+                                        ? AppColors.borderDanger
+                                        : AppColors.borderSecondary,
+                                paddingFaIcon:
+                                    EdgeInsets.symmetric(horizontal: 1.7.w),
+                                fontWeight: _selectedBenefitsListItem.isEmpty
+                                    ? FontWeight.bold
+                                    : null,
+                                widgetIconActive: FaIcon(
+                                  FontAwesomeIcons.caretDown,
+                                  color: AppColors.iconGrayOpacity,
+                                  size: IconSize.sIcon,
+                                ),
+                                press: () async {
+                                  FocusScope.of(context)
+                                      .requestFocus(focusNode);
+
+                                  var result = await showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return BoxIconMultiSelectedAlertDialog(
+                                          title: "benefit".tr,
+                                          listItems: _listBenefits,
+                                          selectedListItem:
+                                              _selectedBenefitsListItem,
+                                        );
+                                      }).then(
+                                    (value) {
                                       //value = []
                                       //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                      if (value.length > 0) {
-                                        _selectedProvincesListItem = value;
-                                        _provinceName =
-                                            []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+                                      setState(() {
+                                        if (value.length > 0) {
+                                          _selectedBenefitsListItem = value;
+                                          _benefitName =
+                                              []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
 
-                                        for (var item in _listProvinces) {
-                                          //
-                                          //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedProvincesListItem ກົງກັບ _listProvinces ບໍ່
-                                          if (_selectedProvincesListItem
-                                              .contains(item['_id'])) {
+                                          for (var item in _listBenefits) {
                                             //
-                                            //add Provinces Name ເຂົ້າໃນ _provinceName
-                                            setState(() {
-                                              _provinceName.add(item['name']);
-                                            });
+                                            //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedBenefitsListItem ກົງກັບ _listIndustries ບໍ່
+                                            if (_selectedBenefitsListItem
+                                                .contains(item['_id'])) {
+                                              //
+                                              //add Provinces Name ເຂົ້າໃນ _benefitName
+                                              setState(() {
+                                                _benefitName.add(item['name']);
+                                              });
+                                            }
                                           }
+                                          print(_benefitName);
                                         }
-                                        print(_provinceName);
-                                      }
-                                    });
-                                  },
-                                );
-                              },
-                              text: _selectedProvincesListItem.isEmpty
-                                  ? "province".tr
-                                  : "${_provinceName.join(', ')}",
-                              colorText: _selectedProvincesListItem.isEmpty
-                                  ? AppColors.fontGreyOpacity
-                                  : AppColors.fontDark,
-                              validateText: _isValidateValue == true &&
-                                      _selectedProvincesListItem.isEmpty
-                                  ? Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.only(
-                                        left: 15,
-                                        top: 5,
-                                      ),
-                                      child: Text(
-                                        "required".tr,
-                                        style: bodyTextSmall(
-                                          AppColors.fontDanger,
+                                      });
+                                    },
+                                  );
+                                },
+                                text: _selectedBenefitsListItem.isEmpty
+                                    ? "select".tr + " " + "benefit".tr
+                                    : "${_benefitName.join(', ')}",
+                                colorText: _selectedBenefitsListItem.isEmpty
+                                    ? AppColors.fontGreyOpacity
+                                    : AppColors.fontDark,
+                                validateText: _isValidateValue == true &&
+                                        _selectedBenefitsListItem.isEmpty
+                                    ? Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.only(
+                                          left: 15,
+                                          top: 5,
                                         ),
-                                      ),
-                                    )
-                                  : Container(),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //Expected Work Industry
-                            Text(
-                              "industry".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            BoxDecorationInput(
-                              mainAxisAlignmentTextIcon:
-                                  MainAxisAlignment.start,
-                              colorInput: AppColors.backgroundWhite,
-                              colorBorder:
-                                  _selectedIndustriesListItem.isEmpty &&
-                                          _isValidateValue == true
-                                      ? AppColors.borderDanger
-                                      : AppColors.borderSecondary,
-                              paddingFaIcon:
-                                  EdgeInsets.symmetric(horizontal: 1.7.w),
-                              fontWeight: _selectedIndustriesListItem.isEmpty
-                                  ? FontWeight.bold
-                                  : null,
-                              widgetIconActive: FaIcon(
-                                FontAwesomeIcons.caretDown,
-                                color: AppColors.iconGrayOpacity,
-                                size: IconSize.sIcon,
+                                        child: Text(
+                                          "required".tr,
+                                          style: bodyTextSmall(
+                                              null, AppColors.fontDanger, null),
+                                        ),
+                                      )
+                                    : Container(),
                               ),
-                              press: () async {
-                                FocusScope.of(context).requestFocus(focusNode);
-
-                                var result = await showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) {
-                                      return ListMultiSelectedAlertDialog(
-                                        title: "industry".tr,
-                                        listItems: _listIndustries,
-                                        selectedListItem:
-                                            _selectedIndustriesListItem,
-                                      );
-                                    }).then(
-                                  (value) {
-                                    setState(() {
-                                      print(value);
-                                      //value = []
-                                      //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                      if (value.length > 0) {
-                                        _selectedIndustriesListItem = value;
-                                        _industryName =
-                                            []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
-
-                                        for (var item in _listIndustries) {
-                                          //
-                                          //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedIndustriesListItem ກົງກັບ _listIndustries ບໍ່
-                                          if (_selectedIndustriesListItem
-                                              .contains(item['_id'])) {
-                                            //
-                                            //add Provinces Name ເຂົ້າໃນ _industryName
-                                            setState(() {
-                                              _industryName.add(item['name']);
-                                            });
-                                          }
-                                        }
-                                        print(_industryName);
-                                      }
-                                    });
-                                  },
-                                );
-                              },
-                              text: _selectedIndustriesListItem.isEmpty
-                                  ? "select".tr + " " + "industry".tr
-                                  : "${_industryName.join(', ')}",
-                              colorText: _selectedIndustriesListItem.isEmpty
-                                  ? AppColors.fontGreyOpacity
-                                  : AppColors.fontDark,
-                              validateText: _isValidateValue == true &&
-                                      _selectedIndustriesListItem.isEmpty
-                                  ? Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.only(
-                                        left: 15,
-                                        top: 5,
-                                      ),
-                                      child: Text(
-                                        "required".tr,
-                                        style: bodyTextSmall(
-                                          AppColors.fontDanger,
-                                        ),
-                                      ),
-                                    )
-                                  : Container(),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-
-                            //
-                            //
-                            //
-                            //
-                            //Expected Benefits
-                            Text(
-                              "benefit".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            BoxDecorationInput(
-                              mainAxisAlignmentTextIcon:
-                                  MainAxisAlignment.start,
-                              colorInput: AppColors.backgroundWhite,
-                              colorBorder: _selectedBenefitsListItem.isEmpty &&
-                                      _isValidateValue == true
-                                  ? AppColors.borderDanger
-                                  : AppColors.borderSecondary,
-                              paddingFaIcon:
-                                  EdgeInsets.symmetric(horizontal: 1.7.w),
-                              fontWeight: _selectedBenefitsListItem.isEmpty
-                                  ? FontWeight.bold
-                                  : null,
-                              widgetIconActive: FaIcon(
-                                FontAwesomeIcons.caretDown,
-                                color: AppColors.iconGrayOpacity,
-                                size: IconSize.sIcon,
+                              SizedBox(
+                                height: 20,
                               ),
-                              press: () async {
-                                FocusScope.of(context).requestFocus(focusNode);
 
-                                var result = await showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) {
-                                      return BoxIconMultiSelectedAlertDialog(
-                                        title: "benefit".tr,
-                                        listItems: _listBenefits,
-                                        selectedListItem:
-                                            _selectedBenefitsListItem,
-                                      );
-                                    }).then(
-                                  (value) {
-                                    //value = []
-                                    //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                    setState(() {
-                                      if (value.length > 0) {
-                                        _selectedBenefitsListItem = value;
-                                        _benefitName =
-                                            []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+                              // Text("${_professionalSummary}"),
+                              // Text(jsonEncode(_quillController.document
+                              //         .toDelta()
+                              //         .toJson())
+                              //     .toString()),
 
-                                        for (var item in _listBenefits) {
-                                          //
-                                          //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedBenefitsListItem ກົງກັບ _listIndustries ບໍ່
-                                          if (_selectedBenefitsListItem
-                                              .contains(item['_id'])) {
-                                            //
-                                            //add Provinces Name ເຂົ້າໃນ _benefitName
-                                            setState(() {
-                                              _benefitName.add(item['name']);
-                                            });
-                                          }
-                                        }
-                                        print(_benefitName);
-                                      }
-                                    });
-                                  },
-                                );
-                              },
-                              text: _selectedBenefitsListItem.isEmpty
-                                  ? "select".tr + " " + "benefit".tr
-                                  : "${_benefitName.join(', ')}",
-                              colorText: _selectedBenefitsListItem.isEmpty
-                                  ? AppColors.fontGreyOpacity
-                                  : AppColors.fontDark,
-                              validateText: _isValidateValue == true &&
-                                      _selectedBenefitsListItem.isEmpty
-                                  ? Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.only(
-                                        left: 15,
-                                        top: 5,
-                                      ),
-                                      child: Text(
-                                        "required".tr,
-                                        style: bodyTextSmall(
-                                          AppColors.fontDanger,
-                                        ),
-                                      ),
-                                    )
-                                  : Container(),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
+                              //
+                              //
+                              //Professional Summary
+                              Text(
+                                "professional summary".tr,
+                                style:
+                                    bodyTextNormal(null, null, FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              // SimpleTextFieldSingleValidate(
+                              //   codeController: _professionalSummaryController,
+                              //   heightCon: 250,
+                              //   maxLines: 20,
+                              //   inputColor: AppColors.backgroundWhite,
+                              //   changed: (value) {
+                              //     setState(() {
+                              //       _professionalSummary = value;
+                              //     });
+                              //   },
+                              //   hintText: "tell about you".tr,
+                              //   hintTextFontWeight: FontWeight.bold,
+                              //   validator: (value) {
+                              //     if (value == null || value == "") {
+                              //       return "required".tr;
+                              //     }
+                              //     return null;
+                              //   },
+                              // ),
 
-                            // Text("${_professionalSummary}"),
-                            // Text(jsonEncode(_quillController.document
-                            //         .toDelta()
-                            //         .toJson())
-                            //     .toString()),
-
-                            //
-                            //
-                            //Professional Summary
-                            Text(
-                              "professional summary".tr,
-                              style: bodyTextNormal(null, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            // SimpleTextFieldSingleValidate(
-                            //   codeController: _professionalSummaryController,
-                            //   heightCon: 250,
-                            //   maxLines: 20,
-                            //   inputColor: AppColors.backgroundWhite,
-                            //   changed: (value) {
-                            //     setState(() {
-                            //       _professionalSummary = value;
-                            //     });
-                            //   },
-                            //   hintText: "tell about you".tr,
-                            //   hintTextFontWeight: FontWeight.bold,
-                            //   validator: (value) {
-                            //     if (value == null || value == "") {
-                            //       return "required".tr;
-                            //     }
-                            //     return null;
-                            //   },
-                            // ),
-
-                            Container(
-                              width: double.infinity,
-                              color: AppColors.background,
-                              child: QuillToolbar.simple(
-                                configurations:
-                                    QuillSimpleToolbarConfigurations(
-                                  controller: _quillController,
-                                  toolbarIconAlignment: WrapAlignment.start,
-                                  toolbarSectionSpacing: 0,
-                                  showFontFamily: false,
-                                  showFontSize: false,
-                                  showHeaderStyle: false,
-                                  showAlignmentButtons: false,
-                                  showBackgroundColorButton: false,
-                                  showClipboardCopy: false,
-                                  showClipboardCut: false,
-                                  showClipboardPaste: false,
-                                  showColorButton: false,
-                                  showCodeBlock: false,
-                                  showDirection: false,
-                                  showQuote: false,
-                                  showUndo: false,
-                                  showSuperscript: false,
-                                  showLeftAlignment: false,
-                                  showRedo: false,
-                                  showRightAlignment: false,
-                                  showSearchButton: false,
-                                  showJustifyAlignment: false,
-                                  showLineHeightButton: false,
-                                  showSubscript: false,
-                                  showCenterAlignment: false,
-                                  showInlineCode: false,
-                                  showSmallButton: false,
-                                  // showClearFormat: false,
-                                  showIndent: false,
-                                  showListCheck: false,
-                                  showDividers: false,
+                              Container(
+                                width: double.infinity,
+                                color: AppColors.background,
+                                child: QuillToolbar.simple(
+                                  configurations:
+                                      QuillSimpleToolbarConfigurations(
+                                    controller: _quillController,
+                                    toolbarIconAlignment: WrapAlignment.start,
+                                    toolbarSectionSpacing: 0,
+                                    showFontFamily: false,
+                                    showFontSize: false,
+                                    showHeaderStyle: false,
+                                    showAlignmentButtons: false,
+                                    showBackgroundColorButton: false,
+                                    showClipboardCopy: false,
+                                    showClipboardCut: false,
+                                    showClipboardPaste: false,
+                                    showColorButton: false,
+                                    showCodeBlock: false,
+                                    showDirection: false,
+                                    showQuote: false,
+                                    showUndo: false,
+                                    showSuperscript: false,
+                                    showLeftAlignment: false,
+                                    showRedo: false,
+                                    showRightAlignment: false,
+                                    showSearchButton: false,
+                                    showJustifyAlignment: false,
+                                    showLineHeightButton: false,
+                                    showSubscript: false,
+                                    showCenterAlignment: false,
+                                    showInlineCode: false,
+                                    showSmallButton: false,
+                                    // showClearFormat: false,
+                                    showIndent: false,
+                                    showListCheck: false,
+                                    showDividers: false,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  color: AppColors.background,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(10),
-                                    bottomRight: Radius.circular(10),
-                                  )),
-                              child: QuillEditor.basic(
-                                focusNode: editorFocusNode,
-                                configurations: QuillEditorConfigurations(
-                                  keyboardAppearance: Brightness.dark,
-                                  // requestKeyboardFocusOnCheckListChanged: true,
-                                  controller: _quillController,
+                              Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    color: AppColors.background,
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(10),
+                                      bottomRight: Radius.circular(10),
+                                    )),
+                                child: QuillEditor.basic(
+                                  focusNode: editorFocusNode,
+                                  configurations: QuillEditorConfigurations(
+                                    keyboardAppearance: Brightness.dark,
+                                    // requestKeyboardFocusOnCheckListChanged: true,
+                                    controller: _quillController,
 
-                                  scrollPhysics: ClampingScrollPhysics(),
-                                  readOnlyMouseCursor: SystemMouseCursors.text,
-                                  maxHeight: 400,
-                                  minHeight: 400,
-                                  placeholder: "professional summary".tr,
-                                  padding: EdgeInsets.all(10),
-                                  dialogTheme: QuillDialogTheme(
-                                    labelTextStyle:
-                                        TextStyle(color: AppColors.fontPrimary),
-                                    buttonStyle: ButtonStyle(
-                                      backgroundColor: WidgetStateProperty.all(
-                                        AppColors.red,
+                                    scrollPhysics: ClampingScrollPhysics(),
+                                    readOnlyMouseCursor:
+                                        SystemMouseCursors.text,
+                                    maxHeight: 400,
+                                    minHeight: 400,
+                                    placeholder: "professional summary".tr,
+                                    padding: EdgeInsets.all(10),
+                                    dialogTheme: QuillDialogTheme(
+                                      labelTextStyle: TextStyle(
+                                          color: AppColors.fontPrimary),
+                                      buttonStyle: ButtonStyle(
+                                        backgroundColor:
+                                            WidgetStateProperty.all(
+                                          AppColors.red,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
 
-                            SizedBox(
-                              height: 30,
-                            ),
-                          ],
+                              SizedBox(
+                                height: 30,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -1042,6 +1064,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                       text: "save".tr,
                       fontWeight: FontWeight.bold,
                       press: () {
+                        FocusScope.of(context).requestFocus(focusNode);
                         if (formkey.currentState!.validate()) {
                           print("for check formkey.currentState!.validate()");
                           if (_selectedJobLevel == "" ||
@@ -1113,7 +1136,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustomAlertLoading();
+        return CustAlertLoading();
       },
     );
 
@@ -1143,9 +1166,10 @@ class _WorkPreferencesState extends State<WorkPreferences> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return CustomAlertDialogSuccessButtonConfirm(
-            title: "successful".tr,
-            text: "save".tr + " " + "job level".tr + " " + "successful".tr,
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "save".tr + " " + "successful".tr,
+            contentText:
+                "save".tr + " " + "work preferences".tr + " " + "successful".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -1199,7 +1223,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                       ),
                       Text(
                         "Currency",
-                        style: bodyTextMedium(null, FontWeight.bold),
+                        style: bodyTextMedium(null, null, FontWeight.bold),
                       ),
                       Text("")
                     ],
@@ -1219,6 +1243,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                         Text(
                           "LAK(Lao kip)",
                           style: bodyTextNormal(
+                              null,
                               currency == "₭" ? AppColors.fontPrimary : null,
                               FontWeight.bold),
                         ),
@@ -1247,6 +1272,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                         Text(
                           "USD(US Dollar)",
                           style: bodyTextNormal(
+                              null,
                               currency == r"$" ? AppColors.fontPrimary : null,
                               FontWeight.bold),
                         ),

@@ -77,6 +77,7 @@ class _BoxDecDottedBorderProfileDetailState
               Text(
                 "${widget.title}",
                 style: bodyTextNormal(
+                  null,
                   widget.titleColor == null
                       ? AppColors.fontPrimary
                       : widget.titleColor,
@@ -88,10 +89,11 @@ class _BoxDecDottedBorderProfileDetailState
               Text(
                 "${widget.text}",
                 style: bodyTextSmall(
-                  widget.textColor == null
-                      ? AppColors.fontGreyOpacity
-                      : widget.textColor,
-                ),
+                    null,
+                    widget.textColor == null
+                        ? AppColors.fontGreyOpacity
+                        : widget.textColor,
+                    null),
               ),
               Container(
                 width: widget.buttonWidth == null ? 70 : widget.buttonWidth,
@@ -99,12 +101,12 @@ class _BoxDecDottedBorderProfileDetailState
                   style: ButtonStyle(
                     // padding: MaterialStateProperty.all<EdgeInsets>(
                     //     EdgeInsets.symmetric(horizontal: 40)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
-                    backgroundColor: MaterialStateProperty.all(
+                    backgroundColor: WidgetStateProperty.all(
                       widget.buttonColor == null
                           ? AppColors.buttonPrimary
                           : widget.buttonColor,
@@ -129,10 +131,11 @@ class _BoxDecDottedBorderProfileDetailState
                       Text(
                         "${widget.buttonText}",
                         style: bodyTextSmall(
-                          widget.buttonTextColor == null
-                              ? AppColors.fontWhite
-                              : widget.buttonTextColor,
-                        ),
+                            null,
+                            widget.buttonTextColor == null
+                                ? AppColors.fontWhite
+                                : widget.buttonTextColor,
+                            null),
                       )
                     ],
                   ),
@@ -189,9 +192,13 @@ class _BoxDecProfileDetailHaveValueState
         SizedBox(
           height: 10,
         ),
+        //
+        //
+        //Title
         Text(
           "${widget.title}",
           style: bodyTextMedium(
+            null,
             widget.titleColor == null
                 ? AppColors.fontPrimary
                 : widget.titleColor,
@@ -200,24 +207,37 @@ class _BoxDecProfileDetailHaveValueState
                 : widget.titleFontWeight,
           ),
         ),
+        //
+        //
+        //Text
         Text(
           "${widget.text}",
           style: bodyTextSmall(
-            widget.textColor == null
-                ? AppColors.fontGreyOpacity
-                : widget.textColor,
-          ),
+              null,
+              widget.textColor == null
+                  ? AppColors.fontGreyOpacity
+                  : widget.textColor,
+              null),
         ),
         SizedBox(
           height: 15,
         ),
+        //
+        //
+        //Content
         Container(
           padding: EdgeInsets.all(15),
           decoration: boxDecoration(null, AppColors.light, null, null),
           child: Row(children: [
+            //
+            //
+            //Widget faIcon
             Container(
               child: widget.widgetFaIcon,
             ),
+            //
+            //
+            //Widget Expanded
             Expanded(
               flex: 12,
               child: widget.widgetColumn,
@@ -225,12 +245,18 @@ class _BoxDecProfileDetailHaveValueState
             SizedBox(
               width: 5,
             ),
+
+            //
+            //
+            //Status left
             if (widget.statusLeft == "have")
               GestureDetector(
                 onTap: widget.pressLeft,
                 child: Container(
                   padding: EdgeInsets.all(10),
-                  // color: AppColors.blue,
+                  decoration: BoxDecoration(
+                      color: AppColors.light,
+                      borderRadius: BorderRadius.circular(50)),
                   child: Center(
                     child: FaIcon(
                       FontAwesomeIcons.pen,
@@ -239,12 +265,18 @@ class _BoxDecProfileDetailHaveValueState
                   ),
                 ),
               ),
+
+            //
+            //
+            //Status right
             if (widget.statusRight == "have")
               GestureDetector(
                 onTap: widget.pressRight,
                 child: Container(
                   padding: EdgeInsets.all(10),
-                  color: AppColors.light,
+                  decoration: BoxDecoration(
+                      color: AppColors.light,
+                      borderRadius: BorderRadius.circular(50)),
                   child: Center(
                     child: widget.widgetFaIconRight == null
                         ? FaIcon(
@@ -309,29 +341,30 @@ class _BoxDecProfileDetailHaveValueWithoutTitleTextState
               width: 5,
             ),
             if (widget.statusLeft == "have")
-              Container(
-                // color: AppColors.blue,
-                child: Center(
-                  child: GestureDetector(
-                    onTap: widget.pressLeft,
-                    child: FaIcon(
-                      FontAwesomeIcons.pen,
-                      size: IconSize.xsIcon,
-                    ),
+              GestureDetector(
+                onTap: widget.pressLeft,
+                child: Container(
+                  padding: EdgeInsets.only(left: 15, top: 15, bottom: 15),
+                  decoration: BoxDecoration(
+                      color: AppColors.light,
+                      borderRadius: BorderRadius.circular(50)),
+                  child: FaIcon(
+                    FontAwesomeIcons.pen,
+                    size: IconSize.xsIcon,
                   ),
                 ),
               ),
             if (widget.statusRight == "have")
-              Container(
-                padding: EdgeInsets.only(left: 15),
-                // color: AppColors.blue,
-                child: Center(
-                  child: GestureDetector(
-                    onTap: widget.pressRight,
-                    child: FaIcon(
-                      FontAwesomeIcons.trash,
-                      size: IconSize.xsIcon,
-                    ),
+              GestureDetector(
+                onTap: widget.pressRight,
+                child: Container(
+                  padding: EdgeInsets.only(left: 15, top: 15, bottom: 15),
+                  decoration: BoxDecoration(
+                      color: AppColors.light,
+                      borderRadius: BorderRadius.circular(50)),
+                  child: FaIcon(
+                    FontAwesomeIcons.trash,
+                    size: IconSize.xsIcon,
                   ),
                 ),
               )
@@ -416,6 +449,7 @@ class _BoxDecDottedBorderUploadCVState
             Text(
               "${widget.title}",
               style: bodyTextNormal(
+                null,
                 widget.titleColor == null
                     ? AppColors.fontDark
                     : widget.titleColor,
@@ -430,10 +464,11 @@ class _BoxDecDottedBorderUploadCVState
             Text(
               "${widget.text}",
               style: bodyTextSmall(
-                widget.textColor == null
-                    ? AppColors.fontDark
-                    : widget.textColor,
-              ),
+                  null,
+                  widget.textColor == null
+                      ? AppColors.fontDark
+                      : widget.textColor,
+                  null),
               textAlign: TextAlign.center,
             ),
             SizedBox(
@@ -508,6 +543,7 @@ class _BoxDecProfileSettingHaveValueState
             Text(
               "${widget.title}",
               style: bodyTextNormal(
+                null,
                 widget.titleColor == null
                     ? AppColors.fontPrimary
                     : widget.titleColor,
@@ -519,10 +555,11 @@ class _BoxDecProfileSettingHaveValueState
             Text(
               "${widget.text}",
               style: bodyTextSmall(
-                widget.textColor == null
-                    ? AppColors.fontGreyOpacity
-                    : widget.textColor,
-              ),
+                  null,
+                  widget.textColor == null
+                      ? AppColors.fontGreyOpacity
+                      : widget.textColor,
+                  null),
             ),
             SizedBox(
               height: 10,
@@ -539,7 +576,7 @@ class _BoxDecProfileSettingHaveValueState
                 children: [
                   Text(
                     "Searchable Profile",
-                    style: bodyTextNormal(null, FontWeight.bold),
+                    style: bodyTextNormal(null, null, FontWeight.bold),
                   ),
                   GestureDetector(
                     onTap: widget.pressActionOnOff,
@@ -563,7 +600,7 @@ class _BoxDecProfileSettingHaveValueState
                           Text(
                             "${widget.actionOnOffText}",
                             style: bodyTextNormal(
-                                AppColors.fontWhite, FontWeight.bold),
+                                null, AppColors.fontWhite, FontWeight.bold),
                           ),
                         ],
                       ),
@@ -588,7 +625,7 @@ class _BoxDecProfileSettingHaveValueState
                   Expanded(
                     child: Text(
                       "Hide your profile from these companies",
-                      style: bodyTextNormal(null, FontWeight.bold),
+                      style: bodyTextNormal(null, null, FontWeight.bold),
                     ),
                   ),
                   SizedBox(
