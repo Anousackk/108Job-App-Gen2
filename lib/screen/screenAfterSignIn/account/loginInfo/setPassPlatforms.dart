@@ -136,7 +136,7 @@ class _SetPasswordPlatformsState extends State<SetPasswordPlatforms> {
                   //Button Save Password
                   Button(
                     text: "confirm".tr,
-                    fontWeight: FontWeight.bold,
+                    textFontWeight: FontWeight.bold,
                     press: () async {
                       FocusScope.of(context).requestFocus(focusNode);
                       if (formkey.currentState!.validate()) {

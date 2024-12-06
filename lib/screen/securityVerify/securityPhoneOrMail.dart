@@ -296,7 +296,7 @@ class _SecurityPhoneNumberOrEmailState
                         ),
                         Button(
                           text: "next".tr,
-                          fontWeight: FontWeight.bold,
+                          textFontWeight: FontWeight.bold,
                           press: () {
                             if (formkey.currentState!.validate()) {
                               if (_isToken != "") {

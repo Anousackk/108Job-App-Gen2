@@ -16,7 +16,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:sizer/sizer.dart';
 
 class JobSearchDetail extends StatefulWidget {
   const JobSearchDetail({Key? key, this.jobId, this.newJob, this.status})
@@ -128,6 +127,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
   }
 
   saveAndUnSaveJob() async {
+    //
     //
     //ສະແດງ AlertDialog Loading
     showDialog(
@@ -434,30 +434,35 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                       //
                       //Header Appbar
                       Container(
+                        // color: AppColors.red,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             //
                             //
                             //Button back
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop([
-                                  _checkStatusCallBack,
-                                  _callBackJobSearchId,
-                                  _callBackIsSave
-                                ]);
-                              },
-                              child: Container(
-                                color: AppColors.backgroundWhite,
-                                padding: EdgeInsets.all(20),
-                                child: Text(
-                                  "\uf060",
-                                  style: fontAwesomeRegular(
-                                      null, 20, AppColors.iconDark, null),
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pop([
+                                    _checkStatusCallBack,
+                                    _callBackJobSearchId,
+                                    _callBackIsSave
+                                  ]);
+                                },
+                                borderRadius: BorderRadius.circular(100),
+                                child: Container(
+                                  padding: EdgeInsets.all(20),
+                                  child: Text(
+                                    "\uf060",
+                                    style: fontAwesomeRegular(
+                                        null, 20, AppColors.iconDark, null),
+                                  ),
                                 ),
                               ),
                             ),
+
                             Padding(
                               padding: const EdgeInsets.only(right: 20),
                               child: Text("valid_until".tr + ": ${_closeDate}"),
@@ -466,16 +471,20 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                             //
                             //
                             //Share jobdetail
-                            GestureDetector(
-                              onTap: () async {
-                                sharePlusDynamiclink(context, _id);
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(20),
-                                color: AppColors.backgroundWhite,
-                                child: Text(
-                                  "\uf064",
-                                  style: fontAwesomeSolid(null, 20, null, null),
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () async {
+                                  sharePlusDynamiclink(context, _id);
+                                },
+                                borderRadius: BorderRadius.circular(100),
+                                child: Container(
+                                  padding: EdgeInsets.all(20),
+                                  child: Text(
+                                    "\uf064",
+                                    style:
+                                        fontAwesomeSolid(null, 20, null, null),
+                                  ),
                                 ),
                               ),
                             )
@@ -657,6 +666,8 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                               //
                               //
                               //
+                              //
+                              //
                               //Section 2
                               //Job Description
                               Padding(
@@ -709,219 +720,230 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
 
                               //
                               //
+                              //
+                              //
+                              //
+                              //
                               //Section3
                               //Profile Image, Company, Industry, Job Opening
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CompanyDetail(
-                                        companyId: _companyID,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: AppColors.backgroundWhite,
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                            color: AppColors.borderBG)),
-                                    padding: EdgeInsets.all(15),
-                                    child: Row(
-                                      children: [
-                                        //
-                                        //
-                                        //Profile Image
-                                        Container(
-                                          width: 80,
-                                          height: 80,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: AppColors.backgroundWhite,
-                                              border: Border.all(
-                                                  color: AppColors.borderBG)),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              child: Center(
-                                                child: _logo == ""
-                                                    ? Image.asset(
-                                                        'assets/image/no-image-available.png',
-                                                        fit: BoxFit.contain,
-                                                      )
-                                                    : Image.network(
-                                                        "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
-                                                        fit: BoxFit.contain,
-                                                        errorBuilder: (context,
-                                                            error, stackTrace) {
-                                                          return Image.asset(
-                                                            'assets/image/no-image-available.png',
-                                                            fit: BoxFit.contain,
-                                                          ); // Display an error message
-                                                        },
-                                                      ),
+                              Container(
+                                margin: EdgeInsets.symmetric(horizontal: 20),
+                                decoration: BoxDecoration(
+                                  color: AppColors.backgroundWhite,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: AppColors.borderBG),
+                                ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CompanyDetail(
+                                            companyId: _companyID,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      padding: EdgeInsets.all(15),
+                                      child: Row(
+                                        children: [
+                                          //
+                                          //
+                                          //Profile Image
+                                          Container(
+                                            width: 80,
+                                            height: 80,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color:
+                                                    AppColors.backgroundWhite,
+                                                border: Border.all(
+                                                    color: AppColors.borderBG)),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(5),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Center(
+                                                  child: _logo == ""
+                                                      ? Image.asset(
+                                                          'assets/image/no-image-available.png',
+                                                          fit: BoxFit.contain,
+                                                        )
+                                                      : Image.network(
+                                                          "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                          fit: BoxFit.contain,
+                                                          errorBuilder:
+                                                              (context, error,
+                                                                  stackTrace) {
+                                                            return Image.asset(
+                                                              'assets/image/no-image-available.png',
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                            ); // Display an error message
+                                                          },
+                                                        ),
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: Container(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                //
-                                                //
-                                                //Company Name
-                                                Text(
-                                                  "${_companyName}",
-                                                  style: bodyTextNormal(
-                                                      null, null, null),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                                SizedBox(
-                                                  height: 5,
-                                                ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  //
+                                                  //
+                                                  //Company Name
+                                                  Text(
+                                                    "${_companyName}",
+                                                    style: bodyTextNormal(
+                                                        null, null, null),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
 
-                                                //
-                                                //
-                                                //Industry
-                                                Text(
-                                                  "${_industry}",
-                                                  style: bodyTextSmall(
-                                                      null, null, null),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
+                                                  //
+                                                  //
+                                                  //Industry
+                                                  Text(
+                                                    "${_industry}",
+                                                    style: bodyTextSmall(
+                                                        null, null, null),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
 
-                                                //
-                                                //
-                                                //Address
-                                                Text(
-                                                  "${_address}",
-                                                  style: bodyTextSmall(
-                                                      null, null, null),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
+                                                  //
+                                                  //
+                                                  //Address
+                                                  Text(
+                                                    "${_address}",
+                                                    style: bodyTextSmall(
+                                                        null, null, null),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
 
-                                                //
-                                                //
-                                                //Job Opening
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "${_allOnlineJob.length} ",
-                                                      style: bodyTextSmall(
-                                                          null, null, null),
-                                                    ),
-                                                    Text(
-                                                      "follower".tr,
-                                                      style: bodyTextSmall(
-                                                          null, null, null),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                                  //
+                                                  //
+                                                  //Job Opening
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        "${_allOnlineJob.length} ",
+                                                        style: bodyTextSmall(
+                                                            null, null, null),
+                                                      ),
+                                                      Text(
+                                                        "follower".tr,
+                                                        style: bodyTextSmall(
+                                                            null, null, null),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        //
-                                        //Icon chevronRight
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          //
+                                          //Icon chevronRight
 
-                                        //
-                                        //
-                                        //Bottom follower / following
-                                        // GestureDetector(
-                                        //   onTap: () {
-                                        //     followCompany(
-                                        //       _companyName,
-                                        //       _companyID,
-                                        //     );
-                                        //     setState(() {
-                                        //       _isFollow = !_isFollow;
-                                        //     });
-                                        //   },
-                                        //   child: _isFollow
-                                        //       ? Container(
-                                        //           padding: EdgeInsets.all(8),
-                                        //           decoration: BoxDecoration(
-                                        //             color:
-                                        //                 AppColors.buttonPrimary,
-                                        //             borderRadius:
-                                        //                 BorderRadius.circular(
-                                        //                     8),
-                                        //             border: Border.all(
-                                        //                 color: AppColors
-                                        //                     .borderGreyOpacity),
-                                        //           ),
-                                        //           child: Row(
-                                        //             children: [
-                                        //               FaIcon(
-                                        //                 FontAwesomeIcons.heart,
-                                        //                 size: 13,
-                                        //                 color:
-                                        //                     AppColors.iconLight,
-                                        //               ),
-                                        //               SizedBox(
-                                        //                 width: 8,
-                                        //               ),
-                                        //               Text(
-                                        //                 "following".tr,
-                                        //                 style: bodyTextSmall(null,null,
-                                        //                     AppColors
-                                        //                         .fontWhite),
-                                        //               ),
-                                        //             ],
-                                        //           ),
-                                        //         )
-                                        //       : Container(
-                                        //           padding: EdgeInsets.all(8),
-                                        //           decoration: BoxDecoration(
-                                        //             borderRadius:
-                                        //                 BorderRadius.circular(
-                                        //                     8),
-                                        //             border: Border.all(
-                                        //               color: AppColors
-                                        //                   .borderGreyOpacity,
-                                        //             ),
-                                        //           ),
-                                        //           child: Row(
-                                        //             children: [
-                                        //               FaIcon(
-                                        //                 FontAwesomeIcons.heart,
-                                        //                 size: 13,
-                                        //               ),
-                                        //               SizedBox(
-                                        //                 width: 8,
-                                        //               ),
-                                        //               Text(
-                                        //                 "follow".tr,
-                                        //                 style:
-                                        //                     bodyTextSmall(null,null,null),
-                                        //               ),
-                                        //             ],
-                                        //           ),
-                                        //         ),
-                                        // )
-                                      ],
+                                          //
+                                          //
+                                          //Bottom follower / following
+                                          // GestureDetector(
+                                          //   onTap: () {
+                                          //     followCompany(
+                                          //       _companyName,
+                                          //       _companyID,
+                                          //     );
+                                          //     setState(() {
+                                          //       _isFollow = !_isFollow;
+                                          //     });
+                                          //   },
+                                          //   child: _isFollow
+                                          //       ? Container(
+                                          //           padding: EdgeInsets.all(8),
+                                          //           decoration: BoxDecoration(
+                                          //             color:
+                                          //                 AppColors.buttonPrimary,
+                                          //             borderRadius:
+                                          //                 BorderRadius.circular(
+                                          //                     8),
+                                          //             border: Border.all(
+                                          //                 color: AppColors
+                                          //                     .borderGreyOpacity),
+                                          //           ),
+                                          //           child: Row(
+                                          //             children: [
+                                          //               FaIcon(
+                                          //                 FontAwesomeIcons.heart,
+                                          //                 size: 13,
+                                          //                 color:
+                                          //                     AppColors.iconLight,
+                                          //               ),
+                                          //               SizedBox(
+                                          //                 width: 8,
+                                          //               ),
+                                          //               Text(
+                                          //                 "following".tr,
+                                          //                 style: bodyTextSmall(null,null,
+                                          //                     AppColors
+                                          //                         .fontWhite),
+                                          //               ),
+                                          //             ],
+                                          //           ),
+                                          //         )
+                                          //       : Container(
+                                          //           padding: EdgeInsets.all(8),
+                                          //           decoration: BoxDecoration(
+                                          //             borderRadius:
+                                          //                 BorderRadius.circular(
+                                          //                     8),
+                                          //             border: Border.all(
+                                          //               color: AppColors
+                                          //                   .borderGreyOpacity,
+                                          //             ),
+                                          //           ),
+                                          //           child: Row(
+                                          //             children: [
+                                          //               FaIcon(
+                                          //                 FontAwesomeIcons.heart,
+                                          //                 size: 13,
+                                          //               ),
+                                          //               SizedBox(
+                                          //                 width: 8,
+                                          //               ),
+                                          //               Text(
+                                          //                 "follow".tr,
+                                          //                 style:
+                                          //                     bodyTextSmall(null,null,null),
+                                          //               ),
+                                          //             ],
+                                          //           ),
+                                          //         ),
+                                          // )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -979,8 +1001,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                           WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
                                       ),
-                                      borderRadius:
-                                          BorderRadius.circular(1.5.w),
+                                      borderRadius: BorderRadius.circular(100),
                                       buttonBorderColor:
                                           AppColors.backgroundWhite,
                                       colorButton: AppColors.buttonWhite,
@@ -990,7 +1011,6 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                         size: IconSize.xsIcon,
                                       ),
                                       colorText: AppColors.fontDark,
-                                      // fontWeight: FontWeight.bold,
                                       text: "save job".tr,
                                       press: () {
                                         setState(() {
@@ -1006,8 +1026,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                           WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
                                       ),
-                                      borderRadius:
-                                          BorderRadius.circular(1.5.w),
+                                      borderRadius: BorderRadius.circular(100),
                                       buttonBorderColor:
                                           AppColors.backgroundWhite,
                                       colorButton: AppColors.backgroundWhite,
@@ -1017,7 +1036,6 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                         size: IconSize.xsIcon,
                                       ),
                                       colorText: AppColors.fontPrimary,
-                                      // fontWeight: FontWeight.bold,
                                       text: "saved".tr,
                                       press: () {
                                         saveAndUnSaveJob();
@@ -1040,7 +1058,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                           WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
                                       ),
-                                      borderRadius: BorderRadius.circular(50),
+                                      borderRadius: BorderRadius.circular(100),
                                       colorButton: AppColors.buttonPrimary,
                                       widgetIcon: FaIcon(
                                         FontAwesomeIcons.paperPlane,
@@ -1075,7 +1093,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                           WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
                                       ),
-                                      borderRadius: BorderRadius.circular(50),
+                                      borderRadius: BorderRadius.circular(100),
                                       buttonBorderColor: AppColors.borderWaring,
                                       colorButton: AppColors.lightOrange,
                                       widgetIcon: FaIcon(
@@ -1083,7 +1101,6 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                         color: AppColors.iconWarning,
                                       ),
                                       colorText: AppColors.fontWaring,
-                                      // fontWeight: FontWeight.bold,
                                       text: "applied".tr,
                                       press: () {
                                         applyJob();

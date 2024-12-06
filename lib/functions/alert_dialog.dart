@@ -188,13 +188,13 @@ class _AlertDialogBtnConfirmCancelBetweenState
               Expanded(
                 flex: 1,
                 child: Button(
-                  colorButton: AppColors.buttonBG,
+                  buttonColor: AppColors.buttonBG,
                   buttonBorderColor: AppColors.borderBG,
                   press: () {
                     Navigator.of(context).pop('Cancel');
                   },
                   text: '${widget.textLeft}',
-                  colorText: widget.colorTextLeft == null
+                  textColor: widget.colorTextLeft == null
                       ? AppColors.fontGrey
                       : widget.colorTextLeft,
                 ),
@@ -205,7 +205,7 @@ class _AlertDialogBtnConfirmCancelBetweenState
               Expanded(
                 flex: 1,
                 child: Button(
-                  colorButton: AppColors.buttonWhite,
+                  buttonColor: AppColors.buttonWhite,
                   buttonBorderColor: widget.borderColorButtonRight == null
                       ? AppColors.borderDanger
                       : widget.borderColorButtonRight,
@@ -213,7 +213,7 @@ class _AlertDialogBtnConfirmCancelBetweenState
                     Navigator.of(context).pop('Ok');
                   },
                   text: '${widget.textRight}',
-                  colorText: widget.colorTextRight == null
+                  textColor: widget.colorTextRight == null
                       ? AppColors.fontDark
                       : widget.colorTextRight,
                 ),
@@ -566,6 +566,127 @@ class _CustAlertDialogSuccessBtnConfirmState
   }
 }
 
+class CustAlertDialogSuccessWithoutBtn extends StatefulWidget {
+  const CustAlertDialogSuccessWithoutBtn({
+    Key? key,
+    this.contentText,
+    this.title,
+    this.colorButton,
+    this.colorTextButton,
+    this.textButton,
+    this.boxCircleColor,
+    this.iconColor,
+    this.strIcon,
+  }) : super(key: key);
+  final String? strIcon, contentText, textButton;
+  final String? title;
+  final Color? boxCircleColor, iconColor, colorButton, colorTextButton;
+
+  @override
+  State<CustAlertDialogSuccessWithoutBtn> createState() =>
+      _CustAlertDialogSuccessWithoutBtnState();
+}
+
+class _CustAlertDialogSuccessWithoutBtnState
+    extends State<CustAlertDialogSuccessWithoutBtn> {
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
+      child: Dialog(
+        backgroundColor: AppColors.backgroundWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        insetPadding: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              flex: 1,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    // height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.borderWhite),
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Padding(
+                      padding: EdgeInsets.all(30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 30,
+                          ),
+
+                          //
+                          //
+                          //Title
+                          Text(
+                            "${widget.title}",
+                            style: bodyTextMedium(
+                                "NotoSansLaoLoopedBold", null, FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+
+                          //
+                          //
+                          //Text
+                          Text(
+                            "${widget.contentText}",
+                            style: bodyTextMiniMedium(
+                                "NotoSansLaoLoopedMedium", null, null),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            color: widget.boxCircleColor == null
+                                ? AppColors.primary200
+                                : widget.boxCircleColor),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            widget.strIcon ?? "\uf00c",
+                            style: fontAwesomeSolid(
+                                null,
+                                36,
+                                widget.iconColor == null
+                                    ? AppColors.primary600
+                                    : widget.iconColor,
+                                null),
+                          ),
+                        ),
+                      ),
+                    ),
+                    top: -50,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 //
 //
 //
@@ -764,10 +885,12 @@ class CustAlertDialogWarningWithoutBtn extends StatefulWidget {
     this.colorButton,
     this.colorTextButton,
     this.textButton,
+    this.boxCircleColor,
+    this.iconColor,
   }) : super(key: key);
   final String? contentText, textButton;
   final String? title;
-  final Color? colorButton, colorTextButton;
+  final Color? boxCircleColor, iconColor, colorButton, colorTextButton;
 
   @override
   State<CustAlertDialogWarningWithoutBtn> createState() =>
@@ -783,65 +906,88 @@ class _CustAlertDialogWarningWithoutBtnState
       child: Dialog(
         backgroundColor: AppColors.backgroundWhite,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(30),
         ),
         insetPadding: EdgeInsets.symmetric(horizontal: 20),
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 150,
-              width: double.infinity,
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
+            Flexible(
+              flex: 1,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    // height: 150,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.borderWhite),
+                        borderRadius: BorderRadius.circular(30)),
+                    width: double.infinity,
+                    child: Padding(
+                      padding: EdgeInsets.all(30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 30,
+                          ),
 
-                    //
-                    //
-                    //Title
-                    Text(
-                      '${widget.title}',
-                      style: bodyTextMedium(null, null, FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                          //
+                          //
+                          //Title
+                          Text(
+                            "${widget.title}",
+                            style: bodyTextMedium(
+                                "NotoSansLaoLoopedBold", null, FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
 
-                    //
-                    //
-                    //Content text
-                    Text(
-                      '${widget.contentText}',
-                      style: bodyTextNormal(null, null, null),
-                      textAlign: TextAlign.center,
+                          //
+                          //
+                          //Text
+                          Text(
+                            "${widget.contentText}",
+                            style: bodyTextMiniMedium(
+                                "NotoSansLaoLoopedMedium", null, null),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+
+                  //
+                  //
+                  //Box circle with icon
+                  Positioned(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            color:
+                                widget.boxCircleColor ?? AppColors.warning200),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: FaIcon(
+                            FontAwesomeIcons.exclamation,
+                            size: 36,
+                            color: widget.iconColor ?? AppColors.warning600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    top: -50,
+                  ),
+                ],
               ),
             ),
-            Positioned(
-              child: CircleAvatar(
-                backgroundColor: AppColors.warning200,
-                radius: 40,
-                // child: Text(
-                //   'exclamation',
-                //   style: lIcon('FontAwesomePro-Solid', AppColors.fontWhite),
-                // ),
-                child: FaIcon(
-                  FontAwesomeIcons.exclamation,
-                  size: IconSize.lIcon,
-                  color: AppColors.warning600,
-                ),
-              ),
-              top: -40,
-            )
           ],
         ),
       ),
@@ -972,7 +1118,7 @@ class _NewCustAlertDialogWarningBtnConfirmCancelState
                               Expanded(
                                 flex: 1,
                                 child: Button(
-                                  colorButton: widget.buttonLeftColor == null
+                                  buttonColor: widget.buttonLeftColor == null
                                       ? AppColors.buttonBG
                                       : widget.buttonLeftColor,
                                   buttonBorderColor: AppColors.borderBG,
@@ -980,7 +1126,7 @@ class _NewCustAlertDialogWarningBtnConfirmCancelState
                                     Navigator.of(context).pop('Cancel');
                                   },
                                   text: '${widget.textButtonLeft}',
-                                  colorText: widget.textButtonLeftColor == null
+                                  textColor: widget.textButtonLeftColor == null
                                       ? AppColors.fontDark
                                       : widget.textButtonLeftColor,
                                 ),
@@ -991,7 +1137,7 @@ class _NewCustAlertDialogWarningBtnConfirmCancelState
                               Expanded(
                                 flex: 1,
                                 child: Button(
-                                  colorButton: widget.buttonRightColor == null
+                                  buttonColor: widget.buttonRightColor == null
                                       ? AppColors.buttonPrimary
                                       : widget.buttonRightColor,
                                   buttonBorderColor: AppColors.borderPrimary,
@@ -999,7 +1145,7 @@ class _NewCustAlertDialogWarningBtnConfirmCancelState
                                     Navigator.of(context).pop('Ok');
                                   },
                                   text: '${widget.textButtonRight}',
-                                  colorText: widget.textButtonRightColor == null
+                                  textColor: widget.textButtonRightColor == null
                                       ? AppColors.fontWhite
                                       : widget.textButtonRightColor,
                                 ),
@@ -1149,15 +1295,15 @@ class _NewVer2CustAlertDialogWarningBtnConfirmCancelState
                               Expanded(
                                 flex: 1,
                                 child: Button(
-                                  height: 50,
-                                  colorButton: widget.buttonLeftColor ??
+                                  boxHeight: 50,
+                                  buttonColor: widget.buttonLeftColor ??
                                       AppColors.buttonBG,
                                   press: () {
                                     Navigator.of(context).pop('Cancel');
                                   },
                                   text: '${widget.textButtonLeft}',
-                                  fontFamily: "NotoSansLaoLoopedMedium",
-                                  colorText: widget.textButtonLeftColor == null
+                                  textFontFamily: "NotoSansLaoLoopedMedium",
+                                  textColor: widget.textButtonLeftColor == null
                                       ? AppColors.fontDark
                                       : widget.textButtonLeftColor,
                                 ),
@@ -1171,15 +1317,15 @@ class _NewVer2CustAlertDialogWarningBtnConfirmCancelState
                               Expanded(
                                 flex: 1,
                                 child: Button(
-                                  height: 50,
-                                  colorButton: widget.buttonRightColor ??
+                                  boxHeight: 50,
+                                  buttonColor: widget.buttonRightColor ??
                                       AppColors.warning600,
                                   press: () {
                                     Navigator.of(context).pop('Ok');
                                   },
                                   text: '${widget.textButtonRight}',
-                                  fontFamily: "NotoSansLaoLoopedMedium",
-                                  colorText: widget.textButtonRightColor == null
+                                  textFontFamily: "NotoSansLaoLoopedMedium",
+                                  textColor: widget.textButtonRightColor == null
                                       ? AppColors.fontWhite
                                       : widget.textButtonRightColor,
                                 ),
@@ -1355,15 +1501,15 @@ class _NewVer3CustAlertDialogWarningPictrueBtnConfirmCancelState
                               Expanded(
                                 flex: 1,
                                 child: Button(
-                                  height: 50,
-                                  colorButton: widget.buttonLeftColor ??
+                                  boxHeight: 50,
+                                  buttonColor: widget.buttonLeftColor ??
                                       AppColors.buttonBG,
                                   press: () {
                                     Navigator.of(context).pop('Cancel');
                                   },
                                   text: "${widget.textButtonLeft}",
-                                  fontFamily: "NotoSansLaoLoopedMedium",
-                                  colorText: widget.textButtonLeftColor == null
+                                  textFontFamily: "NotoSansLaoLoopedMedium",
+                                  textColor: widget.textButtonLeftColor == null
                                       ? AppColors.fontDark
                                       : widget.textButtonLeftColor,
                                 ),
@@ -1378,15 +1524,15 @@ class _NewVer3CustAlertDialogWarningPictrueBtnConfirmCancelState
                               Expanded(
                                 flex: 1,
                                 child: Button(
-                                  height: 50,
-                                  colorButton: widget.buttonRightColor ??
+                                  boxHeight: 50,
+                                  buttonColor: widget.buttonRightColor ??
                                       AppColors.primary200,
                                   press: () {
                                     Navigator.of(context).pop('Ok');
                                   },
                                   text: "${widget.textButtonRight}",
-                                  fontFamily: "NotoSansLaoLoopedMedium",
-                                  colorText: widget.textButtonRightColor == null
+                                  textFontFamily: "NotoSansLaoLoopedMedium",
+                                  textColor: widget.textButtonRightColor == null
                                       ? AppColors.primary600
                                       : widget.textButtonRightColor,
                                 ),
@@ -1590,8 +1736,8 @@ class _NewVer4CustAlertDialogWarning3TxtBtnConfirmCancelState
                               Expanded(
                                 flex: 1,
                                 child: Button(
-                                  height: 50,
-                                  colorButton: widget.buttonLeftColor == null
+                                  boxHeight: 50,
+                                  buttonColor: widget.buttonLeftColor == null
                                       ? AppColors.buttonBG
                                       : widget.buttonLeftColor,
                                   // buttonBorderColor: AppColors.borderBG,
@@ -1599,8 +1745,8 @@ class _NewVer4CustAlertDialogWarning3TxtBtnConfirmCancelState
                                     Navigator.of(context).pop('Cancel');
                                   },
                                   text: '${widget.textButtonLeft}',
-                                  fontFamily: "NotoSansLaoLoopedMedium",
-                                  colorText: widget.textButtonLeftColor == null
+                                  textFontFamily: "NotoSansLaoLoopedMedium",
+                                  textColor: widget.textButtonLeftColor == null
                                       ? AppColors.fontDark
                                       : widget.textButtonLeftColor,
                                 ),
@@ -1615,16 +1761,16 @@ class _NewVer4CustAlertDialogWarning3TxtBtnConfirmCancelState
                               Expanded(
                                 flex: 1,
                                 child: Button(
-                                  height: 50,
-                                  colorButton: widget.buttonRightColor == null
+                                  boxHeight: 50,
+                                  buttonColor: widget.buttonRightColor == null
                                       ? AppColors.warning600
                                       : widget.buttonRightColor,
                                   press: () {
                                     Navigator.of(context).pop('Ok');
                                   },
                                   text: '${widget.textButtonRight}',
-                                  fontFamily: "NotoSansLaoLoopedMedium",
-                                  colorText: widget.textButtonRightColor == null
+                                  textFontFamily: "NotoSansLaoLoopedMedium",
+                                  textColor: widget.textButtonRightColor == null
                                       ? AppColors.fontWhite
                                       : widget.textButtonRightColor,
                                 ),

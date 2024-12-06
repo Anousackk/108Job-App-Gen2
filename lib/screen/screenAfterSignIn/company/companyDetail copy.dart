@@ -1847,11 +1847,11 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                           ),
                                                           text:
                                                               "submitted cv".tr,
-                                                          colorText: AppColors
+                                                          textColor: AppColors
                                                               .fontDark,
                                                           // fontWeight:
                                                           //     FontWeight.bold,
-                                                          colorButton: AppColors
+                                                          buttonColor: AppColors
                                                               .buttonGreyWhite,
                                                           press: () {
                                                             submittedCV(

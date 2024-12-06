@@ -53,19 +53,36 @@ class _ListMultiSelectedAlertDialogState
               color: AppColors.backgroundWhite,
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // GestureDetector(
-                //   onTap: () {
-                //     Navigator.of(context).pop(_selectedArray);
-                //   },
-                //   child: FaIcon(FontAwesomeIcons.arrowLeft),
-                // ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: Container(
+                      height: 45,
+                      width: 45,
+                      color: AppColors.iconLight.withOpacity(0.1),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "\uf060",
+                          style: fontAwesomeRegular(null, 20, null, null),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 Text(
                   "${widget.title}",
                   style: bodyTextMedium(null, null, FontWeight.bold),
                 ),
-                Text("")
+                Container(
+                  height: 45,
+                  width: 45,
+                )
               ],
             ),
           ),
@@ -74,7 +91,6 @@ class _ListMultiSelectedAlertDialogState
           //
           //Content Selection
           content: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             color: AppColors.backgroundWhite,
             child: Column(
               children: [
@@ -114,7 +130,8 @@ class _ListMultiSelectedAlertDialogState
                             },
                             child: Container(
                               // color: AppColors.blue,
-                              padding: EdgeInsets.symmetric(vertical: 15),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 20),
                               child: Row(
                                 children: [
                                   _selectedArray.contains(i['_id'])
@@ -151,12 +168,18 @@ class _ListMultiSelectedAlertDialogState
                         }),
                   ),
                 ),
+              ],
+            ),
+          ),
+          actions: [
+            Column(
+              children: [
                 SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
                 Button(
                   text: "confirm".tr,
-                  fontWeight: FontWeight.bold,
+                  textFontWeight: FontWeight.bold,
                   press: () {
                     Navigator.of(context).pop(_selectedArray);
                   },
@@ -165,8 +188,8 @@ class _ListMultiSelectedAlertDialogState
                   height: 30,
                 )
               ],
-            ),
-          ),
+            )
+          ],
         );
       },
     );

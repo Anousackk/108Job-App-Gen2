@@ -227,7 +227,8 @@ class _BoxDecProfileDetailHaveValueState
         //Content
         Container(
           padding: EdgeInsets.all(15),
-          decoration: boxDecoration(null, AppColors.light, null, null),
+          decoration: boxDecoration(
+              BorderRadius.circular(6), AppColors.light, null, null),
           child: Row(children: [
             //
             //
@@ -328,7 +329,8 @@ class _BoxDecProfileDetailHaveValueWithoutTitleTextState
       children: [
         Container(
           padding: EdgeInsets.all(15),
-          decoration: boxDecoration(null, AppColors.light, null, null),
+          decoration: boxDecoration(
+              BorderRadius.circular(6), AppColors.light, null, null),
           child: Row(children: [
             Container(
               child: widget.widgetFaIcon,
@@ -341,30 +343,44 @@ class _BoxDecProfileDetailHaveValueWithoutTitleTextState
               width: 5,
             ),
             if (widget.statusLeft == "have")
-              GestureDetector(
-                onTap: widget.pressLeft,
-                child: Container(
-                  padding: EdgeInsets.only(left: 15, top: 15, bottom: 15),
-                  decoration: BoxDecoration(
-                      color: AppColors.light,
-                      borderRadius: BorderRadius.circular(50)),
-                  child: FaIcon(
-                    FontAwesomeIcons.pen,
-                    size: IconSize.xsIcon,
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.light,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: widget.pressLeft,
+                    borderRadius: BorderRadius.circular(6),
+                    child: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: FaIcon(
+                        FontAwesomeIcons.pen,
+                        size: IconSize.xsIcon,
+                      ),
+                    ),
                   ),
                 ),
               ),
             if (widget.statusRight == "have")
-              GestureDetector(
-                onTap: widget.pressRight,
-                child: Container(
-                  padding: EdgeInsets.only(left: 15, top: 15, bottom: 15),
-                  decoration: BoxDecoration(
-                      color: AppColors.light,
-                      borderRadius: BorderRadius.circular(50)),
-                  child: FaIcon(
-                    FontAwesomeIcons.trash,
-                    size: IconSize.xsIcon,
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.light,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: widget.pressRight,
+                    borderRadius: BorderRadius.circular(6),
+                    child: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: FaIcon(
+                        FontAwesomeIcons.trash,
+                        size: IconSize.xsIcon,
+                      ),
+                    ),
                   ),
                 ),
               )
@@ -393,12 +409,14 @@ class BoxDecDottedBorderUploadCV extends StatefulWidget {
       this.boxDecColor,
       this.titleFontWeight,
       this.widgetFaIcon,
-      this.pressButton,
+      this.press,
       this.boxDecBorderRadius,
-      this.buttonBorderColor})
+      this.buttonBorderColor,
+      this.titleFontFamily,
+      this.textFontFamily})
       : super(key: key);
 
-  final String? title, text, buttonText;
+  final String? title, titleFontFamily, text, textFontFamily, buttonText;
   final Color? titleColor,
       textColor,
       buttonColor,
@@ -411,7 +429,7 @@ class BoxDecDottedBorderUploadCV extends StatefulWidget {
   final Widget? widgetFaIcon;
   final BorderRadiusGeometry? boxDecBorderRadius;
 
-  final Function()? pressButton;
+  final Function()? press;
 
   @override
   State<BoxDecDottedBorderUploadCV> createState() =>
@@ -423,74 +441,87 @@ class _BoxDecDottedBorderUploadCVState
   @override
   Widget build(BuildContext context) {
     return DottedBorder(
-      dashPattern: [4, 5],
-      strokeWidth: 2,
+      dashPattern: [7, 4],
+      strokeWidth: 1,
       borderType: BorderType.RRect,
       radius: Radius.circular(10),
       color: widget.dotBorderColor ?? AppColors.borderPrimary,
       borderPadding: EdgeInsets.all(1),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: widget.boxDecColor == null
               ? AppColors.backgroundWhite
               : widget.boxDecColor,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Column(
-          children: [
-            Container(
-              child: widget.widgetFaIcon,
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              "${widget.title}",
-              style: bodyTextNormal(
-                null,
-                widget.titleColor == null
-                    ? AppColors.fontDark
-                    : widget.titleColor,
-                widget.titleFontWeight == null
-                    ? FontWeight.normal
-                    : widget.titleFontWeight,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: widget.press,
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              padding: EdgeInsets.all(30),
+              child: Column(
+                children: [
+                  // Container(
+                  //   child: widget.widgetFaIcon,
+                  // ),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
+                  Text(
+                    "${widget.title}",
+                    style: bodyTextMaxNormal(
+                      widget.titleFontFamily == null
+                          ? null
+                          : widget.titleFontFamily,
+                      widget.titleColor == null
+                          ? AppColors.fontDark
+                          : widget.titleColor,
+                      widget.titleFontWeight == null
+                          ? FontWeight.normal
+                          : widget.titleFontWeight,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    "${widget.text}",
+                    style: bodyTextSmall(
+                        widget.textFontFamily == null
+                            ? null
+                            : widget.textFontFamily,
+                        widget.textColor == null
+                            ? AppColors.fontDark
+                            : widget.textColor,
+                        null),
+                    textAlign: TextAlign.center,
+                  ),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
+                  // ButtonDefault(
+                  //   boxDecBorderRadius: widget.boxDecBorderRadius == null
+                  //       ? BorderRadius.circular(12.w)
+                  //       : widget.boxDecBorderRadius,
+                  //   buttonBorderColor: widget.buttonBorderColor == null
+                  //       ? AppColors.borderWhite
+                  //       : widget.buttonBorderColor,
+                  //   colorButton: widget.buttonColor == null
+                  //       ? AppColors.buttonPrimary
+                  //       : widget.buttonColor,
+                  //   text: widget.buttonText,
+                  //   colorText: widget.buttonTextColor == null
+                  //       ? AppColors.fontWhite
+                  //       : widget.buttonTextColor,
+                  //   press: widget.pressButton,
+                  // )
+                ],
               ),
             ),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              "${widget.text}",
-              style: bodyTextSmall(
-                  null,
-                  widget.textColor == null
-                      ? AppColors.fontDark
-                      : widget.textColor,
-                  null),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            ButtonDefault(
-              boxDecBorderRadius: widget.boxDecBorderRadius == null
-                  ? BorderRadius.circular(12.w)
-                  : widget.boxDecBorderRadius,
-              buttonBorderColor: widget.buttonBorderColor == null
-                  ? AppColors.borderWhite
-                  : widget.buttonBorderColor,
-              colorButton: widget.buttonColor == null
-                  ? AppColors.buttonPrimary
-                  : widget.buttonColor,
-              text: widget.buttonText,
-              colorText: widget.buttonTextColor == null
-                  ? AppColors.fontWhite
-                  : widget.buttonTextColor,
-              press: widget.pressButton,
-            )
-          ],
+          ),
         ),
       ),
     );

@@ -6,7 +6,7 @@ import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/textSize.dart';
-import 'package:app/screen/main/changeLanguage.dart';
+import 'package:app/screen/Main/changeLanguage.dart';
 import 'package:app/screen/securityVerify/verificationCode.dart';
 import 'package:app/screen/login/login.dart';
 import 'package:app/widget/boxDecorationIcon.dart';

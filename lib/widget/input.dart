@@ -1518,94 +1518,61 @@ class _BoxDecorationInputState extends State<BoxDecorationInput> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GestureDetector(
-          onTap: widget.press,
-          child: Container(
-            width: double.infinity,
-            height: widget.heigth == null ? 50 : widget.heigth,
-            decoration: boxDecoration(
-                widget.boxDecBorderRadius,
-                widget.colorInput == null
-                    ? AppColors.inputColor
-                    : widget.colorInput,
-                widget.colorBorder,
-                null),
-            child: Row(
-              // crossAxisAlignment: CrossAxisAlignment.center,
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  flex: 9,
-                  child: Row(
-                    mainAxisAlignment: widget.mainAxisAlignmentTextIcon,
-                    children: [
-                      Container(
-                        padding: widget.paddingFaIcon == null
-                            ? EdgeInsets.symmetric(horizontal: 12)
-                            : widget.paddingFaIcon,
-                        child: widget.widgetFaIcon,
-                      ),
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(horizontal: 15),
-                      //   child: Text(
-                      //     "${widget.icon}",
-                      //     style: sIcon(
-                      //       null,
-                      //       widget.colorIcon == null
-                      //           ? AppColors.black
-                      //           : widget.colorIcon,
-                      //     ),
-                      //     // style: TextStyle(
-                      //     //   fontFamily: '${widget.fontIcon}',
-                      //     //   fontSize: 10.sp,
-                      //     //   color: widget.colorIcon == null
-                      //     //       ? AppColors.black
-                      //     //       : widget.colorIcon,
-                      //     // ),
-                      //   ),
-                      // ),
-
-                      Flexible(
-                        child: Text(
-                          "${widget.text}",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: bodyTextNormal(
-                              null,
-                              widget.colorText == null
-                                  ? AppColors.fontDark
-                                  : widget.colorText,
-                              widget.fontWeight),
+        Container(
+          width: double.infinity,
+          height: widget.heigth == null ? 50 : widget.heigth,
+          decoration: boxDecoration(
+              widget.boxDecBorderRadius,
+              widget.colorInput == null
+                  ? AppColors.inputColor
+                  : widget.colorInput,
+              widget.colorBorder,
+              null),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: widget.press,
+              borderRadius: BorderRadius.circular(8),
+              child: Row(
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: widget.mainAxisAlignmentTextIcon,
+                      children: [
+                        Container(
+                          padding: widget.paddingFaIcon == null
+                              ? EdgeInsets.symmetric(horizontal: 12)
+                              : widget.paddingFaIcon,
+                          child: widget.widgetFaIcon,
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                GestureDetector(
-                  onTap: widget.pressIconActivity,
-                  child: Container(
-                    child: Padding(
-                        padding: EdgeInsets.only(right: 12),
-                        child: widget.widgetIconActive
-
-                        // child: Text(
-                        //   "${widget.iconActivity}" == null
-                        //       ? ""
-                        //       : "${widget.iconActivity}",
-                        //   textAlign: TextAlign.end,
-                        //   style: sIcon(
-                        //     widget.fontFamily == null
-                        //         ? "FontAwesomePro-Regular"
-                        //         : widget.fontFamily,
-                        //     widget.iconColorActivity == null
-                        //         ? AppColors.inputColor
-                        //         : widget.iconColorActivity,
-                        //   ),
-                        // ),
+                        Flexible(
+                          child: Text(
+                            "${widget.text}",
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: bodyTextNormal(
+                                null,
+                                widget.colorText == null
+                                    ? AppColors.fontDark
+                                    : widget.colorText,
+                                widget.fontWeight),
+                          ),
                         ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  GestureDetector(
+                    onTap: widget.pressIconActivity,
+                    child: Container(
+                      child: Padding(
+                          padding: EdgeInsets.only(right: 12),
+                          child: widget.widgetIconActive),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

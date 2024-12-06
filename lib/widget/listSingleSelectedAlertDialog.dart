@@ -131,7 +131,7 @@ class _ListSingleSelectedAlertDialogState
                 ),
                 Button(
                   text: "confirm".tr,
-                  fontWeight: FontWeight.bold,
+                  textFontWeight: FontWeight.bold,
                   press: () {
                     Navigator.of(context).pop(_selectedString);
                   },

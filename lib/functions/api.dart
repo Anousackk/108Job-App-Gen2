@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use, prefer_if_null_operators, prefer_if_null_operators, deprecated_member_use, avoid_print, avoid_print, avoid_print
+// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use, prefer_if_null_operators, prefer_if_null_operators, deprecated_member_use, avoid_print, avoid_print, avoid_print, deprecated_member_use
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
@@ -116,6 +116,11 @@ var getMessageDetailSeeker = globalURL + "/message-detail-app/";
 var getProfileSeekerApi = globalURL + "/seeker-profile-app";
 var getTotalMyJobSeekerApi = globalURL + "/seeker-get-totals-myjob-app";
 
+//
+//Avatar
+var getAvatarSeekerApi = globalURL + "/seeker-get-avatar-app";
+var updateAvatarSeekerApi = globalURL + "/seeker-update-avatar-app";
+
 //Profile Setting
 var searchableProfileSettingSeeker = globalURL + "/issearchable-seeker-app";
 var getCompaniesProfileSetting = globalURL + "/get-employer-list-in-seeker-app";
@@ -146,6 +151,7 @@ var getJobFunctionsSeekerApi = globalURL + "/jobfunction-in-seeker-app";
 //Upload file CV
 var uploadFileCVApiSeeker = globalURL + "/upload-resume-app";
 var uploadOrUpdateCVApiSeeker = globalURL + "/create-cv-seeker-app";
+var deleteCVApiSeeker = globalURL + "/delete-cv-seeker-app";
 
 //Skill
 var addSkillSeekerApi = globalURL + "/add-skill-seeker-app";
@@ -315,7 +321,9 @@ upLoadFile(String fileName, String url) async {
       return jsonDecode(res.data);
     }
   } catch (e) {
-    if (e is DioError && e.response != null && e.response?.statusCode == 413) {
+    if (e is DioException &&
+        e.response != null &&
+        e.response?.statusCode == 413) {
       // Handle 413 error (Payload Too Large)
       // ignore: avoid_print
       print('File size exceeds the allowed limit');

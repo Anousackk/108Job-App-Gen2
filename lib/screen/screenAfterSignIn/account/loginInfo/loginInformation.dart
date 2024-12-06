@@ -21,6 +21,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sizer/sizer.dart';
 
 class LoginInformation extends StatefulWidget {
   const LoginInformation({Key? key}) : super(key: key);
@@ -117,6 +118,9 @@ class _LoginInformationState extends State<LoginInformation> {
     var removeEmployeeToken = await prefs.remove('employeeToken');
     AuthService().facebookSignOut();
     AuthService().googleSignOut();
+    if (Platform.isIOS) {
+      AuthService().appleSignOut();
+    }
 
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => Login()), (route) => false);
@@ -356,8 +360,15 @@ class _LoginInformationState extends State<LoginInformation> {
                               //
                               //
                               //Google connect
-                              GestureDetector(
-                                onTap: () async {
+                              ConnectOtherPlatform(
+                                title: "Google",
+                                strImage: 'assets/image/google.png',
+                                text:
+                                    _googleId != "" ? _googleEmail : "link".tr,
+                                press: () async {
+                                  //
+                                  //
+                                  //ເລືອກອີເມວເຊື່ອມຕໍ່ແພັດຟອມ google
                                   if (_googleId == "" && _googleEmail == "") {
                                     AuthService().loginSyncGoogleFacebook(
                                         context, "google", (val) {
@@ -366,7 +377,11 @@ class _LoginInformationState extends State<LoginInformation> {
                                         checkSeekerInfo();
                                       }
                                     });
-                                  } else if (_googleId != "" &&
+                                  }
+                                  //
+                                  //
+                                  //ຍົກເລີກເຊື່ອມຕໍ່ແພັດຟອມ google
+                                  else if (_googleId != "" &&
                                           _googleEmail != "" &&
                                           _passwordStatus != "" &&
                                           _email != "" ||
@@ -384,12 +399,29 @@ class _LoginInformationState extends State<LoginInformation> {
                                           );
                                         });
                                     if (result == 'Ok') {
+                                      //
+                                      //
+                                      //Alert dialog loading
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (context) {
+                                          return CustAlertLoading();
+                                        },
+                                      );
+
                                       var res = await postData(
                                           apiDisconnectGoogleFacebookAip, {
                                         "id": _googleId,
                                         "email": _googleEmail,
                                         "type": "google",
                                       });
+                                      AuthService().googleSignOut();
+
+                                      if (res["message"] != null) {
+                                        Navigator.pop(context);
+                                      }
+
                                       if (res["message"] == "disConnected") {
                                         await checkSeekerInfo();
                                         await showDialog(
@@ -439,13 +471,6 @@ class _LoginInformationState extends State<LoginInformation> {
                                     );
                                   }
                                 },
-                                child: ConnectOtherPlatform(
-                                  title: "Google",
-                                  strImage: 'assets/image/google.png',
-                                  text: _googleId != ""
-                                      ? _googleEmail
-                                      : "link".tr,
-                                ),
                               ),
 
                               //
@@ -453,8 +478,16 @@ class _LoginInformationState extends State<LoginInformation> {
                               //
                               //
                               //Facebook connect
-                              GestureDetector(
-                                onTap: () async {
+                              ConnectOtherPlatform(
+                                title: "Facebook",
+                                strImage: 'assets/image/facebook.png',
+                                text: _facebookId != ""
+                                    ? _facebookEmail
+                                    : "link".tr,
+                                press: () async {
+                                  //
+                                  //
+                                  //ເລືອກອີເມວເຊື່ອມຕໍ່ແພັດຟອມ facebook
                                   if (_facebookId == "" &&
                                       _facebookEmail == "") {
                                     AuthService().loginSyncGoogleFacebook(
@@ -464,7 +497,11 @@ class _LoginInformationState extends State<LoginInformation> {
                                         await checkSeekerInfo();
                                       }
                                     });
-                                  } else if (_facebookId != "" &&
+                                  }
+                                  //
+                                  //
+                                  //ຍົກເລີກເຊື່ອມຕໍ່ແພັດຟອມ facebook
+                                  else if (_facebookId != "" &&
                                           _facebookEmail != "" &&
                                           _passwordStatus != "" &&
                                           _email != "" ||
@@ -482,12 +519,29 @@ class _LoginInformationState extends State<LoginInformation> {
                                           );
                                         });
                                     if (result == 'Ok') {
+                                      //
+                                      //
+                                      //Alert dialog loading
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (context) {
+                                          return CustAlertLoading();
+                                        },
+                                      );
+
                                       var res = await postData(
                                           apiDisconnectGoogleFacebookAip, {
                                         "id": _facebookId,
                                         "email": _facebookEmail,
                                         "type": "facebook",
                                       });
+
+                                      AuthService().facebookSignOut();
+
+                                      if (res["message"] != null) {
+                                        Navigator.pop(context);
+                                      }
                                       if (res["message"] == "disConnected") {
                                         await checkSeekerInfo();
                                         await showDialog(
@@ -537,13 +591,6 @@ class _LoginInformationState extends State<LoginInformation> {
                                     );
                                   }
                                 },
-                                child: ConnectOtherPlatform(
-                                  title: "Facebook",
-                                  strImage: 'assets/image/facebook.png',
-                                  text: _facebookId != ""
-                                      ? _facebookEmail
-                                      : "link".tr,
-                                ),
                               ),
 
                               //
@@ -552,8 +599,15 @@ class _LoginInformationState extends State<LoginInformation> {
                               //
                               //Apple connect
                               if (Platform.isIOS)
-                                GestureDetector(
-                                  onTap: () async {
+                                ConnectOtherPlatform(
+                                  title: "Apple",
+                                  strImage: 'assets/image/apple.png',
+                                  text:
+                                      _appleId != "" ? _appleEmail : "link".tr,
+                                  press: () async {
+                                    //
+                                    //
+                                    //ເລືອກອີເມວເຊື່ອມຕໍ່ແພັດຟອມ apple
                                     if (_appleId == "" && _appleEmail == "") {
                                       AuthService().loginSyncGoogleFacebook(
                                           context, "apple", (val) async {
@@ -562,7 +616,11 @@ class _LoginInformationState extends State<LoginInformation> {
                                           await checkSeekerInfo();
                                         }
                                       });
-                                    } else if (_appleEmail != "" &&
+                                    }
+                                    //
+                                    //
+                                    //ຍົກເລີກເຊື່ອມຕໍ່ແພັດຟອມ apple
+                                    else if (_appleEmail != "" &&
                                             _appleId != "" &&
                                             _passwordStatus != "" &&
                                             _email != "" ||
@@ -580,12 +638,29 @@ class _LoginInformationState extends State<LoginInformation> {
                                             );
                                           });
                                       if (result == 'Ok') {
+                                        //
+                                        //
+                                        //Alert dialog loading
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (context) {
+                                            return CustAlertLoading();
+                                          },
+                                        );
+
                                         var res = await postData(
                                             apiDisconnectGoogleFacebookAip, {
                                           "id": _appleId,
                                           "email": _appleEmail,
                                           "type": "apple",
                                         });
+                                        AuthService().facebookSignOut();
+
+                                        if (res["message"] != null) {
+                                          Navigator.pop(context);
+                                        }
+
                                         if (res["message"] == "disConnected") {
                                           await checkSeekerInfo();
                                           await showDialog(
@@ -636,13 +711,6 @@ class _LoginInformationState extends State<LoginInformation> {
                                       );
                                     }
                                   },
-                                  child: ConnectOtherPlatform(
-                                    title: "Apple",
-                                    strImage: 'assets/image/apple.png',
-                                    text: _appleId != ""
-                                        ? _appleEmail
-                                        : "link".tr,
-                                  ),
                                 ),
                             ],
                           ),
@@ -657,39 +725,43 @@ class _LoginInformationState extends State<LoginInformation> {
                         //
                         //
                         //
-                        //Log Out
-                        GestureDetector(
-                          onTap: () async {
-                            var result = await showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return NewVer2CustAlertDialogWarningBtnConfirmCancel(
-                                    title: "logout".tr,
-                                    contentText: "are u sure logout".tr,
-                                    textButtonLeft: "cancel".tr,
-                                    textButtonRight: 'confirm'.tr,
-                                  );
-                                });
-                            if (result == 'Ok') {
-                              removeSharedPreTokenAndLogOut();
-                            }
-                          },
-                          child: Container(
-                            // color: AppColors.primary,
-                            padding: EdgeInsets.all(20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                FaIcon(FontAwesomeIcons.arrowRightFromBracket),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "logout".tr,
-                                  style: bodyTextNormal(
-                                      null, null, FontWeight.bold),
-                                ),
-                              ],
+                        //Button Log Out
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () async {
+                              var result = await showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                      title: "logout".tr,
+                                      contentText: "are u sure logout".tr,
+                                      textButtonLeft: "cancel".tr,
+                                      textButtonRight: 'confirm'.tr,
+                                    );
+                                  });
+                              if (result == 'Ok') {
+                                removeSharedPreTokenAndLogOut();
+                              }
+                            },
+                            child: Container(
+                              width: 50.w,
+                              padding: EdgeInsets.all(20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  FaIcon(
+                                      FontAwesomeIcons.arrowRightFromBracket),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "logout".tr,
+                                    style: bodyTextNormal(
+                                        null, null, FontWeight.bold),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         )
@@ -726,37 +798,40 @@ class _AddGeneralInformationState extends State<AddGeneralInformation> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          child: GestureDetector(
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
             onTap: widget.press,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "${widget.title}",
-                  style: bodyTextNormal(null, null, null),
-                ),
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(right: 5),
-                      child: Text(
-                        "${widget.text}",
-                        style: bodyTextNormal(
-                            null,
-                            widget.textColor == null
-                                ? AppColors.fontDark
-                                : widget.textColor,
-                            null),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "${widget.title}",
+                    style: bodyTextNormal(null, null, null),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(right: 5),
+                        child: Text(
+                          "${widget.text}",
+                          style: bodyTextNormal(
+                              null,
+                              widget.textColor == null
+                                  ? AppColors.fontDark
+                                  : widget.textColor,
+                              null),
+                        ),
                       ),
-                    ),
-                    Container(
-                      child: widget.iconLeft,
-                    )
-                  ],
-                ),
-              ],
+                      Container(
+                        child: widget.iconLeft,
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -786,40 +861,43 @@ class _ConnectOtherPlatformState extends State<ConnectOtherPlatform> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GestureDetector(
-          onTap: widget.press,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Image(
-                      image: AssetImage("${widget.strImage}"),
-                      height: 20,
-                      width: 20,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      "${widget.title}",
-                      style: bodyTextNormal(null, null, null),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                      color: AppColors.opacityBlue,
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Text(
-                    "${widget.text}",
-                    style: bodyTextNormal(null, AppColors.fontGrey, null),
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: widget.press,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Image(
+                        image: AssetImage("${widget.strImage}"),
+                        height: 20,
+                        width: 20,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "${widget.title}",
+                        style: bodyTextNormal(null, null, null),
+                      ),
+                    ],
                   ),
-                )
-              ],
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                        color: AppColors.opacityBlue,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Text(
+                      "${widget.text}",
+                      style: bodyTextNormal(null, AppColors.fontGrey, null),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),

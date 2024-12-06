@@ -16,13 +16,15 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:sizer/sizer.dart';
 import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
 
+// _typeTapCompanyDetail == "jobOpening"
 class CompanyDetail extends StatefulWidget {
-  const CompanyDetail({Key? key, this.companyId}) : super(key: key);
+  const CompanyDetail({Key? key, this.companyId, this.typeTapCompany})
+      : super(key: key);
 
   final companyId;
+  final typeTapCompany;
 
   @override
   State<CompanyDetail> createState() => _CompanyDetailState();
@@ -333,6 +335,16 @@ class _CompanyDetailState extends State<CompanyDetail>
     });
   }
 
+  setTypeTapCompanyDetail() {
+    if (widget.typeTapCompany != null) {
+      setState(() {
+        _typeTapCompanyDetail = widget.typeTapCompany;
+      });
+
+      print(_typeTapCompanyDetail.toString());
+    }
+  }
+
   //error setState() called after dispose(). it can help!!!
   @override
   void setState(fn) {
@@ -347,6 +359,7 @@ class _CompanyDetailState extends State<CompanyDetail>
 
     checkSeekerInfo();
     getDetailCompany(widget.companyId);
+    setTypeTapCompanyDetail();
 
     _tabController = TabController(length: 6, vsync: this);
     _tabController.addListener(() {
@@ -970,7 +983,6 @@ class _CompanyDetailState extends State<CompanyDetail>
                               //
                               //
                               //Section 4 View Detail On Tap
-
                               //
                               //
                               //
@@ -1029,6 +1041,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                           currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
                                           desiredFormat: "yyyy-MM-dd HH:mm:ss");
                                       //
+                                      //
                                       //Format to string 13 Feb 2024
                                       _jobOpeningOpeningDate =
                                           DateFormat('dd MMM yyyy')
@@ -1046,6 +1059,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                           currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
                                           desiredFormat: "yyyy-MM-dd HH:mm:ss");
                                       //
+                                      //
                                       //Format to string 13 Feb 2024
                                       _jobOpeningClosingDate =
                                           DateFormat("dd MMM yyyy")
@@ -1055,182 +1069,220 @@ class _CompanyDetailState extends State<CompanyDetail>
                                             horizontal: 20),
                                         child: Column(
                                           children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        JobSearchDetail(
-                                                            jobId: i['jobId'],
-                                                            newJob:
-                                                                i['newJob']),
-                                                  ),
-                                                ).then((value) {
-                                                  if (value[1] != "") {
-                                                    setState(() {
-                                                      dynamic job = _jobsOpening
-                                                          .firstWhere((e) =>
-                                                              e['jobId'] ==
-                                                              value[1]);
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: AppColors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                    color: AppColors
+                                                        .borderSecondary),
+                                              ),
+                                              child: Material(
+                                                color: Colors.transparent,
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            JobSearchDetail(
+                                                                jobId:
+                                                                    i['jobId'],
+                                                                newJob: i[
+                                                                    'newJob']),
+                                                      ),
+                                                    ).then((value) {
+                                                      if (value[1] != "") {
+                                                        setState(() {
+                                                          dynamic job = _jobsOpening
+                                                              .firstWhere((e) =>
+                                                                  e['jobId'] ==
+                                                                  value[1]);
 
-                                                      job["isSaved"] = value[2];
+                                                          job["isSaved"] =
+                                                              value[2];
+                                                        });
+                                                      }
                                                     });
-                                                  }
-                                                });
-                                              },
-                                              child: Container(
-                                                padding: EdgeInsets.all(15),
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.white,
+                                                  },
                                                   borderRadius:
                                                       BorderRadius.circular(8),
-                                                  border: Border.all(
-                                                      color: AppColors
-                                                          .borderSecondary),
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 7,
-                                                      child: Row(
-                                                        children: [
-                                                          //
-                                                          //
-                                                          //Content Company
-                                                          Expanded(
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
-                                                                    "${_jobOpeningName}",
-                                                                    style: bodyTextNormal(
-                                                                        null,
-                                                                        null,
-                                                                        FontWeight
-                                                                            .bold),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis),
-                                                                SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                Row(
+                                                  child: Padding(
+                                                    padding: EdgeInsets.all(15),
+                                                    child: Row(
+                                                      children: [
+                                                        Expanded(
+                                                          flex: 7,
+                                                          child: Row(
+                                                            children: [
+                                                              //
+                                                              //
+                                                              //Content Company
+                                                              Expanded(
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
                                                                   children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .locationDot,
-                                                                      size: 12,
-                                                                    ),
+                                                                    Text(
+                                                                        "${_jobOpeningName}",
+                                                                        style: bodyTextNormal(
+                                                                            null,
+                                                                            null,
+                                                                            FontWeight
+                                                                                .bold),
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis),
                                                                     SizedBox(
-                                                                      width: 5,
+                                                                      height: 5,
                                                                     ),
-                                                                    Flexible(
-                                                                      child: Text(
-                                                                          "${_jobOpeningWorkingLocation}",
+                                                                    Row(
+                                                                      children: [
+                                                                        FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .locationDot,
+                                                                          size:
+                                                                              12,
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              5,
+                                                                        ),
+                                                                        Flexible(
+                                                                          child: Text(
+                                                                              "${_jobOpeningWorkingLocation}",
+                                                                              style: bodyTextSmall(null, null, null),
+                                                                              overflow: TextOverflow.ellipsis),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: [
+                                                                        FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .calendar,
+                                                                          size:
+                                                                              12,
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              5,
+                                                                        ),
+                                                                        Text(
+                                                                          "${_jobOpeningOpeningDate} - ${_jobOpeningClosingDate}",
                                                                           style: bodyTextSmall(
                                                                               null,
                                                                               null,
                                                                               null),
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis),
+                                                                        )
+                                                                      ],
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                Row(
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .calendar,
-                                                                      size: 12,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                    Text(
-                                                                      "${_jobOpeningOpeningDate} - ${_jobOpeningClosingDate}",
-                                                                      style: bodyTextSmall(
-                                                                          null,
-                                                                          null,
-                                                                          null),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
 
-                                                    //
-                                                    //
-                                                    //Button follow / following
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          i['isSaved'] =
-                                                              !i['isSaved'];
-                                                        });
-                                                        saveAndUnSaveJob(
-                                                            i['jobId'],
-                                                            i['title']);
-                                                      },
-                                                      child: _jobOpeningIsSave
-                                                          ? Container(
-                                                              child: Row(
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .solidHeart,
-                                                                    size: 13,
-                                                                    color: AppColors
-                                                                        .iconPrimary,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 8,
-                                                                  ),
-                                                                  Text(
-                                                                    "saved".tr,
-                                                                    style:
-                                                                        bodyTextSmall(
-                                                                      null,
-                                                                      AppColors
-                                                                          .fontPrimary,
-                                                                      null,
+                                                        //
+                                                        //
+                                                        //Button follow / following
+                                                        Container(
+                                                          // color: AppColors.red,
+                                                          child: Material(
+                                                            color: Colors
+                                                                .transparent,
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  i['isSaved'] =
+                                                                      !i['isSaved'];
+                                                                });
+                                                                saveAndUnSaveJob(
+                                                                    i['jobId'],
+                                                                    i['title']);
+                                                              },
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                              child: _jobOpeningIsSave
+                                                                  ? Container(
+                                                                      padding:
+                                                                          EdgeInsets.all(
+                                                                              8),
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                      ),
+                                                                      child:
+                                                                          Row(
+                                                                        children: [
+                                                                          FaIcon(
+                                                                            FontAwesomeIcons.solidHeart,
+                                                                            size:
+                                                                                13,
+                                                                            color:
+                                                                                AppColors.iconPrimary,
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                8,
+                                                                          ),
+                                                                          Text(
+                                                                            "saved".tr,
+                                                                            style:
+                                                                                bodyTextSmall(
+                                                                              null,
+                                                                              AppColors.fontPrimary,
+                                                                              null,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    )
+                                                                  : Container(
+                                                                      padding:
+                                                                          EdgeInsets.all(
+                                                                              8),
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                      ),
+                                                                      child:
+                                                                          Row(
+                                                                        children: [
+                                                                          FaIcon(
+                                                                            FontAwesomeIcons.heart,
+                                                                            size:
+                                                                                13,
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                8,
+                                                                          ),
+                                                                          Text(
+                                                                            "save".tr,
+                                                                            style: bodyTextSmall(
+                                                                                null,
+                                                                                null,
+                                                                                null),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            )
-                                                          : Container(
-                                                              child: Row(
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .heart,
-                                                                    size: 13,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 8,
-                                                                  ),
-                                                                  Text(
-                                                                    "save".tr,
-                                                                    style: bodyTextSmall(
-                                                                        null,
-                                                                        null,
-                                                                        null),
-                                                                  ),
-                                                                ],
-                                                              ),
                                                             ),
-                                                    )
-                                                  ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -1739,7 +1791,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0x000000).withOpacity(0.05),
+                              color: AppColors.dark.withOpacity(0.05),
                               offset: Offset(0, -6),
                               blurRadius: 4,
                               spreadRadius: 0,
@@ -1759,7 +1811,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                           WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
                                       ),
-                                      borderRadius: BorderRadius.circular(12.w),
+                                      borderRadius: BorderRadius.circular(100),
                                       colorButton: AppColors.buttonWhite,
                                       widgetIcon: FaIcon(
                                         FontAwesomeIcons.heart,
@@ -1767,8 +1819,6 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         size: IconSize.xsIcon,
                                       ),
                                       colorText: AppColors.fontDark,
-                                      // fontWeight:
-                                      //     FontWeight.bold,
                                       text: "follow".tr,
                                       press: () {
                                         followCompany(
@@ -1785,7 +1835,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                           WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
                                       ),
-                                      borderRadius: BorderRadius.circular(12.w),
+                                      borderRadius: BorderRadius.circular(100),
                                       colorButton: AppColors.buttonWhite,
                                       widgetIcon: FaIcon(
                                         FontAwesomeIcons.solidHeart,
@@ -1793,8 +1843,6 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         size: IconSize.xsIcon,
                                       ),
                                       colorText: AppColors.fontPrimary,
-                                      // fontWeight:
-                                      //     FontWeight.bold,
                                       text: "following".tr,
                                       press: () {
                                         followCompany(
@@ -1881,8 +1929,8 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         EdgeInsets.all(10),
                                       ),
                                       text: "submitted cv".tr,
-                                      colorButton: AppColors.buttonGreyWhite,
-                                      colorText: AppColors.fontDark,
+                                      buttonColor: AppColors.buttonGreyWhite,
+                                      textColor: AppColors.fontDark,
                                       press: () {
                                         submittedCV(
                                           _companyName,

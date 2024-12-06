@@ -5,15 +5,15 @@ import 'dart:io';
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
-import 'package:app/functions/iconSize.dart';
+import 'package:app/functions/launchInBrowser.dart';
+import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/UploadCV/Widget/boxPrefixSuffix.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/boxDecDottedBorderProfileDetail.dart';
 import 'package:app/widget/button.dart';
-import 'package:app/widget/input.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -31,10 +31,15 @@ class _UploadCVState extends State<UploadCV> {
   String _strFilePath = "";
   String _strFileName = "";
   String _strFileType = "";
+  String _cvSrc = "";
+  String _cvName = "";
 
-  void pickFile() async {
+  dynamic _cvUploadDate;
+
+  pickFile() async {
     var statusStorage = await Permission.storage.status;
     if (statusStorage.isGranted) {
+      //
       //
       //ສະແດງ AlertDialog Loading
       showDialog(
@@ -66,19 +71,22 @@ class _UploadCVState extends State<UploadCV> {
 
         if (_strFilePath != null) {
           //
+          //
           //Api upload file CV
           var value = await upLoadFile(_strFilePath, uploadFileCVApiSeeker);
-          print(value);
+          print("value: " + value.toString());
 
-          setState(() {
-            _fileValue = value['myFile'];
-            //
-            //ປິດ AlertDialog Loading ຫຼັງຈາກ _fileValue ມີຄ່າ
-            if (_fileValue != null) {
-              Navigator.pop(context);
-            }
-            print(_fileValue);
-          });
+          _fileValue = await value['myFile'];
+          print("_fileValue" + _fileValue.toString());
+
+          //
+          //
+          //ປິດ AlertDialog Loading ຫຼັງຈາກ _fileValue ມີຄ່າ
+          if (_fileValue != null) {
+            Navigator.pop(context);
+          }
+
+          setState(() {});
         }
       } else if (result == null) {
         print("result == null");
@@ -95,13 +103,133 @@ class _UploadCVState extends State<UploadCV> {
     }
   }
 
+  uploadOrUpdateCV() async {
+    //
+    //
+    //ສະແດງ AlertDialog Loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustAlertLoading();
+      },
+    );
+
+    var res = await postData(
+      uploadOrUpdateCVApiSeeker,
+      {
+        "cv": _fileValue,
+      },
+    );
+
+    //
+    //
+    //ປິດ AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
+    if (res != null) {
+      Navigator.pop(context);
+    }
+
+    if (res['message'] == 'CV uploaded') {
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "successful".tr,
+            contentText: "upload cv".tr + " " + "successful".tr,
+            textButton: "ok".tr,
+            press: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          );
+        },
+      );
+    } else {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustAlertDialogWarningWithoutBtn(
+            title: "try_again".tr,
+          );
+        },
+      );
+    }
+  }
+
+  deleteCV() async {
+    //
+    //
+    //ສະແດງ AlertDialog Loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustAlertLoading();
+      },
+    );
+
+    var res = await postData(deleteCVApiSeeker, {});
+
+    //
+    //
+    //ປິດ AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
+    if (res != null) {
+      Navigator.pop(context);
+    }
+
+    if (res['message'] == "CV deleted") {
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "successful".tr,
+            contentText: "delete_cv_success".tr,
+            textButton: "ok".tr,
+            press: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          );
+        },
+      );
+    }
+  }
+
+  cvInfomation() {
+    if (widget.cv != null) {
+      setState(() {
+        print("${widget.cv}");
+
+        _cvName = widget.cv['link'].split('/')[1];
+        _cvSrc = widget.cv['src'];
+        _cvUploadDate = widget.cv['updatedAt'];
+        //pars ISO to Flutter DateTime
+        parsDateTime(value: '', currentFormat: '', desiredFormat: '');
+        DateTime cvUploadDate = parsDateTime(
+          value: _cvUploadDate,
+          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+          desiredFormat: "yyyy-MM-dd HH:mm:ss",
+        );
+        _cvUploadDate = formatDate(cvUploadDate);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    cvInfomation();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBarDefault(
-          textTitle: "upload cvL".tr,
+          textTitle: "cv_file".tr,
           // fontWeight: FontWeight.bold,
           leadingIcon: Icon(Icons.arrow_back),
           leadingPress: () {
@@ -122,27 +250,28 @@ class _UploadCVState extends State<UploadCV> {
                     //
                     //BoxDecoration Upload CV
                     BoxDecDottedBorderUploadCV(
-                      boxDecColor: AppColors.lightPrimary,
+                      boxDecColor: AppColors.primary100,
                       boxDecBorderRadius: BorderRadius.circular(5),
-                      widgetFaIcon: FaIcon(
-                        _strFileType == "pdf"
-                            ? FontAwesomeIcons.filePdf
-                            : (_strFileType == "docx" || _strFileType == "doc"
-                                ? FontAwesomeIcons.fileWord
-                                : FontAwesomeIcons.fileArrowUp),
-                        size: 55,
-                        color: AppColors.iconGray,
-                      ),
-                      title: "select file to upload".tr,
+                      // widgetFaIcon: FaIcon(
+                      //   _strFileType == "pdf"
+                      //       ? FontAwesomeIcons.filePdf
+                      //       : (_strFileType == "docx" || _strFileType == "doc"
+                      //           ? FontAwesomeIcons.fileWord
+                      //           : FontAwesomeIcons.fileArrowUp),
+                      //   size: 55,
+                      //   color: AppColors.iconGray,
+                      // ),
+                      title: "select_cv_file".tr,
+                      titleColor: AppColors.primary600,
                       titleFontWeight: FontWeight.bold,
                       text: _strFileName == "" || _strFileName == null
-                          ? "support file".tr
+                          ? "cv_file_support".tr
                           : "${_strFileName}",
-                      buttonText: "select file to upload".tr,
-                      buttonColor: AppColors.lightPrimary,
-                      buttonBorderColor: AppColors.borderPrimary,
-                      buttonTextColor: AppColors.fontPrimary,
-                      pressButton: () {
+                      // buttonText: "select_cv_file".tr,
+                      // buttonColor: AppColors.lightPrimary,
+                      // buttonBorderColor: AppColors.borderPrimary,
+                      // buttonTextColor: AppColors.fontPrimary,
+                      press: () {
                         pickFile();
                       },
                     ),
@@ -150,28 +279,89 @@ class _UploadCVState extends State<UploadCV> {
                       height: 30,
                     ),
 
+                    if (widget.cv != null)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //
+                          //
+                          //Uploaded file
+                          Text(
+                            "uploaded_file".tr,
+                            style: bodyTextMaxNormal(
+                                "NotoSansLaoLoopedBold", null, null),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+
+                          //
+                          //
+                          //Box Decoration Resume File
+                          BoxDecorationInputPrefixTextSuffixWidget(
+                            press: () {
+                              launchInBrowser(Uri.parse(_cvSrc));
+                            },
+                            prefixIconText: "\uf15b",
+                            prefixFontFamily: "FontAwesomeSolid",
+                            prefixColor: AppColors.primary600,
+                            text: "${_cvName}",
+                            textColor: AppColors.fontDark,
+                            suffixWidget: Text(
+                              "\uf00d",
+                              style: fontAwesomeRegular(
+                                  null, 14, AppColors.warning600, null),
+                            ),
+                            pressSuffixWidget: () async {
+                              var result = await showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                      title: "delete_this_info".tr,
+                                      contentText: "are_u_delete_cv".tr,
+                                      textButtonLeft: 'cancel'.tr,
+                                      textButtonRight: 'confirm'.tr,
+                                      textButtonRightColor: AppColors.fontWhite,
+                                    );
+                                  });
+                              if (result == 'Ok') {
+                                print("confirm delete");
+                                deleteCV();
+                              }
+                            },
+                            validateText: Container(),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                        ],
+                      ),
+
                     //
                     //
                     //Trips
                     Text(
                       "tips".tr,
-                      style: bodyTextNormal(null, null, FontWeight.bold),
+                      style: bodyTextMaxNormal(
+                          "NotoSansLaoLoopedBold", null, null),
                     ),
                     SizedBox(
                       height: 10,
                     ),
                     Text(
-                      "1. " + "upload only cv".tr,
-                    ),
-                    Text(
-                      "2. " + "pdf file recommend".tr,
+                      "cv_tip_1".tr,
+                      style: bodyTextMinNormal(
+                          "NotoSansLaoLoopedMedium", null, null),
                     ),
                     SizedBox(
-                      height: 30,
+                      height: 10,
+                    ),
+                    Text(
+                      "cv_tip_2".tr,
+                      style: bodyTextMinNormal(
+                          "NotoSansLaoLoopedMedium", null, null),
                     ),
 
-                    //
-                    //
                     //Question ask?
                     // Text(
                     //   "question you my ask".tr,
@@ -181,8 +371,6 @@ class _UploadCVState extends State<UploadCV> {
                     //   height: 10,
                     // ),
 
-                    //
-                    //
                     //1. BoxDecoration Question ask
                     // BoxDecorationInput(
                     //   boxDecBorderRadius: BorderRadius.circular(10),
@@ -203,9 +391,7 @@ class _UploadCVState extends State<UploadCV> {
                     //   height: 5,
                     // ),
 
-                    // //
-                    // //
-                    // //2. BoxDecoration Question ask
+                    //2. BoxDecoration Question ask
                     // BoxDecorationInput(
                     //   boxDecBorderRadius: BorderRadius.circular(10),
                     //   colorInput: AppColors.greyWhite,
@@ -225,9 +411,7 @@ class _UploadCVState extends State<UploadCV> {
                     //   height: 5,
                     // ),
 
-                    // //
-                    // //
-                    // //3. BoxDecoration Question ask
+                    //3. BoxDecoration Question ask
                     // BoxDecorationInput(
                     //   boxDecBorderRadius: BorderRadius.circular(10),
                     //   colorInput: AppColors.greyWhite,
@@ -273,57 +457,5 @@ class _UploadCVState extends State<UploadCV> {
         ),
       ),
     );
-  }
-
-  uploadOrUpdateCV() async {
-    //
-    //ສະແດງ AlertDialog Loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustAlertLoading();
-      },
-    );
-
-    var res = await postData(
-      uploadOrUpdateCVApiSeeker,
-      {
-        "cv": _fileValue,
-      },
-    );
-    //
-    //ປິດ AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
-    if (res != null) {
-      Navigator.pop(context);
-    }
-
-    if (res['message'] == 'CV uploaded') {
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "upload cv".tr + " " + "sccessful".tr,
-            contentText: res['message'],
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-          );
-        },
-      );
-    } else {
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return CustAlertDialogErrorWithoutBtn(
-            title: "incorrect".tr,
-            text: res['message'],
-          );
-        },
-      );
-    }
   }
 }

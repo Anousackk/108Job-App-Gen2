@@ -22,8 +22,10 @@ TextStyle appbarTextNormal(Color? textColor, FontWeight? fontWeight) {
   );
 }
 
-TextStyle appbarTextMedium(Color? textColor, FontWeight? fontWeight) {
+TextStyle appbarTextMedium(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
+    fontFamily: fontFamily,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     fontSize: 20,
@@ -63,6 +65,17 @@ TextStyle bodyTitleNormal(Color? textColor, FontWeight? fontWeight) {
 //
 //
 //body
+
+TextStyle bodyTextMiniSmall(
+    String? fontFamily, Color? textColor, FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 10,
+  );
+}
+
 TextStyle bodyTextSmall(
     String? fontFamily, Color? textColor, FontWeight? fontWeight) {
   return TextStyle(
@@ -314,17 +327,35 @@ TextStyle buttonTextMaxLarge(
 //
 //
 //input
-TextStyle inputTextSmall(Color? textColor) {
+TextStyle inputTextSmall(String? fontFamily, Color? textColor) {
   return TextStyle(
+    fontFamily: fontFamily,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 13,
   );
 }
 
-TextStyle inputTextNormal(Color? textColor) {
+TextStyle inputTextMiniNormal(String? fontFamily, Color? textColor) {
   return TextStyle(
+    fontFamily: fontFamily,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 14,
+  );
+}
+
+TextStyle inputTextNormal(String? fontFamily, Color? textColor) {
+  return TextStyle(
+    fontFamily: fontFamily,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 15,
+  );
+}
+
+TextStyle inputTextMaxNormal(String? fontFamily, Color? textColor) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: 16,
   );
 }
 

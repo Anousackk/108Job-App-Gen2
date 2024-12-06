@@ -2,22 +2,22 @@
 
 import 'dart:io';
 
-import 'package:app/MyUpgraderMessages.dart';
+import 'package:app/alertUpgraderMessages.dart';
 import 'package:app/firebase_options.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/screen/ScreenAfterSignIn/Company/company.dart';
+import 'package:app/screen/ScreenAfterSignIn/Company/companyDetail.dart';
+import 'package:app/screen/ScreenAfterSignIn/JobSearch/jobSearch.dart';
+import 'package:app/screen/ScreenAfterSignIn/Message/message.dart';
+import 'package:app/screen/ScreenAfterSignIn/MyJob/myJob.dart';
 import 'package:app/screen/login/login.dart';
-import 'package:app/screen/main/changeLanguage.dart';
-import 'package:app/screen/screenAfterSignIn/Notifications/notification.dart';
-import 'package:app/screen/screenAfterSignIn/account/account.dart';
-import 'package:app/screen/screenAfterSignIn/company/company.dart';
-import 'package:app/screen/screenAfterSignIn/company/companyDetail.dart';
-import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearch.dart';
-import 'package:app/screen/screenAfterSignIn/message/message.dart';
-import 'package:app/screen/screenAfterSignIn/myJob/myJob.dart';
+import 'package:app/screen/Main/changeLanguage.dart';
+import 'package:app/screen/ScreenAfterSignIn/Notifications/notification.dart';
+import 'package:app/screen/ScreenAfterSignIn/account/account.dart';
 import 'package:app/widget/listMultiSelectedAlertDialog.dart';
 import 'package:apple_product_name/apple_product_name.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -154,7 +154,7 @@ class _HomeState extends State<Home> {
   getProfileSeeker() async {
     var res = await fetchData(getProfileSeekerApi);
 
-    print("eiei: " + res.toString());
+    // print("eiei: " + res.toString());
 
     // if (res == "Unauthorized") {
     //   print("body == Unauthorized");
@@ -555,7 +555,7 @@ class _MainHomeState extends State<MainHome> {
   fetchPopupBanner() async {
     var res = await postData(getPopupBanner, {});
     _listPopupBanner = res['info'];
-    print(_listPopupBanner.toString());
+    print("List popup banner " + _listPopupBanner.toString());
     if (_listPopupBanner.length > 0) {
       _imagePopupBanner = _listPopupBanner[0]['image'];
       _urlPopupBanner = _listPopupBanner[0]['url'];
@@ -670,11 +670,8 @@ class _MainHomeState extends State<MainHome> {
 
   // checkBanner() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
-
   //   dynamic hasShownDialog = await prefs.getBool('hasShownDialog');
-
   //   print("hasShownDialog: " + hasShownDialog.toString());
-
   //   if (hasShownDialog) {
   //     await prefs.setBool('hasShownDialog', true);
   //     setState(() {
@@ -818,19 +815,36 @@ class _MainHomeState extends State<MainHome> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          //
+                          //
+                          //
+                          //
+                          //
+                          //
+                          //
+                          //
+                          //
+                          //
+                          //
+                          //
+                          //
+                          //
+                          //Section Home Header
                           Container(
                             color: AppColors.backgroundWhite,
                             padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
+                              horizontal: 20,
+                            ),
                             child: Row(
-                              // crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                //
+                                //
+                                //Logo image
                                 Expanded(
                                   child: Container(
                                     height: 30,
                                     width: 30,
                                     alignment: Alignment.centerLeft,
-                                    // color: AppColors.red,
                                     child: Image.asset(
                                       'assets/image/Logo108.png',
                                       fit: BoxFit.contain,
@@ -838,9 +852,6 @@ class _MainHomeState extends State<MainHome> {
                                   ),
                                 ),
 
-                                //
-                                //
-                                //
                                 //
                                 //
                                 //Home Header
@@ -859,143 +870,165 @@ class _MainHomeState extends State<MainHome> {
                                           }
                                         }),
                                         SizedBox(
-                                          width: 20,
+                                          width: 10,
                                         ),
 
                                         //
                                         //
                                         //Notication
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Notifications(
-                                                  callbackTotalNoti: (value) {
-                                                    setState(() {
-                                                      _totalNotiUnRead = value;
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            );
-                                            // .then((value) {
-                                            //   setState(() {
-                                            //     _totalNotiUnRead = value;
-                                            //   });
-                                            // });
-                                          },
-                                          child: Stack(
-                                            clipBehavior: Clip.none,
-                                            alignment:
-                                                AlignmentDirectional.center,
-                                            children: [
-                                              Text(
-                                                "\uf0f3",
-                                                style: fontAwesomeLight(
-                                                    null,
-                                                    20,
-                                                    AppColors.iconDark,
-                                                    null),
-                                              ),
-                                              if (_totalNotiUnRead != "0" &&
-                                                  _totalNotiUnRead.isNotEmpty)
-                                                Positioned(
-                                                  top: -8,
-                                                  right: -10,
-                                                  child: Container(
-                                                    height: 20,
-                                                    width: 20,
-                                                    decoration: BoxDecoration(
-                                                      color: AppColors.danger,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: Center(
-                                                      child: Text(
-                                                        int.parse(_totalNotiUnRead) >=
-                                                                1000
-                                                            ? "1..."
-                                                            : "${_totalNotiUnRead}",
-                                                        style: TextStyle(
-                                                            fontSize: 10,
-                                                            color: AppColors
-                                                                .fontWhite),
-                                                      ),
-                                                    ),
+                                        Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Notifications(
+                                                    callbackTotalNoti: (value) {
+                                                      setState(() {
+                                                        _totalNotiUnRead =
+                                                            value;
+                                                      });
+                                                    },
                                                   ),
-                                                )
-                                            ],
+                                                ),
+                                              );
+                                              // .then((value) {
+                                              //   setState(() {
+                                              //     _totalNotiUnRead = value;
+                                              //   });
+                                              // });
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(15),
+                                              child: Stack(
+                                                clipBehavior: Clip.none,
+                                                alignment:
+                                                    AlignmentDirectional.center,
+                                                children: [
+                                                  Text(
+                                                    "\uf0f3",
+                                                    style: fontAwesomeLight(
+                                                        null,
+                                                        20,
+                                                        AppColors.iconDark,
+                                                        null),
+                                                  ),
+                                                  if (_totalNotiUnRead != "0" &&
+                                                      _totalNotiUnRead
+                                                          .isNotEmpty)
+                                                    Positioned(
+                                                      top: -8,
+                                                      right: -10,
+                                                      child: Container(
+                                                        height: 20,
+                                                        width: 20,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              AppColors.danger,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            int.parse(_totalNotiUnRead) >=
+                                                                    1000
+                                                                ? "1..."
+                                                                : "${_totalNotiUnRead}",
+                                                            style: TextStyle(
+                                                                fontSize: 10,
+                                                                color: AppColors
+                                                                    .fontWhite),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
+                                        // SizedBox(
+                                        //   width: 20,
+                                        // ),
 
                                         //
                                         //
                                         //Message
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => Messages(
-                                                  callbackTotalNoti: (value) {
-                                                    setState(() {
-                                                      _totalMessageUnRead =
-                                                          value;
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            ).then((value) {
-                                              setState(() {
-                                                _totalMessageUnRead = value;
-                                              });
-                                            });
-                                          },
-                                          child: Stack(
-                                            clipBehavior: Clip.none,
-                                            alignment:
-                                                AlignmentDirectional.center,
-                                            children: [
-                                              Text(
-                                                "\uf27a",
-                                                style: fontAwesomeLight(
-                                                    null,
-                                                    20,
-                                                    AppColors.iconDark,
-                                                    null),
-                                              ),
-                                              if (_totalMessageUnRead != "0" &&
-                                                  _totalMessageUnRead
-                                                      .isNotEmpty)
-                                                Positioned(
-                                                  top: -8,
-                                                  right: -10,
-                                                  child: Container(
-                                                    height: 20,
-                                                    width: 20,
-                                                    decoration: BoxDecoration(
-                                                      color: AppColors.danger,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: Center(
-                                                      child: Text(
-                                                        int.parse(_totalMessageUnRead) >=
-                                                                1000
-                                                            ? "1..."
-                                                            : "${_totalMessageUnRead}",
-                                                        style: TextStyle(
-                                                            fontSize: 10,
-                                                            color: AppColors
-                                                                .fontWhite),
-                                                      ),
-                                                    ),
+                                        Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Messages(
+                                                    callbackTotalNoti: (value) {
+                                                      setState(() {
+                                                        _totalMessageUnRead =
+                                                            value;
+                                                      });
+                                                    },
                                                   ),
-                                                )
-                                            ],
+                                                ),
+                                              ).then((value) {
+                                                setState(() {
+                                                  _totalMessageUnRead = value;
+                                                });
+                                              });
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(15),
+                                              child: Stack(
+                                                clipBehavior: Clip.none,
+                                                alignment:
+                                                    AlignmentDirectional.center,
+                                                children: [
+                                                  Text(
+                                                    "\uf27a",
+                                                    style: fontAwesomeLight(
+                                                        null,
+                                                        20,
+                                                        AppColors.iconDark,
+                                                        null),
+                                                  ),
+                                                  if (_totalMessageUnRead !=
+                                                          "0" &&
+                                                      _totalMessageUnRead
+                                                          .isNotEmpty)
+                                                    Positioned(
+                                                      top: -8,
+                                                      right: -10,
+                                                      child: Container(
+                                                        height: 20,
+                                                        width: 20,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              AppColors.danger,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            int.parse(_totalMessageUnRead) >=
+                                                                    1000
+                                                                ? "1..."
+                                                                : "${_totalMessageUnRead}",
+                                                            style: TextStyle(
+                                                                fontSize: 10,
+                                                                color: AppColors
+                                                                    .fontWhite),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -1193,58 +1226,62 @@ class _MainHomeState extends State<MainHome> {
                                           style: bodyTitleNormal(
                                               null, FontWeight.bold),
                                         ),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            var result = await showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder: (context) {
-                                                  return ListMultiSelectedAlertDialog(
-                                                    title: "job by province".tr,
-                                                    listItems: _listProvinces,
-                                                    selectedListItem:
-                                                        _selectedProvincesListItem,
-                                                  );
-                                                }).then(
-                                              (value) {
-                                                setState(() {
-                                                  //value = []
-                                                  //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                  if (value.length > 0) {
-                                                    _selectedProvincesListItem =
-                                                        value;
-                                                    _provinceName =
-                                                        []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+                                        Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            onTap: () async {
+                                              var result = await showDialog(
+                                                  barrierDismissible: false,
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return ListMultiSelectedAlertDialog(
+                                                      title:
+                                                          "job by province".tr,
+                                                      listItems: _listProvinces,
+                                                      selectedListItem:
+                                                          _selectedProvincesListItem,
+                                                    );
+                                                  }).then(
+                                                (value) {
+                                                  setState(() {
+                                                    //value = []
+                                                    //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                                    if (value.length > 0) {
+                                                      _selectedProvincesListItem =
+                                                          value;
+                                                      _provinceName =
+                                                          []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
 
-                                                    for (var item
-                                                        in _listProvinces) {
-                                                      //
-                                                      //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedProvincesListItem ກົງກັບ _listProvinces ບໍ່
-                                                      if (_selectedProvincesListItem
-                                                          .contains(
-                                                              item['_id'])) {
+                                                      for (var item
+                                                          in _listProvinces) {
                                                         //
-                                                        //add Provinces Name ເຂົ້າໃນ _provinceName
-                                                        setState(() {
-                                                          _provinceName.add(
-                                                              item['name']);
-                                                        });
+                                                        //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedProvincesListItem ກົງກັບ _listProvinces ບໍ່
+                                                        if (_selectedProvincesListItem
+                                                            .contains(
+                                                                item['_id'])) {
+                                                          //
+                                                          //add Provinces Name ເຂົ້າໃນ _provinceName
+                                                          setState(() {
+                                                            _provinceName.add(
+                                                                item['name']);
+                                                          });
+                                                        }
                                                       }
-                                                    }
 
-                                                    widget.callBackSelectedIndustryProvince!(
-                                                        'Province',
-                                                        _selectedProvincesListItem);
-                                                    print(_provinceName);
-                                                  }
-                                                });
-                                              },
-                                            );
-                                          },
-                                          child: Text(
-                                            "seemore".tr,
-                                            style: bodyTextMinNormal(null,
-                                                AppColors.fontPrimary, null),
+                                                      widget.callBackSelectedIndustryProvince!(
+                                                          'Province',
+                                                          _selectedProvincesListItem);
+                                                      print(_provinceName);
+                                                    }
+                                                  });
+                                                },
+                                              );
+                                            },
+                                            child: Text(
+                                              "seemore".tr,
+                                              style: bodyTextMinNormal(null,
+                                                  AppColors.fontPrimary, null),
+                                            ),
                                           ),
                                         )
                                       ],
@@ -1426,8 +1463,7 @@ class _MainHomeState extends State<MainHome> {
                                                               ),
                                                             ),
                                                           ),
-                                                          //
-                                                          //
+
                                                           //ຖ້າ _listCompaniesAssignedProvince ຫຼາຍກວ່າ 3 ໃຫ້ສະແດງ Card Count ໂຕເລກ
                                                           // if (_listCompaniesAssignedProvince
                                                           //         .length >
@@ -1522,58 +1558,63 @@ class _MainHomeState extends State<MainHome> {
                                           style: bodyTitleNormal(
                                               null, FontWeight.bold),
                                         ),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            var result = await showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder: (context) {
-                                                  return ListMultiSelectedAlertDialog(
-                                                    title: "job by industry".tr,
-                                                    listItems: _listIndustries,
-                                                    selectedListItem:
-                                                        _selectedIndustryListItem,
-                                                  );
-                                                }).then(
-                                              (value) {
-                                                setState(() {
-                                                  //value = []
-                                                  //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                  if (value.length > 0) {
-                                                    _selectedIndustryListItem =
-                                                        value;
-                                                    _industryName =
-                                                        []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+                                        Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            onTap: () async {
+                                              var result = await showDialog(
+                                                  barrierDismissible: false,
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return ListMultiSelectedAlertDialog(
+                                                      title:
+                                                          "job by industry".tr,
+                                                      listItems:
+                                                          _listIndustries,
+                                                      selectedListItem:
+                                                          _selectedIndustryListItem,
+                                                    );
+                                                  }).then(
+                                                (value) {
+                                                  setState(() {
+                                                    //value = []
+                                                    //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                                    if (value.length > 0) {
+                                                      _selectedIndustryListItem =
+                                                          value;
+                                                      _industryName =
+                                                          []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
 
-                                                    for (var item
-                                                        in _listIndustries) {
-                                                      //
-                                                      //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedIndustryListItem ກົງກັບ _listIndustries ບໍ່
-                                                      if (_selectedIndustryListItem
-                                                          .contains(
-                                                              item['_id'])) {
+                                                      for (var item
+                                                          in _listIndustries) {
                                                         //
-                                                        //add Language Name ເຂົ້າໃນ _industryName
-                                                        setState(() {
-                                                          _industryName.add(
-                                                              item['name']);
-                                                        });
+                                                        //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedIndustryListItem ກົງກັບ _listIndustries ບໍ່
+                                                        if (_selectedIndustryListItem
+                                                            .contains(
+                                                                item['_id'])) {
+                                                          //
+                                                          //add Language Name ເຂົ້າໃນ _industryName
+                                                          setState(() {
+                                                            _industryName.add(
+                                                                item['name']);
+                                                          });
+                                                        }
                                                       }
-                                                    }
-                                                    widget.callBackSelectedIndustryProvince!(
-                                                        'Industry',
-                                                        _selectedIndustryListItem);
+                                                      widget.callBackSelectedIndustryProvince!(
+                                                          'Industry',
+                                                          _selectedIndustryListItem);
 
-                                                    print(_industryName);
-                                                  }
-                                                });
-                                              },
-                                            );
-                                          },
-                                          child: Text(
-                                            "seemore".tr,
-                                            style: bodyTextMinNormal(null,
-                                                AppColors.fontPrimary, null),
+                                                      print(_industryName);
+                                                    }
+                                                  });
+                                                },
+                                              );
+                                            },
+                                            child: Text(
+                                              "seemore".tr,
+                                              style: bodyTextMinNormal(null,
+                                                  AppColors.fontPrimary, null),
+                                            ),
                                           ),
                                         )
                                       ],
@@ -1619,9 +1660,6 @@ class _MainHomeState extends State<MainHome> {
                                                     decoration: BoxDecoration(
                                                       color: AppColors
                                                           .backgroundWhite,
-                                                      // border: Border.all(
-                                                      //     color: AppColors
-                                                      //         .borderGreyOpacity),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10),
@@ -1758,8 +1796,7 @@ class _MainHomeState extends State<MainHome> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            //
-                                                            //
+
                                                             //ຖ້າ _listCompaniesAssignedTopIndustry ຫຼາຍກວ່າ 3 ໃຫ້ສະແດງ Card Count ໂຕເລກ
                                                             // if (_listCompaniesAssignedTopIndustry
                                                             //         .length >
@@ -1827,8 +1864,6 @@ class _MainHomeState extends State<MainHome> {
                                   ],
                                 ),
 
-                                //
-                                //
                                 //Wrap List Top WorkLocations
                                 // Wrap(
                                 //   spacing: 10,
@@ -1848,7 +1883,6 @@ class _MainHomeState extends State<MainHome> {
                                 //         //     .contains(i['_id'])) {
                                 //         //   _selectedWorkLocations
                                 //         //       .removeWhere((e) => e == i['_id']);
-
                                 //         //   return;
                                 //         // }
                                 //         // //
@@ -2071,41 +2105,30 @@ class _MainHomeState extends State<MainHome> {
                                           //
                                           //
                                           //text Explore all company
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                widget.callBackToHiringCompany!(
-                                                    "Hiring");
-                                              });
-                                            },
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  "seemore".tr,
-                                                  style: bodyTextMinNormal(
-                                                      null,
-                                                      AppColors.fontPrimary,
-                                                      null),
-                                                ),
-                                                // Text(
-                                                //   "all company".tr,
-                                                //   style: bodyTextNormal(null,
-                                                //       AppColors.fontPrimary,
-                                                //       FontWeight.bold),
-                                                // ),
-                                                // SizedBox(
-                                                //   width: 5,
-                                                // ),
-                                                // FaIcon(
-                                                //   FontAwesomeIcons.arrowRight,
-                                                //   color: AppColors.iconPrimary,
-                                                //   size: 15,
-                                                // )
-                                              ],
+                                          Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  widget.callBackToHiringCompany!(
+                                                      "Hiring");
+                                                });
+                                              },
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "seemore".tr,
+                                                    style: bodyTextMinNormal(
+                                                        null,
+                                                        AppColors.fontPrimary,
+                                                        null),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -2134,8 +2157,6 @@ class _MainHomeState extends State<MainHome> {
                                             _jobsOpening =
                                                 i['jobsCount'].toString();
 
-                                            //
-                                            //
                                             //
                                             //
                                             //hiring card
@@ -2167,8 +2188,6 @@ class _MainHomeState extends State<MainHome> {
                                                   ),
                                                   child: Column(
                                                     children: [
-                                                      //
-                                                      //
                                                       //
                                                       //
                                                       //hiring card cover
@@ -2325,17 +2344,6 @@ class _MainHomeState extends State<MainHome> {
                                                                       .circular(
                                                                           8),
                                                                 ),
-                                                                // border: Border(
-                                                                //   left: BorderSide(
-                                                                //       color: AppColors
-                                                                //           .borderGreyOpacity),
-                                                                //   right: BorderSide(
-                                                                //       color: AppColors
-                                                                //           .borderGreyOpacity),
-                                                                //   bottom: BorderSide(
-                                                                //       color: AppColors
-                                                                //           .borderGreyOpacity),
-                                                                // ),
                                                               ),
                                                               child: Column(
                                                                 mainAxisAlignment:
@@ -2387,12 +2395,6 @@ class _MainHomeState extends State<MainHome> {
                                                                                 AppColors.iconDark,
                                                                                 null),
                                                                           ),
-                                                                          // FaIcon(
-                                                                          //   FontAwesomeIcons
-                                                                          //       .industry,
-                                                                          //   size:
-                                                                          //       IconSize.xsIcon,
-                                                                          // ),
                                                                           SizedBox(
                                                                             width:
                                                                                 5,
@@ -2447,10 +2449,10 @@ class _MainHomeState extends State<MainHome> {
                                                                     height: 15,
                                                                   ),
 
+                                                                  //
+                                                                  //
+                                                                  //Button view positions
                                                                   Container(
-                                                                    padding:
-                                                                        EdgeInsets.all(
-                                                                            12),
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color: AppColors
@@ -2459,21 +2461,46 @@ class _MainHomeState extends State<MainHome> {
                                                                           BorderRadius.circular(
                                                                               8),
                                                                     ),
-                                                                    child: Text(
-                                                                      "view".tr +
-                                                                          " ${_jobsOpening} " +
-                                                                          "position"
-                                                                              .tr,
-                                                                      style: bodyTextNormal(
-                                                                          null,
-                                                                          AppColors
-                                                                              .fontPrimary,
-                                                                          null),
+                                                                    child:
+                                                                        Material(
+                                                                      color: Colors
+                                                                          .transparent,
+                                                                      child:
+                                                                          InkWell(
+                                                                        onTap:
+                                                                            () {
+                                                                          Navigator
+                                                                              .push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder: (context) => CompanyDetail(
+                                                                                companyId: i['_id'],
+                                                                                typeTapCompany: "jobOpening",
+                                                                              ),
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              EdgeInsets.all(12),
+                                                                          child:
+                                                                              Text(
+                                                                            "view".tr +
+                                                                                " ${_jobsOpening} " +
+                                                                                "position".tr,
+                                                                            style: bodyTextNormal(
+                                                                                null,
+                                                                                AppColors.fontPrimary,
+                                                                                null),
+                                                                          ),
+                                                                        ),
+                                                                      ),
                                                                     ),
                                                                   ),
 
-                                                                  //
-                                                                  //
                                                                   //Follower
                                                                   // Row(
                                                                   //   mainAxisAlignment:
@@ -2593,7 +2620,6 @@ class _MainHomeState extends State<MainHome> {
                                 //           style: bodyTextMaxNormal(null,
                                 //               null, FontWeight.bold),
                                 //         ),
-
                                 //         //
                                 //         //
                                 //         //text Explore all company
@@ -2632,7 +2658,6 @@ class _MainHomeState extends State<MainHome> {
                                 //     SizedBox(
                                 //       height: 10,
                                 //     ),
-
                                 //     //
                                 //     //
                                 //     //GridView hiring now

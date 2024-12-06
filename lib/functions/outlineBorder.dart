@@ -30,11 +30,11 @@ BoxDecoration boxDecoration(BorderRadiusGeometry? borderRadius, Color? color,
     Color? borderColor, double? borderWidth) {
   return BoxDecoration(
     borderRadius:
-        borderRadius == null ? BorderRadius.circular(20) : borderRadius,
+        borderRadius == null ? BorderRadius.circular(8) : borderRadius,
     color: color == null ? AppColors.greyOpacity : color,
     border: Border.all(
         color: borderColor == null
-            ? AppColors.borderGrey.withOpacity(0)
+            ? AppColors.borderGreyOpacity.withOpacity(0)
             : borderColor,
         width: borderWidth == null ? 1 : borderWidth),
   );

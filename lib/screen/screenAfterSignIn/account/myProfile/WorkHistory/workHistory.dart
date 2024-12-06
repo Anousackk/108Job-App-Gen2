@@ -1,11 +1,12 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_in_if_null_operators, avoid_init_to_null, file_names
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_in_if_null_operators, avoid_init_to_null, file_names, sized_box_for_whitespace
+
+import 'dart:convert';
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/cupertinoDatePicker.dart';
 import 'package:app/functions/iconSize.dart';
-import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/widget/appbar.dart';
@@ -13,6 +14,7 @@ import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -38,6 +40,8 @@ class _WorkHistoryState extends State<WorkHistory> {
   TextEditingController _responsibilityController = TextEditingController();
   FocusScopeNode _currentFocus = FocusScopeNode();
   FocusNode focusNode = FocusNode();
+  FocusNode editorFocusNode = FocusNode();
+  QuillController _quillController = QuillController.basic();
 
   String? _id;
   String _company = "";
@@ -69,32 +73,45 @@ class _WorkHistoryState extends State<WorkHistory> {
 
       _fromMonthYear =
           i['startYear'] == null ? formattedStartMonthYearUtc : i['startYear'];
-      //
-      //pars ISO to Flutter DateTime
-      parsDateTime(value: '', currentFormat: '', desiredFormat: '');
-      DateTime fromMonthYear = parsDateTime(
-          value: _fromMonthYear,
-          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-          desiredFormat: "yyyy-MM-dd HH:mm:ss");
-      //
-      //Convert String to DateTime
-      _fromMonthYear = DateFormat("yyyy-MM-dd").parse(fromMonthYear.toString());
+      if (_fromMonthYear != null) {
+        //
+        //pars ISO to Flutter DateTime
+        parsDateTime(value: '', currentFormat: '', desiredFormat: '');
+        DateTime fromMonthYear = parsDateTime(
+            value: _fromMonthYear,
+            currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+            desiredFormat: "yyyy-MM-dd HH:mm:ss");
+        //
+        //Convert String to DateTime
+        _fromMonthYear =
+            DateFormat("yyyy-MM-dd").parse(fromMonthYear.toString());
+      }
 
-      _toMonthYear =
-          i['endYear'] == null ? formattedToMonthYearUtc : i['endYear'];
-      //pars ISO to Flutter DateTime
-      parsDateTime(value: '', currentFormat: '', desiredFormat: '');
-      DateTime toMonthYear = parsDateTime(
-          value: _toMonthYear,
-          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-          desiredFormat: "yyyy-MM-dd HH:mm:ss");
-      //
-      //Convert String to DateTime
-      _toMonthYear = DateFormat("yyyy-MM-dd").parse(toMonthYear.toString());
+      _toMonthYear = i['endYear'];
+      if (_toMonthYear != null) {
+        //
+        //pars ISO to Flutter DateTime
+        parsDateTime(value: '', currentFormat: '', desiredFormat: '');
+        DateTime toMonthYear = parsDateTime(
+            value: _toMonthYear,
+            currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+            desiredFormat: "yyyy-MM-dd HH:mm:ss");
+        //
+        //Convert String to DateTime
+        _toMonthYear = DateFormat("yyyy-MM-dd").parse(toMonthYear.toString());
+      }
 
       _companyController.text = _company;
       _jobTitleController.text = _jobTitle;
-      _responsibilityController.text = _responsibility;
+      //_responsibilityController.text = _responsibility;
+
+      try {
+        final json = jsonDecode(_responsibility);
+        _quillController.document = Document.fromJson(json);
+      } catch (e) {
+        //Handle the decoding error (e.g., print an error message)
+        print('Error decoding JSON: $e');
+      }
     });
   }
 
@@ -110,7 +127,7 @@ class _WorkHistoryState extends State<WorkHistory> {
     super.initState();
     _companyController.text = _company;
     _jobTitleController.text = _jobTitle;
-    _responsibilityController.text = _responsibility;
+    // _responsibilityController.text = _responsibility;
 
     _id = widget.id ?? "";
     if (_id != null && _id != "") {
@@ -123,6 +140,7 @@ class _WorkHistoryState extends State<WorkHistory> {
 
   @override
   void dispose() {
+    _quillController.dispose();
     super.dispose();
   }
 
@@ -148,12 +166,9 @@ class _WorkHistoryState extends State<WorkHistory> {
         data:
             MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
         child: Scaffold(
-          appBar: AppBarDefault(
-            textTitle: "work history".tr,
-            leadingIcon: Icon(Icons.arrow_back),
-            leadingPress: () {
-              Navigator.pop(context);
-            },
+          appBar: AppBar(
+            toolbarHeight: 0,
+            backgroundColor: AppColors.primary600,
           ),
           body: SafeArea(
             child: Container(
@@ -164,6 +179,64 @@ class _WorkHistoryState extends State<WorkHistory> {
                 key: formkey,
                 child: Column(
                   children: [
+                    //
+                    //
+                    //
+                    //
+                    //Section
+                    //Appbar custom
+                    AppBarThreeWidgt(
+                      //
+                      //Widget Leading
+                      //Navigator.pop
+                      leading: GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Container(
+                            height: 45,
+                            width: 45,
+                            color: AppColors.iconLight.withOpacity(0.1),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "\uf060",
+                                style: fontAwesomeRegular(
+                                    null, 20, AppColors.iconLight, null),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //
+                      //
+                      //Widget Title
+                      //Text title
+                      title: Text(
+                        "work_history".tr,
+                        style: appbarTextMedium(
+                            "NotoSansLaoLoopedBold", AppColors.fontWhite, null),
+                      ),
+
+                      //
+                      //
+                      //Widget Actions
+                      //Profile setting
+                      actions: Container(
+                        height: 45,
+                        width: 45,
+                      ),
+                    ),
+
+                    //
+                    //
+                    //
+                    //
+                    //Section
+                    //Content form work history
                     Expanded(
                       flex: 15,
                       child: SingleChildScrollView(
@@ -179,9 +252,6 @@ class _WorkHistoryState extends State<WorkHistory> {
 
                               //
                               //
-                              //
-                              //
-                              //
                               //Company
                               Text(
                                 "company".tr,
@@ -191,6 +261,10 @@ class _WorkHistoryState extends State<WorkHistory> {
                               SizedBox(
                                 height: 5,
                               ),
+
+                              //
+                              //
+                              //Company input
                               SimpleTextFieldWithIconRight(
                                 textController: _companyController,
                                 changed: (value) {
@@ -212,9 +286,6 @@ class _WorkHistoryState extends State<WorkHistory> {
 
                               //
                               //
-                              //
-                              //
-                              //
                               //Job Title
                               Text(
                                 "job title".tr,
@@ -224,6 +295,10 @@ class _WorkHistoryState extends State<WorkHistory> {
                               SizedBox(
                                 height: 5,
                               ),
+
+                              //
+                              //
+                              //Job title input
                               SimpleTextFieldWithIconRight(
                                 textController: _jobTitleController,
                                 changed: (value) {
@@ -243,6 +318,10 @@ class _WorkHistoryState extends State<WorkHistory> {
                               SizedBox(
                                 height: 20,
                               ),
+
+                              //
+                              //
+                              //CheckBox current job
                               Row(
                                 children: [
                                   GestureDetector(
@@ -280,17 +359,13 @@ class _WorkHistoryState extends State<WorkHistory> {
                                   Text("my current job".tr),
                                 ],
                               ),
-
                               SizedBox(
                                 height: 20,
                               ),
 
                               //
                               //
-                              //
-                              //
-                              //
-                              //From DateTime(Month)
+                              //From DateTime(Month/Year)
                               Text(
                                 "from".tr + " " + "month".tr + "/" + "year".tr,
                                 style:
@@ -299,6 +374,10 @@ class _WorkHistoryState extends State<WorkHistory> {
                               SizedBox(
                                 height: 5,
                               ),
+
+                              //
+                              //
+                              //From DateTime(Month/Year) select date
                               BoxDecorationInput(
                                 mainAxisAlignmentTextIcon:
                                     MainAxisAlignment.start,
@@ -412,10 +491,7 @@ class _WorkHistoryState extends State<WorkHistory> {
 
                               //
                               //
-                              //
-                              //
-                              //
-                              //To DateTime(Month)
+                              //To DateTime(Month/Year)
                               if (!_isCurrentJob)
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -432,6 +508,9 @@ class _WorkHistoryState extends State<WorkHistory> {
                                     SizedBox(
                                       height: 5,
                                     ),
+                                    //
+                                    //ຖ້າມີຂໍ້ມູນ _fromMonthYear
+                                    //To DateTime(Month/Year) select date
                                     _fromMonthYear != null
                                         ? BoxDecorationInput(
                                             mainAxisAlignmentTextIcon:
@@ -538,6 +617,11 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                   )
                                                 : Container(),
                                           )
+
+                                        //
+                                        //
+                                        // ຖ້າຍັງບໍ່ມີຂໍ້ມູນ _fromMonthYear
+                                        //To DateTime(Month/Year) select date
                                         : BoxDecorationInput(
                                             mainAxisAlignmentTextIcon:
                                                 MainAxisAlignment.start,
@@ -588,9 +672,6 @@ class _WorkHistoryState extends State<WorkHistory> {
 
                               //
                               //
-                              //
-                              //
-                              //
                               // Responsibility
                               Text(
                                 "responsibility".tr,
@@ -600,26 +681,112 @@ class _WorkHistoryState extends State<WorkHistory> {
                               SizedBox(
                                 height: 5,
                               ),
-                              SimpleTextFieldSingleValidate(
-                                heightCon: 300,
-                                maxLines: 20,
-                                enabledBorder: enableOutlineBorder(
-                                  AppColors.borderSecondary,
+                              //
+                              //
+                              // Responsibility input
+                              // SimpleTextFieldSingleValidate(
+                              //   heightCon: 300,
+                              //   maxLines: 20,
+                              //   enabledBorder: enableOutlineBorder(
+                              //     AppColors.borderSecondary,
+                              //   ),
+                              //   inputColor: AppColors.backgroundWhite,
+                              //   codeController: _responsibilityController,
+                              //   changed: (value) {
+                              //     setState(() {
+                              //       _responsibility = value;
+                              //     });
+                              //   },
+                              //   hintText: "",
+                              //   validator: (value) {
+                              //     if (value == null || value.isEmpty) {
+                              //       return "required".tr;
+                              //     }
+                              //     return null;
+                              //   },
+                              // ),
+
+                              //
+                              //
+                              //QuillToolbar
+                              Container(
+                                width: double.infinity,
+                                color: AppColors.background,
+                                child: QuillToolbar.simple(
+                                  configurations:
+                                      QuillSimpleToolbarConfigurations(
+                                    controller: _quillController,
+                                    toolbarIconAlignment: WrapAlignment.start,
+                                    toolbarSectionSpacing: 0,
+                                    showFontFamily: false,
+                                    showFontSize: false,
+                                    showHeaderStyle: false,
+                                    showAlignmentButtons: false,
+                                    showBackgroundColorButton: false,
+                                    showClipboardCopy: false,
+                                    showClipboardCut: false,
+                                    showClipboardPaste: false,
+                                    showColorButton: false,
+                                    showCodeBlock: false,
+                                    showDirection: false,
+                                    showQuote: false,
+                                    showUndo: false,
+                                    showSuperscript: false,
+                                    showLeftAlignment: false,
+                                    showRedo: false,
+                                    showRightAlignment: false,
+                                    showSearchButton: false,
+                                    showJustifyAlignment: false,
+                                    showLineHeightButton: false,
+                                    showSubscript: false,
+                                    showCenterAlignment: false,
+                                    showInlineCode: false,
+                                    showSmallButton: false,
+                                    // showClearFormat: false,
+                                    showIndent: false,
+                                    showListCheck: false,
+                                    showDividers: false,
+                                  ),
                                 ),
-                                inputColor: AppColors.backgroundWhite,
-                                codeController: _responsibilityController,
-                                changed: (value) {
-                                  setState(() {
-                                    _responsibility = value;
-                                  });
-                                },
-                                hintText: "",
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "required".tr;
-                                  }
-                                  return null;
-                                },
+                              ),
+
+                              //
+                              //
+                              //QuillEditor
+                              Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    color: AppColors.background,
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(8),
+                                      bottomRight: Radius.circular(8),
+                                    )),
+                                child: QuillEditor.basic(
+                                  focusNode: editorFocusNode,
+                                  configurations: QuillEditorConfigurations(
+                                    keyboardAppearance: Brightness.dark,
+                                    // requestKeyboardFocusOnCheckListChanged: true,
+                                    controller: _quillController,
+
+                                    scrollPhysics: ClampingScrollPhysics(),
+                                    readOnlyMouseCursor:
+                                        SystemMouseCursors.text,
+                                    maxHeight: 400,
+                                    minHeight: 400,
+                                    placeholder: "professional summary".tr,
+                                    padding: EdgeInsets.all(10),
+                                    dialogTheme: QuillDialogTheme(
+                                      labelTextStyle: TextStyle(
+                                          color: AppColors.fontPrimary),
+                                      buttonStyle: ButtonStyle(
+                                        backgroundColor:
+                                            WidgetStateProperty.all(
+                                          AppColors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
 
                               SizedBox(
@@ -630,28 +797,33 @@ class _WorkHistoryState extends State<WorkHistory> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Button(
-                      text: "save".tr,
-                      fontWeight: FontWeight.bold,
-                      press: () {
-                        FocusScope.of(context).requestFocus(focusNode);
-                        if (formkey.currentState!.validate()) {
-                          setState(() {
-                            _isValidateValue = false;
-                            addWorkHistorySeeker();
-                          });
-                        } else {
-                          setState(() {
-                            _isValidateValue = true;
-                          });
-                        }
-                      },
-                    ),
-                    SizedBox(
-                      height: 30,
+
+                    //
+                    //
+                    //
+                    //
+                    //Section
+                    // Button save
+                    Container(
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 10, bottom: 30),
+                      child: Button(
+                        text: "save".tr,
+                        textFontFamily: "NotoSansLaoLoopedMedium",
+                        press: () {
+                          FocusScope.of(context).requestFocus(focusNode);
+                          if (formkey.currentState!.validate()) {
+                            setState(() {
+                              _isValidateValue = false;
+                              addWorkHistorySeeker();
+                            });
+                          } else {
+                            setState(() {
+                              _isValidateValue = true;
+                            });
+                          }
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -664,6 +836,7 @@ class _WorkHistoryState extends State<WorkHistory> {
   }
 
   addWorkHistorySeeker() async {
+    //
     //
     //ສະແດງ AlertDialog Loading
     showDialog(
@@ -681,10 +854,10 @@ class _WorkHistoryState extends State<WorkHistory> {
           _fromMonthYear != null ? _fromMonthYear.toString() : _fromMonthYear,
       "endYear": _toMonthYear != null ? _toMonthYear.toString() : _toMonthYear,
       "position": _jobTitle,
-      "responsibility": _responsibility,
+      "responsibility":
+          jsonEncode(_quillController.document.toDelta().toJson()),
       "isCurrentJob": _isCurrentJob
     });
-    print(res);
 
     if (res['workHistory'] != null) {
       Navigator.pop(context);
@@ -698,11 +871,11 @@ class _WorkHistoryState extends State<WorkHistory> {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
             title: "save".tr + " " + "successful".tr,
             contentText:
-                "save".tr + " " + "work history".tr + " " + "successful".tr,
+                "save".tr + " " + "work_history".tr + " " + "successful".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.of(context).pop("Submitted");
             },
           );
         },

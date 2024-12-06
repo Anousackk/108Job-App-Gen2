@@ -312,8 +312,6 @@ class _CompanyState extends State<Company> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Text("${_hasMoreData}"),
-                        // Text("${_isLoadingMoreData}"),
                         SizedBox(
                           height: 20,
                         ),
@@ -388,6 +386,8 @@ class _CompanyState extends State<Company> {
                             shrinkWrap: true,
                             physics: ClampingScrollPhysics(),
                             slivers: <Widget>[
+                              //
+                              //
                               //
                               //
                               //
@@ -608,6 +608,7 @@ class _CompanyState extends State<Company> {
                                                                   child: Column(
                                                                     children: [
                                                                       //
+                                                                      //
                                                                       //Company Name
                                                                       Text(
                                                                         "${_companyName}",
@@ -632,6 +633,7 @@ class _CompanyState extends State<Company> {
                                                                           .start,
                                                                   children: [
                                                                     //
+                                                                    //
                                                                     //Industry
                                                                     Text(
                                                                       "${_industry}",
@@ -647,6 +649,7 @@ class _CompanyState extends State<Company> {
                                                                       height: 5,
                                                                     ),
 
+                                                                    //
                                                                     //
                                                                     //Address
                                                                     Text(
@@ -674,6 +677,7 @@ class _CompanyState extends State<Company> {
                                                                           .spaceBetween,
                                                                   children: [
                                                                     //
+                                                                    //
                                                                     //Follower
                                                                     Row(
                                                                       children: [
@@ -697,71 +701,78 @@ class _CompanyState extends State<Company> {
 
                                                                     //
                                                                     //
-                                                                    //Following / Follow
-                                                                    GestureDetector(
-                                                                      onTap:
-                                                                          () {
-                                                                        FocusScope.of(context)
-                                                                            .requestFocus(focusNode);
-                                                                        setState(
+                                                                    //Button following / follow
+                                                                    Material(
+                                                                      color: Colors
+                                                                          .transparent,
+                                                                      child:
+                                                                          InkWell(
+                                                                        onTap:
                                                                             () {
-                                                                          i['follow'] =
-                                                                              !i['follow'];
-                                                                        });
-                                                                        followCompany(
-                                                                          i['companyName'],
-                                                                          i['_id'],
-                                                                        );
-                                                                      },
-                                                                      child: _isFollow
-                                                                          ? Container(
-                                                                              padding: EdgeInsets.all(8),
-                                                                              decoration: BoxDecoration(
-                                                                                color: AppColors.buttonPrimary,
-                                                                                borderRadius: BorderRadius.circular(8),
-                                                                                // border: Border.all(color: AppColors.borderGreyOpacity),
-                                                                              ),
-                                                                              child: Row(
-                                                                                children: [
-                                                                                  FaIcon(
-                                                                                    FontAwesomeIcons.heart,
-                                                                                    size: 13,
-                                                                                    color: AppColors.iconLight,
+                                                                          FocusScope.of(context)
+                                                                              .requestFocus(focusNode);
+                                                                          setState(
+                                                                              () {
+                                                                            i['follow'] =
+                                                                                !i['follow'];
+                                                                          });
+                                                                          followCompany(
+                                                                            i['companyName'],
+                                                                            i['_id'],
+                                                                          );
+                                                                        },
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                        child: _isFollow
+                                                                            ? Container(
+                                                                                padding: EdgeInsets.all(8),
+                                                                                decoration: BoxDecoration(
+                                                                                  color: AppColors.buttonPrimary,
+                                                                                  borderRadius: BorderRadius.circular(8),
+                                                                                  // border: Border.all(color: AppColors.borderGreyOpacity),
+                                                                                ),
+                                                                                child: Row(
+                                                                                  children: [
+                                                                                    FaIcon(
+                                                                                      FontAwesomeIcons.heart,
+                                                                                      size: 13,
+                                                                                      color: AppColors.iconLight,
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      width: 8,
+                                                                                    ),
+                                                                                    Text(
+                                                                                      "following".tr,
+                                                                                      style: bodyTextSmall(null, AppColors.fontWhite, null),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              )
+                                                                            : Container(
+                                                                                padding: EdgeInsets.all(8),
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(8),
+                                                                                  border: Border.all(
+                                                                                    color: AppColors.borderGreyOpacity,
                                                                                   ),
-                                                                                  SizedBox(
-                                                                                    width: 8,
-                                                                                  ),
-                                                                                  Text(
-                                                                                    "following".tr,
-                                                                                    style: bodyTextSmall(null, AppColors.fontWhite, null),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            )
-                                                                          : Container(
-                                                                              padding: EdgeInsets.all(8),
-                                                                              decoration: BoxDecoration(
-                                                                                borderRadius: BorderRadius.circular(8),
-                                                                                border: Border.all(
-                                                                                  color: AppColors.borderGreyOpacity,
+                                                                                ),
+                                                                                child: Row(
+                                                                                  children: [
+                                                                                    FaIcon(
+                                                                                      FontAwesomeIcons.heart,
+                                                                                      size: 13,
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      width: 8,
+                                                                                    ),
+                                                                                    Text(
+                                                                                      "follow".tr,
+                                                                                      style: bodyTextSmall(null, null, null),
+                                                                                    ),
+                                                                                  ],
                                                                                 ),
                                                                               ),
-                                                                              child: Row(
-                                                                                children: [
-                                                                                  FaIcon(
-                                                                                    FontAwesomeIcons.heart,
-                                                                                    size: 13,
-                                                                                  ),
-                                                                                  SizedBox(
-                                                                                    width: 8,
-                                                                                  ),
-                                                                                  Text(
-                                                                                    "follow".tr,
-                                                                                    style: bodyTextSmall(null, null, null),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
+                                                                      ),
                                                                     )
                                                                   ],
                                                                 )
@@ -871,7 +882,6 @@ class _CompanyState extends State<Company> {
                                           horizontal: 20,
                                         ),
                                         padding: EdgeInsets.only(bottom: 15),
-
                                         width: double.infinity,
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
@@ -1129,12 +1139,12 @@ class _CompanyState extends State<Company> {
                                               color: AppColors.white,
                                               borderRadius:
                                                   BorderRadius.circular(10),
-                                              // border: Border.all(
-                                              //     color: AppColors
-                                              //         .borderSecondary),
                                             ),
                                             child: Row(
                                               children: [
+                                                //
+                                                //
+                                                //Content card company
                                                 Expanded(
                                                   flex: 7,
                                                   child: Row(
@@ -1233,20 +1243,21 @@ class _CompanyState extends State<Company> {
                                                                     TextOverflow
                                                                         .ellipsis),
                                                             Text(
-                                                                "${_followerTotals} " +
-                                                                    "follower"
-                                                                        .tr,
-                                                                style:
-                                                                    bodyTextSmall(
-                                                                        null,
-                                                                        null,
-                                                                        null))
+                                                              "${_followerTotals} " +
+                                                                  "follower".tr,
+                                                              style:
+                                                                  bodyTextSmall(
+                                                                      null,
+                                                                      null,
+                                                                      null),
+                                                            )
                                                           ],
                                                         ),
                                                       )
                                                     ],
                                                   ),
                                                 ),
+
                                                 SizedBox(
                                                   width: 10,
                                                 ),
@@ -1254,99 +1265,104 @@ class _CompanyState extends State<Company> {
                                                 //
                                                 //
                                                 //Button follow / following
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    FocusScope.of(context)
-                                                        .requestFocus(
-                                                            focusNode);
-                                                    setState(() {
-                                                      i['follow'] =
-                                                          !i['follow'];
-                                                    });
-                                                    followCompany(
-                                                      i['companyName'],
-                                                      i['_id'],
-                                                    );
-                                                  },
-                                                  child: _isFollow
-                                                      ? Container(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                            8,
-                                                          ),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: AppColors
-                                                                .buttonPrimary,
-                                                            // border: Border.all(
-                                                            //   color: AppColors
-                                                            //       .borderGreyOpacity,
-                                                            // ),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                          ),
-                                                          child: Row(
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .heart,
-                                                                size: 13,
-                                                                color: AppColors
-                                                                    .iconLight,
-                                                              ),
-                                                              SizedBox(
-                                                                width: 8,
-                                                              ),
-                                                              Text(
-                                                                  "following"
-                                                                      .tr,
-                                                                  style:
-                                                                      bodyTextSmall(
-                                                                    null,
-                                                                    AppColors
-                                                                        .fontWhite,
-                                                                    null,
-                                                                  )),
-                                                            ],
-                                                          ),
-                                                        )
-                                                      : Container(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                            8,
-                                                          ),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            border: Border.all(
-                                                              color: AppColors
-                                                                  .borderSecondary,
+                                                Material(
+                                                  color: Colors.transparent,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      FocusScope.of(context)
+                                                          .requestFocus(
+                                                              focusNode);
+                                                      setState(() {
+                                                        i['follow'] =
+                                                            !i['follow'];
+                                                      });
+                                                      followCompany(
+                                                        i['companyName'],
+                                                        i['_id'],
+                                                      );
+                                                    },
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    child: _isFollow
+                                                        ? Container(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                              8,
                                                             ),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                          ),
-                                                          child: Row(
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .heart,
-                                                                size: 13,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: AppColors
+                                                                  .buttonPrimary,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            child: Row(
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .heart,
+                                                                  size: 13,
+                                                                  color: AppColors
+                                                                      .iconLight,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 8,
+                                                                ),
+                                                                Text(
+                                                                    "following"
+                                                                        .tr,
+                                                                    style:
+                                                                        bodyTextSmall(
+                                                                      null,
+                                                                      AppColors
+                                                                          .fontWhite,
+                                                                      null,
+                                                                    )),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        : Container(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                              8,
+                                                            ),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              border:
+                                                                  Border.all(
+                                                                color: AppColors
+                                                                    .borderSecondary,
                                                               ),
-                                                              SizedBox(
-                                                                width: 8,
-                                                              ),
-                                                              Text("follow".tr,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            child: Row(
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .heart,
+                                                                  size: 13,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 8,
+                                                                ),
+                                                                Text(
+                                                                  "follow".tr,
                                                                   style:
                                                                       bodyTextSmall(
                                                                           null,
                                                                           null,
-                                                                          null)),
-                                                            ],
+                                                                          null),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
+                                                  ),
                                                 )
                                               ],
                                             ),

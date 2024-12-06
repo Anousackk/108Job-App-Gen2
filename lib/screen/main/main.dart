@@ -4,7 +4,7 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/screenAfterSignIn/home/home.dart';
 import 'package:app/screen/login/login.dart';
-import 'package:app/screen/main/changeLanguage.dart';
+import 'package:app/screen/Main/changeLanguage.dart';
 import 'package:app/screen/register/register.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';

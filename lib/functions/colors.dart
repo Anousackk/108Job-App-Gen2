@@ -128,15 +128,12 @@ class AppColors {
   static Color primary100 = HexColor("#F0F8FF");
 
   //dark 900-100
-  static Color dark900 = HexColor("#070707");
-  static Color dark800 = HexColor("#333333");
-  static Color dark700 = HexColor("#333333");
-  static Color dark600 = HexColor("#666666");
-  static Color dark500 = HexColor("#808080");
-  static Color dark400 = HexColor("#999999");
-  static Color dark300 = HexColor("#CFCFCF");
-  static Color dark200 = HexColor("#E7E7E7");
-  static Color dark100 = HexColor("#F1F1F1");
+  static Color dark600 = HexColor("#000000");
+  static Color dark500 = HexColor("#7D7D7D");
+  static Color dark400 = HexColor("#CCCCCC");
+  static Color dark300 = HexColor("#D9D9D9");
+  static Color dark200 = HexColor("#E6E6E6");
+  static Color dark100 = HexColor("#F5F5F5");
 }
 
 class TextSize {

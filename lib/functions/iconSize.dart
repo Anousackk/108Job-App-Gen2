@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 TextStyle xsIcon(String? fontFamily, Color? textColor) {
   return TextStyle(
-    fontFamily: fontFamily == null ? "FontAwesomePro-Regular" : fontFamily,
+    fontFamily: fontFamily == null ? "FontAwesomeRegular" : fontFamily,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 15,
   );
@@ -13,7 +13,7 @@ TextStyle xsIcon(String? fontFamily, Color? textColor) {
 
 TextStyle sIcon(String? fontFamily, Color? textColor) {
   return TextStyle(
-    fontFamily: fontFamily == null ? "FontAwesomePro-Light" : fontFamily,
+    fontFamily: fontFamily == null ? "FontAwesomeRegular" : fontFamily,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 20,
   );
@@ -21,7 +21,7 @@ TextStyle sIcon(String? fontFamily, Color? textColor) {
 
 TextStyle mIcon(String? fontFamily, Color? textColor) {
   return TextStyle(
-    fontFamily: fontFamily == null ? "FontAwesomePro-Regular" : fontFamily,
+    fontFamily: fontFamily == null ? "FontAwesomeRegular" : fontFamily,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 30,
   );
@@ -29,7 +29,7 @@ TextStyle mIcon(String? fontFamily, Color? textColor) {
 
 TextStyle lIcon(String? fontFamily, Color? textColor) {
   return TextStyle(
-    fontFamily: fontFamily == null ? "FontAwesomePro-Regular" : fontFamily,
+    fontFamily: fontFamily == null ? "FontAwesomeRegular" : fontFamily,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 40,
   );
@@ -37,7 +37,7 @@ TextStyle lIcon(String? fontFamily, Color? textColor) {
 
 TextStyle xlIcon(String? fontFamily, Color? textColor) {
   return TextStyle(
-    fontFamily: fontFamily == null ? "FontAwesomePro-Regular" : fontFamily,
+    fontFamily: fontFamily == null ? "FontAwesomeRegular" : fontFamily,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 50,
   );
@@ -45,7 +45,7 @@ TextStyle xlIcon(String? fontFamily, Color? textColor) {
 
 TextStyle xxlIcon(String? fontFamily, Color? textColor) {
   return TextStyle(
-    fontFamily: fontFamily == null ? "FontAwesomePro-Regular" : fontFamily,
+    fontFamily: fontFamily == null ? "FontAwesomeRegular" : fontFamily,
     color: textColor == null ? AppColors.fontDark : textColor,
     fontSize: 80,
   );

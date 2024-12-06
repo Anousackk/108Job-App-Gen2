@@ -17,7 +17,9 @@ class AuthService {
     // FacebookAuth.instance.login();
 
     try {
-      print("try");
+      print("Login facebook try");
+      //
+      //
       //Alert dialog loading
       showDialog(
         context: context,
@@ -27,10 +29,10 @@ class AuthService {
         },
       );
       FacebookAuth.instance.login().then((value) {
-        print("eiei: " + value.toString());
+        print("Fn login() then " + value.toString());
 
         if (value.status == LoginStatus.success) {
-          print("LoginStatus.success");
+          print("Login status success");
           final AccessToken accessToken = value.accessToken!;
 
           FacebookAuth.instance.getUserData().then(
@@ -71,7 +73,7 @@ class AuthService {
             },
           );
         } else if (value.status == LoginStatus.cancelled) {
-          print("LoginStatus.cancelled");
+          print("Login status cancelled");
           Navigator.pop(context);
         } else {
           print(value.status);
@@ -80,13 +82,16 @@ class AuthService {
         }
       });
     } catch (error) {
-      print("catch");
+      print("Login facebokk catch");
+      print(error);
       Navigator.pop(context);
     }
   }
 
   loginWithGoogle(BuildContext context) async {
     try {
+      //
+      //
       //Alert dialog loading
       showDialog(
         context: context,
@@ -95,7 +100,8 @@ class AuthService {
           return CustAlertLoading();
         },
       );
-      print("try");
+
+      print("Login google try");
       //Google Sign in
       // const scopes = <String>[
       //   'https://www.googleapis.com/auth/userinfo.email',
@@ -115,7 +121,7 @@ class AuthService {
       print(gUser?.email);
 
       if (gUser != null) {
-        print("gUser != null");
+        print("gUser isn't null");
 
         //obtaiin auth details from request
         final GoogleSignInAuthentication gAuth = await gUser.authentication;
@@ -165,11 +171,12 @@ class AuthService {
               (route) => false);
         }
       } else {
-        print("gUser == null");
+        print("gUser is null");
         Navigator.pop(context);
       }
     } catch (error) {
-      print("catch");
+      print("Login google catch");
+      print(error);
       Navigator.pop(context);
     }
   }
@@ -177,8 +184,10 @@ class AuthService {
   loginWithApple(BuildContext context) async {
     final firebaseAuth = FirebaseAuth.instance;
     try {
-      print("try");
+      print("Login apple try");
 
+      //
+      //
       //Alert dialog loading
       showDialog(
         context: context,
@@ -204,6 +213,7 @@ class AuthService {
       var appleSigninEmail;
 
       if (credential.userIdentifier != null) {
+        print("Credential userIdentifier isn't null");
         //
         //
         //set userIdentifier shared preferences.
@@ -273,23 +283,26 @@ class AuthService {
       // }
     } catch (error) {
       print(error);
-      print("catch");
+      print("Login apple catch");
+      print(error);
       Navigator.pop(context);
     }
   }
 
   googleSignOut() async {
     await GoogleSignIn().signOut();
+    print("Google sign out");
   }
 
   facebookSignOut() async {
     await FacebookAuth.instance.logOut();
+    print("Facebook sign out");
   }
 
   appleSignOut() async {
     final firebaseAuth = FirebaseAuth.instance;
     await firebaseAuth.signOut();
-    print("Apple SignOut");
+    print("Apple sign out");
   }
 
   loginSyncGoogleFacebook(
@@ -301,6 +314,8 @@ class AuthService {
     if (type == "facebook") {
       print("sync facebook");
 
+      //
+      //
       //Alert dialog loading
       showDialog(
         context: context,
@@ -396,6 +411,8 @@ class AuthService {
     else if (type == "google") {
       print("sync google");
 
+      //
+      //
       //Alert dialog loading
       showDialog(
         context: context,
@@ -501,6 +518,8 @@ class AuthService {
       try {
         print("sync apple");
 
+        //
+        //
         //Alert dialog loading
         showDialog(
           context: context,

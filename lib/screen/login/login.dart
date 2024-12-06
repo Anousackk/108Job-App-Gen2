@@ -10,11 +10,10 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/textSize.dart';
-import 'package:app/screen/screenAfterSignIn/home/home.dart';
-import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearch.dart';
-import 'package:app/screen/main/changeLanguage.dart';
-import 'package:app/screen/securityVerify/securityVerification.dart';
-import 'package:app/screen/register/register.dart';
+import 'package:app/screen/Main/changeLanguage.dart';
+import 'package:app/screen/ScreenAfterSignIn/Home/home.dart';
+import 'package:app/screen/SecurityVerify/securityVerification.dart';
+import 'package:app/screen/Register/register.dart';
 import 'package:app/widget/boxDecorationIcon.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
@@ -354,7 +353,6 @@ class _LoginState extends State<Login> {
                                   //Change Language Lao-Eng
                                   Container(
                                     padding: EdgeInsets.only(top: 10),
-                                    // color: AppColors.blue,
                                     child: ChangeLanguage(
                                         callBackSetLanguage: (val) {
                                       if (val == "Set Language Success") {

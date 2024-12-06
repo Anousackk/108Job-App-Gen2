@@ -11,22 +11,18 @@ import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Education/education.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Education/fetchEducation.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Language/fetchLanguage.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Language/language.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Personal_Information/personal_Information.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Skill/fetchSkill.dart';
+import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/ProfileSetting/profileSetting.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Skill/skill.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/UploadCV/uploadCV.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Widget/BoxPrefixSuffix.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Widget/avatarImage.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/WorkHistory/fetchWorkHistory.dart';
+import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Widget/photoView.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/WorkHistory/workHistory.dart';
-import 'package:app/screen/ScreenAfterSignIn/account/MyProfile/ProfileSetting/profileSetting.dart';
-import 'package:app/screen/ScreenAfterSignIn/account/MyProfile/WorkPreference/workPreferences.dart';
+import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/WorkPreference/workPreferences.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/boxDecDottedBorderProfileDetail.dart';
 import 'package:app/widget/button.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -55,33 +51,17 @@ class _MyProfileState extends State<MyProfile>
   String _firstName = "";
   String _lastName = "";
   String _imageSrc = "";
-
   dynamic _seekerProfile;
-  dynamic _reviewStatus;
   dynamic _workPreferences;
   dynamic _cv;
-  dynamic _personalInformationStatus;
-  dynamic _workPreferenceStatus;
-  dynamic _resumeStatus;
-  dynamic _educationStatus;
-  dynamic _workHistoryStatus;
-  dynamic _languageStatus;
-  dynamic _skillStatus;
-  dynamic _avatarObj;
-
   List _education = [];
   List _workHistory = [];
   List _languageSkill = [];
   List _skills = [];
-  List _avatars = [];
-
   String _memberLevel = "";
   String _status = "";
   String _currentJobTitle = "";
   String _statusUploadImage = "";
-  String _selectedAvatarImage = "";
-  String _avatarScr = "";
-
   File? _image;
 
   bool _isLoading = true;
@@ -228,7 +208,9 @@ class _MyProfileState extends State<MyProfile>
   uploadOrUpdateProfileImageSeeker() async {
     var res = await postData(
         uploadOrUpdateProfileImageApiSeeker, {"file": _fileValue});
+
     print(res);
+    print("5");
 
     if (res != null) {
       getProfileSeeker();
@@ -236,7 +218,6 @@ class _MyProfileState extends State<MyProfile>
   }
 
   onGoBack(dynamic value) {
-    print("onGoBack is working");
     getProfileSeeker();
     if (mounted) {
       setState(() {});
@@ -244,100 +225,35 @@ class _MyProfileState extends State<MyProfile>
   }
 
   getProfileSeeker() async {
+    print("get api profile seeker");
     var res = await fetchData(getProfileSeekerApi);
-    _seekerProfile = await res["profile"];
-    _reviewStatus = await res["reviewStatus"];
-    _firstName = _seekerProfile["firstName"];
-    _lastName = _seekerProfile["lastName"];
-    _memberLevel = _seekerProfile["memberLevel"];
-    _status = _seekerProfile["status"];
-    _isSearchable = _seekerProfile["isSearchable"] as bool;
-    _avatarObj = _seekerProfile["avatar"];
-    if (_avatarObj != null) {
-      _selectedAvatarImage = _avatarObj["_id"];
-      _avatarScr = _avatarObj["src"];
-    }
-    if (_seekerProfile["file"] != "") {
-      _imageSrc = !_seekerProfile["file"].containsKey("src") ||
-              _seekerProfile["file"]["src"] == null
+    _seekerProfile = await res['profile'];
+    _firstName = _seekerProfile['firstName'];
+    _lastName = _seekerProfile['lastName'];
+    _memberLevel = _seekerProfile['memberLevel'];
+    _status = _seekerProfile['status'];
+    _isSearchable = _seekerProfile['isSearchable'] as bool;
+    if (_seekerProfile['file'] != "") {
+      _imageSrc = !_seekerProfile['file'].containsKey("src") ||
+              _seekerProfile['file']["src"] == null
           ? ""
-          : _seekerProfile["file"]["src"];
+          : _seekerProfile['file']["src"];
     }
 
-    _personalInformationStatus =
-        _reviewStatus["personalInformationStatus"] == null
-            ? null
-            : _reviewStatus["personalInformationStatus"] as bool;
-    _workPreferenceStatus = _reviewStatus["workPreferenceStatus"] == null
-        ? null
-        : _reviewStatus["workPreferenceStatus"] as bool;
-    _resumeStatus = _reviewStatus["resumeStatus"] == null
-        ? null
-        : _reviewStatus["resumeStatus"] as bool;
-    _educationStatus = _reviewStatus["educationStatus"] == null
-        ? null
-        : _reviewStatus["educationStatus"] as bool;
-    _workHistoryStatus = _reviewStatus["workHistoryStatus"] == null
-        ? null
-        : _reviewStatus["workHistoryStatus"] as bool;
-    _languageStatus = _reviewStatus["languageStatus"] == null
-        ? null
-        : _reviewStatus["languageStatus"] as bool;
-    _skillStatus = _reviewStatus["skillStatus"] == null
-        ? null
-        : _reviewStatus["skillStatus"] as bool;
-
-    _workPreferences = res["workPreferences"] ?? null;
-    _cv = res["cv"] ?? null;
-    _education = res["education"] ?? [];
-    _workHistory = res["workHistory"] ?? [];
-    _languageSkill = res["languageSkill"] ?? [];
-    _skills = res["skills"] ?? [];
+    _workPreferences = res['workPreferences'] ?? null;
+    _cv = res['cv'] ?? null;
+    _education = res['education'] ?? [];
+    _workHistory = res['workHistory'] ?? [];
+    _languageSkill = res['languageSkill'] ?? [];
+    _skills = res['skills'] ?? [];
     _isReview = res["isReview"] as bool;
+
     if (_workPreferences != null) {
-      _currentJobTitle = _workPreferences["currentJobTitle"];
+      _currentJobTitle = _workPreferences['currentJobTitle'];
     }
+
     if (res != null) {
       _isLoading = false;
-    }
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  fetchAvatar() async {
-    print("Fetch avatar is working");
-    var res = await fetchData(getAvatarSeekerApi);
-    _avatars = await res["info"];
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  updateAvatar(String avatarId) async {
-    //
-    //
-    //ສະແດງ AlertDialog Loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustAlertLoading();
-      },
-    );
-
-    var res = await postData(updateAvatarSeekerApi, {
-      "avatarId": avatarId,
-    });
-
-    print(res.toString());
-
-    if (res["message"] == "Update avatar succeed") {
-      await getProfileSeeker();
-
-      Navigator.pop(context);
     }
 
     if (mounted) {
@@ -358,7 +274,6 @@ class _MyProfileState extends State<MyProfile>
     super.initState();
 
     getProfileSeeker();
-    fetchAvatar();
   }
 
   @override
@@ -417,48 +332,50 @@ class _MyProfileState extends State<MyProfile>
                       //Text title
                       title: Text(
                         'my profile'.tr,
-                        style: appbarTextMedium(
-                            "NotoSansLaoLoopedBold", AppColors.fontWhite, null),
+                        style:
+                            appbarTextMedium(null, AppColors.fontWhite, null),
                       ),
 
                       //
                       //
                       //Widget Actions
                       //Profile setting
-                      actions: _status == "Approved" &&
-                              _memberLevel != "Basic Member"
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProfileSetting(
-                                      isSearchable: _isSearchable,
-                                    ),
-                                  ),
-                                ).then((value) => onGoBack(value));
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(100),
-                                child: Container(
-                                  height: 45,
-                                  width: 45,
-                                  color: AppColors.iconLight.withOpacity(0.1),
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "\uf013",
-                                      style: fontAwesomeRegular(
-                                          null, 20, AppColors.iconLight, null),
-                                    ),
-                                  ),
-                                ),
+                      actions:
+                          //_status == "Approved" &&
+                          //         _memberLevel != "Basic Member"
+                          //     ?
+                          GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileSetting(
+                                isSearchable: _isSearchable,
                               ),
-                            )
-                          : Container(
-                              height: 45,
-                              width: 45,
                             ),
+                          ).then((value) => onGoBack(value));
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Container(
+                            height: 45,
+                            width: 45,
+                            color: AppColors.iconLight.withOpacity(0.1),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "\uf013",
+                                style: fontAwesomeRegular(
+                                    null, 20, AppColors.iconLight, null),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // : Container(
+                      //     height: 45,
+                      //     width: 45,
+                      //   ),
                     ),
 
                     //
@@ -476,7 +393,7 @@ class _MyProfileState extends State<MyProfile>
                             //
                             //
                             //
-                            //Section
+                            //
                             //Processing profile
                             if (_isReview)
                               Container(
@@ -511,739 +428,219 @@ class _MyProfileState extends State<MyProfile>
                             //
                             //
                             //
-                            //Section
+                            //
                             //Profile Image
                             Container(
                               width: double.infinity,
-                              color: AppColors.primary100,
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  //
-                                  //
-                                  //Press alert dialog show avatar image
-                                  onTap: () async {
-                                    dynamic result = await showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) {
-                                          return BoxDecAvatarImage(
-                                            listItems: _avatars,
-                                            selectedListItem:
-                                                _selectedAvatarImage,
-                                            title: "avatar_image".tr,
-                                          );
-                                        });
-
-                                    if (result != null) {
-                                      if (result[0] == "Confirm") {
-                                        setState(() {
-                                          updateAvatar(result[1].toString());
-                                        });
-                                      }
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(20),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          child: Row(
-                                            children: [
-                                              //
-                                              //
-                                              //Avatar image
-                                              Stack(
-                                                clipBehavior: Clip.none,
-                                                alignment: Alignment.center,
-                                                children: <Widget>[
-                                                  //
-                                                  //
-                                                  //Image loading
-                                                  _imageLoading
-                                                      ? Container(
-                                                          width: 90,
-                                                          height: 90,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: AppColors
-                                                                .backgroundWhite,
-                                                          ),
-                                                          child: Center(
-                                                            child: Text(
-                                                                "uploading".tr),
-                                                          ),
-                                                        )
-                                                      //
-                                                      //
-                                                      //ຫຼັງຈາກ Image loading ແລ້ວ
-                                                      : Container(
-                                                          width: 90,
-                                                          height: 90,
-                                                          child: _image != null
-                                                              //
-                                                              //
-                                                              //ຖ້າວ່າມີຮູບ (_image != null)
-                                                              ? ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              100),
-                                                                  child: Image
-                                                                      .file(
-                                                                    _image!,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
-                                                                )
-                                                              //
-                                                              //
-                                                              //ຖ້າວ່າບໍ່ມີຮູບ (_image == null)
-                                                              : ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              100),
-                                                                  child: _avatarObj ==
-                                                                          null
-                                                                      ? Image
-                                                                          .asset(
-                                                                          'assets/image/no-image-available.png',
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                        )
-                                                                      : Image
-                                                                          .network(
-                                                                          "${_avatarScr}",
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                          errorBuilder: (context,
-                                                                              error,
-                                                                              stackTrace) {
-                                                                            print(error);
-                                                                            return Image.asset(
-                                                                              'assets/image/no-image-available.png',
-                                                                              fit: BoxFit.cover,
-                                                                            ); // Display an error message
-                                                                          },
-                                                                        ),
-                                                                ),
-                                                        ),
-
-                                                  //
-                                                  //
-                                                  //Gallery image icon at the bottom right corner
-                                                  Positioned(
-                                                    bottom: 0,
-                                                    right: 0,
-                                                    child: GestureDetector(
-                                                      onTap: () {},
-                                                      child: Container(
-                                                        height: 20,
-                                                        width: 20,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color:
-                                                              AppColors.dark100,
-                                                        ),
-                                                        child: Text(
-                                                          "\uf021",
-                                                          style:
-                                                              fontAwesomeRegular(
-                                                                  null,
-                                                                  10,
-                                                                  AppColors
-                                                                      .dark500,
-                                                                  null),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              //
-                                              //
-                                              //Column text right avatar image
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      "avatar_image".tr,
-                                                      style: bodyTextMaxNormal(
-                                                          "NotoSansLaoLoopedBold",
-                                                          null,
-                                                          FontWeight.bold),
-                                                    ),
-                                                    Text(
-                                                      "select_avatar_intro_text"
-                                                          .tr,
-                                                      style: bodyTextSmall(
-                                                          null, null, null),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            //
-                            //
-                            //
-                            //
-                            //Section
-                            //Content profile
-                            Container(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   SizedBox(
-                                    height: 20,
+                                    height: 40,
                                   ),
 
                                   //
                                   //
-                                  //
-                                  //
-                                  //
-                                  //Note text
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
-                                        child: Text(
-                                          "\uf06a",
-                                          style: fontAwesomeSolid(
-                                              null, 14, null, null),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          "upgrade_member_level_intro".tr,
-                                          style: bodyTextMinNormal(
-                                              null, null, null),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-
-                                  //
-                                  //
-                                  //
-                                  //
-                                  //
-                                  //Basic Member
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Basic Member",
-                                        style: bodyTextMiniMedium(
-                                            "NotoSansLaoLoopedBold",
-                                            null,
-                                            null),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
+                                  //Press show modal bottom to view or upload image profile
+                                  GestureDetector(
+                                    onTap: () {
                                       //
                                       //
-                                      //Current member status
-                                      if (_memberLevel == "Basic Member")
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 3),
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: AppColors.primary600),
-                                          child: Text(
-                                            "curret_member_level".tr,
-                                            style: bodyTextSmall(null,
-                                                AppColors.fontWhite, null),
-                                          ),
-                                        )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-
-                                  //
-                                  //
-                                  //Box Decoration Personal information
-                                  BoxDecorationInputPrefixTextSuffixWidget(
-                                    press: () {
-                                      _seekerProfile == null ||
-                                              _seekerProfile == ""
-                                          ? Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PersonalInformation(),
+                                      //show modal bottom view profile image, upload image profile
+                                      showModalBottomSheet(
+                                          context: context,
+                                          builder: (builder) {
+                                            return ModalBottomCameraGallery(
+                                              () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PhotViewDetail(
+                                                      image: _imageSrc,
+                                                    ),
+                                                  ),
+                                                ).then((value) =>
+                                                    Navigator.pop(context));
+                                              },
+                                              FaIcon(
+                                                FontAwesomeIcons.solidEye,
+                                                size: IconSize.sIcon,
+                                                color: AppColors.iconPrimary,
                                               ),
-                                            ).then((val) => onGoBack(val))
-                                          : Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PersonalInformation(
-                                                  id: _seekerProfile['_id'],
-                                                  profile: _seekerProfile,
+                                              "view".tr,
+                                              () {
+                                                pickImageGallery(
+                                                    ImageSource.gallery);
+                                                Navigator.pop(context);
+                                              },
+                                              FaIcon(
+                                                FontAwesomeIcons.solidImage,
+                                                size: IconSize.sIcon,
+                                                color: AppColors.iconPrimary,
+                                              ),
+                                              "photo gallery".tr,
+                                            );
+                                          });
+                                    },
+                                    child: Container(
+                                      child: Stack(
+                                        clipBehavior: Clip.none,
+                                        alignment: Alignment.center,
+                                        children: <Widget>[
+                                          //
+                                          //
+                                          //Placeholder circle for profile picture
+                                          DottedBorder(
+                                            dashPattern: [6, 7],
+                                            strokeWidth: 2,
+                                            borderType: BorderType.Circle,
+                                            color: AppColors.borderPrimary,
+                                            borderPadding: EdgeInsets.all(1),
+                                            child: _imageLoading
+                                                ? Container(
+                                                    width: 150,
+                                                    height: 150,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: AppColors
+                                                          .backgroundWhite,
+                                                    ),
+                                                    child: Center(
+                                                      child:
+                                                          Text("uploading".tr),
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    width: 150,
+                                                    height: 150,
+                                                    child: _image != null
+                                                        ? ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        100),
+                                                            child: Image.file(
+                                                              _image!,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          )
+                                                        : ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        100),
+                                                            child: _imageSrc ==
+                                                                    ""
+                                                                ? Image.asset(
+                                                                    'assets/image/no-image-available.png',
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                  )
+                                                                : Image.network(
+                                                                    "${_imageSrc}",
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    errorBuilder:
+                                                                        (context,
+                                                                            error,
+                                                                            stackTrace) {
+                                                                      print(
+                                                                          error);
+                                                                      return Image
+                                                                          .asset(
+                                                                        'assets/image/no-image-available.png',
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      ); // Display an error message
+                                                                    },
+                                                                  ),
+                                                          ),
+                                                  ),
+                                          ),
+                                          //
+                                          //
+                                          //Status Seeker on top profile image
+                                          Positioned(
+                                            top: -20,
+                                            child: Container(
+                                              padding: EdgeInsets.all(8),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.success,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Text(
+                                                _memberLevel,
+                                                style: bodyTextSmall(
+                                                  null,
+                                                  AppColors.fontWhite,
+                                                  null,
                                                 ),
                                               ),
-                                            ).then((val) => onGoBack(val));
-                                    },
-                                    prefixIconText:
-                                        _personalInformationStatus == null
-                                            ? "\uf058"
-                                            : !_personalInformationStatus
-                                                ? "\uf04c"
-                                                : "\uf058",
-                                    prefixFontFamily:
-                                        _personalInformationStatus == null
-                                            ? "FontAwesomeRegular"
-                                            : "FontAwesomeSolid",
-                                    prefixColor:
-                                        _personalInformationStatus == null
-                                            ? AppColors.dark500
-                                            : !_personalInformationStatus
-                                                ? AppColors.warning600
-                                                : AppColors.primary600,
-                                    text: "personal_info".tr,
-                                    textColor:
-                                        _personalInformationStatus == null
-                                            ? AppColors.dark500
-                                            : !_personalInformationStatus
-                                                ? null
-                                                : null,
-                                    statusReview:
-                                        _personalInformationStatus == null
-                                            ? ""
-                                            : !_personalInformationStatus
-                                                ? "profile_inreview".tr
-                                                : "",
-                                    suffixWidget: Text(
-                                      "\uf054",
-                                      style: fontAwesomeSolid(
-                                          null, 14, null, null),
-                                    ),
-                                    validateText: Container(),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-
-                                  //
-                                  //
-                                  //
-                                  //
-                                  //
-                                  //Basic Job Seeker
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Basic Job Seeker",
-                                        style: bodyTextMiniMedium(
-                                            "NotoSansLaoLoopedBold",
-                                            null,
-                                            null),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      //
-                                      //
-                                      //Current member status
-                                      if (_memberLevel == "Basic Job Seeker")
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 3),
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: AppColors.primary600),
-                                          child: Text(
-                                            "Current",
-                                            style: bodyTextSmall(null,
-                                                AppColors.fontWhite, null),
+                                            ),
                                           ),
-                                        )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
 
-                                  //
-                                  //
-                                  //Box Decoration Work Preferences
-                                  BoxDecorationInputPrefixTextSuffixWidget(
-                                    press: () {
-                                      _workPreferences == null ||
-                                              _workPreferences == ""
-                                          ? Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    WorkPreferences(),
+                                          //
+                                          //
+                                          //Camera/Gallery image icon at the bottom right corner
+                                          Positioned(
+                                            bottom: 0,
+                                            right: 5,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                pickImageGallery(
+                                                    ImageSource.gallery);
+                                              },
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                padding: EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: AppColors.dark
+                                                        .withOpacity(0.5),
+                                                    border: Border.all(
+                                                        color: AppColors
+                                                            .borderWhite)),
+                                                child: FaIcon(
+                                                  FontAwesomeIcons.image,
+                                                  color: AppColors.iconLight,
+                                                  size: 15,
+                                                ),
                                               ),
-                                            ).then((val) => onGoBack(val))
-                                          : Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    WorkPreferences(),
-                                              ),
-                                            ).then((val) => onGoBack(val));
-                                    },
-                                    prefixIconText:
-                                        _workPreferenceStatus == null
-                                            ? "\uf058"
-                                            : !_workPreferenceStatus
-                                                ? "\uf04c"
-                                                : "\uf058",
-                                    prefixFontFamily:
-                                        _workPreferenceStatus == null
-                                            ? "FontAwesomeRegular"
-                                            : "FontAwesomeSolid",
-                                    prefixColor: _workPreferenceStatus == null
-                                        ? AppColors.dark500
-                                        : !_workPreferenceStatus
-                                            ? AppColors.warning600
-                                            : AppColors.primary600,
-                                    text: "work_preference".tr,
-                                    textColor: _workPreferenceStatus == null
-                                        ? AppColors.dark500
-                                        : !_workPreferenceStatus
-                                            ? null
-                                            : null,
-                                    statusReview: _workPreferenceStatus == null
-                                        ? ""
-                                        : !_workPreferenceStatus
-                                            ? "profile_inreview".tr
-                                            : "",
-                                    suffixWidget: Text(
-                                      "\uf054",
-                                      style: fontAwesomeSolid(
-                                          null, 14, null, null),
-                                    ),
-                                    validateText: Container(),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-
-                                  //
-                                  //
-                                  //Box Decoration Resume File
-                                  BoxDecorationInputPrefixTextSuffixWidget(
-                                    press: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => UploadCV(
-                                            cv: _cv,
+                                            ),
                                           ),
-                                        ),
-                                      ).then((val) => onGoBack(val));
-                                    },
-                                    prefixIconText: _resumeStatus == null
-                                        ? "\uf058"
-                                        : !_resumeStatus
-                                            ? "\uf04c"
-                                            : "\uf058",
-                                    prefixFontFamily: _resumeStatus == null
-                                        ? "FontAwesomeRegular"
-                                        : "FontAwesomeSolid",
-                                    prefixColor: _resumeStatus == null
-                                        ? AppColors.dark500
-                                        : !_resumeStatus
-                                            ? AppColors.warning600
-                                            : AppColors.primary600,
-                                    text: "cv_file".tr,
-                                    textColor: _resumeStatus == null
-                                        ? AppColors.dark500
-                                        : !_resumeStatus
-                                            ? null
-                                            : null,
-                                    statusReview: _resumeStatus == null
-                                        ? ""
-                                        : !_resumeStatus
-                                            ? "profile_inreview".tr
-                                            : "",
-                                    suffixWidget: Text(
-                                      "\uf054",
-                                      style: fontAwesomeSolid(
-                                          null, 14, null, null),
-                                    ),
-                                    validateText: Container(),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-
-                                  //
-                                  //
-                                  //
-                                  //
-                                  //
-                                  //Expert Job Seeker
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Expert Job Seeker",
-                                        style: bodyTextMiniMedium(
-                                            "NotoSansLaoLoopedBold",
-                                            null,
-                                            null),
+                                        ],
                                       ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      //
-                                      //
-                                      //Current member status
-                                      if (_memberLevel == "Expert Job Seeker")
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 3),
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: AppColors.primary600),
-                                          child: Text(
-                                            "Current",
-                                            style: bodyTextSmall(null,
-                                                AppColors.fontWhite, null),
-                                          ),
-                                        )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-
-                                  //
-                                  //
-                                  //Box Decoration Work History
-                                  BoxDecorationInputPrefixTextSuffixWidget(
-                                    press: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              FetchWorkHistory(),
-                                        ),
-                                      ).then((val) => onGoBack(val));
-                                    },
-                                    prefixIconText: _workHistoryStatus == null
-                                        ? "\uf058"
-                                        : !_workHistoryStatus
-                                            ? "\uf04c"
-                                            : "\uf058",
-                                    prefixFontFamily: _workHistoryStatus == null
-                                        ? "FontAwesomeRegular"
-                                        : "FontAwesomeSolid",
-                                    prefixColor: _workHistoryStatus == null
-                                        ? AppColors.dark500
-                                        : !_workHistoryStatus
-                                            ? AppColors.warning600
-                                            : AppColors.primary600,
-                                    text: "work_history".tr,
-                                    textColor: _workHistoryStatus == null
-                                        ? AppColors.dark500
-                                        : !_workHistoryStatus
-                                            ? null
-                                            : null,
-                                    statusReview: _workHistoryStatus == null
-                                        ? ""
-                                        : !_workHistoryStatus
-                                            ? "profile_inreview".tr
-                                            : "",
-                                    suffixWidget: Text(
-                                      "\uf054",
-                                      style: fontAwesomeSolid(
-                                          null, 14, null, null),
                                     ),
-                                    validateText: Container(),
                                   ),
                                   SizedBox(
                                     height: 10,
                                   ),
-
                                   //
                                   //
-                                  //Box Decoration Education
-                                  BoxDecorationInputPrefixTextSuffixWidget(
-                                    press: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              FetchEducation(),
-                                        ),
-                                      ).then((val) => onGoBack(val));
-                                    },
-                                    prefixIconText: _educationStatus == null
-                                        ? "\uf058"
-                                        : !_educationStatus
-                                            ? "\uf04c"
-                                            : "\uf058",
-                                    prefixFontFamily: _educationStatus == null
-                                        ? "FontAwesomeRegular"
-                                        : "FontAwesomeSolid",
-                                    prefixColor: _educationStatus == null
-                                        ? AppColors.dark500
-                                        : !_educationStatus
-                                            ? AppColors.warning600
-                                            : AppColors.primary600,
-                                    text: "education".tr,
-                                    textColor: _educationStatus == null
-                                        ? AppColors.dark500
-                                        : !_educationStatus
-                                            ? null
-                                            : null,
-                                    statusReview: _educationStatus == null
-                                        ? ""
-                                        : !_educationStatus
-                                            ? "profile_inreview".tr
-                                            : "",
-                                    suffixWidget: Text(
-                                      "\uf054",
-                                      style: fontAwesomeSolid(
-                                          null, 14, null, null),
-                                    ),
-                                    validateText: Container(),
+                                  //Profile Name
+                                  Text(
+                                    "${_firstName}  ${_lastName}",
+                                    style: bodyTextMedium(
+                                        null, null, FontWeight.bold),
                                   ),
                                   SizedBox(
-                                    height: 10,
+                                    height: 5,
                                   ),
-
                                   //
                                   //
-                                  //Box Decoration Language
-                                  BoxDecorationInputPrefixTextSuffixWidget(
-                                    press: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => FetchLanguage(),
-                                        ),
-                                      ).then((val) => onGoBack(val));
-                                    },
-                                    prefixIconText: _languageStatus == null
-                                        ? "\uf058"
-                                        : !_languageStatus
-                                            ? "\uf04c"
-                                            : "\uf058",
-                                    prefixFontFamily: _languageStatus == null
-                                        ? "FontAwesomeRegular"
-                                        : "FontAwesomeSolid",
-                                    prefixColor: _languageStatus == null
-                                        ? AppColors.dark500
-                                        : !_languageStatus
-                                            ? AppColors.warning600
-                                            : AppColors.primary600,
-                                    text: "language_skill".tr,
-                                    textColor: _languageStatus == null
-                                        ? AppColors.dark500
-                                        : !_languageStatus
-                                            ? null
-                                            : null,
-                                    statusReview: _languageStatus == null
-                                        ? ""
-                                        : !_languageStatus
-                                            ? "profile_inreview".tr
-                                            : "",
-                                    suffixWidget: Text(
-                                      "\uf054",
-                                      style: fontAwesomeSolid(
-                                          null, 14, null, null),
-                                    ),
-                                    validateText: Container(),
+                                  //Current JobTitle
+                                  Text(
+                                    _currentJobTitle == ""
+                                        ? "- -"
+                                        : "${_currentJobTitle}",
+                                    style: bodyTextNormal(null, null, null),
+                                    textAlign: TextAlign.center,
                                   ),
                                   SizedBox(
-                                    height: 10,
-                                  ),
-
-                                  //
-                                  //
-                                  //Box Decoration Skill
-                                  BoxDecorationInputPrefixTextSuffixWidget(
-                                    press: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => FetchSkill(),
-                                        ),
-                                      ).then((val) => onGoBack(val));
-                                    },
-                                    prefixIconText: _skillStatus == null
-                                        ? "\uf058"
-                                        : !_skillStatus
-                                            ? "\uf04c"
-                                            : "\uf058",
-                                    prefixFontFamily: _skillStatus == null
-                                        ? "FontAwesomeRegular"
-                                        : "FontAwesomeSolid",
-                                    prefixColor: _skillStatus == null
-                                        ? AppColors.dark500
-                                        : !_skillStatus
-                                            ? AppColors.warning600
-                                            : AppColors.primary600,
-                                    text: "skills".tr,
-                                    textColor: _skillStatus == null
-                                        ? AppColors.dark500
-                                        : !_skillStatus
-                                            ? null
-                                            : null,
-                                    statusReview: _skillStatus == null
-                                        ? ""
-                                        : !_skillStatus
-                                            ? "profile_inreview".tr
-                                            : "",
-                                    suffixWidget: Text(
-                                      "\uf054",
-                                      style: fontAwesomeSolid(
-                                          null, 14, null, null),
-                                    ),
-                                    validateText: Container(),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
+                                    height: 5,
                                   ),
                                 ],
                               ),
@@ -1255,18 +652,18 @@ class _MyProfileState extends State<MyProfile>
                             //
                             //
                             //ProfileDetail
-                            // Container(
-                            //   child: ProfileDetail(
-                            //     profile: _seekerProfile,
-                            //     workPreferences: _workPreferences,
-                            //     cv: _cv,
-                            //     educations: _education,
-                            //     workHistories: _workHistory,
-                            //     languageSkills: _languageSkill,
-                            //     skills: _skills,
-                            //     onGoBack: onGoBack,
-                            //   ),
-                            // )
+                            Container(
+                              child: ProfileDetail(
+                                profile: _seekerProfile,
+                                workPreferences: _workPreferences,
+                                cv: _cv,
+                                educations: _education,
+                                workHistories: _workHistory,
+                                languageSkills: _languageSkill,
+                                skills: _skills,
+                                onGoBack: onGoBack,
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -1465,9 +862,11 @@ class _ProfileDetailState extends State<ProfileDetail> {
       _email = widget.profile['email'];
       _mobile = widget.profile['mobile'];
     }
+
     if (widget.cv != null) {
       _cvName = widget.cv['link'].split('/')[1];
       _cvUploadDate = widget.cv['updatedAt'];
+      //pars ISO to Flutter DateTime
       parsDateTime(value: '', currentFormat: '', desiredFormat: '');
       DateTime cvUploadDate = parsDateTime(
         value: _cvUploadDate,
@@ -1479,6 +878,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
       _mimeType = widget.cv['mimeType'];
       _mimeType = _mimeType.split("/")[1].toString();
     }
+
     if (widget.workPreferences != null) {
       _currentJobTitle = widget.workPreferences['currentJobTitle'];
 

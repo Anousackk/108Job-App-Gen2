@@ -3,7 +3,7 @@
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/login/login.dart';
-import 'package:app/screen/resetNewPassword.dart/resetNewPassword.dart';
+import 'package:app/screen/ResetNewPassword.dart/resetNewPassword.dart';
 import 'package:app/widget/boxDecorationIcon.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';

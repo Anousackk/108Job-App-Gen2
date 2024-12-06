@@ -159,19 +159,18 @@ class Button extends StatefulWidget {
     Key? key,
     this.text,
     this.press,
-    this.colorButton,
-    this.colorText,
-    this.fontWeight,
+    this.buttonColor,
+    this.textColor,
+    this.textFontWeight,
     this.buttonBorderColor,
-    this.height,
+    this.boxHeight,
     this.paddingButton,
-    this.fontFamily,
+    this.textFontFamily,
   }) : super(key: key);
-  final String? text, fontFamily;
-  final Color? colorButton, buttonBorderColor;
-  final Color? colorText;
-  final FontWeight? fontWeight;
-  final double? height;
+  final String? text, textFontFamily;
+  final Color? textColor, buttonColor, buttonBorderColor;
+  final FontWeight? textFontWeight;
+  final double? boxHeight;
   final WidgetStateProperty<EdgeInsetsGeometry?>? paddingButton;
 
   final Function()? press;
@@ -185,7 +184,7 @@ class _ButtonState extends State<Button> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: widget.height ?? 45,
+      height: widget.boxHeight ?? 45,
       child: TextButton(
         style: ButtonStyle(
           padding: widget.paddingButton ??
@@ -206,16 +205,16 @@ class _ButtonState extends State<Button> {
             ),
           ),
           backgroundColor: WidgetStateProperty.all(
-            widget.colorButton == null ? AppColors.primary : widget.colorButton,
+            widget.buttonColor == null ? AppColors.primary : widget.buttonColor,
           ),
         ),
         onPressed: widget.press,
         child: Text(
           '${widget.text}',
-          style: buttonTextNormal(
-            widget.fontFamily == null ? null : widget.fontFamily,
-            widget.colorText == null ? AppColors.white : widget.colorText,
-            widget.fontWeight,
+          style: buttonTextMaxNormal(
+            widget.textFontFamily == null ? null : widget.textFontFamily,
+            widget.textColor == null ? AppColors.white : widget.textColor,
+            widget.textFontWeight,
           ),
           overflow: TextOverflow.visible,
           textAlign: TextAlign.center,
@@ -756,8 +755,8 @@ class _BottomSingleCancelButtonState extends State<BottomSingleCancelButton> {
                   flex: 1,
                   child: Button(
                     text: widget.text,
-                    colorButton: AppColors.danger,
-                    colorText: AppColors.white,
+                    buttonColor: AppColors.danger,
+                    textColor: AppColors.white,
                     press: widget.pressCancelled,
                   ),
                 ),
@@ -807,8 +806,8 @@ class _BottomSingleButtonState extends State<BottomSingleButton> {
                   flex: 1,
                   child: Button(
                     text: widget.text,
-                    colorButton: widget.colorButton,
-                    colorText: widget.colorText == null
+                    buttonColor: widget.colorButton,
+                    textColor: widget.colorText == null
                         ? AppColors.fontWhite
                         : widget.colorText,
                     press: widget.press,

@@ -218,25 +218,88 @@ class _WorkPreferencesState extends State<WorkPreferences> {
         data:
             MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
         child: Scaffold(
-          appBar: AppBarDefault(
-            textTitle: "work preferences".tr,
-            leadingIcon: Icon(Icons.arrow_back),
-            leadingPress: () {
-              Navigator.pop(context);
-            },
+          // appBar: AppBarDefault(
+          //   textTitle: "work_preference".tr,
+          //   leadingIcon: Icon(Icons.arrow_back),
+          //   leadingPress: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
+          appBar: AppBar(
+            toolbarHeight: 0,
+            backgroundColor: AppColors.primary600,
           ),
           body: SafeArea(
             child: Container(
               height: double.infinity,
               width: double.infinity,
               color: AppColors.backgroundWhite,
-              child: Form(
-                key: formkey,
-                child: Column(
-                  children: [
-                    Expanded(
-                      flex: 15,
-                      child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  //
+                  //
+                  //
+                  //
+                  //Section
+                  //Appbar custom
+                  AppBarThreeWidgt(
+                    //
+                    //Widget Leading
+                    //Navigator.pop
+                    leading: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: Container(
+                          height: 45,
+                          width: 45,
+                          color: AppColors.iconLight.withOpacity(0.1),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "\uf060",
+                              style: fontAwesomeRegular(
+                                  null, 20, AppColors.iconLight, null),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    //
+                    //
+                    //Widget Title
+                    //Text title
+                    title: Text(
+                      "work_preference".tr,
+                      style: appbarTextMedium(
+                          "NotoSansLaoLoopedBold", AppColors.fontWhite, null),
+                    ),
+
+                    //
+                    //
+                    //Widget Actions
+                    //Profile setting
+                    actions: Container(
+                      height: 45,
+                      width: 45,
+                    ),
+                  ),
+
+                  //
+                  //
+                  //
+                  //
+                  //Section
+                  //Content personal information
+                  Expanded(
+                    flex: 15,
+                    child: SingleChildScrollView(
+                      physics: ClampingScrollPhysics(),
+                      child: Form(
+                        key: formkey,
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Column(
@@ -1051,18 +1114,19 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                  ),
 
-                    //
-                    //
-                    //
-                    //
-                    //Button Save
-                    Button(
+                  //
+                  //
+                  //
+                  //
+                  //Button Save
+                  Container(
+                    padding: EdgeInsets.only(
+                        left: 20, right: 20, top: 10, bottom: 30),
+                    child: Button(
                       text: "save".tr,
-                      fontWeight: FontWeight.bold,
+                      textFontWeight: FontWeight.bold,
                       press: () {
                         FocusScope.of(context).requestFocus(focusNode);
                         if (formkey.currentState!.validate()) {
@@ -1094,11 +1158,8 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                         }
                       },
                     ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -1169,7 +1230,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
             title: "save".tr + " " + "successful".tr,
             contentText:
-                "save".tr + " " + "work preferences".tr + " " + "successful".tr,
+                "save".tr + " " + "work_preference".tr + " " + "successful".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
