@@ -803,6 +803,8 @@ class _MyProfileState extends State<MyProfile>
 
                                   //
                                   //
+
+                                  //
                                   //Box Decoration Personal information
                                   BoxDecorationInputPrefixTextSuffixWidget(
                                     press: () {
