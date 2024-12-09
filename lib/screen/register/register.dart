@@ -696,7 +696,7 @@ class _RegisterState extends State<Register> {
   //     context: context,
   //     barrierDismissible: false,
   //     builder: (context) {
-  //       return CustAlertLoading();
+  //       return CustomLoadingLogoCircle();
   //     },
   //   );
   //   await postData(apiRegisterSeeker, {

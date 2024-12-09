@@ -345,7 +345,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -370,7 +370,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -395,7 +395,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -420,7 +420,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -476,7 +476,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -530,7 +530,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 

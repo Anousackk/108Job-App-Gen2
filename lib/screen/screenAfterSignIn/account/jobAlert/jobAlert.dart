@@ -103,7 +103,7 @@ class _JobAlertState extends State<JobAlert> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -249,7 +249,7 @@ class _JobAlertState extends State<JobAlert> {
                     color: AppColors.background,
                     width: double.infinity,
                     height: double.infinity,
-                    child: Center(child: CircularProgressIndicator()),
+                    child: Center(child: CustomLoadingLogoCircle()),
                   )
                 : Container(
                     color: AppColors.background,

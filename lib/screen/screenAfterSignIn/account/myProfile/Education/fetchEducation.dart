@@ -55,7 +55,7 @@ class _FetchEducationState extends State<FetchEducation> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustAlertLoading();
+          return CustomLoadingLogoCircle();
         },
       );
       await getProfileSeeker();
@@ -71,7 +71,7 @@ class _FetchEducationState extends State<FetchEducation> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
     await getProfileSeeker();
@@ -173,7 +173,7 @@ class _FetchEducationState extends State<FetchEducation> {
                       color: AppColors.backgroundWhite,
                       width: double.infinity,
                       height: double.infinity,
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(child: CustomLoadingLogoCircle()),
                     )
                   : Stack(
                       clipBehavior: Clip.none,

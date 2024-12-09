@@ -25,7 +25,7 @@ class AuthService {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustAlertLoading();
+          return CustomLoadingLogoCircle();
         },
       );
       FacebookAuth.instance.login().then((value) {
@@ -97,7 +97,7 @@ class AuthService {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustAlertLoading();
+          return CustomLoadingLogoCircle();
         },
       );
 
@@ -193,7 +193,7 @@ class AuthService {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustAlertLoading();
+          return CustomLoadingLogoCircle();
         },
       );
 
@@ -321,7 +321,7 @@ class AuthService {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustAlertLoading();
+          return CustomLoadingLogoCircle();
         },
       );
 
@@ -418,7 +418,7 @@ class AuthService {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustAlertLoading();
+          return CustomLoadingLogoCircle();
         },
       );
 
@@ -525,7 +525,7 @@ class AuthService {
           context: context,
           barrierDismissible: false,
           builder: (context) {
-            return CustAlertLoading();
+            return CustomLoadingLogoCircle();
           },
         );
 

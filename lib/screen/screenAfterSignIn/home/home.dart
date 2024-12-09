@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:app/alertUpgraderMessages.dart';
 import 'package:app/firebase_options.dart';
+import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
@@ -788,10 +789,10 @@ class _MainHomeState extends State<MainHome> {
         body: SafeArea(
           child: _isLoading
               ? Container(
-                  color: AppColors.background,
+                  color: AppColors.backgroundWhite,
                   width: double.infinity,
                   height: double.infinity,
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(child: CustomLoadingLogoCircle()),
                 )
               : UpgradeAlert(
                   showIgnore: false,

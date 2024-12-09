@@ -731,7 +731,7 @@ class _EducationState extends State<Education> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 

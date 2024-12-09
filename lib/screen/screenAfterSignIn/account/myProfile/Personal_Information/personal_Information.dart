@@ -1335,7 +1335,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 

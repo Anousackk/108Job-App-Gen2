@@ -430,7 +430,7 @@ class _LanguageState extends State<Language> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 

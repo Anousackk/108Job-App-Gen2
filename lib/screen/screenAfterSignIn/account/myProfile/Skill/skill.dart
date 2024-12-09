@@ -521,7 +521,7 @@ class _SkillState extends State<Skill> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
     var res = await postData(addSkillSeekerApi, {

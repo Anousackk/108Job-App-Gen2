@@ -257,11 +257,11 @@ class _AccountState extends State<Account> {
         body: SafeArea(
           child: _isLoading
               ? Container(
-                  color: AppColors.background,
+                  color: AppColors.backgroundWhite,
                   width: double.infinity,
                   height: double.infinity,
                   child: Center(
-                    child: CircularProgressIndicator(),
+                    child: CustomLoadingLogoCircle(),
                   ),
                 )
               : SingleChildScrollView(

@@ -843,7 +843,7 @@ class _WorkHistoryState extends State<WorkHistory> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 

@@ -324,7 +324,7 @@ class _MyProfileState extends State<MyProfile>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -370,28 +370,66 @@ class _MyProfileState extends State<MyProfile>
           toolbarHeight: 0,
           backgroundColor: AppColors.primary600,
         ),
-        body: _isLoading
-            ? Center(
-                child: Container(
-                  child: CircularProgressIndicator(),
+        body: SafeArea(
+          child: Column(
+            children: [
+              //
+              //
+              //
+              //
+              //
+              //Appbar custom
+              AppBarThreeWidgt(
+                //
+                //Widget Leading
+                //Navigator.pop
+                leading: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: Container(
+                      height: 45,
+                      width: 45,
+                      color: AppColors.iconLight.withOpacity(0.1),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "\uf060",
+                          style: fontAwesomeRegular(
+                              null, 20, AppColors.iconLight, null),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              )
-            : SafeArea(
-                child: Column(
-                  children: [
-                    //
-                    //
-                    //
-                    //
-                    //
-                    //Appbar custom
-                    AppBarThreeWidgt(
-                      //
-                      //Widget Leading
-                      //Navigator.pop
-                      leading: GestureDetector(
+
+                //
+                //
+                //Widget Title
+                //Text title
+                title: Text(
+                  'my profile'.tr,
+                  style: appbarTextMedium(
+                      "NotoSansLaoLoopedBold", AppColors.fontWhite, null),
+                ),
+
+                //
+                //
+                //Widget Actions
+                //Profile setting
+                actions: _status == "Approved" && _memberLevel != "Basic Member"
+                    ? GestureDetector(
                         onTap: () {
-                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileSetting(
+                                isSearchable: _isSearchable,
+                              ),
+                            ),
+                          ).then((value) => onGoBack(value));
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
@@ -402,72 +440,35 @@ class _MyProfileState extends State<MyProfile>
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                "\uf060",
+                                "\uf013",
                                 style: fontAwesomeRegular(
                                     null, 20, AppColors.iconLight, null),
                               ),
                             ),
                           ),
                         ),
+                      )
+                    : Container(
+                        height: 45,
+                        width: 45,
                       ),
+              ),
 
-                      //
-                      //
-                      //Widget Title
-                      //Text title
-                      title: Text(
-                        'my profile'.tr,
-                        style: appbarTextMedium(
-                            "NotoSansLaoLoopedBold", AppColors.fontWhite, null),
+              //
+              //
+              //
+              //
+              //
+              //Content expanded
+              _isLoading
+                  ? Expanded(
+                      child: Center(
+                        child: Container(
+                          child: CustomLoadingLogoCircle(),
+                        ),
                       ),
-
-                      //
-                      //
-                      //Widget Actions
-                      //Profile setting
-                      actions: _status == "Approved" &&
-                              _memberLevel != "Basic Member"
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProfileSetting(
-                                      isSearchable: _isSearchable,
-                                    ),
-                                  ),
-                                ).then((value) => onGoBack(value));
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(100),
-                                child: Container(
-                                  height: 45,
-                                  width: 45,
-                                  color: AppColors.iconLight.withOpacity(0.1),
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "\uf013",
-                                      style: fontAwesomeRegular(
-                                          null, 20, AppColors.iconLight, null),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(
-                              height: 45,
-                              width: 45,
-                            ),
-                    ),
-
-                    //
-                    //
-                    //
-                    //
-                    //
-                    //Content expanded
-                    Expanded(
+                    )
+                  : Expanded(
                       child: SingleChildScrollView(
                         physics: ClampingScrollPhysics(),
                         child: Column(
@@ -478,34 +479,34 @@ class _MyProfileState extends State<MyProfile>
                             //
                             //Section
                             //Processing profile
-                            if (_isReview)
-                              Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 30),
-                                decoration: BoxDecoration(
-                                  color: AppColors.warning.withOpacity(0.2),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "your profile is review".tr,
-                                      style: bodyTextNormal(
-                                          null,
-                                          AppColors.fontWaring,
-                                          FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "it takeup to process".tr,
-                                      style: bodyTextSmall(
-                                        null,
-                                        AppColors.fontGreyOpacity,
-                                        null,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
+                            // if (_isReview)
+                            //   Container(
+                            //     width: double.infinity,
+                            //     padding: EdgeInsets.symmetric(
+                            //         horizontal: 20, vertical: 30),
+                            //     decoration: BoxDecoration(
+                            //       color: AppColors.warning.withOpacity(0.2),
+                            //     ),
+                            //     child: Column(
+                            //       children: [
+                            //         Text(
+                            //           "your profile is review".tr,
+                            //           style: bodyTextNormal(
+                            //               null,
+                            //               AppColors.fontWaring,
+                            //               FontWeight.bold),
+                            //         ),
+                            //         Text(
+                            //           "it takeup to process".tr,
+                            //           style: bodyTextSmall(
+                            //             null,
+                            //             AppColors.fontGreyOpacity,
+                            //             null,
+                            //           ),
+                            //         )
+                            //       ],
+                            //     ),
+                            //   ),
 
                             //
                             //
@@ -826,7 +827,9 @@ class _MyProfileState extends State<MyProfile>
                                                   profile: _seekerProfile,
                                                 ),
                                               ),
-                                            ).then((val) => onGoBack(val));
+                                            ).then(
+                                              (val) => onGoBack(val),
+                                            );
                                     },
                                     prefixIconText:
                                         _personalInformationStatus == null
@@ -927,7 +930,11 @@ class _MyProfileState extends State<MyProfile>
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    WorkPreferences(),
+                                                    WorkPreferences(
+                                                  id: "workPreferenceId",
+                                                  workPreference:
+                                                      _workPreferences,
+                                                ),
                                               ),
                                             ).then((val) => onGoBack(val));
                                     },
@@ -1273,9 +1280,9 @@ class _MyProfileState extends State<MyProfile>
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
+            ],
+          ),
+        ),
       ),
     );
   }

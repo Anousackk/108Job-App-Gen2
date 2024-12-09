@@ -46,7 +46,7 @@ class _UploadCVState extends State<UploadCV> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustAlertLoading();
+          return CustomLoadingLogoCircle();
         },
       );
 
@@ -111,7 +111,7 @@ class _UploadCVState extends State<UploadCV> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -165,7 +165,7 @@ class _UploadCVState extends State<UploadCV> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 

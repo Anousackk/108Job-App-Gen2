@@ -147,7 +147,7 @@ class _CompanyDetailState extends State<CompanyDetail>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -213,7 +213,7 @@ class _CompanyDetailState extends State<CompanyDetail>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -275,7 +275,7 @@ class _CompanyDetailState extends State<CompanyDetail>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -389,7 +389,7 @@ class _CompanyDetailState extends State<CompanyDetail>
             child: _isLoading
                 ? Center(
                     child: Container(
-                      child: CircularProgressIndicator(),
+                      child: CustomLoadingLogoCircle(),
                     ),
                   )
                 : Column(

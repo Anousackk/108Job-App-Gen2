@@ -134,7 +134,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -201,7 +201,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -258,7 +258,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -310,7 +310,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -410,7 +410,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                   width: double.infinity,
                   height: double.infinity,
                   child: Center(
-                    child: CircularProgressIndicator(),
+                    child: CustomLoadingLogoCircle(),
                   ),
                 )
               : Container(

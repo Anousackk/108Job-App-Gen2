@@ -73,7 +73,7 @@ class _AddUpdatePhoneNumberEmailState extends State<AddUpdatePhoneNumberEmail> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -158,7 +158,7 @@ class _AddUpdatePhoneNumberEmailState extends State<AddUpdatePhoneNumberEmail> {
               ? Container(
                   color: AppColors.backgroundWhite,
                   child: Center(
-                    child: CircularProgressIndicator(),
+                    child: CustomLoadingLogoCircle(),
                   ),
                 )
               : SafeArea(

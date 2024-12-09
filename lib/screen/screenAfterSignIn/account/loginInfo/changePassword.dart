@@ -36,7 +36,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 

@@ -76,7 +76,7 @@ class _MyJobsState extends State<MyJobs> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustAlertLoading();
+          return CustomLoadingLogoCircle();
         },
       );
     }
@@ -183,7 +183,7 @@ class _MyJobsState extends State<MyJobs> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -542,7 +542,7 @@ class _MyJobsState extends State<MyJobs> {
                             width: double.infinity,
                             height: double.infinity,
                             child: Center(
-                              child: CircularProgressIndicator(),
+                              child: CustomLoadingLogoCircle(),
                             ),
                           ),
                         )

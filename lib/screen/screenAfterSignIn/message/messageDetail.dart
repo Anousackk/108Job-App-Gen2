@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_is_empty, avoid_print
 
+import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/launchInBrowser.dart';
@@ -65,7 +66,7 @@ class _MessageDetailState extends State<MessageDetail> {
                   color: AppColors.background,
                   width: double.infinity,
                   height: double.infinity,
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(child: CustomLoadingLogoCircle()),
                 )
               : Container(
                   color: AppColors.backgroundWhite,

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_if_null_operators, unnecessary_null_comparison, camel_case_types, unnecessary_null_in_if_null_operators
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_if_null_operators, unnecessary_null_comparison, camel_case_types, unnecessary_null_in_if_null_operators, use_key_in_widget_constructors, unused_field
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'dart:math' as math;
 
 BoxDecoration boxDecorationAlert(Color color) {
   return BoxDecoration(
@@ -2040,6 +2041,198 @@ class _CustAlertLoadingState extends State<CustAlertLoading> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CustomLoadingStackLogo extends StatefulWidget {
+  @override
+  _CustomLoadingStackLogoState createState() => _CustomLoadingStackLogoState();
+}
+
+class _CustomLoadingStackLogoState extends State<CustomLoadingStackLogo>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(); // Repeats the animation indefinitely
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          //
+          //
+          //Center image
+          Image.asset(
+            "assets/image/Logo108.png", // Replace with your image asset
+            width: 50,
+            height: 50,
+          ),
+          //
+          //
+          //Rotating circle
+          Positioned(
+            left: 5,
+            bottom: 12,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.primary600, width: 10),
+              ),
+            ),
+          ),
+          //
+          //
+          //Rotating circle
+          Positioned(
+            right: 10,
+            bottom: 15,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.cyan600, width: 10),
+              ),
+            ),
+          ),
+          //
+          //
+          //Rotating circle
+          Positioned(
+            right: 10,
+            bottom: 5,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.cyan400, width: 10),
+              ),
+            ),
+          ),
+
+          //
+          //
+          //Rotating circle
+          Positioned(
+            // left: 0,
+            // bottom: 0,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.primary600, width: 10),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomLoadingLogoCircle extends StatefulWidget {
+  @override
+  _CustomLoadingLogoCircleState createState() =>
+      _CustomLoadingLogoCircleState();
+}
+
+class _CustomLoadingLogoCircleState extends State<CustomLoadingLogoCircle>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2), // Time for one full rotation
+    )..repeat(); // Repeat the animation indefinitely
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          //
+          //
+          //Box circle
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+            ),
+            width: 150,
+            height: 150,
+          ),
+          //
+          //
+          //Background box circle color withOpacity
+          Positioned(
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: AppColors.backgroundWhite,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          //
+          //
+          //image 108job text
+          Positioned(
+            child: Container(
+              child: Image.asset(
+                "assets/image/108job-logo-text.png",
+                width: 50,
+                height: 50,
+              ),
+            ),
+          ),
+          //
+          //
+          //image circle
+          Positioned(
+            child: RotationTransition(
+              turns: _controller,
+              child: Image.asset(
+                "assets/image/logo-circle.png",
+                width: 150,
+                height: 150,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

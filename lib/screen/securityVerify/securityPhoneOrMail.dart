@@ -104,7 +104,7 @@ class _SecurityPhoneNumberOrEmailState
               ? Container(
                   color: AppColors.backgroundWhite,
                   child: Center(
-                    child: CircularProgressIndicator(),
+                    child: CustomLoadingLogoCircle(),
                   ),
                 )
               : SafeArea(
@@ -326,7 +326,7 @@ class _SecurityPhoneNumberOrEmailState
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
     var res = await postData(requestOTPCodeApiSeeker, {

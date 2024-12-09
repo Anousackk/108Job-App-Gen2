@@ -90,7 +90,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustAlertLoading();
+          return CustomLoadingLogoCircle();
         },
       );
     }
@@ -239,7 +239,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                         color: AppColors.background,
                         width: double.infinity,
                         height: double.infinity,
-                        child: Center(child: CircularProgressIndicator()),
+                        child: Center(child: CustomLoadingLogoCircle()),
                       )
                     : Container(
                         height: double.infinity,

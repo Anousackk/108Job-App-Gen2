@@ -103,7 +103,7 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
         ? Container(
             color: AppColors.backgroundWhite,
             child: Center(
-              child: CircularProgressIndicator(),
+              child: CustomLoadingLogoCircle(),
             ),
           )
         : SafeArea(

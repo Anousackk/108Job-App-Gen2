@@ -153,7 +153,7 @@ class _LoginInformationState extends State<LoginInformation> {
             ? Container(
                 color: AppColors.backgroundWhite,
                 child: Center(
-                  child: CircularProgressIndicator(),
+                  child: CustomLoadingLogoCircle(),
                 ),
               )
             : SafeArea(
@@ -406,7 +406,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                         context: context,
                                         barrierDismissible: false,
                                         builder: (context) {
-                                          return CustAlertLoading();
+                                          return CustomLoadingLogoCircle();
                                         },
                                       );
 
@@ -526,7 +526,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                         context: context,
                                         barrierDismissible: false,
                                         builder: (context) {
-                                          return CustAlertLoading();
+                                          return CustomLoadingLogoCircle();
                                         },
                                       );
 
@@ -645,7 +645,7 @@ class _LoginInformationState extends State<LoginInformation> {
                                           context: context,
                                           barrierDismissible: false,
                                           builder: (context) {
-                                            return CustAlertLoading();
+                                            return CustomLoadingLogoCircle();
                                           },
                                         );
 

@@ -366,10 +366,10 @@ class _JobSearchState extends State<JobSearch>
           body: SafeArea(
             child: _isLoading
                 ? Container(
-                    color: AppColors.background,
+                    color: AppColors.backgroundWhite,
                     width: double.infinity,
                     height: double.infinity,
-                    child: Center(child: CircularProgressIndicator()),
+                    child: Center(child: CustomLoadingLogoCircle()),
                   )
                 : Container(
                     color: AppColors.background,
@@ -2499,7 +2499,7 @@ class _JobSearchState extends State<JobSearch>
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return CustAlertLoading();
+          return CustomLoadingLogoCircle();
         },
       );
     }
@@ -2593,7 +2593,7 @@ class _JobSearchState extends State<JobSearch>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
@@ -2654,7 +2654,7 @@ class _JobSearchState extends State<JobSearch>
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
     var res = await postData(hideJobSeekerApi, {

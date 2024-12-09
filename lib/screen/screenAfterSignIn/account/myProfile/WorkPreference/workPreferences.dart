@@ -1197,7 +1197,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CustAlertLoading();
+        return CustomLoadingLogoCircle();
       },
     );
 
