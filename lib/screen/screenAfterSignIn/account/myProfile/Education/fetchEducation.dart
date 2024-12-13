@@ -100,82 +100,87 @@ class _FetchEducationState extends State<FetchEducation> {
   Widget build(BuildContext context) {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 0,
-          backgroundColor: AppColors.primary600,
-        ),
-        body: SafeArea(
-            child: Column(
-          children: [
-            //
-            //
-            //
-            //
-            //
-            //Appbar custom
-            AppBarThreeWidgt(
-              //
-              //Widget Leading
-              //Navigator.pop
-              leading: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Container(
-                    height: 45,
-                    width: 45,
-                    color: AppColors.iconLight.withOpacity(0.1),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "\uf060",
-                        style: fontAwesomeRegular(
-                            null, 20, AppColors.iconLight, null),
+      child: _isLoading
+          ? Scaffold(
+              appBar: AppBar(
+                toolbarHeight: 0,
+              ),
+              body: Container(
+                color: AppColors.backgroundWhite,
+                width: double.infinity,
+                height: double.infinity,
+                child: Center(child: CustomLoadingLogoCircle()),
+              ),
+            )
+          : Scaffold(
+              appBar: AppBar(
+                toolbarHeight: 0,
+                backgroundColor: AppColors.primary600,
+              ),
+              body: SafeArea(
+                  child: Column(
+                children: [
+                  //
+                  //
+                  //
+                  //
+                  //
+                  //Appbar custom
+                  AppBarThreeWidgt(
+                    //
+                    //Widget Leading
+                    //Navigator.pop
+                    leading: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: Container(
+                          height: 45,
+                          width: 45,
+                          color: AppColors.iconLight.withOpacity(0.1),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "\uf060",
+                              style: fontAwesomeRegular(
+                                  null, 20, AppColors.iconLight, null),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
+
+                    //
+                    //
+                    //Widget Title
+                    //Text title
+                    title: Text(
+                      "education".tr,
+                      style: appbarTextMedium(
+                          "NotoSansLaoLoopedBold", AppColors.fontWhite, null),
+                    ),
+
+                    //
+                    //
+                    //Widget Actions
+                    //Profile setting
+                    actions: Container(
+                      height: 45,
+                      width: 45,
+                    ),
                   ),
-                ),
-              ),
 
-              //
-              //
-              //Widget Title
-              //Text title
-              title: Text(
-                "education".tr,
-                style: appbarTextMedium(
-                    "NotoSansLaoLoopedBold", AppColors.fontWhite, null),
-              ),
+                  //
+                  //
+                  //
+                  //
+                  //Sectioin
+                  //Content work history
 
-              //
-              //
-              //Widget Actions
-              //Profile setting
-              actions: Container(
-                height: 45,
-                width: 45,
-              ),
-            ),
-
-            //
-            //
-            //
-            //
-            //Sectioin
-            //Content work history
-
-            Expanded(
-              child: _isLoading
-                  ? Container(
-                      color: AppColors.backgroundWhite,
-                      width: double.infinity,
-                      height: double.infinity,
-                      child: Center(child: CustomLoadingLogoCircle()),
-                    )
-                  : Stack(
+                  Expanded(
+                    child: Stack(
                       clipBehavior: Clip.none,
                       children: [
                         SingleChildScrollView(
@@ -398,10 +403,10 @@ class _FetchEducationState extends State<FetchEducation> {
                         )
                       ],
                     ),
+                  ),
+                ],
+              )),
             ),
-          ],
-        )),
-      ),
     );
   }
 }

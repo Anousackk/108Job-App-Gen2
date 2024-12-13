@@ -110,7 +110,6 @@ class _SecurityPhoneNumberOrEmailState
               : SafeArea(
                   child: Container(
                     color: AppColors.backgroundWhite,
-
                     // width: double.infinity,
                     // color: AppColors.green,
                     padding: EdgeInsets.symmetric(horizontal: 20),

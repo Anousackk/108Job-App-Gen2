@@ -254,7 +254,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                               //
                               //Company
                               Text(
-                                "company".tr,
+                                "work_employer".tr,
                                 style:
                                     bodyTextNormal(null, null, FontWeight.bold),
                               ),
@@ -273,7 +273,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                   });
                                 },
                                 inputColor: AppColors.inputWhite,
-                                hintText: "enter".tr + " " + "company name".tr,
+                                hintText: "enter".tr + " " + "work_employer".tr,
                                 hintTextFontWeight: FontWeight.bold,
                                 suffixIcon: Icon(
                                   Icons.business,
@@ -288,7 +288,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                               //
                               //Job Title
                               Text(
-                                "job title".tr,
+                                "work_position".tr,
                                 style:
                                     bodyTextNormal(null, null, FontWeight.bold),
                               ),
@@ -307,7 +307,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                   });
                                 },
                                 inputColor: AppColors.inputWhite,
-                                hintText: "enter".tr + " " + "job title".tr,
+                                hintText: "enter".tr + " " + "work_position".tr,
                                 hintTextFontWeight: FontWeight.bold,
                                 suffixIcon: Icon(
                                   Icons.work,
@@ -356,7 +356,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                   SizedBox(
                                     width: 10,
                                   ),
-                                  Text("my current job".tr),
+                                  Text("work_current".tr),
                                 ],
                               ),
                               SizedBox(
@@ -367,7 +367,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                               //
                               //From DateTime(Month/Year)
                               Text(
-                                "from".tr + " " + "month".tr + "/" + "year".tr,
+                                "work_start_date".tr,
                                 style:
                                     bodyTextNormal(null, null, FontWeight.bold),
                               ),
@@ -414,11 +414,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                   showDialogDateTime(
                                       context,
                                       Text(
-                                        "from".tr +
-                                            " " +
-                                            "month".tr +
-                                            "/" +
-                                            "year".tr,
+                                        "work_start_date".tr,
                                         style: bodyTextMedium(
                                             null, null, FontWeight.bold),
                                       ),
@@ -460,11 +456,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                       );
                                 },
                                 text: _fromMonthYear == null
-                                    ? "from".tr +
-                                        " " +
-                                        "month".tr +
-                                        "/" +
-                                        "year".tr
+                                    ? "work_start_date".tr
                                     : "${_fromMonthYear?.month}-${_fromMonthYear?.year}",
                                 colorText: _fromMonthYear == null
                                     ? AppColors.fontGreyOpacity
@@ -497,11 +489,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "to".tr +
-                                          " " +
-                                          "month".tr +
-                                          "/" +
-                                          "year".tr,
+                                      "work_end_date".tr,
                                       style: bodyTextNormal(
                                           null, null, FontWeight.bold),
                                     ),
@@ -546,11 +534,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                               showDialogDateTime(
                                                   context,
                                                   Text(
-                                                    "to".tr +
-                                                        " " +
-                                                        "month".tr +
-                                                        "/" +
-                                                        "year".tr,
+                                                    "work_end_date".tr,
                                                     style: bodyTextMedium(null,
                                                         null, FontWeight.bold),
                                                   ),
@@ -589,11 +573,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                   );
                                             },
                                             text: _toMonthYear == null
-                                                ? "to".tr +
-                                                    " " +
-                                                    "month".tr +
-                                                    "/" +
-                                                    "year".tr
+                                                ? "work_end_date".tr
                                                 : "${_toMonthYear?.month}-${_toMonthYear?.year}",
                                             colorText: _toMonthYear == null
                                                 ? AppColors.fontGreyOpacity
@@ -640,11 +620,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                               color: AppColors.iconGrayOpacity,
                                               size: IconSize.sIcon,
                                             ),
-                                            text: "to".tr +
-                                                " " +
-                                                "month".tr +
-                                                "/" +
-                                                "year".tr,
+                                            text: "work_end_date".tr,
                                             validateText: _isValidateValue ==
                                                         true &&
                                                     _toMonthYear == null
@@ -674,7 +650,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                               //
                               // Responsibility
                               Text(
-                                "responsibility".tr,
+                                "work_responsibility".tr,
                                 style:
                                     bodyTextNormal(null, null, FontWeight.bold),
                               ),
@@ -773,7 +749,8 @@ class _WorkHistoryState extends State<WorkHistory> {
                                         SystemMouseCursors.text,
                                     maxHeight: 400,
                                     minHeight: 400,
-                                    placeholder: "professional summary".tr,
+                                    placeholder:
+                                        "work_responsibility_detail".tr,
                                     padding: EdgeInsets.all(10),
                                     dialogTheme: QuillDialogTheme(
                                       labelTextStyle: TextStyle(

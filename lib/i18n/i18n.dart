@@ -103,7 +103,6 @@ class LocalString extends Translations {
     {"key": "ok", "en": "OK", "la": "ຕົກລົງ"},
     {"key": "close", "en": "Close", "la": "ປິດ"},
     {"key": "search", "en": "Search ", "la": "ຄົ້ນຫາ"},
-    {"key": "job title", "en": "Job title", "la": "ຊື່ຕຳແໜ່ງ"},
     {"key": "all article", "en": "All article", "la": "ບົດຄວາມທັງໝົດ"},
     {"key": "all categories", "en": "All categories", "la": "ໝວດໝູ່ທັງໝົດ"},
     {"key": "job available", "en": "Job Available", "la": "ວຽກທີ່ເປີດຮັບສະໝັກ"},
@@ -619,6 +618,9 @@ class LocalString extends Translations {
 
     //
     //
+    //
+    //
+    //
     //Seeker Profile
     {
       "key": "personal_info",
@@ -682,6 +684,9 @@ class LocalString extends Translations {
       "la": "ກະລຸນາຕື່ມຂໍ້ມູນດ້ານລຸ່ມ ເພື່ອອັບເກດລະດັບສະມາຊິກ.",
     },
 
+    //
+    //
+    //
     //
     //
     //Seeker Profile - Upload CV
@@ -773,11 +778,6 @@ class LocalString extends Translations {
       "la": "ກີບ",
     },
     {
-      "key": "professional summary",
-      "en": "Professional Summary",
-      "la": "ສະຫຼຸບປະສົບການ",
-    },
-    {
       "key": "tell about you",
       "en": "Tell us more about you",
       "la": "ບອກໃຫ້ເຮົາຮູ້ຕື່ມກ່ຽວກັບທ່ານ",
@@ -802,11 +802,7 @@ class LocalString extends Translations {
       "en": "Question you my ask",
       "la": "ຄຳຖາມຍອດຮິດ",
     },
-    {
-      "key": "my current job",
-      "en": "This is my current job",
-      "la": "ວຽກເຮັດປະຈຸບັນ",
-    },
+
     {
       "key": "from",
       "en": "From",
@@ -822,21 +818,85 @@ class LocalString extends Translations {
       "en": "Responsibility",
       "la": "ໜ້າທີ່ຮັບຜິດຊອບ",
     },
+
+    //
+    //
+    //
+    //
+    //
+    //Seeker Profile - Work History
     {
-      "key": "subject",
-      "en": "Subject",
-      "la": "ວິຊາ",
+      "key": "work_employer",
+      "en": "Company",
+      "la": "ບໍລິສັດ",
     },
     {
-      "key": "collage",
-      "en": "Collage",
-      "la": "ວິທະຍາໄລ",
+      "key": "work_position",
+      "en": "Job Title",
+      "la": "ຕຳແໜ່ງງານ",
     },
     {
-      "key": "qualifications",
-      "en": "Qualifications",
-      "la": "ລະດັບການສຶກສາ",
+      "key": "work_start_date",
+      "en": "From Date",
+      "la": "ຈາກວັນທີ",
     },
+    {
+      "key": "work_end_date",
+      "en": "To Date",
+      "la": "ເຖິງວັນທີ",
+    },
+    {
+      "key": "work_current",
+      "en": "I Presently work here",
+      "la": "ບ່ອນເຮັດວຽກປະຈຸບັນ",
+    },
+    {
+      "key": "work_responsibility",
+      "en": "Responsibility",
+      "la": "ໜ້າທີ່ຮັບຜິດຊອບ",
+    },
+    {
+      "key": "work_responsibility_detail",
+      "en": "Responsibility detail",
+      "la": "ລາຍລະອຽດໜ້າທີ່ຮັບຜິດຊອບ",
+    },
+
+    //
+    //
+    //
+    //
+    //
+    //Seeker Profile - Education
+    {
+      "key": "education_major",
+      "en": "Major / Course name",
+      "la": "ສາຂາຮຽນ",
+    },
+    {
+      "key": "education_school",
+      "en": "Institution",
+      "la": "ຊື່ສະຖາບັນ",
+    },
+    {
+      "key": "education_qualifications",
+      "en": "Qualifications / Achievements",
+      "la": "ວຸດທິການສຶກສາ / ຄວາມສຳເລັດ",
+    },
+    {
+      "key": "education_from_date",
+      "en": "From year",
+      "la": "ຈາກປີ",
+    },
+    {
+      "key": "education_to_date",
+      "en": "To Year",
+      "la": "ເຖິງປີ",
+    },
+
+//
+//
+//
+
     {
       "key": "proficiency",
       "en": "Proficiency",

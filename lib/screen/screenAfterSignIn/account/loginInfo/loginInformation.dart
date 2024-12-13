@@ -141,22 +141,27 @@ class _LoginInformationState extends State<LoginInformation> {
   Widget build(BuildContext context) {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
-      child: Scaffold(
-        appBar: AppBarDefault(
-          textTitle: "login info".tr,
-          leadingPress: () {
-            Navigator.pop(context);
-          },
-          leadingIcon: Icon(Icons.arrow_back),
-        ),
-        body: _isloading
-            ? Container(
+      child: _isloading
+          ? Scaffold(
+              appBar: AppBar(
+                toolbarHeight: 0,
+              ),
+              body: Container(
                 color: AppColors.backgroundWhite,
                 child: Center(
                   child: CustomLoadingLogoCircle(),
                 ),
-              )
-            : SafeArea(
+              ),
+            )
+          : Scaffold(
+              appBar: AppBarDefault(
+                textTitle: "login info".tr,
+                leadingPress: () {
+                  Navigator.pop(context);
+                },
+                leadingIcon: Icon(Icons.arrow_back),
+              ),
+              body: SafeArea(
                 child: Container(
                   color: AppColors.backgroundWhite,
                   // padding: EdgeInsets.symmetric(horizontal: 20),
@@ -770,7 +775,7 @@ class _LoginInformationState extends State<LoginInformation> {
                   ),
                 ),
               ),
-      ),
+            ),
     );
   }
 }

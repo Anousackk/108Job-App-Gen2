@@ -67,7 +67,6 @@ class _BoxDecorationInputPrefixTextSuffixWidgetState
               child: Row(
                 children: [
                   Expanded(
-                    flex: 4,
                     child: Row(
                       children: [
                         Padding(
@@ -88,7 +87,7 @@ class _BoxDecorationInputPrefixTextSuffixWidgetState
                           child: Container(
                             // color: AppColors.primary,
                             child: Padding(
-                              padding: EdgeInsets.only(left: 10),
+                              padding: EdgeInsets.only(left: 10, right: 10),
                               child: Text(
                                 "${widget.text}",
                                 overflow: TextOverflow.ellipsis,
@@ -103,18 +102,16 @@ class _BoxDecorationInputPrefixTextSuffixWidgetState
                             ),
                           ),
                         ),
-                        Flexible(
-                          child: Container(
-                            // color: AppColors.red,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 10, top: 5),
-                              child: Text(
-                                widget.statusReview != null
-                                    ? "${widget.statusReview}"
-                                    : "",
-                                style: bodyTextSmall(
-                                    null, AppColors.warning600, null),
-                              ),
+                        Container(
+                          // color: AppColors.red,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              widget.statusReview != null
+                                  ? "${widget.statusReview}"
+                                  : "",
+                              style: bodyTextSmall(
+                                  null, AppColors.warning600, null),
                             ),
                           ),
                         )
@@ -128,7 +125,7 @@ class _BoxDecorationInputPrefixTextSuffixWidgetState
                         // color: AppColors.info,
                         alignment: AlignmentDirectional.centerEnd,
                         child: Padding(
-                          padding: EdgeInsets.only(right: 20),
+                          padding: EdgeInsets.only(left: 20, right: 20),
                           child: widget.suffixWidget,
                         ),
                       ),

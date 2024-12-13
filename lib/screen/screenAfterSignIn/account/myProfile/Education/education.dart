@@ -235,9 +235,9 @@ class _EducationState extends State<Education> {
 
                               //
                               //
-                              //Subject
+                              //"Major / Course name
                               Text(
-                                "subject".tr,
+                                "education_major".tr,
                                 style:
                                     bodyTextNormal(null, null, FontWeight.bold),
                               ),
@@ -247,7 +247,7 @@ class _EducationState extends State<Education> {
 
                               //
                               //
-                              //Subject input
+                              //"Major / Course name input
                               SimpleTextFieldWithIconRight(
                                 textController: _subjectController,
                                 changed: (value) {
@@ -256,7 +256,8 @@ class _EducationState extends State<Education> {
                                   });
                                 },
                                 inputColor: AppColors.inputWhite,
-                                hintText: "enter".tr + " " + "subject".tr,
+                                hintText:
+                                    "enter".tr + " " + "education_major".tr,
                                 hintTextFontWeight: FontWeight.bold,
                                 suffixIcon: Icon(
                                   Icons.keyboard,
@@ -271,7 +272,7 @@ class _EducationState extends State<Education> {
                               //
                               //School/Collage
                               Text(
-                                "collage".tr,
+                                "education_school".tr,
                                 style:
                                     bodyTextNormal(null, null, FontWeight.bold),
                               ),
@@ -290,7 +291,8 @@ class _EducationState extends State<Education> {
                                   });
                                 },
                                 inputColor: AppColors.inputWhite,
-                                hintText: "enter".tr + " " + "collage".tr,
+                                hintText:
+                                    "enter".tr + " " + "education_school".tr,
                                 hintTextFontWeight: FontWeight.bold,
                                 suffixIcon: Icon(
                                   Icons.school,
@@ -305,7 +307,7 @@ class _EducationState extends State<Education> {
                               //
                               //Qualifications
                               Text(
-                                "qualifications".tr,
+                                "education_qualifications".tr,
                                 style:
                                     bodyTextNormal(null, null, FontWeight.bold),
                               ),
@@ -341,7 +343,7 @@ class _EducationState extends State<Education> {
                                       context: context,
                                       builder: (context) {
                                         return ListSingleSelectedAlertDialog(
-                                          title: "qualifications".tr,
+                                          title: "education_qualifications".tr,
                                           listItems: _listDegrees,
                                           selectedListItem: _selectedDegree,
                                         );
@@ -367,7 +369,9 @@ class _EducationState extends State<Education> {
                                 },
                                 text: _selectedDegree != ""
                                     ? "${_degreeName}"
-                                    : "select".tr + " " + "qualifications".tr,
+                                    : "select".tr +
+                                        " " +
+                                        "education_qualifications".tr,
                                 colorText: _selectedDegree == ""
                                     ? AppColors.fontGreyOpacity
                                     : AppColors.fontDark,
@@ -395,7 +399,7 @@ class _EducationState extends State<Education> {
                               //
                               //From DateTime(Year)
                               Text(
-                                "from".tr + " " + "year".tr,
+                                "education_from_date".tr,
                                 style:
                                     bodyTextNormal(null, null, FontWeight.bold),
                               ),
@@ -439,7 +443,7 @@ class _EducationState extends State<Education> {
                                   showDialogDateTime(
                                       context,
                                       Text(
-                                        "from".tr + " " + "year".tr,
+                                        "education_from_date".tr,
                                         style: bodyTextNormal(
                                             null, null, FontWeight.bold),
                                       ),
@@ -480,7 +484,7 @@ class _EducationState extends State<Education> {
                                       );
                                 },
                                 text: _fromYear == null
-                                    ? "from".tr + " " + "year".tr
+                                    ? "education_from_date".tr
                                     : "${_fromYear?.year}",
                                 colorText: _fromYear == null
                                     ? AppColors.fontGreyOpacity
@@ -509,7 +513,7 @@ class _EducationState extends State<Education> {
                               //
                               //To DateTime(Year)
                               Text(
-                                "to".tr + " " + "year".tr,
+                                "education_to_date".tr,
                                 style:
                                     bodyTextNormal(null, null, FontWeight.bold),
                               ),
@@ -558,7 +562,7 @@ class _EducationState extends State<Education> {
                                         showDialogDateTime(
                                             context,
                                             Text(
-                                              "to".tr + " " + "year".tr,
+                                              "education_to_date".tr,
                                               style: bodyTextNormal(
                                                   null, null, FontWeight.bold),
                                             ),
@@ -597,7 +601,7 @@ class _EducationState extends State<Education> {
                                             );
                                       },
                                       text: _toYear == null
-                                          ? "to".tr + " " + "year".tr
+                                          ? "education_to_date".tr
                                           : "${_toYear?.year}",
                                       colorText: _toYear == null
                                           ? AppColors.fontGreyOpacity
@@ -639,7 +643,7 @@ class _EducationState extends State<Education> {
                                         color: AppColors.iconGrayOpacity,
                                         size: IconSize.sIcon,
                                       ),
-                                      text: "to".tr + " " + "year".tr,
+                                      text: "education_to_date".tr,
                                       validateText: _isValidateValue == true &&
                                               _toYear == null
                                           ? Container(
