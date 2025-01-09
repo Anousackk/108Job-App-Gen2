@@ -401,7 +401,8 @@ class _WorkHistoryState extends State<WorkHistory> {
                                       .requestFocus(focusNode);
 
                                   //
-                                  // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
+                                  //
+                                  //format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
                                   var formatDateTimeNow =
                                       DateFormat("yyyy-MM-dd")
                                           .parse(_dateTimeNow.toString());

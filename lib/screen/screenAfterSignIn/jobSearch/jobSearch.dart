@@ -1813,24 +1813,40 @@ class _JobSearchState extends State<JobSearch>
                                                                       'newJob']),
                                                     ),
                                                   ).then((value) {
-                                                    //Success ແມ່ນຄ່າທີ່ໄດ້ຈາກການ Navigator.pop ທີ່ api Save Job or unSave Job ເຮັດວຽກ
-                                                    // if (value[0] == 'Success') {
-                                                    //   setState(() {
-                                                    //     _statusShowLoading = true;
-                                                    //   });
-                                                    //   onGoBack(value);
-                                                    // }
-
-                                                    if (value[1] != "") {
+                                                    //
+                                                    //
+                                                    //ຖ້າມີ job id and status save/unsave job ຄ່າທີ່ໄດ້ຈາກການ Navigator.pop JobSearchDetail
+                                                    if (value[1] != "" &&
+                                                        value[2] != null) {
                                                       setState(() {
                                                         dynamic job =
                                                             _listJobsSearch
                                                                 .firstWhere((e) =>
                                                                     e['jobId'] ==
                                                                     value[1]);
-
+                                                        // print(
+                                                        //     "working save job: " +
+                                                        //         job.toString());
                                                         job["isSaved"] =
                                                             value[2];
+                                                      });
+                                                    }
+                                                    //
+                                                    //
+                                                    //ຖ້າມີ job id and new job ຄ່າທີ່ໄດ້ຈາກການ Navigator.pop JobSearchDetail
+                                                    if (value[1] != "" &&
+                                                        value[3] != null) {
+                                                      setState(() {
+                                                        dynamic job =
+                                                            _listJobsSearch
+                                                                .firstWhere((e) =>
+                                                                    e['jobId'] ==
+                                                                    value[1]);
+                                                        // print(
+                                                        //     "working new job: " +
+                                                        //         job.toString());
+                                                        job["newJob"] =
+                                                            value[3];
                                                       });
                                                     }
                                                   });
@@ -1966,7 +1982,7 @@ class _JobSearchState extends State<JobSearch>
                                                               children: [
                                                                 //
                                                                 //
-                                                                //Status HOT
+                                                                //Check status HOT
                                                                 // if (_tag ==
                                                                 //     "Highlight")
                                                                 //   Align(
@@ -2004,110 +2020,94 @@ class _JobSearchState extends State<JobSearch>
 
                                                                 //
                                                                 //
-                                                                // Check disable people
-                                                                if (_disablePeople)
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            15,
-                                                                        bottom:
-                                                                            15),
-                                                                    child:
-                                                                        Container(
-                                                                      padding:
-                                                                          EdgeInsets.all(
-                                                                              10),
-                                                                      // margin: EdgeInsets
-                                                                      //     .only(
-                                                                      //   top: _tag ==
-                                                                      //           "Highlight"
-                                                                      //       ? 5
-                                                                      //       : 15,
-                                                                      //   right:
-                                                                      //       15,
-                                                                      // ),
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: AppColors
-                                                                            .warning,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5),
-                                                                      ),
-                                                                      child:
-                                                                          FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .wheelchair,
-                                                                        color: AppColors
-                                                                            .iconLight,
-                                                                      ),
-                                                                    ),
-                                                                  ),
+                                                                // Check status disable people
+                                                                // if (_disablePeople)
+                                                                //   Padding(
+                                                                //     padding: const EdgeInsets
+                                                                //         .only(
+                                                                //         right:
+                                                                //             15,
+                                                                //         bottom:
+                                                                //             15),
+                                                                //     child:
+                                                                //         Container(
+                                                                //       padding:
+                                                                //           EdgeInsets.all(
+                                                                //               10),
+                                                                //       // margin: EdgeInsets
+                                                                //       //     .only(
+                                                                //       //   top: _tag ==
+                                                                //       //           "Highlight"
+                                                                //       //       ? 5
+                                                                //       //       : 15,
+                                                                //       //   right:
+                                                                //       //       15,
+                                                                //       // ),
+                                                                //       decoration:
+                                                                //           BoxDecoration(
+                                                                //         color: AppColors
+                                                                //             .warning,
+                                                                //         borderRadius:
+                                                                //             BorderRadius.circular(5),
+                                                                //       ),
+                                                                //       child:
+                                                                //           FaIcon(
+                                                                //         FontAwesomeIcons
+                                                                //             .wheelchair,
+                                                                //         color: AppColors
+                                                                //             .iconLight,
+                                                                //       ),
+                                                                //     ),
+                                                                //   ),
 
                                                                 //
                                                                 //
                                                                 //Status Job New/Saved
-                                                                // if (i['newJob'] ||
-                                                                //     i['isSaved'])
-                                                                //   Container(
-                                                                //     alignment:
-                                                                //         Alignment
-                                                                //             .topCenter,
-                                                                //     padding:
-                                                                //         EdgeInsets
-                                                                //             .symmetric(
-                                                                //       horizontal:
-                                                                //           10,
-                                                                //       vertical:
-                                                                //           5,
-                                                                //     ),
-                                                                //     margin:
-                                                                //         EdgeInsets
-                                                                //             .only(
-                                                                //       top: _tag ==
-                                                                //               "hot"
-                                                                //           ? 5
-                                                                //           : 15,
-                                                                //       right: 15,
-                                                                //     ),
-                                                                //     decoration:
-                                                                //         BoxDecoration(
-                                                                //       // color: !i['newJob'] &&
-                                                                //       //         !i[
-                                                                //       //             'isSaved']
-                                                                //       //     ? AppColors
-                                                                //       //         .greyOpacity
-                                                                //       //     : AppColors
-                                                                //       //         .primary,
-                                                                //       color: AppColors
-                                                                //           .primary,
-
-                                                                //       borderRadius:
-                                                                //           BorderRadius.circular(
-                                                                //               5),
-                                                                //     ),
-                                                                //     child: Text(
-                                                                //       // i['newJob'] &&
-                                                                //       //         !i['isSaved']
-                                                                //       //     ? "New"
-                                                                //       //     : !i['newJob'] && i['isSaved']
-                                                                //       //         ? "Saved"
-                                                                //       //         : "Viewed",
-                                                                //       i['newJob'] &&
-                                                                //               !i['isSaved']
-                                                                //           ? "New"
-                                                                //           : !i['newJob'] && i['isSaved']
-                                                                //               ? "Saved"
-                                                                //               : "",
-                                                                //       style:
-                                                                //           bodyTextSmall(null,null,
-                                                                //         !i['newJob'] &&
-                                                                //                 !i['isSaved']
-                                                                //             ? AppColors.fontDark
-                                                                //             : AppColors.fontWhite,
-                                                                //       ),
-                                                                //     ),
-                                                                //   ),
+                                                                if (indexJobsSearch[
+                                                                    'newJob'])
+                                                                  Container(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .topCenter,
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .symmetric(
+                                                                      horizontal:
+                                                                          8,
+                                                                      vertical:
+                                                                          3,
+                                                                    ),
+                                                                    margin:
+                                                                        EdgeInsets
+                                                                            .only(
+                                                                      right: 15,
+                                                                    ),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: AppColors
+                                                                          .primary,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5),
+                                                                    ),
+                                                                    child: Text(
+                                                                      // i['newJob'] &&
+                                                                      //         !i['isSaved']
+                                                                      //     ? "New"
+                                                                      //     : !i['newJob'] && i['isSaved']
+                                                                      //         ? "Saved"
+                                                                      //         : "Viewed",
+                                                                      "job_card_new_job"
+                                                                          .tr,
+                                                                      style:
+                                                                          bodyTextMiniSmall(
+                                                                        null,
+                                                                        AppColors
+                                                                            .fontWhite,
+                                                                        null,
+                                                                      ),
+                                                                    ),
+                                                                  ),
                                                               ],
                                                             ),
                                                           ],

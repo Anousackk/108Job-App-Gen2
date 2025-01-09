@@ -893,6 +893,18 @@ class LocalString extends Translations {
       "la": "ເຖິງປີ",
     },
 
+    //
+    //
+    //
+    //
+    //
+    //Seeker JobSearch - Job Card
+    {
+      "key": "job_card_new_job",
+      "en": "New",
+      "la": "ວຽກໃຫມ່",
+    },
+
 //
 //
 //

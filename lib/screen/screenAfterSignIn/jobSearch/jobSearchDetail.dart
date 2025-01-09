@@ -54,6 +54,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
 
   String _callBackJobSearchId = "";
   dynamic _callBackIsSave;
+  dynamic _callBackIsNewJob;
 
   // String _checkNewJobFunctioin = "";
   String _checkStatusCallBack = "";
@@ -81,11 +82,12 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     _closeDate = _jobDetail['closingDate'];
     _isFollow = _jobDetail["follow"];
 
-    if (widget.status == true) {
-      setState(() {
-        _callBackJobSearchId = widget.jobId;
-      });
-    }
+    // print("status" + widget.status.toString());
+    // if (widget.status == true) {
+    //   setState(() {
+    //     _callBackJobSearchId = widget.jobId;
+    //   });
+    // }
 
     //
     //Open Date
@@ -117,8 +119,10 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     _allOnlineJob = res['allOnlineJob'];
     _isLoading = false;
 
+    print("newJob" + widget.newJob.toString());
     if (widget.newJob == true) {
-      // _checkStatusCallBack = "Success";
+      _callBackJobSearchId = widget.jobId;
+      _callBackIsNewJob = false;
     }
 
     if (mounted) {
@@ -448,7 +452,8 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                   Navigator.of(context).pop([
                                     _checkStatusCallBack,
                                     _callBackJobSearchId,
-                                    _callBackIsSave
+                                    _callBackIsSave,
+                                    _callBackIsNewJob,
                                   ]);
                                 },
                                 borderRadius: BorderRadius.circular(100),

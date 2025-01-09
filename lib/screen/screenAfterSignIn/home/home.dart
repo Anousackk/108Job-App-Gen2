@@ -514,6 +514,7 @@ class _MainHomeState extends State<MainHome> {
   String _totalMessageUnRead = "";
   String _imagePopupBanner = "";
   String _urlPopupBanner = "";
+  String _modelName = "";
   bool _showBanner = true;
 
   //error setState() called after dispose(). it can help!!!
@@ -522,6 +523,62 @@ class _MainHomeState extends State<MainHome> {
     if (mounted) {
       super.setState(fn);
     }
+  }
+
+  loadInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      print('iOS-running name: ${iosInfo.name}');
+      print('iOS-running systemVersion: '
+              '${iosInfo.systemName}' +
+          ' ' +
+          '${iosInfo.systemVersion}');
+      var name = iosInfo.name;
+      var systemName = iosInfo.systemName;
+      var systemVersion = iosInfo.systemVersion;
+      var productName = iosInfo.utsname.productName;
+      setState(() {
+        _modelName = productName.toString();
+      });
+    } else if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      print('Running on version.release: ${androidInfo.version.release}');
+      print('Running on model: ' "${androidInfo.brand}" +
+          ' ' +
+          "${androidInfo.model}");
+
+      var brand = androidInfo.brand.toString();
+      var model = androidInfo.model.toString();
+      var versionRelease = androidInfo.version.release.toString();
+      setState(() {
+        _modelName = brand.toString() + ' ' + model.toString();
+      });
+    }
+  }
+
+  logOut() async {
+    await loadInfo();
+    var res = await postData(apiLogoutSeeker, {
+      "notifyToken": [
+        {"model": _modelName}
+      ]
+    });
+
+    print("logout: " + res.toString());
+  }
+
+  removeSharedPreTokenAndLogOut() async {
+    final prefs = await SharedPreferences.getInstance();
+    await logOut();
+
+    var removeEmployeeToken = await prefs.remove('employeeToken');
+    AuthService().facebookSignOut();
+    AuthService().googleSignOut();
+
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => Login()), (route) => false);
   }
 
   fcm() async {
@@ -555,6 +612,12 @@ class _MainHomeState extends State<MainHome> {
 
   fetchPopupBanner() async {
     var res = await postData(getPopupBanner, {});
+    if (res == 401) {
+      print("statusCode == 401");
+      await removeSharedPreTokenAndLogOut();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    }
     _listPopupBanner = res['info'];
     print("List popup banner " + _listPopupBanner.toString());
     if (_listPopupBanner.length > 0) {
@@ -572,6 +635,12 @@ class _MainHomeState extends State<MainHome> {
 
   fetchSpotLight() async {
     var res = await postData(getSpotLightEmployee, {});
+    if (res == 401) {
+      print("statusCode == 401");
+      await removeSharedPreTokenAndLogOut();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    }
     _listSpotLights = res['info'];
 
     if (mounted) {
@@ -581,6 +650,12 @@ class _MainHomeState extends State<MainHome> {
 
   fetchHiring() async {
     var res = await postData(getHiringEmployee, {});
+    if (res == 401) {
+      print("statusCode == 401");
+      await removeSharedPreTokenAndLogOut();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    }
     _listHirings = res['info'];
 
     if (mounted) {
@@ -616,7 +691,12 @@ class _MainHomeState extends State<MainHome> {
       String lang, List listValue, String resValue) async {
     var res =
         await fetchData(getReuseFilterJobSearchSeekerApi + "lang=${lang}");
-
+    if (res == 401) {
+      print("statusCode == 401");
+      await removeSharedPreTokenAndLogOut();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    }
     if (mounted) {
       setState(() {
         listValue.clear(); // Clear the existing list
@@ -648,6 +728,13 @@ class _MainHomeState extends State<MainHome> {
   fetchNotifications() async {
     var res = await postData(getNotificationsSeeker,
         {"page": 1, "perPage": 10, "type": "Notification_Page"});
+    if (res == 401) {
+      print("statusCode == 401");
+      await removeSharedPreTokenAndLogOut();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    }
+
     _totalNotiUnRead = res['unreadTotals'].toString();
 
     print("Noti page: ${_totalNotiUnRead}");
@@ -763,11 +850,12 @@ class _MainHomeState extends State<MainHome> {
   fetchDataApi() {
     getSharedPreferences();
     getTokenSharedPre();
+    fetchNotifications();
+
     // getProfileSeeker();
     fetchTopBanner();
     fetchSpotLight();
     fetchHiring();
-    fetchNotifications();
     fetchMessages();
   }
 

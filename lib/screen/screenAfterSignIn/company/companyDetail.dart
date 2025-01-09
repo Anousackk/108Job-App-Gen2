@@ -701,6 +701,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                       // color: AppColors.red,
                                     ),
                                     child: SingleChildScrollView(
+                                      physics: ClampingScrollPhysics(),
                                       scrollDirection: Axis.horizontal,
                                       child: Row(
                                         children: [

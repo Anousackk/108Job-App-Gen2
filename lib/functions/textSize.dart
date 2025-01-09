@@ -72,7 +72,7 @@ TextStyle bodyTextMiniSmall(
     fontFamily: fontFamily,
     fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
     color: textColor == null ? AppColors.fontDark : textColor,
-    fontSize: 10,
+    fontSize: 11,
   );
 }
 

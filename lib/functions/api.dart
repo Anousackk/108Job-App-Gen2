@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use, prefer_if_null_operators, prefer_if_null_operators, deprecated_member_use, avoid_print, avoid_print, avoid_print, deprecated_member_use
+// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use, prefer_if_null_operators, prefer_if_null_operators, deprecated_member_use, avoid_print, avoid_print, avoid_print, deprecated_member_use, avoid_print
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
@@ -186,7 +186,8 @@ fetchData(url) async {
 
   var res = await http.get(Uri.parse(url), headers: {
     "content-type": "application/json",
-    "authorization": "$employeeToken" ?? "",
+    "authorization":
+        employeeToken == null || employeeToken == "" ? "" : employeeToken,
   });
   if (res.statusCode == 200) {
     return jsonDecode(res.body);
@@ -196,9 +197,8 @@ fetchData(url) async {
     return jsonDecode(res.body);
   } else if (res.statusCode == 401) {
     return jsonDecode(res.statusCode.toString());
-    // return jsonDecode(res.body);
   } else {
-    throw Exception('Failed to load data');
+    return jsonDecode(res.body);
   }
 }
 
@@ -210,7 +210,8 @@ postData(url, bodyJsonDecode) async {
     Uri.parse(url),
     headers: <String, String>{
       "content-type": "application/json",
-      "authorization": "$employeeToken" ?? "",
+      "authorization":
+          employeeToken == null || employeeToken == "" ? "" : employeeToken,
     },
     body: jsonEncode(bodyJsonDecode),
   );
@@ -220,6 +221,8 @@ postData(url, bodyJsonDecode) async {
     return jsonDecode(res.body);
   } else if (res.statusCode == 409) {
     return jsonDecode(res.body);
+  } else if (res.statusCode == 401) {
+    return jsonDecode(res.statusCode.toString());
   } else {
     return jsonDecode(res.body);
   }
