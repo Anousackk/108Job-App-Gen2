@@ -12,7 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthService {
-  loginWithFacebook(BuildContext context) async {
+  loginWithFacebook(
+      BuildContext context, dynamic fcmToken, dynamic modelName) async {
     print("press facebook");
     // FacebookAuth.instance.login();
 
@@ -61,9 +62,21 @@ class AuthService {
                 var employeeToken = res["token"] ?? "";
 
                 //
+                //
                 //set token use shared preferences.
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.setString('employeeToken', employeeToken);
+
+                var resAddToken = await postData(apiAddTokenSeeker, {
+                  "notifyToken": [
+                    {
+                      "appToken": fcmToken,
+                      "model": modelName,
+                    }
+                  ]
+                });
+
+                print("login facebook add token success: ${resAddToken}");
 
                 Navigator.pushAndRemoveUntil(
                     context,
@@ -88,7 +101,8 @@ class AuthService {
     }
   }
 
-  loginWithGoogle(BuildContext context) async {
+  loginWithGoogle(
+      BuildContext context, dynamic fcmToken, dynamic modelName) async {
     try {
       //
       //
@@ -152,18 +166,25 @@ class AuthService {
           }
         });
 
-        // close alert dialog loading
-        if (res != null) {
-          Navigator.pop(context);
-        }
-
         if (res["token"] != null) {
           var employeeToken = res["token"] ?? "";
 
           //
+          //
           //set token use shared preferences.
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('employeeToken', employeeToken);
+
+          var resAddToken = await postData(apiAddTokenSeeker, {
+            "notifyToken": [
+              {
+                "appToken": fcmToken,
+                "model": modelName,
+              }
+            ]
+          });
+
+          print("login google add token success: ${resAddToken}");
 
           Navigator.pushAndRemoveUntil(
               context,
@@ -181,7 +202,8 @@ class AuthService {
     }
   }
 
-  loginWithApple(BuildContext context) async {
+  loginWithApple(
+      BuildContext context, dynamic fcmToken, dynamic modelName) async {
     final firebaseAuth = FirebaseAuth.instance;
     try {
       print("Login apple try");
@@ -251,20 +273,25 @@ class AuthService {
           }
         });
 
-        print(res);
-
-        // close alert dialog loading
-        if (res != null) {
-          Navigator.pop(context);
-        }
-
         if (res["token"] != null) {
           var employeeToken = res["token"] ?? "";
 
           //
+          //
           //set token use shared preferences.
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('employeeToken', employeeToken);
+
+          var resAddToken = await postData(apiAddTokenSeeker, {
+            "notifyToken": [
+              {
+                "appToken": fcmToken,
+                "model": modelName,
+              }
+            ]
+          });
+
+          print("login apple add token success: ${resAddToken}");
 
           Navigator.pushAndRemoveUntil(
               context,

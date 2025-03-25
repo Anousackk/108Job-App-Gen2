@@ -81,25 +81,25 @@ class _MainBodyState extends State<MainBody> {
         "title": 'Hide Job',
         "text":
             'If you are focusing on relevant experience, you can simply leave off the unrelated job entirely.',
-        "image": 'assets/image/Typeso-black.jpeg',
+        "image": '',
       },
       {
         "title": 'Save Job',
         "text":
             'Provide you with the capability to shortlist this role for your consideration in the future.',
-        "image": 'assets/image/Typeso-green.jpeg',
+        "image": '',
       },
       {
         "title": 'Job Alert',
         "text":
             'Job alerts deliver relevant opportunities directly to your inbox, saving you valuable time and effort.',
-        "image": 'assets/image/Typeso-white.jpeg',
+        "image": '',
       },
       {
         "title": 'Instant Apply',
         "text":
             "Increase your chances of landing an interview by applying instantly to relevant jobs. Instant Apply saves you time and ensures your application is received by the employer promptly.",
-        "image": 'assets/image/Typeso-black.jpeg',
+        "image": '',
       }
     ];
 

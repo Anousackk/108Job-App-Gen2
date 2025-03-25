@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, sized_box_for_whitespace
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, sized_box_for_whitespace, prefer_adjacent_string_concatenation
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -389,16 +389,16 @@ class _LanguageState extends State<Language> {
                                 _isValidateValue = true;
                               });
                             } else {
+                              setState(() {
+                                _isValidateValue = false;
+                              });
                               addLanguageSeeker();
                             }
                           } else {
                             print("invalid validate form");
-                            if (_selectedLanguage == "" ||
-                                _selectedProficiency == "") {
-                              setState(() {
-                                _isValidateValue = true;
-                              });
-                            }
+                            setState(() {
+                              _isValidateValue = true;
+                            });
                           }
                         },
                       ),
@@ -439,6 +439,8 @@ class _LanguageState extends State<Language> {
       "LanguageId": _selectedLanguage,
       "LanguageLevelId": _selectedProficiency
     });
+    print("languageSkill: " + "${res['languageSkill']}");
+
     if (res['languageSkill'] != null) {
       Navigator.pop(context);
     }

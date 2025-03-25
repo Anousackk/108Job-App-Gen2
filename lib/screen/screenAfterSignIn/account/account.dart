@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, prefer_if_null_operators, non_constant_identifier_names, unused_local_variable, unused_field, unnecessary_string_interpolations, prefer_final_fields, unnecessary_null_in_if_null_operators, avoid_print
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, prefer_if_null_operators, non_constant_identifier_names, unused_local_variable, unused_field, unnecessary_string_interpolations, prefer_final_fields, unnecessary_null_in_if_null_operators, avoid_print, prefer_adjacent_string_concatenation
 
 import 'dart:io';
 
@@ -42,6 +42,7 @@ class _AccountState extends State<Account> {
   int _appliedJobs = 0;
   int _epmSavedSeeker = 0;
   int _submitedCV = 0;
+  int _totalPoint = 0;
 
   dynamic _workPreferences;
   dynamic _fileValue;
@@ -79,11 +80,13 @@ class _AccountState extends State<Account> {
 
   getTotalJobSeeker() async {
     var res = await fetchData(getTotalMyJobSeekerApi);
+    print("${res}");
 
     _savedJobs = int.parse(res['saveJobTotals'].toString());
     _appliedJobs = int.parse(res['appliedJobTotals'].toString());
     _submitedCV = int.parse(res['submittedTotals'].toString());
     _epmSavedSeeker = int.parse(res['empViewTotals'].toString());
+    _totalPoint = int.parse(res['totalPoint'].toString());
 
     if (mounted) {
       setState(() {});
@@ -93,7 +96,9 @@ class _AccountState extends State<Account> {
   Future pickImageGallery(ImageSource source) async {
     var statusPhotos = await Permission.photos.status;
     var statusMediaLibrary = await Permission.mediaLibrary.status;
-
+    //
+    //
+    //Pick image type IOS
     if (Platform.isIOS) {
       print("Platform isIOS");
       print(statusPhotos);
@@ -105,11 +110,41 @@ class _AccountState extends State<Account> {
       }
       if (statusPhotos.isGranted) {
         print("photos isGranted");
-
         final ImagePicker _picker = ImagePicker();
         final XFile? image = await _picker.pickImage(source: source);
 
+        //
+        //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
         if (image == null) return;
+
+        setState(() {
+          _imageLoading = true;
+        });
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
+        final allowedExtensions = ['png', 'jpg', 'jpeg'];
+        final fileExtension = image.path.split('.').last.toLowerCase();
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
+        if (!allowedExtensions.contains(fileExtension)) {
+          print("valUploadFile is null");
+          setState(() {
+            _imageLoading = false;
+          });
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return CustAlertDialogWarningWithoutBtn(
+                title: "warning".tr,
+                contentText: "profile_image_support".tr,
+              );
+            },
+          );
+          return;
+        }
+
         File fileTemp = File(image.path);
         setState(() {
           _image = fileTemp;
@@ -118,21 +153,46 @@ class _AccountState extends State<Account> {
         var strImage = image.path;
 
         print("strImage: " + strImage.toString());
-        _imageLoading = true;
 
+        //
+        //ຖ້າມີຟາຍຮູບ _image
         if (_image != null) {
           //
           //api upload profile seeker
-          var value = await upLoadFile(strImage, uploadProfileApiSeeker);
-          _fileValue = value['file'];
+          var valUploadFile =
+              await upLoadFile(strImage, uploadProfileApiSeeker);
 
-          print("_fileValue: " + _fileValue.toString());
+          //
+          //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
+          //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
+          if (valUploadFile != null) {
+            print("if valUploadFile: " + valUploadFile.toString());
 
-          if (_fileValue != null || _fileValue != "") {
-            //
-            //
-            //api upload or update profile image seeker
-            uploadOrUpdateProfileImageSeeker();
+            _fileValue = valUploadFile['file'];
+            print("fileValue: " + _fileValue.toString());
+
+            if (_fileValue != null || _fileValue != "") {
+              //
+              //api upload or update profile image seeker
+              uploadOrUpdateProfileImageSeeker();
+            }
+          }
+          //
+          //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
+          else {
+            print("else valUploadFile: " + valUploadFile.toString());
+            setState(() {
+              _imageLoading = false;
+            });
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return CustAlertDialogWarningWithoutBtn(
+                  title: "warning".tr,
+                  contentText: "profile_image_size".tr,
+                );
+              },
+            );
           }
         }
       }
@@ -173,37 +233,96 @@ class _AccountState extends State<Account> {
           await openAppSettings();
         }
       }
-    } else if (Platform.isAndroid) {
+    }
+    //
+    //
+    //Pick image type Android
+    else if (Platform.isAndroid) {
       print("Platform isAndroid");
       if (statusMediaLibrary.isGranted) {
         print("mediaLibrary isGranted");
         final ImagePicker _picker = ImagePicker();
         final XFile? image = await _picker.pickImage(source: source);
 
+        //
+        //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
         if (image == null) return;
+
+        setState(() {
+          _imageLoading = true;
+        });
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
+        final allowedExtensions = ['png', 'jpg', 'jpeg'];
+        final fileExtension = image.path.split('.').last.toLowerCase();
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
+        if (!allowedExtensions.contains(fileExtension)) {
+          print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
+          setState(() {
+            _imageLoading = false;
+          });
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return CustAlertDialogWarningWithoutBtn(
+                title: "warning".tr,
+                contentText: "profile_image_support".tr,
+              );
+            },
+          );
+          return;
+        }
+
         File fileTemp = File(image.path);
         setState(() {
           _image = fileTemp;
         });
-
         var strImage = image.path;
 
-        print(strImage);
+        print("strImage: " + strImage.toString());
 
-        _imageLoading = true;
-
+        //
+        //ຖ້າມີຟາຍຮູບ _image
         if (_image != null) {
           //
           //api upload profile seeker
-          var value = await upLoadFile(strImage, uploadProfileApiSeeker);
-          _fileValue = value['file'];
-          print(_fileValue);
+          var valUploadFile =
+              await upLoadFile(strImage, uploadProfileApiSeeker);
 
-          if (_fileValue != null || _fileValue != "") {
-            //
-            //
-            //api upload or update profile image seeker
-            uploadOrUpdateProfileImageSeeker();
+          //
+          //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
+          //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
+          if (valUploadFile != null) {
+            print("if valUploadFile: " + valUploadFile.toString());
+
+            _fileValue = valUploadFile['file'];
+            print("fileValue: " + _fileValue.toString());
+
+            if (_fileValue != null || _fileValue != "") {
+              //
+              //api upload or update profile image seeker
+              uploadOrUpdateProfileImageSeeker();
+            }
+          }
+          //
+          //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
+          else {
+            print("else valUploadFile: " + valUploadFile.toString());
+            setState(() {
+              _imageLoading = false;
+            });
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return CustAlertDialogWarningWithoutBtn(
+                  title: "warning".tr,
+                  contentText: "profile_image_size".tr,
+                );
+              },
+            );
           }
         }
       }
@@ -254,6 +373,7 @@ class _AccountState extends State<Account> {
         //   systemOverlayStyle: SystemUiOverlayStyle.light,
         //   backgroundColor: AppColors.backgroundAppBar,
         // ),
+
         body: SafeArea(
           child: _isLoading
               ? Container(
@@ -383,7 +503,7 @@ class _AccountState extends State<Account> {
 
                                         //
                                         //
-                                        //Gallery icon at the bottom right corner
+                                        //Gallery icon to choose upload image profile
                                         Positioned(
                                           bottom: 0,
                                           right: 5,
@@ -546,6 +666,36 @@ class _AccountState extends State<Account> {
                                 )
                               ],
                             ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                //
+                                //
+                                //Applied job
+                                Expanded(
+                                  flex: 1,
+                                  child: StatisicBox(
+                                    boxColor: AppColors.lightYellow,
+                                    amount: "${_totalPoint}",
+                                    text: "member_point".tr,
+                                    press: () {},
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+
+                                //
+                                //
+                                //Submitted CV
+                                Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                      height: 110,
+                                      width: double.infinity,
+                                    ))
+                              ],
+                            ),
                             SizedBox(height: 20),
 
                             //
@@ -615,12 +765,17 @@ class _AccountState extends State<Account> {
                                   MaterialPageRoute(
                                     builder: (context) => MyProfile(),
                                   ),
-                                );
-                                // .then((value) {
-                                //   if (value == "Success") {
-                                //     getProfileSeeker();
-                                //   }
-                                // });
+                                ).then((value) {
+                                  // fetchNotifierProvider();
+                                  if (value != "") {
+                                    print(
+                                        "navigator.pop imageSrc from MyProfile scree :" +
+                                            "${value}");
+                                    setState(() {
+                                      _imageSrc = value;
+                                    });
+                                  }
+                                });
                               },
                               validateText: Container(),
                             ),

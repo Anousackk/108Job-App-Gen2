@@ -694,7 +694,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                     //                                           )
                                     //                                         : Image
                                     //                                             .network(
-                                    //                                             "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${c['logo']}",
+                                    //                                             "https://storage.googleapis.com/108-bucket/${c['logo']}",
                                     //                                             fit: BoxFit
                                     //                                                 .contain,
                                     //                                             errorBuilder: (context,

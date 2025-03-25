@@ -400,7 +400,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         ),
                                       )
                                     : Image.network(
-                                        "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_cardCover}",
+                                        "https://storage.googleapis.com/108-bucket/${_cardCover}",
                                         fit: BoxFit.cover,
                                         errorBuilder:
                                             (context, error, stackTrace) {
@@ -1150,7 +1150,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                       //     AppColors.red,
                                                                       child: Image
                                                                           .network(
-                                                                        "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_galleryImage[index]}",
+                                                                        "https://storage.googleapis.com/108-bucket/${_galleryImage[index]}",
                                                                         fit: BoxFit
                                                                             .contain,
                                                                       ),
@@ -1915,7 +1915,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                 fit: BoxFit.contain,
                                               )
                                             : Image.network(
-                                                "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                "https://storage.googleapis.com/108-bucket/${_logo}",
                                                 fit: BoxFit.contain,
                                                 errorBuilder: (context, error,
                                                     stackTrace) {
@@ -1931,7 +1931,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         //   )
                                         // : Image(
                                         //     image: NetworkImage(
-                                        //         "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}"),
+                                        //         "https://storage.googleapis.com/108-bucket/${_logo}"),
                                         //     fit: BoxFit.contain,
                                         //   ),
                                       ),

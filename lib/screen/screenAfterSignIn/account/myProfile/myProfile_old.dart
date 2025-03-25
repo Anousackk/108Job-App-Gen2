@@ -1295,7 +1295,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                   // Button(
                   //   text: "Request for review",
                   //   fontWeight: FontWeight.bold,
-                  //   colorButton: AppColors.buttonSecondary,
+                  //   buttonColor: AppColors.buttonSecondary,
                   // ),
                   // SizedBox(
                   //   height: 5,
@@ -1514,13 +1514,13 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               },
                             ),
                             CustomButtonIconText(
-                              colorButton: AppColors.lightPrimary,
-                              widgetFaIcon: FaIcon(
+                              buttonColor: AppColors.lightPrimary,
+                              widgetPrefixIcon: FaIcon(
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
                               text: "add".tr + " " + 'work history'.tr,
-                              colorText: AppColors.fontPrimary,
+                              textColor: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
                                   context,
@@ -1726,13 +1726,13 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               },
                             ),
                             CustomButtonIconText(
-                              colorButton: AppColors.lightPrimary,
-                              widgetFaIcon: FaIcon(
+                              buttonColor: AppColors.lightPrimary,
+                              widgetPrefixIcon: FaIcon(
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
                               text: "add".tr + " " + "education".tr,
-                              colorText: AppColors.fontPrimary,
+                              textColor: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
                                   context,
@@ -1877,13 +1877,13 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               },
                             ),
                             CustomButtonIconText(
-                              colorButton: AppColors.lightPrimary,
-                              widgetFaIcon: FaIcon(
+                              buttonColor: AppColors.lightPrimary,
+                              widgetPrefixIcon: FaIcon(
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
                               text: "add".tr + " " + "language_skill".tr,
-                              colorText: AppColors.fontPrimary,
+                              textColor: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
                                   context,
@@ -2024,13 +2024,13 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               },
                             ),
                             CustomButtonIconText(
-                              colorButton: AppColors.lightPrimary,
-                              widgetFaIcon: FaIcon(
+                              buttonColor: AppColors.lightPrimary,
+                              widgetPrefixIcon: FaIcon(
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
                               text: "add".tr + " " + 'skill'.tr,
-                              colorText: AppColors.fontPrimary,
+                              textColor: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
                                   context,

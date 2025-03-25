@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, sized_box_for_whitespace
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, sized_box_for_whitespace, prefer_adjacent_string_concatenation
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -49,12 +49,26 @@ class _EducationState extends State<Education> {
   dynamic _fromYear;
   dynamic _toYear;
   bool _isValidateValue = false;
+  bool _isCurrentlyStudying = false;
 
   //
   //value display(ສະເພາະສະແດງ)
   String _degreeName = "";
 
   DateTime _dateTimeNow = DateTime.now();
+
+  getSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    var getLanguageSharePref = prefs.getString('setLanguage');
+    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // print("local " + getLanguageSharePref.toString());
+    // print("api " + getLanguageApiSharePref.toString());
+
+    setState(() {
+      _localeLanguageApi = getLanguageApiSharePref.toString();
+    });
+    getReuseTypeSeeker(_localeLanguageApi, 'Degree');
+  }
 
   setValueGetById() {
     setState(() {
@@ -70,6 +84,7 @@ class _EducationState extends State<Education> {
       _collage = i['school'];
       _selectedDegree = i['qualifications']['_id'];
       _degreeName = i['qualifications']['name'];
+      _isCurrentlyStudying = i['currentlyStudying'] as bool;
 
       _fromYear =
           i['startYear'] == null ? formattedStartDateUtc : i['startYear'];
@@ -100,17 +115,66 @@ class _EducationState extends State<Education> {
     });
   }
 
-  getSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    var getLanguageSharePref = prefs.getString('setLanguage');
-    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
-    // print("local " + getLanguageSharePref.toString());
-    // print("api " + getLanguageApiSharePref.toString());
+  getReuseTypeSeeker(String lang, String type) async {
+    var res =
+        await fetchData(getReuseTypeApiSeeker + "lang=${lang}&type=${type}");
+    _listDegrees = res['seekerReuse'];
 
-    setState(() {
-      _localeLanguageApi = getLanguageApiSharePref.toString();
+    setState(() {});
+  }
+
+  addEducationSeeker() async {
+    //
+    //
+    //ສະແດງ AlertDialog Loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomLoadingLogoCircle();
+      },
+    );
+
+    var res = await postData(addEducationSeekerApi, {
+      "_id": _id,
+      "subject": _subject,
+      "startYear": _fromYear.toString(),
+      "endYear": _toYear == null ? "" : _toYear.toString(),
+      "school": _collage,
+      "qualifications": _selectedDegree,
+      "currentlyStudying": _isCurrentlyStudying
     });
-    getReuseTypeSeeker(_localeLanguageApi, 'Degree');
+    print("education: " + "${res['education']}");
+
+    if (res['education'] != null) {
+      Navigator.pop(context);
+    }
+
+    if (res['education'] != null) {
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "save".tr + " " + "successful".tr,
+            contentText:
+                "save".tr + " " + "education".tr + " " + "successful".tr,
+            textButton: "ok".tr,
+            press: () {
+              Navigator.pop(context);
+              Navigator.of(context).pop("Submitted");
+            },
+          );
+        },
+      );
+    }
+  }
+
+  pressCurrentJobCheckBox() {
+    setState(() {
+      _isCurrentlyStudying = !_isCurrentlyStudying;
+      _toYear = null;
+    });
   }
 
   @override
@@ -229,6 +293,14 @@ class _EducationState extends State<Education> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Text("${_id}"),
+                              // Text("${_subject}"),
+                              // Text("${_fromYear}"),
+                              // Text("${_toYear}"),
+                              // Text("${_collage}"),
+                              // Text("${_selectedDegree}"),
+                              // Text("${_isCurrentlyStudying}"),
+
                               SizedBox(
                                 height: 30,
                               ),
@@ -397,6 +469,50 @@ class _EducationState extends State<Education> {
 
                               //
                               //
+                              //CheckBox current study
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      pressCurrentJobCheckBox();
+                                    },
+                                    child: Container(
+                                      height: 20,
+                                      width: 20,
+                                      decoration: BoxDecoration(
+                                        color: _isCurrentlyStudying
+                                            ? AppColors.iconPrimary
+                                            : AppColors.iconLight,
+                                        border: Border.all(
+                                            color: _isCurrentlyStudying
+                                                ? AppColors.borderPrimary
+                                                : AppColors.borderDark),
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
+                                      child: _isCurrentlyStudying
+                                          ? Align(
+                                              alignment: Alignment.center,
+                                              child: FaIcon(
+                                                FontAwesomeIcons.check,
+                                                size: 15,
+                                                color: AppColors.iconLight,
+                                              ),
+                                            )
+                                          : Container(),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("study_current".tr),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+
+                              //
+                              //
                               //From DateTime(Year)
                               Text(
                                 "education_from_date".tr,
@@ -512,157 +628,177 @@ class _EducationState extends State<Education> {
                               //
                               //
                               //To DateTime(Year)
-                              Text(
-                                "education_to_date".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-
-                              //
-                              //
-                              //ຖ້າມີຂໍ້ມູນ _fromYear
-                              //From DateTime(Year) selection date
-                              _fromYear != null
-                                  ? BoxDecorationInput(
-                                      mainAxisAlignmentTextIcon:
-                                          MainAxisAlignment.start,
-                                      colorInput: AppColors.backgroundWhite,
-                                      colorBorder: _isValidateValue == true &&
-                                              _toYear == null
-                                          ? AppColors.borderDanger
-                                          : AppColors.borderSecondary,
-                                      paddingFaIcon: EdgeInsets.symmetric(
-                                          horizontal: 1.7.w),
-                                      fontWeight: _toYear == null
-                                          ? FontWeight.bold
-                                          : null,
-                                      widgetIconActive: FaIcon(
-                                        FontAwesomeIcons.calendar,
-                                        color: AppColors.iconGrayOpacity,
-                                        size: IconSize.sIcon,
-                                      ),
-                                      press: () {
-                                        FocusScope.of(context)
-                                            .requestFocus(focusNode);
-
-                                        // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
-                                        var formatDateTimeNow =
-                                            DateFormat("yyyy-MM-dd")
-                                                .parse(_dateTimeNow.toString());
-
-                                        setState(() {
-                                          _toYear == null
-                                              ? _toYear = _fromYear
-                                              : _toYear;
-                                        });
-
-                                        showDialogDateTime(
-                                            context,
-                                            Text(
-                                              "education_to_date".tr,
-                                              style: bodyTextNormal(
-                                                  null, null, FontWeight.bold),
-                                            ),
-                                            CupertinoDatePicker(
-                                              initialDateTime: _toYear == null
-                                                  ? _fromYear
-                                                  : _toYear,
-                                              mode: CupertinoDatePickerMode
-                                                  .monthYear,
-                                              dateOrder:
-                                                  DatePickerDateOrder.ymd,
-                                              maximumDate: formatDateTimeNow,
-                                              minimumDate: _fromYear,
-                                              use24hFormat: true,
-                                              onDateTimeChanged:
-                                                  (DateTime newDate) {
-                                                setState(() {
-                                                  _toYear = newDate;
-                                                });
-                                              },
-                                            )
-                                            // SimpleButton(
-                                            //   text: 'Cancel',
-                                            //   colorButton: AppColors.buttonSecondary,
-                                            //   colorText: AppColors.fontWhite,
-                                            //   press: () {
-                                            //     Navigator.of(context).pop();
-                                            //   },
-                                            // ),
-                                            // SimpleButton(
-                                            //   text: 'Confirm',
-                                            //   press: () {
-                                            //     Navigator.of(context).pop();
-                                            //   },
-                                            // ),
-                                            );
-                                      },
-                                      text: _toYear == null
-                                          ? "education_to_date".tr
-                                          : "${_toYear?.year}",
-                                      colorText: _toYear == null
-                                          ? AppColors.fontGreyOpacity
-                                          : AppColors.fontDark,
-                                      validateText: _isValidateValue == true &&
-                                              _toYear == null
-                                          ? Container(
-                                              width: double.infinity,
-                                              padding: EdgeInsets.only(
-                                                left: 10,
-                                                top: 5,
-                                              ),
-                                              child: Text(
-                                                "required".tr,
-                                                style: bodyTextSmall(null,
-                                                    AppColors.fontDanger, null),
-                                              ),
-                                            )
-                                          : Container(),
-                                    )
-
-                                  //
-                                  //
-                                  //ຖ້າຍັງບໍ່ມີຂໍ້ມູນ _fromYear
-                                  //From DateTime(Year) selection date
-                                  : BoxDecorationInput(
-                                      mainAxisAlignmentTextIcon:
-                                          MainAxisAlignment.start,
-                                      colorBorder: _isValidateValue == true &&
-                                              _toYear == null
-                                          ? AppColors.borderDanger
-                                          : AppColors.borderSecondary,
-                                      paddingFaIcon: EdgeInsets.symmetric(
-                                          horizontal: 1.7.w),
-                                      fontWeight: FontWeight.bold,
-                                      colorText: AppColors.fontGreyOpacity,
-                                      widgetIconActive: FaIcon(
-                                        FontAwesomeIcons.calendar,
-                                        color: AppColors.iconGrayOpacity,
-                                        size: IconSize.sIcon,
-                                      ),
-                                      text: "education_to_date".tr,
-                                      validateText: _isValidateValue == true &&
-                                              _toYear == null
-                                          ? Container(
-                                              width: double.infinity,
-                                              padding: EdgeInsets.only(
-                                                left: 10,
-                                                top: 5,
-                                              ),
-                                              child: Text(
-                                                "required".tr,
-                                                style: bodyTextSmall(null,
-                                                    AppColors.fontDanger, null),
-                                              ),
-                                            )
-                                          : Container(),
+                              if (!_isCurrentlyStudying)
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "education_to_date".tr,
+                                      style: bodyTextNormal(
+                                          null, null, FontWeight.bold),
                                     ),
-                              SizedBox(
-                                height: 20,
-                              )
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+
+                                    //
+                                    //
+                                    //ຖ້າມີຂໍ້ມູນ _fromYear
+                                    //From DateTime(Year) selection date
+                                    _fromYear != null
+                                        ? BoxDecorationInput(
+                                            mainAxisAlignmentTextIcon:
+                                                MainAxisAlignment.start,
+                                            colorInput:
+                                                AppColors.backgroundWhite,
+                                            colorBorder:
+                                                _isValidateValue == true &&
+                                                        _toYear == null
+                                                    ? AppColors.borderDanger
+                                                    : AppColors.borderSecondary,
+                                            paddingFaIcon: EdgeInsets.symmetric(
+                                                horizontal: 1.7.w),
+                                            fontWeight: _toYear == null
+                                                ? FontWeight.bold
+                                                : null,
+                                            widgetIconActive: FaIcon(
+                                              FontAwesomeIcons.calendar,
+                                              color: AppColors.iconGrayOpacity,
+                                              size: IconSize.sIcon,
+                                            ),
+                                            press: () {
+                                              FocusScope.of(context)
+                                                  .requestFocus(focusNode);
+
+                                              // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
+                                              var formatDateTimeNow =
+                                                  DateFormat("yyyy-MM-dd")
+                                                      .parse(_dateTimeNow
+                                                          .toString());
+
+                                              setState(() {
+                                                _toYear == null
+                                                    ? _toYear = _fromYear
+                                                    : _toYear;
+                                              });
+
+                                              showDialogDateTime(
+                                                  context,
+                                                  Text(
+                                                    "education_to_date".tr,
+                                                    style: bodyTextNormal(null,
+                                                        null, FontWeight.bold),
+                                                  ),
+                                                  CupertinoDatePicker(
+                                                    initialDateTime:
+                                                        _toYear == null
+                                                            ? _fromYear
+                                                            : _toYear,
+                                                    mode:
+                                                        CupertinoDatePickerMode
+                                                            .monthYear,
+                                                    dateOrder:
+                                                        DatePickerDateOrder.ymd,
+                                                    maximumDate:
+                                                        formatDateTimeNow,
+                                                    minimumDate: _fromYear,
+                                                    use24hFormat: true,
+                                                    onDateTimeChanged:
+                                                        (DateTime newDate) {
+                                                      setState(() {
+                                                        _toYear = newDate;
+                                                      });
+                                                    },
+                                                  )
+                                                  // SimpleButton(
+                                                  //   text: 'Cancel',
+                                                  //   colorButton: AppColors.buttonSecondary,
+                                                  //   colorText: AppColors.fontWhite,
+                                                  //   press: () {
+                                                  //     Navigator.of(context).pop();
+                                                  //   },
+                                                  // ),
+                                                  // SimpleButton(
+                                                  //   text: 'Confirm',
+                                                  //   press: () {
+                                                  //     Navigator.of(context).pop();
+                                                  //   },
+                                                  // ),
+                                                  );
+                                            },
+                                            text: _toYear == null
+                                                ? "education_to_date".tr
+                                                : "${_toYear?.year}",
+                                            colorText: _toYear == null
+                                                ? AppColors.fontGreyOpacity
+                                                : AppColors.fontDark,
+                                            validateText: _isValidateValue ==
+                                                        true &&
+                                                    _toYear == null
+                                                ? Container(
+                                                    width: double.infinity,
+                                                    padding: EdgeInsets.only(
+                                                      left: 10,
+                                                      top: 5,
+                                                    ),
+                                                    child: Text(
+                                                      "required".tr,
+                                                      style: bodyTextSmall(
+                                                          null,
+                                                          AppColors.fontDanger,
+                                                          null),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          )
+
+                                        //
+                                        //
+                                        //ຖ້າຍັງບໍ່ມີຂໍ້ມູນ _fromYear
+                                        //From DateTime(Year) selection date
+                                        : BoxDecorationInput(
+                                            mainAxisAlignmentTextIcon:
+                                                MainAxisAlignment.start,
+                                            colorBorder:
+                                                _isValidateValue == true &&
+                                                        _toYear == null
+                                                    ? AppColors.borderDanger
+                                                    : AppColors.borderSecondary,
+                                            paddingFaIcon: EdgeInsets.symmetric(
+                                                horizontal: 1.7.w),
+                                            fontWeight: FontWeight.bold,
+                                            colorText:
+                                                AppColors.fontGreyOpacity,
+                                            widgetIconActive: FaIcon(
+                                              FontAwesomeIcons.calendar,
+                                              color: AppColors.iconGrayOpacity,
+                                              size: IconSize.sIcon,
+                                            ),
+                                            text: "education_to_date".tr,
+                                            validateText: _isValidateValue ==
+                                                        true &&
+                                                    _toYear == null
+                                                ? Container(
+                                                    width: double.infinity,
+                                                    padding: EdgeInsets.only(
+                                                      left: 10,
+                                                      top: 5,
+                                                    ),
+                                                    child: Text(
+                                                      "required".tr,
+                                                      style: bodyTextSmall(
+                                                          null,
+                                                          AppColors.fontDanger,
+                                                          null),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                )
                             ],
                           ),
                         ),
@@ -685,7 +821,27 @@ class _EducationState extends State<Education> {
                           FocusScope.of(context).requestFocus(focusNode);
                           if (formkey.currentState!.validate()) {
                             print("check for formkey.currentState!.validate()");
-                            setState(() {
+                            //
+                            //_isCurrentlyStudying = true ໃຫ້ກວດແຕ່ຟິວ _fromYear
+                            if (_isCurrentlyStudying) {
+                              print("CurrentlyStudying: " +
+                                  "${_isCurrentlyStudying}");
+                              if (_selectedDegree == "" || _fromYear == null) {
+                                setState(() {
+                                  _isValidateValue = true;
+                                });
+                              } else {
+                                setState(() {
+                                  _isValidateValue = false;
+                                });
+                                addEducationSeeker();
+                              }
+                            }
+                            //
+                            //_isCurrentlyStudying = false ໃຫ້ກວດຟິວ _fromYear and _toYear
+                            else {
+                              print("CurrentlyStudying: " +
+                                  "${_isCurrentlyStudying}");
                               if (_selectedDegree == "" ||
                                   _fromYear == null ||
                                   _toYear == null) {
@@ -693,18 +849,17 @@ class _EducationState extends State<Education> {
                                   _isValidateValue = true;
                                 });
                               } else {
+                                setState(() {
+                                  _isValidateValue = false;
+                                });
                                 addEducationSeeker();
                               }
-                            });
+                            }
                           } else {
                             print("invalid validate form");
-                            if (_selectedDegree == "" ||
-                                _fromYear == null ||
-                                _toYear == null) {
-                              setState(() {
-                                _isValidateValue = true;
-                              });
-                            }
+                            setState(() {
+                              _isValidateValue = true;
+                            });
                           }
                         },
                       ),
@@ -717,57 +872,5 @@ class _EducationState extends State<Education> {
         ),
       ),
     );
-  }
-
-  getReuseTypeSeeker(String lang, String type) async {
-    var res =
-        await fetchData(getReuseTypeApiSeeker + "lang=${lang}&type=${type}");
-    _listDegrees = res['seekerReuse'];
-
-    setState(() {});
-  }
-
-  addEducationSeeker() async {
-    //
-    //
-    //ສະແດງ AlertDialog Loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustomLoadingLogoCircle();
-      },
-    );
-
-    var res = await postData(addEducationSeekerApi, {
-      "_id": _id,
-      "subject": _subject,
-      "startYear": _fromYear.toString(),
-      "endYear": _toYear.toString(),
-      "school": _collage,
-      "qualifications": _selectedDegree
-    });
-    if (res['education'] != null) {
-      Navigator.pop(context);
-    }
-
-    if (res['education'] != null) {
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "save".tr + " " + "successful".tr,
-            contentText:
-                "save".tr + " " + "education".tr + " " + "successful".tr,
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-              Navigator.of(context).pop("Submitted");
-            },
-          );
-        },
-      );
-    }
   }
 }

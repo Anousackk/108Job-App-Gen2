@@ -628,7 +628,7 @@ packages:
     source: hosted
     version: "9.6.0"
   flutter_quill_delta_from_html:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_quill_delta_from_html
       sha256: "3cddb27325e005459fd2bbd6af4d813525d5b2bcb6e9828ab2b449f70eaf1147"
@@ -893,6 +893,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.15.4"
+  html_unescape:
+    dependency: transitive
+    description:
+      name: html_unescape
+      sha256: "15362d7a18f19d7b742ef8dcb811f5fd2a2df98db9f80ea393c075189e0b61e3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   http:
     dependency: transitive
     description:
@@ -1085,6 +1093,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   nm:
     dependency: transitive
     description:
@@ -1317,6 +1333,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.4"
+  provider:
+    dependency: "direct main"
+    description:
+      name: provider
+      sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.2"
+  quill_html_converter:
+    dependency: "direct main"
+    description:
+      name: quill_html_converter
+      sha256: "21a8b98126471eeaa7d2c2dd60a165a54f9b9493a09b5846eaae71d308a02e40"
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.5.15"
   quiver:
     dependency: transitive
     description:
@@ -1674,6 +1706,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.2.5"
+  vsc_quill_delta_to_html:
+    dependency: transitive
+    description:
+      name: vsc_quill_delta_to_html
+      sha256: "9aca60d53ed1b700e922dabff8cd8b3490daecbf99c258f19eb45820b794fa45"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
   web:
     dependency: transitive
     description:

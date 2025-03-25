@@ -67,26 +67,26 @@ class _LoginState extends State<Login> {
     }
   }
 
-  checkTokenLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    //
-    //get token from shared preferences.
-    var employeeToken = prefs.getString('employeeToken');
+  // checkTokenLogin() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   //
+  //   //get token from shared preferences.
+  //   var employeeToken = prefs.getString('employeeToken');
 
-    if (employeeToken != null) {
-      Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute(builder: (context) => Home()), (route) => false);
-    }
-    Future.delayed(Duration(seconds: 1), () {
-      setState(() {
-        _isLoading = false;
-      });
-    });
+  //   if (employeeToken != null) {
+  //     Navigator.pushAndRemoveUntil(context,
+  //         MaterialPageRoute(builder: (context) => Home()), (route) => false);
+  //   }
+  //   Future.delayed(Duration(seconds: 1), () {
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   });
 
-    if (mounted) {
-      setState(() {});
-    }
-  }
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+  // }
 
   fcm() async {
     await Firebase.initializeApp(
@@ -102,6 +102,10 @@ class _LoginState extends State<Login> {
 
   loadInfo() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    setState(() {
+      _isLoading = false;
+    });
 
     if (Platform.isIOS) {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
@@ -147,11 +151,11 @@ class _LoginState extends State<Login> {
       "password": _password,
     });
 
-    print('${res}');
+    print("login res: " + '${res}');
 
-    if (res != null) {
-      Navigator.pop(context);
-    }
+    // if (res != null) {
+    //   Navigator.pop(context);
+    // }
 
     if (res["token"] != null) {
       var employeeToken = res["token"] ?? "";
@@ -170,10 +174,14 @@ class _LoginState extends State<Login> {
         ]
       });
 
-      print("add token success: ${resAddToken}");
+      print("login number/email add token success: ${resAddToken}");
       Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(builder: (context) => Home()), (route) => false);
     } else if (res['message'] == "You are not a Seeker") {
+      //
+      //close first loading
+      Navigator.pop(context);
+
       await showDialog(
         context: context,
         builder: (context) {
@@ -184,6 +192,10 @@ class _LoginState extends State<Login> {
         },
       );
     } else if (res['message'] == "Incorrect email or mobile") {
+      //
+      //close first loading
+      Navigator.pop(context);
+
       await showDialog(
         context: context,
         builder: (context) {
@@ -194,6 +206,10 @@ class _LoginState extends State<Login> {
         },
       );
     } else if (res['message'] == "Incorrect password") {
+      //
+      //close first loading
+      Navigator.pop(context);
+
       await showDialog(
         context: context,
         builder: (context) {
@@ -235,8 +251,7 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    checkTokenLogin();
-
+    // checkTokenLogin();
     fcm();
     loadInfo();
 
@@ -274,7 +289,10 @@ class _LoginState extends State<Login> {
           ),
           body: _isLoading
               ? Container(
-                  color: AppColors.white,
+                  color: AppColors.backgroundWhite,
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: Center(child: CustomLoadingLogoCircle()),
                 )
               : Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
@@ -664,8 +682,8 @@ class _LoginState extends State<Login> {
                                         padding: EdgeInsets.all(13),
                                         StrImage: 'assets/image/google.png',
                                         press: () {
-                                          AuthService()
-                                              .loginWithGoogle(context);
+                                          AuthService().loginWithGoogle(
+                                              context, _fcmToken, _modelName);
                                         },
                                       ),
                                       SizedBox(
@@ -679,8 +697,8 @@ class _LoginState extends State<Login> {
                                         padding: EdgeInsets.all(13),
                                         StrImage: 'assets/image/facebook.png',
                                         press: () async {
-                                          AuthService()
-                                              .loginWithFacebook(context);
+                                          AuthService().loginWithFacebook(
+                                              context, _fcmToken, _modelName);
                                         },
                                       ),
 
@@ -701,8 +719,10 @@ class _LoginState extends State<Login> {
                                               StrImage:
                                                   'assets/image/apple.png',
                                               press: () async {
-                                                AuthService()
-                                                    .loginWithApple(context);
+                                                AuthService().loginWithApple(
+                                                    context,
+                                                    _fcmToken,
+                                                    _modelName);
                                               },
                                             ),
                                           ],

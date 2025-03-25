@@ -88,7 +88,7 @@ class _BoxDecInputHideCompaniesState extends State<BoxDecInputHideCompanies> {
                                 fit: BoxFit.contain,
                               )
                             : Image.network(
-                                "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${widget.prefixImage}",
+                                "https://storage.googleapis.com/108-bucket/${widget.prefixImage}",
                                 fit: BoxFit.contain,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Image.asset(

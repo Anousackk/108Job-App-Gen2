@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_const_declarations, unused_local_variable, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_final_fields, unused_field, avoid_print, unnecessary_overrides, file_names, unused_element
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_const_declarations, unused_local_variable, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_final_fields, unused_field, avoid_print, unnecessary_overrides, file_names, unused_element, prefer_is_empty
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -446,7 +446,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                   ),
                                                 )
                                               : Image.network(
-                                                  "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_cardCover}",
+                                                  "https://storage.googleapis.com/108-bucket/${_cardCover}",
                                                   fit: BoxFit.cover,
                                                   errorBuilder: (context, error,
                                                       stackTrace) {
@@ -532,7 +532,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                       fit: BoxFit.contain,
                                                     )
                                                   : Image.network(
-                                                      "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                      "https://storage.googleapis.com/108-bucket/${_logo}",
                                                       fit: BoxFit.contain,
                                                       errorBuilder: (context,
                                                           error, stackTrace) {
@@ -617,7 +617,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                               //                             fit: BoxFit.contain,
                               //                           )
                               //                         : Image.network(
-                              //                             "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                              //                             "https://storage.googleapis.com/108-bucket/${_logo}",
                               //                             fit: BoxFit.contain,
                               //                             errorBuilder:
                               //                                 (context, error,
@@ -1341,8 +1341,15 @@ class _CompanyDetailState extends State<CompanyDetail>
                                           Container(
                                             color: AppColors.backgroundWhite,
                                             child: Image.network(
-                                              "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_galleryImage[index]}",
+                                              "https://storage.googleapis.com/108-bucket/${_galleryImage[index]}",
                                               fit: BoxFit.contain,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Image.asset(
+                                                  'assets/image/no-image-available.png',
+                                                  fit: BoxFit.contain,
+                                                ); // Display an error message
+                                              },
                                             ),
                                           ),
                                           SizedBox(

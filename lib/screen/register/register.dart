@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:app/firebase_options.dart';
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
@@ -12,6 +13,10 @@ import 'package:app/screen/login/login.dart';
 import 'package:app/widget/boxDecorationIcon.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
+import 'package:apple_product_name/apple_product_name.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -35,13 +40,62 @@ class _RegisterState extends State<Register> {
   FocusNode focusNode = FocusNode();
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
+  dynamic _fcmToken;
+
   String _name = "";
   String _email = "";
   String _phoneNumber = "";
   String _password = "";
+  String _modelName = "";
+  String _modelVersion = "";
 
   bool _isCheckTelAndEmail = true;
   bool _isObscure = true;
+
+  fcm() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    _fcmToken = await FirebaseMessaging.instance.getToken();
+    print("fcmToken: " + "${_fcmToken}");
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  loadInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      print('iOS-running name: ${iosInfo.name}');
+      print('iOS-running systemVersion: '
+              '${iosInfo.systemName}' +
+          ' ' +
+          '${iosInfo.systemVersion}');
+      var name = iosInfo.name;
+      var systemName = iosInfo.systemName;
+      var systemVersion = iosInfo.systemVersion;
+      var productName = iosInfo.utsname.productName;
+
+      _modelName = productName.toString();
+      _modelVersion = systemName.toString() + ' ' + systemVersion.toString();
+    } else if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      print('Running on version.release: ${androidInfo.version.release}');
+      print('Running on model: ' "${androidInfo.brand}" +
+          ' ' +
+          "${androidInfo.model}");
+
+      var brand = androidInfo.brand.toString();
+      var model = androidInfo.model.toString();
+      var versionRelease = androidInfo.version.release.toString();
+
+      _modelName = brand.toString() + ' ' + model.toString();
+      _modelVersion = versionRelease.toString();
+    }
+  }
 
   SiginWith() {
     setState(() {
@@ -82,8 +136,10 @@ class _RegisterState extends State<Register> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
+    // fcm();
+    loadInfo();
 
     _fullNameController.text = _name;
     _phoneNumberController.text = _phoneNumber;
@@ -534,7 +590,8 @@ class _RegisterState extends State<Register> {
                                     padding: EdgeInsets.all(13),
                                     StrImage: 'assets/image/google.png',
                                     press: () {
-                                      AuthService().loginWithGoogle(context);
+                                      AuthService().loginWithGoogle(
+                                          context, _fcmToken, _modelName);
                                     },
                                   ),
                                   SizedBox(
@@ -551,7 +608,8 @@ class _RegisterState extends State<Register> {
                                     padding: EdgeInsets.all(13),
                                     StrImage: 'assets/image/facebook.png',
                                     press: () {
-                                      AuthService().loginWithFacebook(context);
+                                      AuthService().loginWithFacebook(
+                                          context, _fcmToken, _modelName);
                                     },
                                   ),
 
@@ -577,8 +635,8 @@ class _RegisterState extends State<Register> {
                                           padding: EdgeInsets.all(13),
                                           StrImage: 'assets/image/apple.png',
                                           press: () async {
-                                            AuthService()
-                                                .loginWithApple(context);
+                                            AuthService().loginWithApple(
+                                                context, _fcmToken, _modelName);
                                           },
                                         ),
                                       ],

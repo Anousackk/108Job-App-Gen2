@@ -98,6 +98,7 @@ var saveJobSeekerApi = globalURL + "/seeker-save-job-app";
 var hideJobSeekerApi = globalURL + "/seeker-hide-job-app";
 var deleteMyJobSeekerApi = globalURL + "/seeker-delete-my-job-app";
 var applyJobSeekerApi = globalURL + "/seeker-apply-job-app";
+var catchDuckSeekerApi = globalURL + "/catch-duck-seeker-app";
 
 //
 //My Job
@@ -169,6 +170,9 @@ var deleteEducationSeekerApi = globalURL + "/delete-educations-seeker-app/";
 //Work history
 var addWorkHistorySeekerApi = globalURL + "/create-workhistory-seeker-app";
 var deleteWorkHistorySeekerApi = globalURL + "/delete-workhistory-seeker-app/";
+
+//No Experience
+var noExperienceSeekerApi = globalURL + "/update-no-experience-seeker-app";
 
 //Get reuse type
 var getReuseTypeApiSeeker = globalURL + "/get-reuse-in-seeker-app?";
@@ -324,12 +328,12 @@ upLoadFile(String fileName, String url) async {
       return jsonDecode(res.data);
     }
   } catch (e) {
-    if (e is DioException &&
-        e.response != null &&
-        e.response?.statusCode == 413) {
-      // Handle 413 error (Payload Too Large)
-      // ignore: avoid_print
-      print('File size exceeds the allowed limit');
-    }
+    // if (e is DioException &&
+    //     e.response != null &&
+    //     e.response?.statusCode == 413) {
+    //   // Handle 413 error (Payload Too Large)
+    //   // ignore: avoid_print
+    //   print('File size exceeds the allowed limit: ');
+    // }
   }
 }

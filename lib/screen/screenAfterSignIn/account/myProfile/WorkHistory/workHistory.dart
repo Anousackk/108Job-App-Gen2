@@ -1,6 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_in_if_null_operators, avoid_init_to_null, file_names, sized_box_for_whitespace
-
-import 'dart:convert';
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_in_if_null_operators, avoid_init_to_null, file_names, sized_box_for_whitespace, deprecated_member_use, prefer_adjacent_string_concatenation, avoid_unnecessary_containers
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -15,10 +13,13 @@ import 'package:app/widget/input.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_quill/quill_delta.dart';
+import 'package:flutter_quill_delta_from_html/flutter_quill_delta_from_html.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+import 'package:quill_html_converter/quill_html_converter.dart';
 
 class WorkHistory extends StatefulWidget {
   const WorkHistory({
@@ -37,7 +38,6 @@ class _WorkHistoryState extends State<WorkHistory> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController _companyController = TextEditingController();
   TextEditingController _jobTitleController = TextEditingController();
-  TextEditingController _responsibilityController = TextEditingController();
   FocusScopeNode _currentFocus = FocusScopeNode();
   FocusNode focusNode = FocusNode();
   FocusNode editorFocusNode = FocusNode();
@@ -103,11 +103,15 @@ class _WorkHistoryState extends State<WorkHistory> {
 
       _companyController.text = _company;
       _jobTitleController.text = _jobTitle;
-      //_responsibilityController.text = _responsibility;
 
       try {
-        final json = jsonDecode(_responsibility);
-        _quillController.document = Document.fromJson(json);
+        // final json = jsonDecode(_responsibility);
+        // _quillController.document = Document.fromJson(json);
+
+        // Convert HTML to Quill Delta
+        Delta delta = HtmlToDelta().convert(_responsibility.toString());
+
+        _quillController.document = Document.fromDelta(delta);
       } catch (e) {
         //Handle the decoding error (e.g., print an error message)
         print('Error decoding JSON: $e');
@@ -115,11 +119,69 @@ class _WorkHistoryState extends State<WorkHistory> {
     });
   }
 
-  pressCheckBox() {
+  pressCurrentJobCheckBox() {
     setState(() {
       _isCurrentJob = !_isCurrentJob;
       _toMonthYear = null;
     });
+  }
+
+  addWorkHistorySeeker() async {
+    String quillConvertDeltaToHTML =
+        _quillController.document.toDelta().toHtml();
+    print(quillConvertDeltaToHTML.toString());
+    //
+    //
+    //ສະແດງ AlertDialog Loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomLoadingLogoCircle();
+      },
+    );
+
+    var res = await postData(addWorkHistorySeekerApi, {
+      "_id": _id,
+      "company": _company,
+      "startYear":
+          _fromMonthYear != null ? _fromMonthYear.toString() : _fromMonthYear,
+      "endYear": _toMonthYear != null ? _toMonthYear.toString() : _toMonthYear,
+      "position": _jobTitle,
+      "responsibility":
+          // jsonEncode(_quillController.document.toDelta().toJson()),
+          quillConvertDeltaToHTML,
+      "isCurrentJob": _isCurrentJob
+    });
+
+    var updateNoExperience =
+        await postData(noExperienceSeekerApi, {"noExperience": false});
+
+    print("workHistory: " + "${res['workHistory']}");
+    print("updateNoExperience: " + "${updateNoExperience}");
+
+    if (res['workHistory'] != null) {
+      Navigator.pop(context);
+    }
+
+    if (res['workHistory'] != null) {
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "save".tr + " " + "successful".tr,
+            contentText:
+                "save".tr + " " + "work_history".tr + " " + "successful".tr,
+            textButton: "ok".tr,
+            press: () {
+              Navigator.pop(context);
+              Navigator.of(context).pop("Submitted");
+            },
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -127,7 +189,6 @@ class _WorkHistoryState extends State<WorkHistory> {
     super.initState();
     _companyController.text = _company;
     _jobTitleController.text = _jobTitle;
-    // _responsibilityController.text = _responsibility;
 
     _id = widget.id ?? "";
     if (_id != null && _id != "") {
@@ -326,7 +387,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      pressCheckBox();
+                                      pressCurrentJobCheckBox();
                                     },
                                     child: Container(
                                       height: 20,
@@ -658,113 +719,187 @@ class _WorkHistoryState extends State<WorkHistory> {
                               SizedBox(
                                 height: 5,
                               ),
+
                               //
                               //
                               // Responsibility input
-                              // SimpleTextFieldSingleValidate(
-                              //   heightCon: 300,
-                              //   maxLines: 20,
-                              //   enabledBorder: enableOutlineBorder(
-                              //     AppColors.borderSecondary,
-                              //   ),
-                              //   inputColor: AppColors.backgroundWhite,
-                              //   codeController: _responsibilityController,
-                              //   changed: (value) {
-                              //     setState(() {
-                              //       _responsibility = value;
-                              //     });
-                              //   },
-                              //   hintText: "",
-                              //   validator: (value) {
-                              //     if (value == null || value.isEmpty) {
-                              //       return "required".tr;
-                              //     }
-                              //     return null;
-                              //   },
-                              // ),
+                              BoxDecorationInput(
+                                mainAxisAlignmentTextIcon:
+                                    MainAxisAlignment.start,
+                                colorInput: AppColors.backgroundWhite,
+                                colorBorder: AppColors.borderSecondary,
+                                paddingFaIcon:
+                                    EdgeInsets.symmetric(horizontal: 1.7.w),
+                                press: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(focusNode);
 
-                              //
-                              //
-                              //QuillToolbar
-                              Container(
-                                width: double.infinity,
-                                color: AppColors.background,
-                                child: QuillToolbar.simple(
-                                  configurations:
-                                      QuillSimpleToolbarConfigurations(
-                                    controller: _quillController,
-                                    toolbarIconAlignment: WrapAlignment.start,
-                                    toolbarSectionSpacing: 0,
-                                    showFontFamily: false,
-                                    showFontSize: false,
-                                    showHeaderStyle: false,
-                                    showAlignmentButtons: false,
-                                    showBackgroundColorButton: false,
-                                    showClipboardCopy: false,
-                                    showClipboardCut: false,
-                                    showClipboardPaste: false,
-                                    showColorButton: false,
-                                    showCodeBlock: false,
-                                    showDirection: false,
-                                    showQuote: false,
-                                    showUndo: false,
-                                    showSuperscript: false,
-                                    showLeftAlignment: false,
-                                    showRedo: false,
-                                    showRightAlignment: false,
-                                    showSearchButton: false,
-                                    showJustifyAlignment: false,
-                                    showLineHeightButton: false,
-                                    showSubscript: false,
-                                    showCenterAlignment: false,
-                                    showInlineCode: false,
-                                    showSmallButton: false,
-                                    // showClearFormat: false,
-                                    showIndent: false,
-                                    showListCheck: false,
-                                    showDividers: false,
-                                  ),
-                                ),
-                              ),
+                                  //
+                                  //
+                                  //show dialog QuillEditor
+                                  showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (context) {
+                                        return Dialog(
+                                          insetPadding: EdgeInsets.zero,
+                                          child: Container(
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            child: Column(
+                                              children: [
+                                                //
+                                                //
+                                                //QuillToolbar
+                                                Container(
+                                                  width: double.infinity,
+                                                  color: AppColors.background,
+                                                  child: QuillToolbar.simple(
+                                                    configurations:
+                                                        QuillSimpleToolbarConfigurations(
+                                                      controller:
+                                                          _quillController,
+                                                      toolbarIconAlignment:
+                                                          WrapAlignment.start,
+                                                      toolbarSectionSpacing: 0,
+                                                      showFontFamily: false,
+                                                      showFontSize: false,
+                                                      showHeaderStyle: false,
+                                                      showAlignmentButtons:
+                                                          false,
+                                                      showBackgroundColorButton:
+                                                          false,
+                                                      showClipboardCopy: false,
+                                                      showClipboardCut: false,
+                                                      showClipboardPaste: false,
+                                                      showColorButton: false,
+                                                      showCodeBlock: false,
+                                                      showDirection: false,
+                                                      showQuote: false,
+                                                      showUndo: false,
+                                                      showSuperscript: false,
+                                                      showLeftAlignment: false,
+                                                      showRedo: false,
+                                                      showRightAlignment: false,
+                                                      showSearchButton: false,
+                                                      showJustifyAlignment:
+                                                          false,
+                                                      showLineHeightButton:
+                                                          false,
+                                                      showSubscript: false,
+                                                      showCenterAlignment:
+                                                          false,
+                                                      showInlineCode: false,
+                                                      showSmallButton: false,
+                                                      // showClearFormat: false,
+                                                      showIndent: false,
+                                                      showListCheck: false,
+                                                      showDividers: false,
+                                                    ),
+                                                  ),
+                                                ),
 
-                              //
-                              //
-                              //QuillEditor
-                              Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                    color: AppColors.background,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(8),
-                                      bottomRight: Radius.circular(8),
-                                    )),
-                                child: QuillEditor.basic(
-                                  focusNode: editorFocusNode,
-                                  configurations: QuillEditorConfigurations(
-                                    keyboardAppearance: Brightness.dark,
-                                    // requestKeyboardFocusOnCheckListChanged: true,
-                                    controller: _quillController,
+                                                //
+                                                //
+                                                //QuillEditor
+                                                Expanded(
+                                                  child: Container(
+                                                    width: double.infinity,
+                                                    decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .background,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  8),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  8),
+                                                        )),
+                                                    child: QuillEditor.basic(
+                                                      focusNode:
+                                                          editorFocusNode,
+                                                      configurations:
+                                                          QuillEditorConfigurations(
+                                                        keyboardAppearance:
+                                                            Brightness.dark,
+                                                        // requestKeyboardFocusOnCheckListChanged: true,
+                                                        controller:
+                                                            _quillController,
 
-                                    scrollPhysics: ClampingScrollPhysics(),
-                                    readOnlyMouseCursor:
-                                        SystemMouseCursors.text,
-                                    maxHeight: 400,
-                                    minHeight: 400,
-                                    placeholder:
-                                        "work_responsibility_detail".tr,
-                                    padding: EdgeInsets.all(10),
-                                    dialogTheme: QuillDialogTheme(
-                                      labelTextStyle: TextStyle(
-                                          color: AppColors.fontPrimary),
-                                      buttonStyle: ButtonStyle(
-                                        backgroundColor:
-                                            WidgetStateProperty.all(
-                                          AppColors.red,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                                        scrollPhysics:
+                                                            ClampingScrollPhysics(),
+                                                        readOnlyMouseCursor:
+                                                            SystemMouseCursors
+                                                                .text,
+                                                        maxHeight: 400,
+                                                        minHeight: 400,
+                                                        placeholder:
+                                                            "work_responsibility_detail"
+                                                                .tr,
+                                                        padding:
+                                                            EdgeInsets.all(10),
+                                                        dialogTheme:
+                                                            QuillDialogTheme(
+                                                          labelTextStyle: TextStyle(
+                                                              color: AppColors
+                                                                  .fontPrimary),
+                                                          buttonStyle:
+                                                              ButtonStyle(
+                                                            backgroundColor:
+                                                                WidgetStateProperty
+                                                                    .all(
+                                                              AppColors.red,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 20,
+                                                          right: 20,
+                                                          top: 20,
+                                                        ),
+                                                        child: Button(
+                                                          text: "Done",
+                                                          press: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 30,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      });
+                                },
+                                fontWeight: _quillController.document.isEmpty()
+                                    ? FontWeight.bold
+                                    : null,
+                                text: _quillController.document.isEmpty()
+                                    ? "work_responsibility_detail".tr
+                                    : _quillController.document.toPlainText(),
+                                colorText: _quillController.document.isEmpty()
+                                    ? AppColors.fontGreyOpacity
+                                    : AppColors.fontDark,
+                                validateText: Container(),
                               ),
 
                               SizedBox(
@@ -791,10 +926,35 @@ class _WorkHistoryState extends State<WorkHistory> {
                         press: () {
                           FocusScope.of(context).requestFocus(focusNode);
                           if (formkey.currentState!.validate()) {
-                            setState(() {
-                              _isValidateValue = false;
-                              addWorkHistorySeeker();
-                            });
+                            //
+                            //_isCurrentJob = true ໃຫ້ກວດແຕ່ຟິວ _fromMonthYear
+                            if (_isCurrentJob) {
+                              if (_fromMonthYear == null) {
+                                setState(() {
+                                  _isValidateValue = true;
+                                });
+                              } else {
+                                setState(() {
+                                  _isValidateValue = false;
+                                  addWorkHistorySeeker();
+                                });
+                              }
+                            }
+                            //
+                            //_isCurrentJob = false ໃຫ້ກວດຟິວ _fromMonthYear and _toMonthYear
+                            else {
+                              if (_fromMonthYear == null ||
+                                  _toMonthYear == null) {
+                                setState(() {
+                                  _isValidateValue = true;
+                                });
+                              } else {
+                                setState(() {
+                                  _isValidateValue = false;
+                                  addWorkHistorySeeker();
+                                });
+                              }
+                            }
                           } else {
                             setState(() {
                               _isValidateValue = true;
@@ -812,52 +972,88 @@ class _WorkHistoryState extends State<WorkHistory> {
       ),
     );
   }
-
-  addWorkHistorySeeker() async {
-    //
-    //
-    //ສະແດງ AlertDialog Loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustomLoadingLogoCircle();
-      },
-    );
-
-    var res = await postData(addWorkHistorySeekerApi, {
-      "_id": _id,
-      "company": _company,
-      "startYear":
-          _fromMonthYear != null ? _fromMonthYear.toString() : _fromMonthYear,
-      "endYear": _toMonthYear != null ? _toMonthYear.toString() : _toMonthYear,
-      "position": _jobTitle,
-      "responsibility":
-          jsonEncode(_quillController.document.toDelta().toJson()),
-      "isCurrentJob": _isCurrentJob
-    });
-
-    if (res['workHistory'] != null) {
-      Navigator.pop(context);
-    }
-
-    if (res['workHistory'] != null) {
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "save".tr + " " + "successful".tr,
-            contentText:
-                "save".tr + " " + "work_history".tr + " " + "successful".tr,
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-              Navigator.of(context).pop("Submitted");
-            },
-          );
-        },
-      );
-    }
-  }
 }
+
+//QuillToolbar
+// Container(
+//   width: double.infinity,
+//   color: AppColors.background,
+//   child: QuillToolbar.simple(
+//     configurations:
+//         QuillSimpleToolbarConfigurations(
+//       controller: _quillController,
+//       toolbarIconAlignment: WrapAlignment.start,
+//       toolbarSectionSpacing: 0,
+//       showFontFamily: false,
+//       showFontSize: false,
+//       showHeaderStyle: false,
+//       showAlignmentButtons: false,
+//       showBackgroundColorButton: false,
+//       showClipboardCopy: false,
+//       showClipboardCut: false,
+//       showClipboardPaste: false,
+//       showColorButton: false,
+//       showCodeBlock: false,
+//       showDirection: false,
+//       showQuote: false,
+//       showUndo: false,
+//       showSuperscript: false,
+//       showLeftAlignment: false,
+//       showRedo: false,
+//       showRightAlignment: false,
+//       showSearchButton: false,
+//       showJustifyAlignment: false,
+//       showLineHeightButton: false,
+//       showSubscript: false,
+//       showCenterAlignment: false,
+//       showInlineCode: false,
+//       showSmallButton: false,
+//       // showClearFormat: false,
+//       showIndent: false,
+//       showListCheck: false,
+//       showDividers: false,
+//     ),
+//   ),
+// ),
+
+// //
+// //
+// //QuillEditor
+// Container(
+//   width: double.infinity,
+//   decoration: BoxDecoration(
+//       color: AppColors.background,
+//       borderRadius: BorderRadius.only(
+//         bottomLeft: Radius.circular(8),
+//         bottomRight: Radius.circular(8),
+//       )),
+//   child: QuillEditor.basic(
+//     focusNode: editorFocusNode,
+//     configurations: QuillEditorConfigurations(
+//       keyboardAppearance: Brightness.dark,
+//       // requestKeyboardFocusOnCheckListChanged: true,
+//       controller: _quillController,
+
+//       scrollPhysics: ClampingScrollPhysics(),
+//       readOnlyMouseCursor:
+//           SystemMouseCursors.text,
+//       maxHeight: 400,
+//       minHeight: 400,
+//       placeholder:
+//           "work_responsibility_detail".tr,
+//       padding: EdgeInsets.all(10),
+//       dialogTheme: QuillDialogTheme(
+//         labelTextStyle: TextStyle(
+//             color: AppColors.fontPrimary),
+//         buttonStyle: ButtonStyle(
+//           backgroundColor:
+//               WidgetStateProperty.all(
+//             AppColors.red,
+//           ),
+//         ),
+//       ),
+//     ),
+//   ),
+// ),
+
+

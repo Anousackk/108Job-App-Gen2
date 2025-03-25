@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types, prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, avoid_init_to_null, avoid_print, prefer_typing_uninitialized_variables, unused_field, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, prefer_final_fields
+// ignore_for_file: camel_case_types, prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, avoid_init_to_null, avoid_print, prefer_typing_uninitialized_variables, unused_field, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, prefer_final_fields, unused_local_variable, prefer_is_empty
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -11,10 +11,13 @@ import 'package:app/widget/boxDecDottedBorderProfileDetail.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 class FetchWorkHistory extends StatefulWidget {
-  const FetchWorkHistory({Key? key, this.onGoBack}) : super(key: key);
+  const FetchWorkHistory({Key? key, this.onGoBack, required this.noExperience})
+      : super(key: key);
 
+  final bool noExperience;
   final onGoBack;
 
   @override
@@ -30,10 +33,14 @@ class _FetchWorkHistoryState extends State<FetchWorkHistory> {
   String _company = "";
   String _position = "";
   bool _isLoading = true;
+  bool _isNoExperience = false;
 
   getProfileSeeker() async {
     var res = await fetchData(getProfileSeekerApi);
     _workHistory = res["workHistory"] ?? [];
+
+    _isNoExperience =
+        res["noExperience"] == null ? false : res["noExperience"] as bool;
 
     if (mounted) {
       setState(() {
@@ -79,10 +86,74 @@ class _FetchWorkHistoryState extends State<FetchWorkHistory> {
     }
   }
 
+  onExperience(bool val) async {
+    var res = await postData(noExperienceSeekerApi, {"noExperience": val});
+
+    if (res["message"] != "" || res["message"] != null) {
+      Navigator.pop(context);
+    }
+
+    if (res['message'] == "Updated") {
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "save".tr + " " + "successful".tr,
+            contentText: val
+                ? "save".tr +
+                    " " +
+                    "button_no_experience".tr +
+                    " " +
+                    "successful".tr
+                : "save".tr +
+                    " " +
+                    "button_have_experience".tr +
+                    " " +
+                    "successful".tr,
+            textButton: "ok".tr,
+            press: () {
+              Navigator.pop(context);
+            },
+          );
+        },
+      );
+    }
+  }
+
+  pressButtonNoExperience() {
+    //
+    //ສະແດງ AlertDialog Loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomLoadingLogoCircle();
+      },
+    );
+
+    setState(() {
+      _isNoExperience = !_isNoExperience;
+    });
+
+    print("${_isNoExperience}");
+
+    Future.delayed(Duration(milliseconds: 300), () {
+      onExperience(_isNoExperience);
+    });
+  }
+
+  initStateValue() {
+    setState(() {
+      _isNoExperience = widget.noExperience;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
+    initStateValue();
     getProfileSeeker();
   }
 
@@ -357,24 +428,69 @@ class _FetchWorkHistoryState extends State<FetchWorkHistory> {
                           left: 0,
                           right: 0,
                           child: Container(
+                            // color: AppColors.backgroundSecond,
                             padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Button(
-                              buttonColor: AppColors.primary200,
-                              text: "add".tr + " " + "work_history".tr,
-                              textFontFamily: "NotoSansLaoLoopedMedium",
-                              textColor: AppColors.primary600,
-                              press: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => WorkHistory(),
+                            child: Column(
+                              children: [
+                                if (_workHistory.length == 0)
+                                  // Button(
+                                  //   buttonColor: AppColors.warning200,
+                                  //   text: _isNoExperience
+                                  //       ? "button_have_experience".tr
+                                  //       : "button_no_experience".tr,
+                                  //   textFontFamily: "NotoSansLaoLoopedMedium",
+                                  //   textColor: AppColors.dark600,
+                                  //   press: () {
+                                  //     pressButtonNoExperience();
+                                  //   },
+                                  // ),
+
+                                  CustomButtonIconText(
+                                    boxBorderRadius:
+                                        BorderRadius.circular(12.w),
+                                    buttonColor: !_isNoExperience
+                                        ? AppColors.warning200
+                                        : AppColors.warning600,
+                                    widgetPrefixIcon: !_isNoExperience
+                                        ? Text(
+                                            "\uf0c8",
+                                            style: fontAwesomeRegular(
+                                                null, 15, null, null),
+                                          )
+                                        : Text(
+                                            "\uf14a",
+                                            style: fontAwesomeSolid(
+                                                null, 15, null, null),
+                                          ),
+                                    text: "button_no_experience".tr,
+                                    textFontFamily: "NotoSansLaoLoopedMedium",
+                                    textColor: AppColors.dark600,
+                                    press: () {
+                                      pressButtonNoExperience();
+                                    },
                                   ),
-                                ).then((val) {
-                                  if (val == "Submitted") {
-                                    onGoBack(val);
-                                  }
-                                });
-                              },
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Button(
+                                  buttonColor: AppColors.primary200,
+                                  text: "add".tr + " " + "work_history".tr,
+                                  textFontFamily: "NotoSansLaoLoopedMedium",
+                                  textColor: AppColors.primary600,
+                                  press: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => WorkHistory(),
+                                      ),
+                                    ).then((val) {
+                                      if (val == "Submitted") {
+                                        onGoBack(val);
+                                      }
+                                    });
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         )

@@ -878,7 +878,7 @@ class _MyJobsState extends State<MyJobs> {
                                                                                     fit: BoxFit.contain,
                                                                                   )
                                                                                 : Image.network(
-                                                                                    "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                                                    "https://storage.googleapis.com/108-bucket/${_logo}",
                                                                                     fit: BoxFit.contain,
                                                                                     errorBuilder: (context, error, stackTrace) {
                                                                                       return Image.asset(

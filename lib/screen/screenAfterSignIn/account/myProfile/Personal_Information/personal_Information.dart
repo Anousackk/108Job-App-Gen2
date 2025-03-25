@@ -1,4 +1,6 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_typing_uninitialized_variables, unnecessary_new, prefer_is_empty, file_names
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_typing_uninitialized_variables, unnecessary_new, prefer_is_empty, file_names, prefer_adjacent_string_concatenation
+
+import 'dart:io';
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -7,6 +9,7 @@ import 'package:app/functions/cupertinoDatePicker.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/provider/notifierProvider.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
@@ -15,7 +18,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersonalInformation extends StatefulWidget {
@@ -56,6 +62,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
   String _selectedCountry = "";
   String _selectedProvince = "";
   String _selectedDistrict = "";
+  String _imageSrc = "";
+  String _memberLevel = "";
 
   //
   //value display(ສະເພາະສະແດງ)
@@ -67,7 +75,12 @@ class _PersonalInformationState extends State<PersonalInformation> {
   String _maritalStatusName = "";
   String _localeLanguageApi = "";
 
+  dynamic _fileValue;
+
+  File? _image;
+
   bool _isValidateValue = false;
+  bool _imageLoading = false;
   DateTime _dateTimeNow = DateTime.now();
 
   setValueGetById() {
@@ -77,6 +90,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
       _name = i['firstName'];
       _lastName = i['lastName'];
       _dateOfBirth = i['dateOfBirth'];
+      _memberLevel = i['memberLevel'];
 
       if (_dateOfBirth != null) {
         //
@@ -93,6 +107,11 @@ class _PersonalInformationState extends State<PersonalInformation> {
         );
 
         _dateOfBirth = parsDateOfBirth;
+      }
+      if (i["file"] != "") {
+        _imageSrc = !i["file"].containsKey("src") || i["file"]["src"] == null
+            ? ""
+            : i["file"]["src"];
       }
 
       _selectedGender = i['genderId'] != null ? i['genderId']['_id'] : "";
@@ -150,6 +169,275 @@ class _PersonalInformationState extends State<PersonalInformation> {
     getReuseTypeSeeker(_localeLanguageApi, 'Gender', _listGender);
     getReuseTypeSeeker(_localeLanguageApi, 'MaritalStatus', _listMaritalStatus);
     getProvinceAndDistrict(_localeLanguageApi);
+  }
+
+  Future pickImageGallery(ImageSource source) async {
+    var statusPhotos = await Permission.photos.status;
+    var statusMediaLibrary = await Permission.mediaLibrary.status;
+    //
+    //
+    //Pick image type IOS
+    if (Platform.isIOS) {
+      print("Platform isIOS");
+      print(statusPhotos);
+
+      if (statusPhotos.isLimited) {
+        print("photos isLimited");
+
+        await openAppSettings();
+      }
+      if (statusPhotos.isGranted) {
+        print("photos isGranted");
+        final ImagePicker _picker = ImagePicker();
+        final XFile? image = await _picker.pickImage(source: source);
+
+        //
+        //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
+        if (image == null) return;
+
+        setState(() {
+          _imageLoading = true;
+        });
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
+        final allowedExtensions = ['png', 'jpg', 'jpeg'];
+        final fileExtension = image.path.split('.').last.toLowerCase();
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
+        if (!allowedExtensions.contains(fileExtension)) {
+          print("valUploadFile is null");
+          setState(() {
+            _imageLoading = false;
+          });
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return CustAlertDialogWarningWithoutBtn(
+                title: "warning".tr,
+                contentText: "profile_image_support".tr,
+              );
+            },
+          );
+          return;
+        }
+
+        File fileTemp = File(image.path);
+        setState(() {
+          _image = fileTemp;
+        });
+
+        var strImage = image.path;
+
+        print("strImage: " + strImage.toString());
+
+        //
+        //ຖ້າມີຟາຍຮູບ _image
+        if (_image != null) {
+          //
+          //api upload profile seeker
+          var valUploadFile =
+              await upLoadFile(strImage, uploadProfileApiSeeker);
+
+          //
+          //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
+          //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
+          if (valUploadFile != null) {
+            print("if valUploadFile: " + valUploadFile.toString());
+
+            _fileValue = valUploadFile['file'];
+            print("fileValue: " + _fileValue.toString());
+
+            if (_fileValue != null || _fileValue != "") {
+              //
+              //api upload or update profile image seeker
+              await uploadOrUpdateProfileImageSeeker();
+
+              setState(() {
+                _imageSrc =
+                    "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
+              });
+            }
+          }
+          //
+          //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
+          else {
+            print("else valUploadFile: " + valUploadFile.toString());
+            setState(() {
+              _imageLoading = false;
+            });
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return CustAlertDialogWarningWithoutBtn(
+                  title: "warning".tr,
+                  contentText: "profile_image_size".tr,
+                );
+              },
+            );
+          }
+        }
+      }
+      if (statusPhotos.isDenied) {
+        print("photos isDenied");
+        // await Permission.photos.request();
+        var result = await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return CupertinoAlertDialogOk(
+              title: '“108 Jobs” Would like to Access Your Photos',
+              contentText:
+                  "'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.",
+              text: 'Continue',
+            );
+          },
+        );
+        if (result == 'Ok') {
+          await Permission.photos.request();
+        }
+      }
+      if (statusPhotos.isPermanentlyDenied) {
+        print("photos isPermanentlyDenied");
+        var result = await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return CupertinoAlertDialogOk(
+              title: 'Allow Access Photos',
+              contentText:
+                  "'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.",
+              text: 'Continue',
+            );
+          },
+        );
+        if (result == 'Ok') {
+          await openAppSettings();
+        }
+      }
+    }
+    //
+    //
+    //Pick image type Android
+    else if (Platform.isAndroid) {
+      print("Platform isAndroid");
+      if (statusMediaLibrary.isGranted) {
+        print("mediaLibrary isGranted");
+        final ImagePicker _picker = ImagePicker();
+        final XFile? image = await _picker.pickImage(source: source);
+
+        //
+        //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
+        if (image == null) return;
+
+        setState(() {
+          _imageLoading = true;
+        });
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
+        final allowedExtensions = ['png', 'jpg', 'jpeg'];
+        final fileExtension = image.path.split('.').last.toLowerCase();
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
+        if (!allowedExtensions.contains(fileExtension)) {
+          print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
+          setState(() {
+            _imageLoading = false;
+          });
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return CustAlertDialogWarningWithoutBtn(
+                title: "warning".tr,
+                contentText: "profile_image_support".tr,
+              );
+            },
+          );
+          return;
+        }
+
+        File fileTemp = File(image.path);
+        setState(() {
+          _image = fileTemp;
+        });
+        var strImage = image.path;
+
+        print("strImage: " + strImage.toString());
+
+        //
+        //ຖ້າມີຟາຍຮູບ _image
+        if (_image != null) {
+          //
+          //api upload profile seeker
+          var valUploadFile =
+              await upLoadFile(strImage, uploadProfileApiSeeker);
+
+          //
+          //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
+          //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
+          if (valUploadFile != null) {
+            print("if valUploadFile: " + valUploadFile.toString());
+
+            _fileValue = valUploadFile['file'];
+            print("fileValue: " + _fileValue.toString());
+
+            if (_fileValue != null || _fileValue != "") {
+              //
+              //api upload or update profile image seeker
+              await uploadOrUpdateProfileImageSeeker();
+
+              setState(() {
+                _imageSrc =
+                    "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
+              });
+            }
+          }
+          //
+          //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
+          else {
+            print("else valUploadFile: " + valUploadFile.toString());
+            setState(() {
+              _imageLoading = false;
+            });
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return CustAlertDialogWarningWithoutBtn(
+                  title: "warning".tr,
+                  contentText: "profile_image_size".tr,
+                );
+              },
+            );
+          }
+        }
+      }
+      if (statusMediaLibrary.isDenied) {
+        print("mediaLibrary isDenied");
+        await Permission.photos.request();
+      }
+      if (statusMediaLibrary.isPermanentlyDenied) {
+        print("mediaLibrary isPermanentlyDenied");
+
+        await openAppSettings();
+      }
+    }
+  }
+
+  uploadOrUpdateProfileImageSeeker() async {
+    print("api upload profile image working account screen");
+    var res = await postData(
+        uploadOrUpdateProfileImageApiSeeker, {"file": _fileValue});
+    print("api uploadOrUpdateProfileImageApiSeeker: " + '${res}');
+
+    if (res != null) {
+      // await getProfileSeeker();
+      _imageLoading = false;
+    }
+
+    setState(() {});
   }
 
   @override
@@ -266,980 +554,1166 @@ class _PersonalInformationState extends State<PersonalInformation> {
                       physics: ClampingScrollPhysics(),
                       child: Form(
                         key: formkey,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 30,
-                              ),
+                        child: Column(
+                          children: [
+                            //
+                            //
+                            //
+                            //
+                            //Section
+                            //Profile Image
+                            Container(
+                              width: double.infinity,
+                              color: AppColors.primary100,
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  //
+                                  //
+                                  //Press choose image upload profile image
+                                  onTap: () async {
+                                    pickImageGallery(ImageSource.gallery);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(20),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          child: Row(
+                                            children: [
+                                              //
+                                              //
+                                              //Avatar image
+                                              Stack(
+                                                clipBehavior: Clip.none,
+                                                alignment: Alignment.center,
+                                                children: <Widget>[
+                                                  //
+                                                  //
+                                                  //Image loading
+                                                  _imageLoading
+                                                      ? Container(
+                                                          width: 90,
+                                                          height: 90,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            color: AppColors
+                                                                .backgroundWhite,
+                                                          ),
+                                                          child: Center(
+                                                            child: Text(
+                                                                "uploading".tr),
+                                                          ),
+                                                        )
+                                                      //
+                                                      //
+                                                      //ຫຼັງຈາກ Image loading ແລ້ວ
+                                                      : Container(
+                                                          width: 90,
+                                                          height: 90,
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        100),
+                                                            child: _imageSrc ==
+                                                                    ""
+                                                                ? Image.asset(
+                                                                    'assets/image/defprofile.jpg',
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                  )
+                                                                : Image.network(
+                                                                    "${_imageSrc}",
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    errorBuilder:
+                                                                        (context,
+                                                                            error,
+                                                                            stackTrace) {
+                                                                      return Image
+                                                                          .asset(
+                                                                        'assets/image/defprofile.jpg',
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      ); // Display an error message
+                                                                    },
+                                                                  ),
+                                                          ),
+                                                        ),
 
-                              //
-                              //
-                              //Name
-                              Text(
-                                "first name".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-
-                              //
-                              //
-                              //Name input
-                              SimpleTextFieldWithIconRight(
-                                textController: _nameController,
-                                changed: (value) {
-                                  setState(() {
-                                    _name = value;
-                                  });
-                                },
-                                inputColor: AppColors.inputWhite,
-                                hintText:
-                                    "enter your".tr + " " + "first name".tr,
-                                hintTextFontWeight: FontWeight.bold,
-                                suffixIcon: Icon(
-                                  Icons.keyboard,
+                                                  //
+                                                  //
+                                                  //Gallery image icon at the bottom right corner
+                                                  Positioned(
+                                                    bottom: 0,
+                                                    right: 0,
+                                                    child: GestureDetector(
+                                                      onTap: () {},
+                                                      child: Container(
+                                                        height: 20,
+                                                        width: 20,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          color:
+                                                              AppColors.dark100,
+                                                        ),
+                                                        child: Text(
+                                                          "\uf021",
+                                                          style:
+                                                              fontAwesomeRegular(
+                                                                  null,
+                                                                  10,
+                                                                  AppColors
+                                                                      .dark500,
+                                                                  null),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              //
+                                              //
+                                              //Column text right avatar image
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      "profile_image".tr,
+                                                      style: bodyTextMaxNormal(
+                                                          "NotoSansLaoLoopedBold",
+                                                          null,
+                                                          FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      _memberLevel.tr,
+                                                      style: bodyTextSmall(
+                                                          null, null, null),
+                                                    )
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                suffixIconColor: AppColors.iconGrayOpacity,
                               ),
-                              SizedBox(
-                                height: 20,
-                              ),
+                            ),
 
-                              //
-                              //
-                              //LastName
-                              Text(
-                                "last name".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
+                            //
+                            //
+                            //
+                            //
+                            //Section
+                            //Form information
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: 30,
+                                  ),
 
-                              //
-                              //
-                              //last name input
-                              SimpleTextFieldWithIconRight(
-                                textController: _lastNameController,
-                                changed: (value) {
-                                  setState(() {
-                                    _lastName = value;
-                                  });
-                                },
-                                inputColor: AppColors.inputWhite,
-                                hintText:
-                                    "enter your".tr + " " + "last name".tr,
-                                hintTextFontWeight: FontWeight.bold,
-                                suffixIcon: Icon(
-                                  Icons.keyboard,
-                                ),
-                                suffixIconColor: AppColors.iconGrayOpacity,
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
+                                  //
+                                  //
+                                  //Name
+                                  Text(
+                                    "first name".tr,
+                                    style: bodyTextNormal(
+                                        null, null, FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
 
-                              //
-                              //
-                              //Date of birth
-                              Text(
-                                "date of birth".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
+                                  //
+                                  //
+                                  //Name input
+                                  SimpleTextFieldWithIconRight(
+                                    textController: _nameController,
+                                    changed: (value) {
+                                      setState(() {
+                                        _name = value;
+                                      });
+                                    },
+                                    inputColor: AppColors.inputWhite,
+                                    hintText:
+                                        "enter your".tr + " " + "first name".tr,
+                                    hintTextFontWeight: FontWeight.bold,
+                                    suffixIcon: Icon(
+                                      Icons.keyboard,
+                                    ),
+                                    suffixIconColor: AppColors.iconGrayOpacity,
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
 
-                              //
-                              //
-                              //Date of birth select date
-                              BoxDecorationInput(
-                                mainAxisAlignmentTextIcon:
-                                    MainAxisAlignment.start,
-                                colorInput: AppColors.backgroundWhite,
-                                colorBorder: _isValidateValue == true &&
+                                  //
+                                  //
+                                  //LastName
+                                  Text(
+                                    "last name".tr,
+                                    style: bodyTextNormal(
+                                        null, null, FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+
+                                  //
+                                  //
+                                  //last name input
+                                  SimpleTextFieldWithIconRight(
+                                    textController: _lastNameController,
+                                    changed: (value) {
+                                      setState(() {
+                                        _lastName = value;
+                                      });
+                                    },
+                                    inputColor: AppColors.inputWhite,
+                                    hintText:
+                                        "enter your".tr + " " + "last name".tr,
+                                    hintTextFontWeight: FontWeight.bold,
+                                    suffixIcon: Icon(
+                                      Icons.keyboard,
+                                    ),
+                                    suffixIconColor: AppColors.iconGrayOpacity,
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+
+                                  //
+                                  //
+                                  //Date of birth
+                                  Text(
+                                    "date of birth".tr,
+                                    style: bodyTextNormal(
+                                        null, null, FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+
+                                  //
+                                  //
+                                  //Date of birth select date
+                                  BoxDecorationInput(
+                                    mainAxisAlignmentTextIcon:
+                                        MainAxisAlignment.start,
+                                    colorInput: AppColors.backgroundWhite,
+                                    colorBorder: _isValidateValue == true &&
+                                            _dateOfBirth == null
+                                        ? AppColors.borderDanger
+                                        : AppColors.borderSecondary,
+                                    paddingFaIcon:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    fontWeight: null,
+                                    widgetIconActive: FaIcon(
+                                      FontAwesomeIcons.calendar,
+                                      color: AppColors.iconGrayOpacity,
+                                      size: IconSize.sIcon,
+                                    ),
+                                    press: () {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
+
+                                      // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
+                                      var formatDateTimeNow =
+                                          DateFormat("yyyy-MM-dd")
+                                              .parse(_dateTimeNow.toString());
+                                      setState(() {
                                         _dateOfBirth == null
-                                    ? AppColors.borderDanger
-                                    : AppColors.borderSecondary,
-                                paddingFaIcon:
-                                    EdgeInsets.symmetric(horizontal: 8),
-                                fontWeight: null,
-                                widgetIconActive: FaIcon(
-                                  FontAwesomeIcons.calendar,
-                                  color: AppColors.iconGrayOpacity,
-                                  size: IconSize.sIcon,
-                                ),
-                                press: () {
-                                  FocusScope.of(context)
-                                      .requestFocus(focusNode);
+                                            ? _dateOfBirth = formatDateTimeNow
+                                            : _dateOfBirth;
 
-                                  // format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
-                                  var formatDateTimeNow =
-                                      DateFormat("yyyy-MM-dd")
-                                          .parse(_dateTimeNow.toString());
-                                  setState(() {
-                                    _dateOfBirth == null
-                                        ? _dateOfBirth = formatDateTimeNow
-                                        : _dateOfBirth;
+                                        print(_dateOfBirth);
+                                      });
 
-                                    print(_dateOfBirth);
-                                  });
-
-                                  showDialogDateTime(
-                                      context,
-                                      Text(
-                                        "date of birth".tr,
-                                        style: bodyTextNormal(
-                                            null, null, FontWeight.bold),
-                                      ),
-                                      CupertinoDatePicker(
-                                        initialDateTime: _dateOfBirth == null
-                                            ? formatDateTimeNow
-                                            : _dateOfBirth,
-                                        maximumDate: formatDateTimeNow,
-                                        mode: CupertinoDatePickerMode.date,
-                                        dateOrder: DatePickerDateOrder.dmy,
-                                        use24hFormat: true,
-                                        onDateTimeChanged: (DateTime newDate) {
-                                          setState(
-                                            () => _dateOfBirth = newDate,
+                                      showDialogDateTime(
+                                          context,
+                                          Text(
+                                            "date of birth".tr,
+                                            style: bodyTextNormal(
+                                                null, null, FontWeight.bold),
+                                          ),
+                                          CupertinoDatePicker(
+                                            initialDateTime:
+                                                _dateOfBirth == null
+                                                    ? formatDateTimeNow
+                                                    : _dateOfBirth,
+                                            maximumDate: formatDateTimeNow,
+                                            mode: CupertinoDatePickerMode.date,
+                                            dateOrder: DatePickerDateOrder.dmy,
+                                            use24hFormat: true,
+                                            onDateTimeChanged:
+                                                (DateTime newDate) {
+                                              setState(
+                                                () => _dateOfBirth = newDate,
+                                              );
+                                            },
+                                          )
+                                          // SimpleButton(
+                                          //   text: 'Cancel',
+                                          //   colorButton: AppColors.buttonSecondary,
+                                          //   colorText: AppColors.fontWhite,
+                                          //   press: () {
+                                          //     Navigator.of(context).pop();
+                                          //   },
+                                          // ),
+                                          // SimpleButton(
+                                          //   text: 'Confirm',
+                                          //   press: () {
+                                          //     Navigator.of(context).pop();
+                                          //   },
+                                          // ),
                                           );
+                                    },
+                                    text: _dateOfBirth == null
+                                        ? "date of birth".tr
+                                        : "${_dateOfBirth?.day}-${_dateOfBirth?.month}-${_dateOfBirth?.year}",
+                                    colorText: _dateOfBirth == null
+                                        ? AppColors.fontGreyOpacity
+                                        : AppColors.fontDark,
+                                    validateText: _isValidateValue == true &&
+                                            _dateOfBirth == null
+                                        ? Container(
+                                            width: double.infinity,
+                                            padding: EdgeInsets.only(
+                                              left: 15,
+                                              top: 5,
+                                            ),
+                                            child: Text(
+                                              "required",
+                                              style: bodyTextSmall(null,
+                                                  AppColors.fontDanger, null),
+                                            ),
+                                          )
+                                        : Container(),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+
+                                  //
+                                  //
+                                  //Gender
+                                  Text(
+                                    "gender".tr,
+                                    style: bodyTextNormal(
+                                        null, null, FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+
+                                  //
+                                  //
+                                  //Gender box decoration select
+                                  BoxDecorationInput(
+                                    mainAxisAlignmentTextIcon:
+                                        MainAxisAlignment.start,
+                                    colorInput: AppColors.backgroundWhite,
+                                    colorBorder: _selectedGender == "" &&
+                                            _isValidateValue == true
+                                        ? AppColors.borderDanger
+                                        : AppColors.borderSecondary,
+                                    paddingFaIcon:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    fontWeight: null,
+                                    widgetIconActive: FaIcon(
+                                      FontAwesomeIcons.caretDown,
+                                      color: AppColors.iconGrayOpacity,
+                                      size: IconSize.sIcon,
+                                    ),
+                                    press: () async {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
+
+                                      var result = await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return ListSingleSelectedAlertDialog(
+                                              title: "gender".tr,
+                                              listItems: _listGender,
+                                              selectedListItem: _selectedGender,
+                                            );
+                                          }).then(
+                                        (value) {
+                                          // print(_currentFocus);
+                                          //value = "_id"
+                                          //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                          if (value != "") {
+                                            //
+                                            //ເອົາ _listGender ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
+                                            dynamic findValue =
+                                                _listGender.firstWhere(
+                                                    (i) => i["_id"] == value);
+
+                                            setState(() {
+                                              _selectedGender =
+                                                  findValue['_id'];
+                                              _genderName = findValue['name'];
+                                            });
+
+                                            print(_genderName);
+                                          }
                                         },
-                                      )
-                                      // SimpleButton(
-                                      //   text: 'Cancel',
-                                      //   colorButton: AppColors.buttonSecondary,
-                                      //   colorText: AppColors.fontWhite,
-                                      //   press: () {
-                                      //     Navigator.of(context).pop();
-                                      //   },
-                                      // ),
-                                      // SimpleButton(
-                                      //   text: 'Confirm',
-                                      //   press: () {
-                                      //     Navigator.of(context).pop();
-                                      //   },
-                                      // ),
                                       );
-                                },
-                                text: _dateOfBirth == null
-                                    ? "date of birth".tr
-                                    : "${_dateOfBirth?.day}-${_dateOfBirth?.month}-${_dateOfBirth?.year}",
-                                colorText: _dateOfBirth == null
-                                    ? AppColors.fontGreyOpacity
-                                    : AppColors.fontDark,
-                                validateText: _isValidateValue == true &&
-                                        _dateOfBirth == null
-                                    ? Container(
-                                        width: double.infinity,
-                                        padding: EdgeInsets.only(
-                                          left: 15,
-                                          top: 5,
-                                        ),
-                                        child: Text(
-                                          "required",
-                                          style: bodyTextSmall(
-                                              null, AppColors.fontDanger, null),
-                                        ),
-                                      )
-                                    : Container(),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-
-                              //
-                              //
-                              //Gender
-                              Text(
-                                "gender".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-
-                              //
-                              //
-                              //Gender box decoration select
-                              BoxDecorationInput(
-                                mainAxisAlignmentTextIcon:
-                                    MainAxisAlignment.start,
-                                colorInput: AppColors.backgroundWhite,
-                                colorBorder: _selectedGender == "" &&
-                                        _isValidateValue == true
-                                    ? AppColors.borderDanger
-                                    : AppColors.borderSecondary,
-                                paddingFaIcon:
-                                    EdgeInsets.symmetric(horizontal: 8),
-                                fontWeight: null,
-                                widgetIconActive: FaIcon(
-                                  FontAwesomeIcons.caretDown,
-                                  color: AppColors.iconGrayOpacity,
-                                  size: IconSize.sIcon,
-                                ),
-                                press: () async {
-                                  FocusScope.of(context)
-                                      .requestFocus(focusNode);
-
-                                  var result = await showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) {
-                                        return ListSingleSelectedAlertDialog(
-                                          title: "gender".tr,
-                                          listItems: _listGender,
-                                          selectedListItem: _selectedGender,
-                                        );
-                                      }).then(
-                                    (value) {
-                                      // print(_currentFocus);
-                                      //value = "_id"
-                                      //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                      if (value != "") {
-                                        //
-                                        //ເອົາ _listGender ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
-                                        dynamic findValue =
-                                            _listGender.firstWhere(
-                                                (i) => i["_id"] == value);
-
-                                        setState(() {
-                                          _selectedGender = findValue['_id'];
-                                          _genderName = findValue['name'];
-                                        });
-
-                                        print(_genderName);
-                                      }
                                     },
-                                  );
-                                },
-                                text: _selectedGender != ""
-                                    ? "${_genderName}"
-                                    : "select".tr + " " + "gender".tr,
-                                colorText: _selectedGender == ""
-                                    ? AppColors.fontGreyOpacity
-                                    : AppColors.fontDark,
-                                validateText: _isValidateValue == true &&
-                                        _selectedGender == ""
-                                    ? Container(
-                                        width: double.infinity,
-                                        padding: EdgeInsets.only(
-                                          left: 15,
-                                          top: 5,
-                                        ),
-                                        child: Text(
-                                          "required".tr,
-                                          style: bodyTextSmall(
-                                              null, AppColors.fontDanger, null),
-                                        ),
-                                      )
-                                    : Container(),
-                              ),
+                                    text: _selectedGender != ""
+                                        ? "${_genderName}"
+                                        : "select".tr + " " + "gender".tr,
+                                    colorText: _selectedGender == ""
+                                        ? AppColors.fontGreyOpacity
+                                        : AppColors.fontDark,
+                                    validateText: _isValidateValue == true &&
+                                            _selectedGender == ""
+                                        ? Container(
+                                            width: double.infinity,
+                                            padding: EdgeInsets.only(
+                                              left: 15,
+                                              top: 5,
+                                            ),
+                                            child: Text(
+                                              "required".tr,
+                                              style: bodyTextSmall(null,
+                                                  AppColors.fontDanger, null),
+                                            ),
+                                          )
+                                        : Container(),
+                                  ),
 
-                              // Row(
-                              //   children: [
-                              //     Expanded(
-                              //       flex: 1,
-                              //       child: ButtonWithIconLeft(
-                              //         paddingButton:
-                              //             MaterialStateProperty.all<EdgeInsets>(
-                              //           EdgeInsets.symmetric(vertical: 12),
-                              //         ),
-                              //         borderRadius: BorderRadius.circular(2.5.w),
-                              //         colorButton: _gender == "Male"
-                              //             ? AppColors.buttonLightBlue
-                              //             : AppColors.buttonWhite,
-                              //         buttonBorderColor: _gender == "Male"
-                              //             ? AppColors.borderPrimary
-                              //             : AppColors.borderSecondary,
-                              //         widgetIcon: FaIcon(
-                              //           FontAwesomeIcons.mars,
-                              //           color: _gender == "Male"
-                              //               ? AppColors.iconPrimary
-                              //               : AppColors.iconDark,
-                              //           size: IconSize.sIcon,
-                              //         ),
-                              //         text: "Male",
-                              //         colorText: _gender == "Male"
-                              //             ? AppColors.iconPrimary
-                              //             : AppColors.iconDark,
-                              //         press: () {
-                              //           selectValueGender("Male");
-                              //         },
-                              //       ),
-                              //     ),
-                              //     SizedBox(
-                              //       width: 10,
-                              //     ),
-                              //     Expanded(
-                              //       flex: 1,
-                              //       child: ButtonWithIconLeft(
-                              //         paddingButton:
-                              //             MaterialStateProperty.all<EdgeInsets>(
-                              //           EdgeInsets.symmetric(vertical: 12),
-                              //         ),
-                              //         borderRadius: BorderRadius.circular(2.5.w),
-                              //         colorButton: _gender == "Female"
-                              //             ? AppColors.buttonLightBlue
-                              //             : AppColors.buttonWhite,
-                              //         buttonBorderColor: _gender == "Female"
-                              //             ? AppColors.borderPrimary
-                              //             : AppColors.borderSecondary,
-                              //         widgetIcon: FaIcon(
-                              //           FontAwesomeIcons.venus,
-                              //           color: _gender == "Female"
-                              //               ? AppColors.iconPrimary
-                              //               : AppColors.iconDark,
-                              //           size: IconSize.sIcon,
-                              //         ),
-                              //         text: "Female",
-                              //         colorText: _gender == "Female"
-                              //             ? AppColors.iconPrimary
-                              //             : AppColors.iconDark,
-                              //         press: () {
-                              //           selectValueGender("Female");
-                              //         },
-                              //       ),
-                              //     ),
-                              //     SizedBox(
-                              //       width: 10,
-                              //     ),
-                              //     Expanded(
-                              //       flex: 1,
-                              //       child: ButtonWithIconLeft(
-                              //         paddingButton:
-                              //             MaterialStateProperty.all<EdgeInsets>(
-                              //           EdgeInsets.symmetric(vertical: 12),
-                              //         ),
-                              //         borderRadius: BorderRadius.circular(2.5.w),
-                              //         colorButton: _gender == "Other"
-                              //             ? AppColors.buttonLightBlue
-                              //             : AppColors.buttonWhite,
-                              //         buttonBorderColor: _gender == "Other"
-                              //             ? AppColors.borderPrimary
-                              //             : AppColors.borderSecondary,
-                              //         widgetIcon: FaIcon(
-                              //           FontAwesomeIcons.marsAndVenus,
-                              //           color: _gender == "Other"
-                              //               ? AppColors.iconPrimary
-                              //               : AppColors.iconDark,
-                              //           size: IconSize.sIcon,
-                              //         ),
-                              //         text: "Other",
-                              //         colorText: _gender == "Other"
-                              //             ? AppColors.iconPrimary
-                              //             : AppColors.iconDark,
-                              //         press: () {
-                              //           selectValueGender("Other");
-                              //         },
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                              SizedBox(
-                                height: 20,
-                              ),
+                                  // Row(
+                                  //   children: [
+                                  //     Expanded(
+                                  //       flex: 1,
+                                  //       child: ButtonWithIconLeft(
+                                  //         paddingButton:
+                                  //             MaterialStateProperty.all<EdgeInsets>(
+                                  //           EdgeInsets.symmetric(vertical: 12),
+                                  //         ),
+                                  //         borderRadius: BorderRadius.circular(2.5.w),
+                                  //         colorButton: _gender == "Male"
+                                  //             ? AppColors.buttonLightBlue
+                                  //             : AppColors.buttonWhite,
+                                  //         buttonBorderColor: _gender == "Male"
+                                  //             ? AppColors.borderPrimary
+                                  //             : AppColors.borderSecondary,
+                                  //         widgetIcon: FaIcon(
+                                  //           FontAwesomeIcons.mars,
+                                  //           color: _gender == "Male"
+                                  //               ? AppColors.iconPrimary
+                                  //               : AppColors.iconDark,
+                                  //           size: IconSize.sIcon,
+                                  //         ),
+                                  //         text: "Male",
+                                  //         colorText: _gender == "Male"
+                                  //             ? AppColors.iconPrimary
+                                  //             : AppColors.iconDark,
+                                  //         press: () {
+                                  //           selectValueGender("Male");
+                                  //         },
+                                  //       ),
+                                  //     ),
+                                  //     SizedBox(
+                                  //       width: 10,
+                                  //     ),
+                                  //     Expanded(
+                                  //       flex: 1,
+                                  //       child: ButtonWithIconLeft(
+                                  //         paddingButton:
+                                  //             MaterialStateProperty.all<EdgeInsets>(
+                                  //           EdgeInsets.symmetric(vertical: 12),
+                                  //         ),
+                                  //         borderRadius: BorderRadius.circular(2.5.w),
+                                  //         colorButton: _gender == "Female"
+                                  //             ? AppColors.buttonLightBlue
+                                  //             : AppColors.buttonWhite,
+                                  //         buttonBorderColor: _gender == "Female"
+                                  //             ? AppColors.borderPrimary
+                                  //             : AppColors.borderSecondary,
+                                  //         widgetIcon: FaIcon(
+                                  //           FontAwesomeIcons.venus,
+                                  //           color: _gender == "Female"
+                                  //               ? AppColors.iconPrimary
+                                  //               : AppColors.iconDark,
+                                  //           size: IconSize.sIcon,
+                                  //         ),
+                                  //         text: "Female",
+                                  //         colorText: _gender == "Female"
+                                  //             ? AppColors.iconPrimary
+                                  //             : AppColors.iconDark,
+                                  //         press: () {
+                                  //           selectValueGender("Female");
+                                  //         },
+                                  //       ),
+                                  //     ),
+                                  //     SizedBox(
+                                  //       width: 10,
+                                  //     ),
+                                  //     Expanded(
+                                  //       flex: 1,
+                                  //       child: ButtonWithIconLeft(
+                                  //         paddingButton:
+                                  //             MaterialStateProperty.all<EdgeInsets>(
+                                  //           EdgeInsets.symmetric(vertical: 12),
+                                  //         ),
+                                  //         borderRadius: BorderRadius.circular(2.5.w),
+                                  //         colorButton: _gender == "Other"
+                                  //             ? AppColors.buttonLightBlue
+                                  //             : AppColors.buttonWhite,
+                                  //         buttonBorderColor: _gender == "Other"
+                                  //             ? AppColors.borderPrimary
+                                  //             : AppColors.borderSecondary,
+                                  //         widgetIcon: FaIcon(
+                                  //           FontAwesomeIcons.marsAndVenus,
+                                  //           color: _gender == "Other"
+                                  //               ? AppColors.iconPrimary
+                                  //               : AppColors.iconDark,
+                                  //           size: IconSize.sIcon,
+                                  //         ),
+                                  //         text: "Other",
+                                  //         colorText: _gender == "Other"
+                                  //             ? AppColors.iconPrimary
+                                  //             : AppColors.iconDark,
+                                  //         press: () {
+                                  //           selectValueGender("Other");
+                                  //         },
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
 
-                              //
-                              //
-                              //Marital Status
-                              Text(
-                                "marital status".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
+                                  //
+                                  //
+                                  //Marital Status
+                                  Text(
+                                    "marital status".tr,
+                                    style: bodyTextNormal(
+                                        null, null, FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
 
-                              //
-                              //
-                              //Marital Status box decoration select
-                              BoxDecorationInput(
-                                mainAxisAlignmentTextIcon:
-                                    MainAxisAlignment.start,
-                                colorInput: AppColors.backgroundWhite,
-                                colorBorder: _selectedMaritalStatus == "" &&
-                                        _isValidateValue == true
-                                    ? AppColors.borderDanger
-                                    : AppColors.borderSecondary,
-                                paddingFaIcon:
-                                    EdgeInsets.symmetric(horizontal: 8),
-                                fontWeight: null,
-                                widgetIconActive: FaIcon(
-                                  FontAwesomeIcons.caretDown,
-                                  color: AppColors.iconGrayOpacity,
-                                  size: IconSize.sIcon,
-                                ),
-                                press: () async {
-                                  FocusScope.of(context)
-                                      .requestFocus(focusNode);
+                                  //
+                                  //
+                                  //Marital Status box decoration select
+                                  BoxDecorationInput(
+                                    mainAxisAlignmentTextIcon:
+                                        MainAxisAlignment.start,
+                                    colorInput: AppColors.backgroundWhite,
+                                    colorBorder: _selectedMaritalStatus == "" &&
+                                            _isValidateValue == true
+                                        ? AppColors.borderDanger
+                                        : AppColors.borderSecondary,
+                                    paddingFaIcon:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    fontWeight: null,
+                                    widgetIconActive: FaIcon(
+                                      FontAwesomeIcons.caretDown,
+                                      color: AppColors.iconGrayOpacity,
+                                      size: IconSize.sIcon,
+                                    ),
+                                    press: () async {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
 
-                                  var result = await showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) {
-                                        return ListSingleSelectedAlertDialog(
-                                          title: "marital status".tr,
-                                          listItems: _listMaritalStatus,
-                                          selectedListItem:
-                                              _selectedMaritalStatus,
-                                        );
-                                      }).then(
-                                    (value) {
-                                      //value = "_id"
-                                      //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                      if (value != "") {
-                                        //
-                                        //ເອົາ _listMaritalStatus ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
-                                        dynamic findValue =
-                                            _listMaritalStatus.firstWhere(
-                                                (i) => i["_id"] == value);
+                                      var result = await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return ListSingleSelectedAlertDialog(
+                                              title: "marital status".tr,
+                                              listItems: _listMaritalStatus,
+                                              selectedListItem:
+                                                  _selectedMaritalStatus,
+                                            );
+                                          }).then(
+                                        (value) {
+                                          //value = "_id"
+                                          //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                          if (value != "") {
+                                            //
+                                            //ເອົາ _listMaritalStatus ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
+                                            dynamic findValue =
+                                                _listMaritalStatus.firstWhere(
+                                                    (i) => i["_id"] == value);
 
-                                        setState(() {
-                                          _selectedMaritalStatus =
-                                              findValue['_id'];
-                                          _maritalStatusName =
-                                              findValue['name'];
-                                        });
+                                            setState(() {
+                                              _selectedMaritalStatus =
+                                                  findValue['_id'];
+                                              _maritalStatusName =
+                                                  findValue['name'];
+                                            });
 
-                                        print(_maritalStatusName);
-                                      }
+                                            print(_maritalStatusName);
+                                          }
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                                text: _selectedMaritalStatus != ""
-                                    ? "${_maritalStatusName}"
-                                    : "select".tr + " " + "marital status".tr,
-                                colorText: _selectedMaritalStatus == ""
-                                    ? AppColors.fontGreyOpacity
-                                    : AppColors.fontDark,
-                                validateText: _isValidateValue == true &&
-                                        _selectedMaritalStatus == ""
-                                    ? Container(
-                                        width: double.infinity,
-                                        padding: EdgeInsets.only(
-                                          left: 15,
-                                          top: 5,
-                                        ),
-                                        child: Text(
-                                          "required".tr,
-                                          style: bodyTextSmall(
-                                              null, AppColors.fontDanger, null),
-                                        ),
-                                      )
-                                    : Container(),
-                              ),
-                              // Row(
-                              //   children: [
-                              //     Expanded(
-                              //       flex: 1,
-                              //       child: ButtonWithIconLeft(
-                              //         paddingButton:
-                              //             MaterialStateProperty.all<EdgeInsets>(
-                              //           EdgeInsets.symmetric(vertical: 12),
-                              //         ),
-                              //         borderRadius: BorderRadius.circular(2.5.w),
-                              //         colorButton: _maritalStatus == "Single"
-                              //             ? AppColors.buttonLightBlue
-                              //             : AppColors.buttonWhite,
-                              //         buttonBorderColor: _maritalStatus == "Single"
-                              //             ? AppColors.borderPrimary
-                              //             : AppColors.borderSecondary,
-                              //         widgetIcon: FaIcon(
-                              //           FontAwesomeIcons.person,
-                              //           color: _maritalStatus == "Single"
-                              //               ? AppColors.iconPrimary
-                              //               : AppColors.iconDark,
-                              //           size: IconSize.sIcon,
-                              //         ),
-                              //         text: "Single",
-                              //         colorText: _maritalStatus == "Single"
-                              //             ? AppColors.iconPrimary
-                              //             : AppColors.iconDark,
-                              //         press: () {
-                              //           selectValueMarital("Single");
-                              //         },
-                              //       ),
-                              //     ),
-                              //     SizedBox(
-                              //       width: 10,
-                              //     ),
-                              //     Expanded(
-                              //       flex: 1,
-                              //       child: ButtonWithIconLeft(
-                              //         paddingButton:
-                              //             MaterialStateProperty.all<EdgeInsets>(
-                              //           EdgeInsets.symmetric(vertical: 12),
-                              //         ),
-                              //         borderRadius: BorderRadius.circular(2.5.w),
-                              //         colorButton: _maritalStatus == "Married"
-                              //             ? AppColors.buttonLightBlue
-                              //             : AppColors.buttonWhite,
-                              //         buttonBorderColor: _maritalStatus == "Married"
-                              //             ? AppColors.borderPrimary
-                              //             : AppColors.borderSecondary,
-                              //         widgetIcon: FaIcon(
-                              //           FontAwesomeIcons.solidHeart,
-                              //           color: _maritalStatus == "Married"
-                              //               ? AppColors.iconPrimary
-                              //               : AppColors.iconDark,
-                              //           size: IconSize.sIcon,
-                              //         ),
-                              //         text: "Married",
-                              //         colorText: _maritalStatus == "Married"
-                              //             ? AppColors.iconPrimary
-                              //             : AppColors.iconDark,
-                              //         press: () {
-                              //           selectValueMarital("Married");
-                              //         },
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                              SizedBox(
-                                height: 20,
-                              ),
+                                    text: _selectedMaritalStatus != ""
+                                        ? "${_maritalStatusName}"
+                                        : "select".tr +
+                                            " " +
+                                            "marital status".tr,
+                                    colorText: _selectedMaritalStatus == ""
+                                        ? AppColors.fontGreyOpacity
+                                        : AppColors.fontDark,
+                                    validateText: _isValidateValue == true &&
+                                            _selectedMaritalStatus == ""
+                                        ? Container(
+                                            width: double.infinity,
+                                            padding: EdgeInsets.only(
+                                              left: 15,
+                                              top: 5,
+                                            ),
+                                            child: Text(
+                                              "required".tr,
+                                              style: bodyTextSmall(null,
+                                                  AppColors.fontDanger, null),
+                                            ),
+                                          )
+                                        : Container(),
+                                  ),
+                                  // Row(
+                                  //   children: [
+                                  //     Expanded(
+                                  //       flex: 1,
+                                  //       child: ButtonWithIconLeft(
+                                  //         paddingButton:
+                                  //             MaterialStateProperty.all<EdgeInsets>(
+                                  //           EdgeInsets.symmetric(vertical: 12),
+                                  //         ),
+                                  //         borderRadius: BorderRadius.circular(2.5.w),
+                                  //         colorButton: _maritalStatus == "Single"
+                                  //             ? AppColors.buttonLightBlue
+                                  //             : AppColors.buttonWhite,
+                                  //         buttonBorderColor: _maritalStatus == "Single"
+                                  //             ? AppColors.borderPrimary
+                                  //             : AppColors.borderSecondary,
+                                  //         widgetIcon: FaIcon(
+                                  //           FontAwesomeIcons.person,
+                                  //           color: _maritalStatus == "Single"
+                                  //               ? AppColors.iconPrimary
+                                  //               : AppColors.iconDark,
+                                  //           size: IconSize.sIcon,
+                                  //         ),
+                                  //         text: "Single",
+                                  //         colorText: _maritalStatus == "Single"
+                                  //             ? AppColors.iconPrimary
+                                  //             : AppColors.iconDark,
+                                  //         press: () {
+                                  //           selectValueMarital("Single");
+                                  //         },
+                                  //       ),
+                                  //     ),
+                                  //     SizedBox(
+                                  //       width: 10,
+                                  //     ),
+                                  //     Expanded(
+                                  //       flex: 1,
+                                  //       child: ButtonWithIconLeft(
+                                  //         paddingButton:
+                                  //             MaterialStateProperty.all<EdgeInsets>(
+                                  //           EdgeInsets.symmetric(vertical: 12),
+                                  //         ),
+                                  //         borderRadius: BorderRadius.circular(2.5.w),
+                                  //         colorButton: _maritalStatus == "Married"
+                                  //             ? AppColors.buttonLightBlue
+                                  //             : AppColors.buttonWhite,
+                                  //         buttonBorderColor: _maritalStatus == "Married"
+                                  //             ? AppColors.borderPrimary
+                                  //             : AppColors.borderSecondary,
+                                  //         widgetIcon: FaIcon(
+                                  //           FontAwesomeIcons.solidHeart,
+                                  //           color: _maritalStatus == "Married"
+                                  //               ? AppColors.iconPrimary
+                                  //               : AppColors.iconDark,
+                                  //           size: IconSize.sIcon,
+                                  //         ),
+                                  //         text: "Married",
+                                  //         colorText: _maritalStatus == "Married"
+                                  //             ? AppColors.iconPrimary
+                                  //             : AppColors.iconDark,
+                                  //         press: () {
+                                  //           selectValueMarital("Married");
+                                  //         },
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
 
-                              //
-                              //
-                              //Nationality
-                              Text(
-                                "nationality".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
+                                  //
+                                  //
+                                  //Nationality
+                                  Text(
+                                    "nationality".tr,
+                                    style: bodyTextNormal(
+                                        null, null, FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
 
-                              //
-                              //
-                              //Nationality box decoration select
-                              BoxDecorationInput(
-                                mainAxisAlignmentTextIcon:
-                                    MainAxisAlignment.start,
-                                colorInput: AppColors.backgroundWhite,
-                                colorBorder: _selectedNationality == "" &&
-                                        _isValidateValue == true
-                                    ? AppColors.borderDanger
-                                    : AppColors.borderSecondary,
-                                paddingFaIcon:
-                                    EdgeInsets.symmetric(horizontal: 8),
-                                fontWeight: null,
-                                widgetIconActive: FaIcon(
-                                  FontAwesomeIcons.caretDown,
-                                  color: AppColors.iconGrayOpacity,
-                                  size: IconSize.sIcon,
-                                ),
-                                press: () async {
-                                  FocusScope.of(context)
-                                      .requestFocus(focusNode);
+                                  //
+                                  //
+                                  //Nationality box decoration select
+                                  BoxDecorationInput(
+                                    mainAxisAlignmentTextIcon:
+                                        MainAxisAlignment.start,
+                                    colorInput: AppColors.backgroundWhite,
+                                    colorBorder: _selectedNationality == "" &&
+                                            _isValidateValue == true
+                                        ? AppColors.borderDanger
+                                        : AppColors.borderSecondary,
+                                    paddingFaIcon:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    fontWeight: null,
+                                    widgetIconActive: FaIcon(
+                                      FontAwesomeIcons.caretDown,
+                                      color: AppColors.iconGrayOpacity,
+                                      size: IconSize.sIcon,
+                                    ),
+                                    press: () async {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
 
-                                  var result = await showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) {
-                                        return ListSingleSelectedAlertDialog(
-                                          title: "nationality".tr,
-                                          listItems: _listNationality,
-                                          selectedListItem:
-                                              _selectedNationality,
-                                        );
-                                      }).then(
-                                    (value) {
-                                      //value = "_id"
-                                      //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                      if (value != "") {
-                                        //
-                                        //ເອົາ _listNationality ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
-                                        dynamic findValue =
-                                            _listNationality.firstWhere(
-                                                (i) => i["_id"] == value);
+                                      var result = await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return ListSingleSelectedAlertDialog(
+                                              title: "nationality".tr,
+                                              listItems: _listNationality,
+                                              selectedListItem:
+                                                  _selectedNationality,
+                                            );
+                                          }).then(
+                                        (value) {
+                                          //value = "_id"
+                                          //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                          if (value != "") {
+                                            //
+                                            //ເອົາ _listNationality ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
+                                            dynamic findValue =
+                                                _listNationality.firstWhere(
+                                                    (i) => i["_id"] == value);
 
-                                        setState(() {
-                                          _selectedNationality =
-                                              findValue['_id'];
-                                          _nationalityName = findValue['name'];
-                                        });
+                                            setState(() {
+                                              _selectedNationality =
+                                                  findValue['_id'];
+                                              _nationalityName =
+                                                  findValue['name'];
+                                            });
 
-                                        print(_nationalityName);
-                                      }
+                                            print(_nationalityName);
+                                          }
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                                text: _selectedNationality != ""
-                                    ? "${_nationalityName}"
-                                    : "select".tr + " " + "nationality".tr,
-                                colorText: _selectedNationality == ""
-                                    ? AppColors.fontGreyOpacity
-                                    : AppColors.fontDark,
-                                validateText: _isValidateValue == true &&
-                                        _selectedNationality == ""
-                                    ? Container(
-                                        width: double.infinity,
-                                        padding: EdgeInsets.only(
-                                          left: 15,
-                                          top: 5,
-                                        ),
-                                        child: Text(
-                                          "required".tr,
-                                          style: bodyTextSmall(
-                                              null, AppColors.fontDanger, null),
-                                        ),
-                                      )
-                                    : Container(),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
+                                    text: _selectedNationality != ""
+                                        ? "${_nationalityName}"
+                                        : "select".tr + " " + "nationality".tr,
+                                    colorText: _selectedNationality == ""
+                                        ? AppColors.fontGreyOpacity
+                                        : AppColors.fontDark,
+                                    validateText: _isValidateValue == true &&
+                                            _selectedNationality == ""
+                                        ? Container(
+                                            width: double.infinity,
+                                            padding: EdgeInsets.only(
+                                              left: 15,
+                                              top: 5,
+                                            ),
+                                            child: Text(
+                                              "required".tr,
+                                              style: bodyTextSmall(null,
+                                                  AppColors.fontDanger, null),
+                                            ),
+                                          )
+                                        : Container(),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
 
-                              //
-                              //
-                              //Country
-                              Text(
-                                "country".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
+                                  //
+                                  //
+                                  //Country
+                                  Text(
+                                    "country".tr,
+                                    style: bodyTextNormal(
+                                        null, null, FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
 
-                              //
-                              //
-                              //Country box decoration select
-                              BoxDecorationInput(
-                                mainAxisAlignmentTextIcon:
-                                    MainAxisAlignment.start,
-                                colorInput: AppColors.backgroundWhite,
-                                colorBorder: _selectedCountry == "" &&
-                                        _isValidateValue == true
-                                    ? AppColors.borderDanger
-                                    : AppColors.borderSecondary,
-                                paddingFaIcon:
-                                    EdgeInsets.symmetric(horizontal: 8),
-                                fontWeight: null,
-                                widgetIconActive: FaIcon(
-                                  FontAwesomeIcons.caretDown,
-                                  color: AppColors.iconGrayOpacity,
-                                  size: IconSize.sIcon,
-                                ),
-                                press: () async {
-                                  FocusScope.of(context)
-                                      .requestFocus(focusNode);
+                                  //
+                                  //
+                                  //Country box decoration select
+                                  BoxDecorationInput(
+                                    mainAxisAlignmentTextIcon:
+                                        MainAxisAlignment.start,
+                                    colorInput: AppColors.backgroundWhite,
+                                    colorBorder: _selectedCountry == "" &&
+                                            _isValidateValue == true
+                                        ? AppColors.borderDanger
+                                        : AppColors.borderSecondary,
+                                    paddingFaIcon:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    fontWeight: null,
+                                    widgetIconActive: FaIcon(
+                                      FontAwesomeIcons.caretDown,
+                                      color: AppColors.iconGrayOpacity,
+                                      size: IconSize.sIcon,
+                                    ),
+                                    press: () async {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
 
-                                  var result = await showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) {
-                                        return ListSingleSelectedAlertDialog(
-                                          title: "country".tr,
-                                          listItems: _listCountry,
-                                          selectedListItem: _selectedCountry,
-                                        );
-                                      }).then(
-                                    (value) {
-                                      //value = "_id"
-                                      //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                      if (value != "") {
-                                        //
-                                        //ເອົາ _listCountry ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
-                                        dynamic findValue =
-                                            _listCountry.firstWhere(
-                                                (i) => i["_id"] == value);
+                                      var result = await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return ListSingleSelectedAlertDialog(
+                                              title: "country".tr,
+                                              listItems: _listCountry,
+                                              selectedListItem:
+                                                  _selectedCountry,
+                                            );
+                                          }).then(
+                                        (value) {
+                                          //value = "_id"
+                                          //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                          if (value != "") {
+                                            //
+                                            //ເອົາ _listCountry ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
+                                            dynamic findValue =
+                                                _listCountry.firstWhere(
+                                                    (i) => i["_id"] == value);
 
-                                        setState(() {
-                                          _selectedCountry = findValue['_id'];
-                                          _countryName = findValue['name'];
-                                        });
+                                            setState(() {
+                                              _selectedCountry =
+                                                  findValue['_id'];
+                                              _countryName = findValue['name'];
+                                            });
 
-                                        print(_countryName);
-                                      }
+                                            print(_countryName);
+                                          }
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                                text: _selectedCountry != ""
-                                    ? "${_countryName}"
-                                    : "select".tr + " " + "country".tr,
-                                colorText: _selectedCountry == ""
-                                    ? AppColors.fontGreyOpacity
-                                    : AppColors.fontDark,
-                                validateText: _isValidateValue == true &&
-                                        _selectedCountry == ""
-                                    ? Container(
-                                        width: double.infinity,
-                                        padding: EdgeInsets.only(
-                                          left: 15,
-                                          top: 5,
-                                        ),
-                                        child: Text(
-                                          "required".tr,
-                                          style: bodyTextSmall(
-                                              null, AppColors.fontDanger, null),
-                                        ),
-                                      )
-                                    : Container(),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
+                                    text: _selectedCountry != ""
+                                        ? "${_countryName}"
+                                        : "select".tr + " " + "country".tr,
+                                    colorText: _selectedCountry == ""
+                                        ? AppColors.fontGreyOpacity
+                                        : AppColors.fontDark,
+                                    validateText: _isValidateValue == true &&
+                                            _selectedCountry == ""
+                                        ? Container(
+                                            width: double.infinity,
+                                            padding: EdgeInsets.only(
+                                              left: 15,
+                                              top: 5,
+                                            ),
+                                            child: Text(
+                                              "required".tr,
+                                              style: bodyTextSmall(null,
+                                                  AppColors.fontDanger, null),
+                                            ),
+                                          )
+                                        : Container(),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
 
-                              //
-                              //
-                              //Province
-                              Text(
-                                "province".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
+                                  //
+                                  //
+                                  //Province
+                                  Text(
+                                    "province".tr,
+                                    style: bodyTextNormal(
+                                        null, null, FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
 
-                              //
-                              //
-                              //Province box decoration select
-                              BoxDecorationInput(
-                                mainAxisAlignmentTextIcon:
-                                    MainAxisAlignment.start,
-                                colorInput: AppColors.backgroundWhite,
-                                colorBorder: _selectedProvince == "" &&
-                                        _isValidateValue == true
-                                    ? AppColors.borderDanger
-                                    : AppColors.borderSecondary,
-                                paddingFaIcon:
-                                    EdgeInsets.symmetric(horizontal: 8),
-                                fontWeight: null,
-                                widgetIconActive: FaIcon(
-                                  FontAwesomeIcons.caretDown,
-                                  color: AppColors.iconGrayOpacity,
-                                  size: IconSize.sIcon,
-                                ),
-                                press: () async {
-                                  FocusScope.of(context)
-                                      .requestFocus(focusNode);
+                                  //
+                                  //
+                                  //Province box decoration select
+                                  BoxDecorationInput(
+                                    mainAxisAlignmentTextIcon:
+                                        MainAxisAlignment.start,
+                                    colorInput: AppColors.backgroundWhite,
+                                    colorBorder: _selectedProvince == "" &&
+                                            _isValidateValue == true
+                                        ? AppColors.borderDanger
+                                        : AppColors.borderSecondary,
+                                    paddingFaIcon:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    fontWeight: null,
+                                    widgetIconActive: FaIcon(
+                                      FontAwesomeIcons.caretDown,
+                                      color: AppColors.iconGrayOpacity,
+                                      size: IconSize.sIcon,
+                                    ),
+                                    press: () async {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
 
-                                  var result = await showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) {
-                                        return ListSingleSelectedAlertDialog(
-                                          title: "province".tr,
-                                          listItems: _listProvinces,
-                                          selectedListItem: _selectedProvince,
-                                        );
-                                      }).then(
-                                    (value) {
-                                      //value = "_id"
-                                      //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                      if (value != "") {
-                                        //
-                                        //ເອົາ _listProvinces ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
-                                        dynamic findValue =
-                                            _listProvinces.firstWhere(
-                                                (i) => i["_id"] == value);
+                                      var result = await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return ListSingleSelectedAlertDialog(
+                                              title: "province".tr,
+                                              listItems: _listProvinces,
+                                              selectedListItem:
+                                                  _selectedProvince,
+                                            );
+                                          }).then(
+                                        (value) {
+                                          //value = "_id"
+                                          //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                          if (value != "") {
+                                            //
+                                            //ເອົາ _listProvinces ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
+                                            dynamic findValue =
+                                                _listProvinces.firstWhere(
+                                                    (i) => i["_id"] == value);
 
-                                        setState(() {
-                                          _selectedProvince = findValue['_id'];
-                                          _provinceName = findValue['name'];
-                                        });
-                                        print(_provinceName);
+                                            setState(() {
+                                              _selectedProvince =
+                                                  findValue['_id'];
+                                              _provinceName = findValue['name'];
+                                            });
+                                            print(_provinceName);
 
-                                        //
-                                        //map ເອົາ Provincs And Districts ທີ່ເຮົາເລືອກ _province(_id) ກົງກັບ _provinces
-                                        //add ໂຕທີ່ເຮົາ map ໃສ່ _districts
-                                        var mapDistrict =
-                                            _listProvinces.firstWhere((d) =>
-                                                d['_id'] == _selectedProvince);
+                                            //
+                                            //map ເອົາ Provincs And Districts ທີ່ເຮົາເລືອກ _province(_id) ກົງກັບ _provinces
+                                            //add ໂຕທີ່ເຮົາ map ໃສ່ _districts
+                                            var mapDistrict =
+                                                _listProvinces.firstWhere((d) =>
+                                                    d['_id'] ==
+                                                    _selectedProvince);
 
-                                        //
-                                        //add ໂຕທີ່ເຮົາ map ໃສ່ _districts
-                                        _listDistricts =
-                                            mapDistrict['districts'];
+                                            //
+                                            //add ໂຕທີ່ເຮົາ map ໃສ່ _districts
+                                            _listDistricts =
+                                                mapDistrict['districts'];
 
-                                        if (_selectedDistrict != "" &&
-                                            _selectedProvince != "") {
-                                          _listDistricts = [];
-                                          _selectedDistrict = "";
-                                          var mapDistrict =
-                                              _listProvinces.firstWhere((d) =>
-                                                  d['_id'] ==
-                                                  _selectedProvince);
-                                          _listDistricts =
-                                              mapDistrict['districts'];
-                                        }
-                                      }
+                                            if (_selectedDistrict != "" &&
+                                                _selectedProvince != "") {
+                                              _listDistricts = [];
+                                              _selectedDistrict = "";
+                                              var mapDistrict = _listProvinces
+                                                  .firstWhere((d) =>
+                                                      d['_id'] ==
+                                                      _selectedProvince);
+                                              _listDistricts =
+                                                  mapDistrict['districts'];
+                                            }
+                                          }
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                                text: _selectedProvince != ""
-                                    ? "${_provinceName}"
-                                    : "select".tr + " " + "province".tr,
-                                colorText: _selectedProvince == ""
-                                    ? AppColors.fontGreyOpacity
-                                    : AppColors.fontDark,
-                                validateText: _isValidateValue == true &&
-                                        _selectedProvince == ""
-                                    ? Container(
-                                        width: double.infinity,
-                                        padding: EdgeInsets.only(
-                                          left: 15,
-                                          top: 5,
-                                        ),
-                                        child: Text(
-                                          "required".tr,
-                                          style: bodyTextSmall(
-                                              null, AppColors.fontDanger, null),
-                                        ),
-                                      )
-                                    : Container(),
-                              ),
+                                    text: _selectedProvince != ""
+                                        ? "${_provinceName}"
+                                        : "select".tr + " " + "province".tr,
+                                    colorText: _selectedProvince == ""
+                                        ? AppColors.fontGreyOpacity
+                                        : AppColors.fontDark,
+                                    validateText: _isValidateValue == true &&
+                                            _selectedProvince == ""
+                                        ? Container(
+                                            width: double.infinity,
+                                            padding: EdgeInsets.only(
+                                              left: 15,
+                                              top: 5,
+                                            ),
+                                            child: Text(
+                                              "required".tr,
+                                              style: bodyTextSmall(null,
+                                                  AppColors.fontDanger, null),
+                                            ),
+                                          )
+                                        : Container(),
+                                  ),
 
-                              // DropdownButtonMenu(
-                              //   inputColor: AppColors.backgroundWhite,
-                              //   hintTextFontWeight: FontWeight.bold,
-                              //   hintText: 'Select Province',
-                              //   onChanged: (i) {
-                              //     setState(() {
-                              //       _province = i;
-                              //       //
-                              //       //map ເອົາ Provincs And Districts ທີ່ເຮົາເລືອກ _province(_id) ກົງກັບ _provinces
-                              //       var mapDistrict = _listProvinces
-                              //           .firstWhere((d) => d['_id'] == _province);
-                              //       //
-                              //       //add ໂຕທີ່ເຮົາ map ໃສ່ _districts
-                              //       _listDistricts = mapDistrict['districts'];
-                              //       if (_district != null && _province != null) {
-                              //         _listDistricts = [];
-                              //         _district = null;
-                              //         var mapDistrict = _listProvinces
-                              //             .firstWhere((d) => d['_id'] == _province);
-                              //         _listDistricts = mapDistrict['districts'];
-                              //       }
-                              //       // print(_province);
-                              //       // print(mapDistrict);
-                              //     });
-                              //   },
-                              //   value: _province,
-                              //   items: _listProvinces
-                              //       .map(
-                              //         (i) => DropdownMenuItem(
-                              //           value: i['_id'].toString(),
-                              //           child: Text(
-                              //             i['name'],
-                              //             overflow: TextOverflow.ellipsis,
-                              //           ),
-                              //         ),
-                              //       )
-                              //       .toList(),
-                              //   validator: (value) =>
-                              //       value == null || value == "" ? "required" : null,
-                              // ),
-                              SizedBox(
-                                height: 20,
-                              ),
+                                  // DropdownButtonMenu(
+                                  //   inputColor: AppColors.backgroundWhite,
+                                  //   hintTextFontWeight: FontWeight.bold,
+                                  //   hintText: 'Select Province',
+                                  //   onChanged: (i) {
+                                  //     setState(() {
+                                  //       _province = i;
+                                  //       //
+                                  //       //map ເອົາ Provincs And Districts ທີ່ເຮົາເລືອກ _province(_id) ກົງກັບ _provinces
+                                  //       var mapDistrict = _listProvinces
+                                  //           .firstWhere((d) => d['_id'] == _province);
+                                  //       //
+                                  //       //add ໂຕທີ່ເຮົາ map ໃສ່ _districts
+                                  //       _listDistricts = mapDistrict['districts'];
+                                  //       if (_district != null && _province != null) {
+                                  //         _listDistricts = [];
+                                  //         _district = null;
+                                  //         var mapDistrict = _listProvinces
+                                  //             .firstWhere((d) => d['_id'] == _province);
+                                  //         _listDistricts = mapDistrict['districts'];
+                                  //       }
+                                  //       // print(_province);
+                                  //       // print(mapDistrict);
+                                  //     });
+                                  //   },
+                                  //   value: _province,
+                                  //   items: _listProvinces
+                                  //       .map(
+                                  //         (i) => DropdownMenuItem(
+                                  //           value: i['_id'].toString(),
+                                  //           child: Text(
+                                  //             i['name'],
+                                  //             overflow: TextOverflow.ellipsis,
+                                  //           ),
+                                  //         ),
+                                  //       )
+                                  //       .toList(),
+                                  //   validator: (value) =>
+                                  //       value == null || value == "" ? "required" : null,
+                                  // ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
 
-                              //
-                              //
-                              //District
-                              Text(
-                                "district".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
+                                  //
+                                  //
+                                  //District
+                                  Text(
+                                    "district".tr,
+                                    style: bodyTextNormal(
+                                        null, null, FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
 
-                              //
-                              //
-                              //District box decoration select
-                              BoxDecorationInput(
-                                mainAxisAlignmentTextIcon:
-                                    MainAxisAlignment.start,
-                                colorInput: AppColors.backgroundWhite,
-                                colorBorder: _selectedDistrict == "" &&
-                                        _isValidateValue == true
-                                    ? AppColors.borderDanger
-                                    : AppColors.borderSecondary,
-                                paddingFaIcon:
-                                    EdgeInsets.symmetric(horizontal: 8),
-                                fontWeight: null,
-                                widgetIconActive: FaIcon(
-                                  FontAwesomeIcons.caretDown,
-                                  color: AppColors.iconGrayOpacity,
-                                  size: IconSize.sIcon,
-                                ),
-                                press: () async {
-                                  FocusScope.of(context)
-                                      .requestFocus(focusNode);
+                                  //
+                                  //
+                                  //District box decoration select
+                                  BoxDecorationInput(
+                                    mainAxisAlignmentTextIcon:
+                                        MainAxisAlignment.start,
+                                    colorInput: AppColors.backgroundWhite,
+                                    colorBorder: _selectedDistrict == "" &&
+                                            _isValidateValue == true
+                                        ? AppColors.borderDanger
+                                        : AppColors.borderSecondary,
+                                    paddingFaIcon:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    fontWeight: null,
+                                    widgetIconActive: FaIcon(
+                                      FontAwesomeIcons.caretDown,
+                                      color: AppColors.iconGrayOpacity,
+                                      size: IconSize.sIcon,
+                                    ),
+                                    press: () async {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
 
-                                  var result = await showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) {
-                                        return ListSingleSelectedAlertDialog(
-                                          title: "district".tr,
-                                          listItems: _listDistricts,
-                                          selectedListItem: _selectedDistrict,
-                                        );
-                                      }).then(
-                                    (value) {
-                                      //value = "_id"
-                                      //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                      if (value != "") {
-                                        //
-                                        //ເອົາ _listDistricts ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
-                                        dynamic findValue =
-                                            _listDistricts.firstWhere(
-                                                (i) => i["_id"] == value);
+                                      var result = await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return ListSingleSelectedAlertDialog(
+                                              title: "district".tr,
+                                              listItems: _listDistricts,
+                                              selectedListItem:
+                                                  _selectedDistrict,
+                                            );
+                                          }).then(
+                                        (value) {
+                                          //value = "_id"
+                                          //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
+                                          if (value != "") {
+                                            //
+                                            //ເອົາ _listDistricts ມາຊອກຫາວ່າມີຄ່າກົງກັບຄ່າທີ່ສົ່ງຄືນກັບມາບໍ່?
+                                            dynamic findValue =
+                                                _listDistricts.firstWhere(
+                                                    (i) => i["_id"] == value);
 
-                                        setState(() {
-                                          _selectedDistrict = findValue['_id'];
-                                          _districtName = findValue['name'];
-                                        });
+                                            setState(() {
+                                              _selectedDistrict =
+                                                  findValue['_id'];
+                                              _districtName = findValue['name'];
+                                            });
 
-                                        print(_districtName);
-                                      }
+                                            print(_districtName);
+                                          }
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                                text: _selectedDistrict != ""
-                                    ? "${_districtName}"
-                                    : "select".tr + " " + "district".tr,
-                                colorText: _selectedDistrict == ""
-                                    ? AppColors.fontGreyOpacity
-                                    : AppColors.fontDark,
-                                validateText: _isValidateValue == true &&
-                                        _selectedDistrict == ""
-                                    ? Container(
-                                        width: double.infinity,
-                                        padding: EdgeInsets.only(
-                                          left: 15,
-                                          top: 5,
-                                        ),
-                                        child: Text(
-                                          "required".tr,
-                                          style: bodyTextSmall(
-                                              null, AppColors.fontDanger, null),
-                                        ),
-                                      )
-                                    : Container(),
+                                    text: _selectedDistrict != ""
+                                        ? "${_districtName}"
+                                        : "select".tr + " " + "district".tr,
+                                    colorText: _selectedDistrict == ""
+                                        ? AppColors.fontGreyOpacity
+                                        : AppColors.fontDark,
+                                    validateText: _isValidateValue == true &&
+                                            _selectedDistrict == ""
+                                        ? Container(
+                                            width: double.infinity,
+                                            padding: EdgeInsets.only(
+                                              left: 15,
+                                              top: 5,
+                                            ),
+                                            child: Text(
+                                              "required".tr,
+                                              style: bodyTextSmall(null,
+                                                  AppColors.fontDanger, null),
+                                            ),
+                                          )
+                                        : Container(),
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                height: 30,
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -1355,7 +1829,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
       Navigator.pop(context);
     }
 
-    print(res);
+    print("personal information: " + "${res['created']}");
 
     if (res['created'] != null) {
       await showDialog(

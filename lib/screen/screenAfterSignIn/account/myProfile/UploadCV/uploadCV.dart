@@ -37,19 +37,20 @@ class _UploadCVState extends State<UploadCV> {
   dynamic _cvUploadDate;
 
   pickFile() async {
-    var statusStorage = await Permission.storage.status;
-    if (statusStorage.isGranted) {
-      //
-      //
-      //ສະແດງ AlertDialog Loading
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return CustomLoadingLogoCircle();
-        },
-      );
+    //
+    //
+    //ສະແດງ AlertDialog Loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomLoadingLogoCircle();
+      },
+    );
 
+    var statusStorage = await Permission.storage.status;
+    print("${statusStorage}");
+    if (statusStorage.isGranted) {
       print("storage isGranted");
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -92,14 +93,53 @@ class _UploadCVState extends State<UploadCV> {
         print("result == null");
         Navigator.pop(context);
       }
-    }
-    if (statusStorage.isDenied) {
+    } else if (statusStorage.isDenied) {
       print("storage isDenied");
       await Permission.storage.request();
-    }
-    if (statusStorage.isPermanentlyDenied) {
+      Navigator.pop(context);
+    } else if (statusStorage.isPermanentlyDenied) {
       print("storage isPermanentlyDenied");
-      await openAppSettings();
+      // await openAppSettings();
+      Navigator.pop(context);
+
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return NewVer5CustAlertDialogWarningBtnConfirm(
+            title: "warning".tr,
+            contentText: "cv_file_permission_guide".tr,
+            textButton: "ok".tr,
+            press: () async {
+              Navigator.pop(context);
+              await openAppSettings();
+            },
+          );
+        },
+      );
+    } else {
+      print("storage is etc...");
+      // await openAppSettings();
+      // Future.delayed(Duration(seconds: 1), () {
+      //   Navigator.pop(context);
+      // });
+      Navigator.pop(context);
+
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return NewVer5CustAlertDialogWarningBtnConfirm(
+            title: "warning".tr,
+            contentText: "cv_file_permission_guide".tr,
+            textButton: "ok".tr,
+            press: () async {
+              Navigator.pop(context);
+              await openAppSettings();
+            },
+          );
+        },
+      );
     }
   }
 

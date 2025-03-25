@@ -529,7 +529,7 @@ class _CompanyState extends State<Company> {
                                                                     )
                                                                   : Image
                                                                       .network(
-                                                                      "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${i['cardCover']}",
+                                                                      "https://storage.googleapis.com/108-bucket/${i['cardCover']}",
                                                                       fit: BoxFit
                                                                           .cover,
                                                                       errorBuilder: (context,
@@ -822,7 +822,7 @@ class _CompanyState extends State<Company> {
                                                                         )
                                                                       : Image
                                                                           .network(
-                                                                          "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                                          "https://storage.googleapis.com/108-bucket/${_logo}",
                                                                           fit: BoxFit
                                                                               .contain,
                                                                           errorBuilder: (context,
@@ -1183,7 +1183,7 @@ class _CompanyState extends State<Company> {
                                                                         .contain,
                                                                   )
                                                                 : Image.network(
-                                                                    "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                                    "https://storage.googleapis.com/108-bucket/${_logo}",
                                                                     fit: BoxFit
                                                                         .contain,
                                                                     errorBuilder:

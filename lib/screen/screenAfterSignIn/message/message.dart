@@ -244,7 +244,6 @@ class _MessagesState extends State<Messages> {
                                               if (value != "") {
                                                 print("call back mess id : " +
                                                     value);
-                                                await fetchApiCheckTotalMessageUnRead();
 
                                                 setState(() {
                                                   dynamic mes = _listMessages
@@ -252,15 +251,16 @@ class _MessagesState extends State<Messages> {
                                                           m['msgId'] == value);
                                                   print(mes.toString());
                                                   mes["status"] = false;
+                                                });
 
-                                                  Future.delayed(
-                                                      Duration(
-                                                          milliseconds: 100),
-                                                      () {
-                                                    widget.callbackTotalNoti!(
-                                                        totalMessageUnRead
-                                                            .toString());
-                                                  });
+                                                await fetchApiCheckTotalMessageUnRead();
+
+                                                Future.delayed(
+                                                    Duration(milliseconds: 100),
+                                                    () {
+                                                  widget.callbackTotalNoti!(
+                                                      totalMessageUnRead
+                                                          .toString());
                                                 });
                                               }
                                             });

@@ -442,15 +442,16 @@ class _SkillState extends State<Skill> {
                                 _isValidateValue = true;
                               });
                             } else {
+                              setState(() {
+                                _isValidateValue = false;
+                              });
                               addSkill();
                             }
                           } else {
                             print("invalid validate form");
-                            if (_selectedSkillLevel == "") {
-                              setState(() {
-                                _isValidateValue = true;
-                              });
-                            }
+                            setState(() {
+                              _isValidateValue = true;
+                            });
                           }
                         },
                       ),
@@ -529,6 +530,8 @@ class _SkillState extends State<Skill> {
       "keySkill": _skill,
       "skillLevelId": _selectedSkillLevel,
     });
+
+    print("skills: " + "${res['skills']}");
 
     if (res['skills'] != null) {
       Navigator.pop(context);

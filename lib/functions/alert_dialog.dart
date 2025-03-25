@@ -1571,7 +1571,7 @@ class _NewVer3CustAlertDialogWarningPictrueBtnConfirmCancelState
                                     fit: BoxFit.contain,
                                   )
                                 : Image.network(
-                                    "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${widget.logo}",
+                                    "https://storage.googleapis.com/108-bucket/${widget.logo}",
                                     fit: BoxFit.contain,
                                     errorBuilder: (context, error, stackTrace) {
                                       return Image.asset(
@@ -1833,6 +1833,165 @@ class _NewVer4CustAlertDialogWarning3TxtBtnConfirmCancelState
                 ],
               ),
             )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NewVer5CustAlertDialogWarningBtnConfirm extends StatefulWidget {
+  const NewVer5CustAlertDialogWarningBtnConfirm({
+    Key? key,
+    this.contentText,
+    this.title,
+    this.colorButton,
+    this.colorTextButton,
+    this.textButton,
+    this.boxCircleColor,
+    this.iconColor,
+    this.buttonColor,
+    this.textButtonColor,
+    this.press,
+  }) : super(key: key);
+  final String? contentText, textButton;
+  final String? title;
+  final Color? boxCircleColor,
+      iconColor,
+      colorButton,
+      colorTextButton,
+      buttonColor,
+      textButtonColor;
+  final Function()? press;
+
+  @override
+  State<NewVer5CustAlertDialogWarningBtnConfirm> createState() =>
+      _NewVer5CustAlertDialogWarningBtnConfirmState();
+}
+
+class _NewVer5CustAlertDialogWarningBtnConfirmState
+    extends State<NewVer5CustAlertDialogWarningBtnConfirm> {
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
+      child: Dialog(
+        backgroundColor: AppColors.backgroundWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        insetPadding: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              flex: 1,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    // height: 150,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.borderWhite),
+                        borderRadius: BorderRadius.circular(30)),
+                    width: double.infinity,
+                    child: Padding(
+                      padding: EdgeInsets.all(30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 30,
+                          ),
+
+                          //
+                          //
+                          //Title
+                          Text(
+                            "${widget.title}",
+                            style: bodyTextMedium(
+                                "NotoSansLaoLoopedBold", null, FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+
+                          //
+                          //
+                          //Text
+                          Text(
+                            "${widget.contentText}",
+                            style: bodyTextMiniMedium(
+                                "NotoSansLaoLoopedMedium", null, null),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          //
+                          //
+                          //Button
+                          GestureDetector(
+                            onTap: widget.press,
+                            child: Container(
+                              width: 170,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: widget.buttonColor == null
+                                    ? AppColors.warning200
+                                    : widget.buttonColor,
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "${widget.textButton}",
+                                  style: bodyTextMaxNormal(
+                                      "NotoSansLaoLoopedMedium",
+                                      widget.textButtonColor == null
+                                          ? AppColors.warning600
+                                          : widget.textButtonColor,
+                                      null),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  //
+                  //
+                  //Box circle with icon
+                  Positioned(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            color:
+                                widget.boxCircleColor ?? AppColors.warning200),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: FaIcon(
+                            FontAwesomeIcons.exclamation,
+                            size: 36,
+                            color: widget.iconColor ?? AppColors.warning600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    top: -50,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

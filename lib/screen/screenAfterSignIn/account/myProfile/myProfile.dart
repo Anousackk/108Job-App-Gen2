@@ -68,6 +68,7 @@ class _MyProfileState extends State<MyProfile>
   dynamic _languageStatus;
   dynamic _skillStatus;
   dynamic _avatarObj;
+  dynamic _noExperience;
 
   List _education = [];
   List _workHistory = [];
@@ -264,6 +265,8 @@ class _MyProfileState extends State<MyProfile>
           : _seekerProfile["file"]["src"];
     }
 
+    _noExperience =
+        res["noExperience"] == null ? false : res["noExperience"] as bool;
     _personalInformationStatus =
         _reviewStatus["personalInformationStatus"] == null
             ? null
@@ -397,7 +400,8 @@ class _MyProfileState extends State<MyProfile>
                       //Navigator.pop
                       leading: GestureDetector(
                         onTap: () {
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
+                          Navigator.of(context).pop("${_imageSrc}");
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
@@ -514,7 +518,7 @@ class _MyProfileState extends State<MyProfile>
                             //
                             //
                             //Section
-                            //Profile Image
+                            //Avatar Image
                             Container(
                               width: double.infinity,
                               color: AppColors.primary100,
@@ -563,7 +567,7 @@ class _MyProfileState extends State<MyProfile>
                                                 children: <Widget>[
                                                   //
                                                   //
-                                                  //Image loading
+                                                  //Avatar image loading
                                                   _imageLoading
                                                       ? Container(
                                                           width: 90,
@@ -582,7 +586,7 @@ class _MyProfileState extends State<MyProfile>
                                                         )
                                                       //
                                                       //
-                                                      //ຫຼັງຈາກ Image loading ແລ້ວ
+                                                      //ຫຼັງຈາກ Avatar image loading ແລ້ວ
                                                       : Container(
                                                           width: 90,
                                                           height: 90,
@@ -1128,9 +1132,13 @@ class _MyProfileState extends State<MyProfile>
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    FetchWorkHistory(),
+                                                    FetchWorkHistory(
+                                                  noExperience: _noExperience,
+                                                ),
                                               ),
-                                            ).then((val) => onGoBack(val));
+                                            ).then((val) {
+                                              onGoBack(val);
+                                            });
                                           },
                                           prefixIconText:
                                               _workHistoryStatus == null
@@ -2190,13 +2198,13 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               },
                             ),
                             CustomButtonIconText(
-                              colorButton: AppColors.lightPrimary,
-                              widgetFaIcon: FaIcon(
+                              buttonColor: AppColors.lightPrimary,
+                              widgetPrefixIcon: FaIcon(
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
                               text: "add".tr + " " + 'work history'.tr,
-                              colorText: AppColors.fontPrimary,
+                              textColor: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
                                   context,
@@ -2402,13 +2410,13 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               },
                             ),
                             CustomButtonIconText(
-                              colorButton: AppColors.lightPrimary,
-                              widgetFaIcon: FaIcon(
+                              buttonColor: AppColors.lightPrimary,
+                              widgetPrefixIcon: FaIcon(
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
                               text: "add".tr + " " + "education".tr,
-                              colorText: AppColors.fontPrimary,
+                              textColor: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
                                   context,
@@ -2553,13 +2561,13 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               },
                             ),
                             CustomButtonIconText(
-                              colorButton: AppColors.lightPrimary,
-                              widgetFaIcon: FaIcon(
+                              buttonColor: AppColors.lightPrimary,
+                              widgetPrefixIcon: FaIcon(
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
                               text: "add".tr + " " + "language_skill".tr,
-                              colorText: AppColors.fontPrimary,
+                              textColor: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
                                   context,
@@ -2700,13 +2708,13 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               },
                             ),
                             CustomButtonIconText(
-                              colorButton: AppColors.lightPrimary,
-                              widgetFaIcon: FaIcon(
+                              buttonColor: AppColors.lightPrimary,
+                              widgetPrefixIcon: FaIcon(
                                 FontAwesomeIcons.plus,
                                 color: AppColors.fontPrimary,
                               ),
                               text: "add".tr + " " + 'skill'.tr,
-                              colorText: AppColors.fontPrimary,
+                              textColor: AppColors.fontPrimary,
                               press: () {
                                 Navigator.push(
                                   context,

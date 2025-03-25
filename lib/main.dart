@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace, body_might_complete_normally_nullable, prefer_final_fields
 import 'dart:io';
+import 'package:app/alertUpgraderMessages.dart';
 import 'package:app/firebase_options.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/i18n/i18n.dart';
+import 'package:app/provider/notifierProvider.dart';
 import 'package:app/routes.dart';
+import 'package:app/screen/ScreenAfterSignIn/Home/home.dart';
 import 'package:app/screen/login/login.dart';
 import 'package:app/screen/screenAfterSignIn/Notifications/notification.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
@@ -16,8 +19,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:upgrader/upgrader.dart';
 
 //Background messages
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -36,6 +41,8 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 //main()
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Upgrader.sharedInstance.initialize();
 
   //1. Initialize the firebase app
   await Firebase.initializeApp(
@@ -104,8 +111,16 @@ Future<void> main() async {
 
   if (Platform.isIOS) {
     print('Running on iOS. iOS version: ${Platform.operatingSystemVersion}');
+    // String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+    // print("APNs Token: $apnsToken");
+
+    // String? token = await FirebaseMessaging.instance.getToken();
+    // print("FCM Token: $token");
   } else if (Platform.isAndroid) {
     print('Running on Android. Android version: ${Platform.version}');
+
+    // String? token = await FirebaseMessaging.instance.getToken();
+    // print("FCM Token: $token");
   } else {
     print('Running on neither iOS nor Android.');
   }
@@ -136,6 +151,7 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   String? getLanguageSharePref;
+  String? _sharePreToken;
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   bool _isDynamicLinkHandled = false;
@@ -246,7 +262,20 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   checkLanguage() async {
     final prefs = await SharedPreferences.getInstance();
+    var employeeToken = prefs.getString('employeeToken');
     getLanguageSharePref = prefs.getString('setLanguage');
+
+    if (employeeToken != null) {
+      setState(() {
+        _sharePreToken = employeeToken.toString();
+        print("sharePreToken" + "${_sharePreToken}");
+      });
+    } else {
+      setState(() {
+        _sharePreToken = null;
+        print("sharePreToken" + "${_sharePreToken}");
+      });
+    }
 
     if (getLanguageSharePref == 'lo') {
       Get.updateLocale(Locale('lo', 'LA'));
@@ -340,105 +369,135 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     print("Main locale: " + '${Get.locale}');
     FocusScopeNode currentFocus = FocusScopeNode();
 
-    return Sizer(
-      builder: (context, orientation, deviceType) {
-        return GestureDetector(
-          onTap: () {
-            currentFocus = FocusScope.of(context);
-            if (!currentFocus.hasPrimaryFocus) {
-              currentFocus.unfocus();
-            }
-          },
-          child: GetMaterialApp(
-            // color: AppColors.backgroundWhite,
-            translations: LocalString(),
-            locale: Locale('lo', 'LA'),
-            fallbackLocale: Locale('lo', 'LA'),
-            debugShowCheckedModeBanner: false,
-            navigatorKey: navigatorKey,
-            theme: ThemeData(
-              useMaterial3: false,
-              scaffoldBackgroundColor: AppColors.backgroundWhite,
-              textTheme: TextTheme(),
-
-              fontFamily: Get.locale == Locale('lo', 'LA') || Get.locale == null
-                  ? 'NotoSansLaoLoopedRegular'
-                  : 'SatoshiMedium',
-              // primaryColor: primaryColor,
-              appBarTheme: AppBarTheme(
-                backgroundColor: AppColors.backgroundWhite,
-
-                // color: AppColors.red,
-                elevation: 0,
-
-                // systemOverlayStyle: SystemUiOverlayStyle.dark,
-                // systemOverlayStyle: SystemUiOverlayStyle(
-                //     statusBarColor: AppColors.white,
-                //     systemNavigationBarColor: AppColors.black),
-              ),
-            ),
-            home: Scaffold(
-              // backgroundColor: AppColors.backgroundWhite,
-              appBar: AppBar(
-                toolbarHeight: 0,
-                systemOverlayStyle: SystemUiOverlayStyle.dark,
-                // backgroundColor: AppColors.backgroundWhite,
-              ),
-              body: Login(),
-              // body: UpgradeAlert(
-              //   upgrader: Upgrader(
-              //     // showIgnore: false,
-              //     // showLater: false,
-              //     // canDismissDialog: false,
-              //     // showReleaseNotes: false,
-              //     // shouldPopScope: () => false,
-              //     durationUntilAlertAgain: Duration(days: 1),
-              //     storeController: UpgraderStoreController(
-              //       onAndroid: () => UpgraderPlayStore(),
-              //       oniOS: () => UpgraderAppStore(),
-              //     ),
-              //     // dialogStyle: Platform.isIOS
-              //     //     ? UpgradeDialogStyle.cupertino
-              //     //     : UpgradeDialogStyle.material,
-              //     // messages: UpgraderMessages(),
-              //     messages: MyUpgraderMessages(),
-              //   ),
-              //   child: Login(),
-              // ),
-            ),
-            localizationsDelegates: [
-              // add your localizations delegates here
-              DefaultMaterialLocalizations.delegate,
-              DefaultWidgetsLocalizations.delegate,
-            ],
-            routes: routes,
-            onGenerateRoute: (settings) {
-              print("settings: ${settings}");
-              if (settings.name == Notifications.routeName) {
-                final args = settings.arguments as Notifications;
-
-                print("args: ${args}");
-                return MaterialPageRoute(
-                  builder: (context) {
-                    return Notifications();
-                  },
-                );
-              } else {
-                final args = settings.arguments as Messages;
-
-                print("args: ${args}");
-                return MaterialPageRoute(
-                  builder: (context) {
-                    return Messages();
-                  },
-                );
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => NotifierProvider()),
+      ],
+      child: Sizer(
+        builder: (context, orientation, deviceType) {
+          return GestureDetector(
+            onTap: () {
+              currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
               }
-              // assert(false, 'Need to implement ${settings.name}');
-              // return null;
             },
-          ),
-        );
-      },
+            child: GetMaterialApp(
+              // color: AppColors.backgroundWhite,
+              translations: LocalString(),
+              locale: Locale('lo', 'LA'),
+              fallbackLocale: Locale('lo', 'LA'),
+              debugShowCheckedModeBanner: false,
+              navigatorKey: navigatorKey,
+              theme: ThemeData(
+                useMaterial3: false,
+                scaffoldBackgroundColor: AppColors.backgroundWhite,
+                textTheme: TextTheme(),
+
+                fontFamily:
+                    Get.locale == Locale('lo', 'LA') || Get.locale == null
+                        ? 'NotoSansLaoLoopedRegular'
+                        : 'SatoshiMedium',
+                // primaryColor: primaryColor,
+                appBarTheme: AppBarTheme(
+                  backgroundColor: AppColors.backgroundWhite,
+
+                  // color: AppColors.red,
+                  elevation: 0,
+
+                  // systemOverlayStyle: SystemUiOverlayStyle.dark,
+                  // systemOverlayStyle: SystemUiOverlayStyle(
+                  //     statusBarColor: AppColors.white,
+                  //     systemNavigationBarColor: AppColors.black),
+                ),
+              ),
+              home: Scaffold(
+                // backgroundColor: AppColors.backgroundWhite,
+
+                // appBar: AppBar(
+                //   toolbarHeight: 0,
+                //   systemOverlayStyle: SystemUiOverlayStyle.dark,
+                //   backgroundColor: AppColors.backgroundAppBar,
+                // ),
+                body: UpgradeAlert(
+                  showIgnore: false,
+                  showLater: false,
+                  barrierDismissible: false,
+                  showReleaseNotes: false,
+                  dialogStyle: Platform.isIOS
+                      ? UpgradeDialogStyle.cupertino
+                      : UpgradeDialogStyle.material,
+                  upgrader: Upgrader(
+                    // debugLogging: true,
+                    // debugDisplayAlways: true,
+                    // debugDisplayOnce: true,
+                    durationUntilAlertAgain: Duration.zero,
+                    // messages: UpgraderMessages(),
+                    messages: MyUpgraderMessages(),
+                    upgraderDevice: UpgraderDevice(),
+
+                    storeController: UpgraderStoreController(
+                      onAndroid: () => UpgraderPlayStore(),
+                      oniOS: () => UpgraderAppStore(),
+                    ),
+                    // storeController: MyStoreController(),
+                  ),
+                  child: _sharePreToken == null ? Login() : Home(),
+                ),
+                // body: UpgradeAlert(
+                //   showIgnore: false,
+                //   showLater: false,
+                //   barrierDismissible: false,
+                //   // showReleaseNotes: false,
+                //   dialogStyle: Platform.isIOS
+                //       ? UpgradeDialogStyle.cupertino
+                //       : UpgradeDialogStyle.material,
+                //   upgrader: Upgrader(
+                //     // debugLogging: true,
+                //     debugDisplayAlways: true,
+                //     durationUntilAlertAgain: Duration(seconds: 1),
+
+                //     messages: UpgraderMessages(),
+                //     // messages: MySpanishMessages(),
+                //     // upgraderDevice: UpgraderDevice(),
+                //   ),
+                //   child: Login(),
+                // ),
+              ),
+              localizationsDelegates: [
+                // add your localizations delegates here
+                DefaultMaterialLocalizations.delegate,
+                DefaultWidgetsLocalizations.delegate,
+              ],
+              routes: routes,
+              onGenerateRoute: (settings) {
+                print("settings: ${settings}");
+                if (settings.name == Notifications.routeName) {
+                  final args = settings.arguments as Notifications;
+
+                  print("args: ${args}");
+                  return MaterialPageRoute(
+                    builder: (context) {
+                      return Notifications();
+                    },
+                  );
+                } else {
+                  final args = settings.arguments as Messages;
+
+                  print("args: ${args}");
+                  return MaterialPageRoute(
+                    builder: (context) {
+                      return Messages();
+                    },
+                  );
+                }
+                // assert(false, 'Need to implement ${settings.name}');
+                // return null;
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }

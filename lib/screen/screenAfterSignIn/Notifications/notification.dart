@@ -256,9 +256,11 @@ class _NotificationsState extends State<Notifications> {
                                                 ),
                                               ),
                                             ).then((value) async {
-                                              if (value[1] != "") {
-                                                await fetchApiCheckTotalNotiUnRead();
+                                              print(value[1].toString());
 
+                                              if ("call back noti id : " +
+                                                      value[1] !=
+                                                  "") {
                                                 setState(() {
                                                   dynamic job =
                                                       _listNotifications
@@ -266,15 +268,14 @@ class _NotificationsState extends State<Notifications> {
                                                               e['jobId'] ==
                                                               value[1]);
                                                   job["status"] = false;
-
-                                                  Future.delayed(
-                                                      Duration(
-                                                          milliseconds: 100),
-                                                      () {
-                                                    widget.callbackTotalNoti!(
-                                                        totalNotiUnRead
-                                                            .toString());
-                                                  });
+                                                });
+                                                await fetchApiCheckTotalNotiUnRead();
+                                                Future.delayed(
+                                                    Duration(milliseconds: 100),
+                                                    () {
+                                                  widget.callbackTotalNoti!(
+                                                      totalNotiUnRead
+                                                          .toString());
                                                 });
                                               }
                                             });

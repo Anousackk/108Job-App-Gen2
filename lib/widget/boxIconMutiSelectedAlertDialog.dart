@@ -115,7 +115,7 @@ class _BoxIconMultiSelectedAlertDialogState
                                 ? AppColors.borderPrimary
                                 : AppColors.borderWhite,
                             imageStr:
-                                "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${image}",
+                                "https://storage.googleapis.com/108-bucket/${image}",
                             text: name,
                             textColor: _selectedArray.contains(i['_id'])
                                 ? AppColors.fontPrimary

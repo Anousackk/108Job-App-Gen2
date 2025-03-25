@@ -1911,7 +1911,7 @@ class _JobSearchState extends State<JobSearch>
                                                                                     fit: BoxFit.contain,
                                                                                   )
                                                                                 : Image.network(
-                                                                                    "https://lab-108-bucket.s3-ap-southeast-1.amazonaws.com/${_logo}",
+                                                                                    "https://storage.googleapis.com/108-bucket/${_logo}",
                                                                                     fit: BoxFit.contain,
                                                                                     errorBuilder: (context, error, stackTrace) {
                                                                                       return Image.asset(
@@ -1980,8 +1980,6 @@ class _JobSearchState extends State<JobSearch>
                                                             //Jobs Seach check status
                                                             Column(
                                                               children: [
-                                                                //
-                                                                //
                                                                 //Check status HOT
                                                                 // if (_tag ==
                                                                 //     "Highlight")
@@ -2017,7 +2015,6 @@ class _JobSearchState extends State<JobSearch>
                                                                 //       ),
                                                                 //     ),
                                                                 //   ),
-
                                                                 //
                                                                 //
                                                                 // Check status disable people
@@ -2075,7 +2072,7 @@ class _JobSearchState extends State<JobSearch>
                                                                       horizontal:
                                                                           8,
                                                                       vertical:
-                                                                          3,
+                                                                          4,
                                                                     ),
                                                                     margin:
                                                                         EdgeInsets
@@ -2468,8 +2465,9 @@ class _JobSearchState extends State<JobSearch>
     }
 
     setState(() {
+      Iterable<dynamic> iterableRes = res[resValue.toString()] ?? [];
       listValue.clear(); // Clear the existing list
-      listValue.addAll(res[resValue]); // Add elements from the response
+      listValue.addAll(iterableRes); // Add elements from the response
     });
   }
 

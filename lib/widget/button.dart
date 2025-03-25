@@ -298,17 +298,20 @@ class _SimpleButtonState extends State<SimpleButton> {
 class CustomButtonIconText extends StatefulWidget {
   const CustomButtonIconText({
     Key? key,
-    required this.text,
-    this.colorButton,
+    this.text,
+    this.buttonColor,
     this.press,
-    this.colorText,
-    required this.widgetFaIcon,
+    this.textColor,
+    this.widgetPrefixIcon,
+    this.textFontFamily,
+    this.textFontWeight,
+    this.boxBorderRadius,
   }) : super(key: key);
-  final String text;
-  final Color? colorButton;
-
-  final Color? colorText;
-  final Widget widgetFaIcon;
+  final String? text, textFontFamily;
+  final FontWeight? textFontWeight;
+  final Color? buttonColor, textColor;
+  final Widget? widgetPrefixIcon;
+  final BorderRadiusGeometry? boxBorderRadius;
   final Function()? press;
 
   @override
@@ -325,56 +328,35 @@ class _CustomButtonIconTextState extends State<CustomButtonIconText> {
         style: ButtonStyle(
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(1.5.w),
+              borderRadius:
+                  widget.boxBorderRadius ?? BorderRadius.circular(1.5.w),
             ),
           ),
           backgroundColor: WidgetStateProperty.all(
-              widget.colorButton ?? AppColors.buttonPrimary),
+              widget.buttonColor ?? AppColors.buttonPrimary),
         ),
         onPressed: widget.press,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              child: widget.widgetFaIcon,
+              child: widget.widgetPrefixIcon,
             ),
-            // Text(
-            //   "${widget.icon}",
-            //   style: TextStyle(
-            //     fontSize: IconSize.xsIcon,
-            //     color: widget.colorIcon == null
-            //         ? AppColors.iconDark
-            //         : widget.colorIcon,
-            //     fontFamily: widget.fontIcon == null
-            //         ? "FontAwesomePro-Regular"
-            //         : widget.fontIcon,
-            //   ),
-            // ),
             SizedBox(
               width: 10,
             ),
             Flexible(
-              child: Container(
-                child: Text(
-                  "${widget.text}",
-                  overflow: TextOverflow.ellipsis,
-                  style: bodyTextSmall(
-                      null,
-                      widget.colorText == null
-                          ? AppColors.fontDark
-                          : widget.colorText,
-                      null),
+              child: Text(
+                '${widget.text}',
+                style: buttonTextMaxNormal(
+                  widget.textFontFamily == null ? null : widget.textFontFamily,
+                  widget.textColor == null ? AppColors.white : widget.textColor,
+                  widget.textFontWeight,
                 ),
+                overflow: TextOverflow.visible,
+                textAlign: TextAlign.center,
               ),
             ),
-            // Text(
-            //   "right-from-line",
-            //   style: TextStyle(
-            //     fontSize: 20,
-            //     color: widget.colorText,
-            //     fontFamily: "${widget.fontIcon}",
-            //   ),
-            // ),
           ],
         ),
       ),
