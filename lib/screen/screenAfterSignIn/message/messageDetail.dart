@@ -30,7 +30,7 @@ class _MessageDetailState extends State<MessageDetail> {
   dynamic _messageDetail;
   String _message = "";
   String _callBackMessageId = "";
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   fetchMessageDetail(dynamic messageId) async {
     var res = await fetchData(getMessageDetailSeeker + messageId);
@@ -43,6 +43,8 @@ class _MessageDetailState extends State<MessageDetail> {
         _callBackMessageId = widget.messageId;
       });
     }
+
+    _isLoading = false;
 
     if (mounted) {
       setState(() {});

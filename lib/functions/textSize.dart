@@ -419,6 +419,16 @@ TextStyle fontAwesomeLight(String? fontFamily, double? fontSize, Color? color,
   );
 }
 
+TextStyle fontAwesomeBrands(String? fontFamily, double? fontSize, Color? color,
+    FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily == null ? "FontAwesomeBrands" : fontFamily,
+    fontSize: fontSize == null ? 15 : fontSize,
+    color: color == null ? AppColors.iconDark : color,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+  );
+}
+
 class FontSize {
   //appbar
   static const double appbarTextSmall = 13;

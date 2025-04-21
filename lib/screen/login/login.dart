@@ -93,7 +93,7 @@ class _LoginState extends State<Login> {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     _fcmToken = await FirebaseMessaging.instance.getToken();
-    print("fcmToken: " + "${_fcmToken}");
+    print("fcmTokenLogin: " + "${_fcmToken}");
 
     if (mounted) {
       setState(() {});
@@ -216,6 +216,20 @@ class _LoginState extends State<Login> {
           return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
             contentText: "Incorrect password".tr,
+          );
+        },
+      );
+    } else {
+      //
+      //close first loading
+      Navigator.pop(context);
+
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "${res['message']}",
           );
         },
       );

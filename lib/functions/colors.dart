@@ -135,6 +135,17 @@ class AppColors {
   static Color dark300 = HexColor("#D9D9D9");
   static Color dark200 = HexColor("#E6E6E6");
   static Color dark100 = HexColor("#F5F5F5");
+
+  //danger 900-100
+  static Color danger900 = HexColor("#FF4757");
+  static Color danger800 = HexColor("#FF5A68");
+  static Color danger700 = HexColor("#FF6C78");
+  static Color danger600 = HexColor("#FF7E89");
+  static Color danger500 = HexColor("#FF919A");
+  static Color danger400 = HexColor("#FFA3AB");
+  static Color danger300 = HexColor("#FFC8CD");
+  static Color danger200 = HexColor("#FFDADD");
+  static Color danger100 = HexColor("#FFEDEE");
 }
 
 class TextSize {

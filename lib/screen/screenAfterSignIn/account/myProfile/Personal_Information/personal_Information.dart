@@ -9,7 +9,6 @@ import 'package:app/functions/cupertinoDatePicker.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
-import 'package:app/provider/notifierProvider.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
@@ -21,7 +20,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersonalInformation extends StatefulWidget {
@@ -564,7 +562,9 @@ class _PersonalInformationState extends State<PersonalInformation> {
                             //Profile Image
                             Container(
                               width: double.infinity,
-                              color: AppColors.primary100,
+                              color: _imageSrc == "" && _isValidateValue == true
+                                  ? AppColors.danger200
+                                  : AppColors.primary100,
                               child: Material(
                                 color: Colors.transparent,
                                 child: InkWell(
@@ -586,99 +586,118 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                               //
                                               //
                                               //Avatar image
-                                              Stack(
-                                                clipBehavior: Clip.none,
-                                                alignment: Alignment.center,
-                                                children: <Widget>[
-                                                  //
-                                                  //
-                                                  //Image loading
-                                                  _imageLoading
-                                                      ? Container(
-                                                          width: 90,
-                                                          height: 90,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: AppColors
-                                                                .backgroundWhite,
-                                                          ),
-                                                          child: Center(
-                                                            child: Text(
-                                                                "uploading".tr),
-                                                          ),
-                                                        )
+                                              Column(
+                                                children: [
+                                                  Stack(
+                                                    clipBehavior: Clip.none,
+                                                    alignment: Alignment.center,
+                                                    children: <Widget>[
                                                       //
                                                       //
-                                                      //ຫຼັງຈາກ Image loading ແລ້ວ
-                                                      : Container(
-                                                          width: 90,
-                                                          height: 90,
-                                                          child: ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        100),
-                                                            child: _imageSrc ==
-                                                                    ""
-                                                                ? Image.asset(
-                                                                    'assets/image/defprofile.jpg',
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  )
-                                                                : Image.network(
-                                                                    "${_imageSrc}",
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    errorBuilder:
-                                                                        (context,
-                                                                            error,
-                                                                            stackTrace) {
-                                                                      return Image
-                                                                          .asset(
+                                                      //Image loading
+                                                      _imageLoading
+                                                          ? Container(
+                                                              width: 90,
+                                                              height: 90,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: AppColors
+                                                                    .backgroundWhite,
+                                                              ),
+                                                              child: Center(
+                                                                child: Text(
+                                                                    "uploading"
+                                                                        .tr),
+                                                              ),
+                                                            )
+                                                          //
+                                                          //
+                                                          //ຫຼັງຈາກ Image loading ແລ້ວ
+                                                          : Container(
+                                                              width: 90,
+                                                              height: 90,
+                                                              child: ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            100),
+                                                                child: _imageSrc ==
+                                                                        ""
+                                                                    ? Image
+                                                                        .asset(
                                                                         'assets/image/defprofile.jpg',
                                                                         fit: BoxFit
                                                                             .cover,
-                                                                      ); // Display an error message
-                                                                    },
-                                                                  ),
-                                                          ),
-                                                        ),
+                                                                      )
+                                                                    : Image
+                                                                        .network(
+                                                                        "${_imageSrc}",
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        errorBuilder: (context,
+                                                                            error,
+                                                                            stackTrace) {
+                                                                          return Image
+                                                                              .asset(
+                                                                            'assets/image/defprofile.jpg',
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                          ); // Display an error message
+                                                                        },
+                                                                      ),
+                                                              ),
+                                                            ),
 
-                                                  //
-                                                  //
-                                                  //Gallery image icon at the bottom right corner
-                                                  Positioned(
-                                                    bottom: 0,
-                                                    right: 0,
-                                                    child: GestureDetector(
-                                                      onTap: () {},
-                                                      child: Container(
-                                                        height: 20,
-                                                        width: 20,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color:
-                                                              AppColors.dark100,
-                                                        ),
-                                                        child: Text(
-                                                          "\uf021",
-                                                          style:
-                                                              fontAwesomeRegular(
+                                                      //
+                                                      //
+                                                      //Gallery image icon at the bottom right corner
+                                                      Positioned(
+                                                        bottom: 0,
+                                                        right: 0,
+                                                        child: GestureDetector(
+                                                          onTap: () {},
+                                                          child: Container(
+                                                            height: 20,
+                                                            width: 20,
+                                                            alignment: Alignment
+                                                                .center,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              color: AppColors
+                                                                  .dark100,
+                                                            ),
+                                                            child: Text(
+                                                              "\uf021",
+                                                              style: fontAwesomeRegular(
                                                                   null,
                                                                   10,
                                                                   AppColors
                                                                       .dark500,
                                                                   null),
+                                                            ),
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
+                                                    ],
                                                   ),
+                                                  if (_imageSrc == "" &&
+                                                      _isValidateValue == true)
+                                                    Container(
+                                                      padding: EdgeInsets.only(
+                                                          top: 5),
+                                                      child: Text(
+                                                        "required".tr,
+                                                        style: bodyTextSmall(
+                                                            null,
+                                                            AppColors
+                                                                .fontDanger,
+                                                            null),
+                                                      ),
+                                                    ),
                                                 ],
                                               ),
                                               SizedBox(
@@ -1742,7 +1761,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               _selectedProvince == "" ||
                               _selectedDistrict == "" ||
                               _selectedGender == "" ||
-                              _selectedMaritalStatus == "") {
+                              _selectedMaritalStatus == "" ||
+                              _imageSrc == "") {
                             setState(() {
                               _isValidateValue = true;
                             });
@@ -1751,18 +1771,9 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           }
                         } else {
                           print("invalid validate form");
-
-                          if (_dateOfBirth == null ||
-                              _selectedNationality == "" ||
-                              _selectedCountry == "" ||
-                              _selectedProvince == "" ||
-                              _selectedDistrict == "" ||
-                              _selectedGender == "" ||
-                              _selectedMaritalStatus == "") {
-                            setState(() {
-                              _isValidateValue = true;
-                            });
-                          }
+                          setState(() {
+                            _isValidateValue = true;
+                          });
                         }
                       },
                     ),

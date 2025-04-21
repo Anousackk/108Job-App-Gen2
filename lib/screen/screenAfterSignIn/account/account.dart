@@ -6,6 +6,7 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
+import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/JobAlert/jobAlert.dart';
@@ -22,10 +23,12 @@ class Account extends StatefulWidget {
   const Account(
       {Key? key,
       this.callBackToMyJobsSavedJob,
-      this.callBackToMyJobsAppliedJob})
+      this.callBackToMyJobsAppliedJob,
+      this.hasInternet})
       : super(key: key);
   final VoidCallback? callBackToMyJobsSavedJob;
   final Function(dynamic)? callBackToMyJobsAppliedJob;
+  final hasInternet;
 
   @override
   State<Account> createState() => _AccountState();
@@ -354,8 +357,16 @@ class _AccountState extends State<Account> {
   @override
   void initState() {
     super.initState();
-    getProfileSeeker();
-    getTotalJobSeeker();
+    print("widget hasInternet account: " + "${widget.hasInternet}");
+
+    if (widget.hasInternet == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showInternetDisconnected(context);
+      });
+    } else {
+      getProfileSeeker();
+      getTotalJobSeeker();
+    }
   }
 
   @override

@@ -1,10 +1,11 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, sized_box_for_whitespace, avoid_print, unused_local_variable, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, unused_element, prefer_is_empty, empty_statements, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, sized_box_for_whitespace, avoid_print, unused_local_variable, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, unused_element, prefer_is_empty, empty_statements, prefer_typing_uninitialized_variables, prefer_adjacent_string_concatenation
 
 import 'dart:async';
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/screenAfterSignIn/company/companyDetail.dart';
@@ -18,8 +19,10 @@ class Company extends StatefulWidget {
   const Company({
     Key? key,
     this.companyType,
+    this.hasInternet,
   }) : super(key: key);
   final companyType;
+  final hasInternet;
 
   @override
   State<Company> createState() => _CompanyState();
@@ -250,25 +253,32 @@ class _CompanyState extends State<Company> {
   @override
   void initState() {
     super.initState();
+    print("widget hasInternet company: " + "${widget.hasInternet}");
 
-    if (widget.companyType == "Hiring") {
-      checkTypeMyJobFromHomePage();
+    if (widget.hasInternet == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showInternetDisconnected(context);
+      });
     } else {
-      fetchCompanies("AllCompanies");
-      fetchCompanyFeature();
-    }
-
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        setState(() {
-          _isLoadingMoreData = true;
-        });
-        fetchCompanies(_searchType);
+      if (widget.companyType == "Hiring") {
+        checkTypeMyJobFromHomePage();
+      } else {
+        fetchCompanies("AllCompanies");
+        fetchCompanyFeature();
       }
-    });
 
-    _searchCompanyNameController.text = _searchCompanyName;
+      _scrollController.addListener(() {
+        if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent) {
+          setState(() {
+            _isLoadingMoreData = true;
+          });
+          fetchCompanies(_searchType);
+        }
+      });
+
+      _searchCompanyNameController.text = _searchCompanyName;
+    }
   }
 
   @override

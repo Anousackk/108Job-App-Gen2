@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'dart:math' as math;
 
 BoxDecoration boxDecorationAlert(Color color) {
   return BoxDecoration(
@@ -707,8 +706,9 @@ class NewVer2CustAlertDialogSuccessBtnConfirm extends StatefulWidget {
     this.iconColor,
     this.widgetBottomColor,
     this.strIcon,
+    this.fontFamilyIcon,
   }) : super(key: key);
-  final String? strIcon, title, contentText, textButton;
+  final String? strIcon, fontFamilyIcon, title, contentText, textButton;
   final Color? boxCircleColor,
       iconColor,
       buttonColor,
@@ -834,7 +834,7 @@ class _NewVer2CustAlertDialogSuccessBtnConfirmState
                           child: Text(
                             widget.strIcon ?? "\uf00c",
                             style: fontAwesomeSolid(
-                                null,
+                                widget.fontFamilyIcon ?? null,
                                 36,
                                 widget.iconColor == null
                                     ? AppColors.primary600
@@ -888,9 +888,11 @@ class CustAlertDialogWarningWithoutBtn extends StatefulWidget {
     this.textButton,
     this.boxCircleColor,
     this.iconColor,
+    this.strIcon,
+    this.fontFamilyIcon,
   }) : super(key: key);
-  final String? contentText, textButton;
-  final String? title;
+  final String? strIcon, fontFamilyIcon, title, contentText, textButton;
+
   final Color? boxCircleColor, iconColor, colorButton, colorTextButton;
 
   @override
@@ -976,200 +978,21 @@ class _CustAlertDialogWarningWithoutBtnState
                                 widget.boxCircleColor ?? AppColors.warning200),
                         child: Align(
                           alignment: Alignment.center,
-                          child: FaIcon(
-                            FontAwesomeIcons.exclamation,
-                            size: 36,
-                            color: widget.iconColor ?? AppColors.warning600,
+                          child: Text(
+                            widget.strIcon ?? "\u0021",
+                            style: fontAwesomeSolid(
+                                widget.fontFamilyIcon ?? null,
+                                36,
+                                widget.iconColor == null
+                                    ? AppColors.warning600
+                                    : widget.iconColor,
+                                null),
                           ),
                         ),
                       ),
                     ),
                     top: -50,
                   ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class NewCustAlertDialogWarningBtnConfirmCancel extends StatefulWidget {
-  const NewCustAlertDialogWarningBtnConfirmCancel({
-    Key? key,
-    this.text,
-    this.title,
-    this.press,
-    this.buttonLeftColor,
-    this.textTop,
-    this.textButtonLeft,
-    this.textButtonRight,
-    this.titleColor,
-    this.textButtonLeftColor,
-    this.textButtonRightColor,
-    this.buttonRightColor,
-    this.textTopColor,
-    this.textColor,
-    this.boxCircleColor,
-    this.iconColor,
-  }) : super(key: key);
-
-  final String? textTop, text, title, textButtonLeft, textButtonRight;
-  final Color? boxCircleColor,
-      iconColor,
-      textTopColor,
-      titleColor,
-      textColor,
-      buttonLeftColor,
-      buttonRightColor,
-      textButtonLeftColor,
-      textButtonRightColor;
-  final Function()? press;
-
-  @override
-  State<NewCustAlertDialogWarningBtnConfirmCancel> createState() =>
-      _NewCustAlertDialogWarningBtnConfirmCancelState();
-}
-
-class _NewCustAlertDialogWarningBtnConfirmCancelState
-    extends State<NewCustAlertDialogWarningBtnConfirmCancel> {
-  @override
-  Widget build(BuildContext context) {
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
-      child: Dialog(
-        backgroundColor: AppColors.backgroundWhite,
-        insetPadding: EdgeInsets.symmetric(horizontal: 20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              flex: 1,
-              child: Stack(
-                clipBehavior: Clip.none,
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    // height: 260,
-                    width: double.infinity,
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: SizedBox(
-                              height: 30,
-                            ),
-                          ),
-
-                          //
-                          //
-                          //TextTop
-                          Text(
-                            '${widget.textTop}',
-                            style: bodyTextNormal(
-                                null, widget.textTopColor ?? null, null),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-
-                          //
-                          //
-                          //Title
-                          Text(
-                            '${widget.title}',
-                            style: bodyTextMedium(
-                                null,
-                                widget.titleColor ?? AppColors.fontPrimary,
-                                FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-
-                          //
-                          //
-                          //Text
-                          Text(
-                            '${widget.text}',
-                            style: bodyTextNormal(
-                                null, widget.textColor ?? null, null),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-
-                          //
-                          //
-                          //Button
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Button(
-                                  buttonColor: widget.buttonLeftColor == null
-                                      ? AppColors.buttonBG
-                                      : widget.buttonLeftColor,
-                                  buttonBorderColor: AppColors.borderBG,
-                                  press: () {
-                                    Navigator.of(context).pop('Cancel');
-                                  },
-                                  text: '${widget.textButtonLeft}',
-                                  textColor: widget.textButtonLeftColor == null
-                                      ? AppColors.fontDark
-                                      : widget.textButtonLeftColor,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Button(
-                                  buttonColor: widget.buttonRightColor == null
-                                      ? AppColors.buttonPrimary
-                                      : widget.buttonRightColor,
-                                  buttonBorderColor: AppColors.borderPrimary,
-                                  press: () {
-                                    Navigator.of(context).pop('Ok');
-                                  },
-                                  text: '${widget.textButtonRight}',
-                                  textColor: widget.textButtonRightColor == null
-                                      ? AppColors.fontWhite
-                                      : widget.textButtonRightColor,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    child: CircleAvatar(
-                      backgroundColor:
-                          widget.boxCircleColor ?? AppColors.lightOrange,
-                      radius: 40,
-                      child: FaIcon(
-                        FontAwesomeIcons.ban,
-                        size: IconSize.lIcon,
-                        color: widget.iconColor ?? AppColors.iconWarning,
-                      ),
-                    ),
-                    top: -40,
-                  )
                 ],
               ),
             ),
@@ -1203,8 +1026,15 @@ class NewVer2CustAlertDialogWarningBtnConfirmCancel extends StatefulWidget {
     this.textButtonLeftColor,
     this.textButtonRightColor,
     this.widgetBottomColor,
+    this.strIcon,
+    this.fontFamilyIcon,
   }) : super(key: key);
-  final String? title, contentText, textButtonLeft, textButtonRight;
+  final String? strIcon,
+      fontFamilyIcon,
+      title,
+      contentText,
+      textButtonLeft,
+      textButtonRight;
   final Color? boxCircleColor,
       iconColor,
       titleColor,
@@ -1351,10 +1181,20 @@ class _NewVer2CustAlertDialogWarningBtnConfirmCancelState
                                 widget.boxCircleColor ?? AppColors.warning200),
                         child: Align(
                           alignment: Alignment.center,
-                          child: FaIcon(
-                            FontAwesomeIcons.exclamation,
-                            size: 36,
-                            color: widget.iconColor ?? AppColors.warning600,
+                          // child: FaIcon(
+                          //   FontAwesomeIcons.exclamation,
+                          //   size: 36,
+                          //   color: widget.iconColor ?? AppColors.warning600,
+                          // ),
+                          child: Text(
+                            widget.strIcon ?? "\u0021",
+                            style: fontAwesomeSolid(
+                                widget.fontFamilyIcon ?? null,
+                                36,
+                                widget.iconColor == null
+                                    ? AppColors.warning600
+                                    : widget.iconColor,
+                                null),
                           ),
                         ),
                       ),
@@ -1633,8 +1473,16 @@ class NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel extends StatefulWidget {
     this.titleColor,
     this.textButtonLeftColor,
     this.textButtonRightColor,
+    this.strIcon,
+    this.fontFamilyIcon,
   }) : super(key: key);
-  final String? contentText, smallText, title, textButtonLeft, textButtonRight;
+  final String? strIcon,
+      fontFamilyIcon,
+      contentText,
+      smallText,
+      title,
+      textButtonLeft,
+      textButtonRight;
   final Color? boxCircleColor,
       titleColor,
       iconColor,
@@ -1798,12 +1646,22 @@ class _NewVer4CustAlertDialogWarning3TxtBtnConfirmCancelState
                                 : widget.boxCircleColor),
                         child: Align(
                           alignment: Alignment.center,
-                          child: FaIcon(
-                            FontAwesomeIcons.exclamation,
-                            size: 36,
-                            color: widget.iconColor == null
-                                ? AppColors.warning600
-                                : widget.iconColor,
+                          // child: FaIcon(
+                          //   FontAwesomeIcons.exclamation,
+                          //   size: 36,
+                          //   color: widget.iconColor == null
+                          //       ? AppColors.warning600
+                          //       : widget.iconColor,
+                          // ),
+                          child: Text(
+                            widget.strIcon ?? "\u0021",
+                            style: fontAwesomeSolid(
+                                widget.fontFamilyIcon ?? null,
+                                36,
+                                widget.iconColor == null
+                                    ? AppColors.warning600
+                                    : widget.iconColor,
+                                null),
                           ),
                         ),
                       ),
@@ -1853,9 +1711,10 @@ class NewVer5CustAlertDialogWarningBtnConfirm extends StatefulWidget {
     this.buttonColor,
     this.textButtonColor,
     this.press,
+    this.strIcon,
+    this.fontFamilyIcon,
   }) : super(key: key);
-  final String? contentText, textButton;
-  final String? title;
+  final String? strIcon, fontFamilyIcon, title, contentText, textButton;
   final Color? boxCircleColor,
       iconColor,
       colorButton,
@@ -1893,8 +1752,9 @@ class _NewVer5CustAlertDialogWarningBtnConfirmState
                   Container(
                     // height: 150,
                     decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.borderWhite),
-                        borderRadius: BorderRadius.circular(30)),
+                      border: Border.all(color: AppColors.borderWhite),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                     width: double.infinity,
                     child: Padding(
                       padding: EdgeInsets.all(30),
@@ -1979,10 +1839,15 @@ class _NewVer5CustAlertDialogWarningBtnConfirmState
                                 widget.boxCircleColor ?? AppColors.warning200),
                         child: Align(
                           alignment: Alignment.center,
-                          child: FaIcon(
-                            FontAwesomeIcons.exclamation,
-                            size: 36,
-                            color: widget.iconColor ?? AppColors.warning600,
+                          child: Text(
+                            widget.strIcon ?? "\u0021",
+                            style: fontAwesomeSolid(
+                                widget.fontFamilyIcon ?? null,
+                                36,
+                                widget.iconColor == null
+                                    ? AppColors.warning600
+                                    : widget.iconColor,
+                                null),
                           ),
                         ),
                       ),
@@ -2014,8 +1879,10 @@ class CustAlertDialogErrorWithoutBtn extends StatefulWidget {
     this.iconColor,
     this.titleColor,
     this.textColor,
+    this.strIcon,
+    this.fontFamilyIcon,
   }) : super(key: key);
-  final String? title, text;
+  final String? strIcon, fontFamilyIcon, title, text;
   final Color? boxCircleColor, iconColor, titleColor, textColor;
 
   @override
@@ -2098,10 +1965,15 @@ class _CustAlertDialogErrorWithoutBtnState
                                 widget.boxCircleColor ?? AppColors.warning200),
                         child: Align(
                           alignment: Alignment.center,
-                          child: FaIcon(
-                            FontAwesomeIcons.xmark,
-                            size: 36,
-                            color: widget.iconColor ?? AppColors.iconDanger,
+                          child: Text(
+                            widget.strIcon ?? "\uf00d",
+                            style: fontAwesomeSolid(
+                                widget.fontFamilyIcon ?? null,
+                                36,
+                                widget.iconColor == null
+                                    ? AppColors.warning600
+                                    : widget.iconColor,
+                                null),
                           ),
                         ),
                       ),

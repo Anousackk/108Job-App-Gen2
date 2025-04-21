@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_print, prefer_is_empty, prefer_if_null_operators, prefer_typing_uninitialized_variables, unused_element, file_names
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_print, prefer_is_empty, prefer_if_null_operators, prefer_typing_uninitialized_variables, unused_element, file_names, prefer_adjacent_string_concatenation
 
 import 'dart:async';
 
@@ -6,6 +6,7 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
+import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
@@ -19,8 +20,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class MyJobs extends StatefulWidget {
-  const MyJobs({Key? key, this.myJobStatus}) : super(key: key);
+  const MyJobs({Key? key, this.myJobStatus, this.hasInternet})
+      : super(key: key);
   final myJobStatus;
+  final hasInternet;
 
   @override
   State<MyJobs> createState() => _MyJobsState();
@@ -263,23 +266,31 @@ class _MyJobsState extends State<MyJobs> {
   void initState() {
     super.initState();
 
-    if (widget.myJobStatus == "AppliedJob") {
-      checkTypeMyJobFromHomePage();
-    } else {
-      fetchMyJob(_typeMyJob);
-    }
+    print("widget hasInternet myjob: " + "${widget.hasInternet}");
 
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        setState(() {
-          _isLoadingMoreData = true;
-        });
+    if (widget.hasInternet == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showInternetDisconnected(context);
+      });
+    } else {
+      if (widget.myJobStatus == "AppliedJob") {
+        checkTypeMyJobFromHomePage();
+      } else {
         fetchMyJob(_typeMyJob);
       }
-    });
 
-    _searchTitleController.text = _searchTitle;
+      _scrollController.addListener(() {
+        if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent) {
+          setState(() {
+            _isLoadingMoreData = true;
+          });
+          fetchMyJob(_typeMyJob);
+        }
+      });
+
+      _searchTitleController.text = _searchTitle;
+    }
   }
 
   @override

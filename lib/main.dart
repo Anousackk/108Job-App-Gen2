@@ -151,7 +151,7 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   String? getLanguageSharePref;
-  String? _sharePreToken;
+  String? _sharePreEmpToken;
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   bool _isDynamicLinkHandled = false;
@@ -267,13 +267,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     if (employeeToken != null) {
       setState(() {
-        _sharePreToken = employeeToken.toString();
-        print("sharePreToken" + "${_sharePreToken}");
+        _sharePreEmpToken = employeeToken.toString();
+        print("sharePreEmployeeToken: " + "${_sharePreEmpToken}");
       });
     } else {
       setState(() {
-        _sharePreToken = null;
-        print("sharePreToken" + "${_sharePreToken}");
+        _sharePreEmpToken = null;
+        print("sharePreEmployeeToken: " + "${_sharePreEmpToken}");
       });
     }
 
@@ -442,7 +442,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     ),
                     // storeController: MyStoreController(),
                   ),
-                  child: _sharePreToken == null ? Login() : Home(),
+                  child: _sharePreEmpToken == null ? Login() : Home(),
                 ),
                 // body: UpgradeAlert(
                 //   showIgnore: false,

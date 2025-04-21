@@ -1,10 +1,10 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_is_empty, avoid_print
 
-import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/screen/ScreenAfterSignIn/Notifications/Widget/notiShimmerWidget.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart';
@@ -105,52 +105,66 @@ class _NotificationsState extends State<Notifications> {
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         body: SafeArea(
-          child: _isLoading
-              ? Container(
+          child: Container(
+            color: AppColors.backgroundWhite,
+            height: double.infinity,
+            width: double.infinity,
+            child: Column(
+              children: [
+                //
+                //
+                //
+                //
+                //
+                //AppBar Custom
+                Container(
+                  padding: EdgeInsets.all(20),
                   color: AppColors.backgroundWhite,
                   width: double.infinity,
-                  height: double.infinity,
-                  child: Center(child: CustomLoadingLogoCircle()),
-                )
-              : Container(
-                  color: AppColors.backgroundWhite,
-                  height: double.infinity,
-                  width: double.infinity,
-                  child: Column(
+                  alignment: Alignment.center,
+                  child: Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        color: AppColors.backgroundWhite,
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        child: Row(
-                          children: [
-                            // if (widget.statusFromScreen == "HomeScreen")
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop(totalNotiUnRead);
-                              },
-                              child: FaIcon(
-                                FontAwesomeIcons.arrowLeft,
-                                size: 20,
-                              ),
-                            ),
-                            Expanded(
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "notification".tr,
-                                  style: bodyTextMedium(
-                                      null, null, FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ],
+                      // if (widget.statusFromScreen == "HomeScreen")
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop(totalNotiUnRead);
+                        },
+                        child: FaIcon(
+                          FontAwesomeIcons.arrowLeft,
+                          size: 20,
                         ),
                       ),
-                      _listNotifications.length > 0
-                          ? Expanded(
-                              child: Container(
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "notification".tr,
+                            style: bodyTextMedium(null, null, FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                //
+                //
+                //
+                //
+                //
+                //isLoading Shimmer
+                _isLoading
+                    ? Expanded(
+                        child: ListView.builder(
+                          itemCount: 5,
+                          itemBuilder: (context, index) {
+                            return NotificationShimmerWidget();
+                          },
+                        ),
+                      )
+                    : Expanded(
+                        child: _listNotifications.length > 0
+                            ? Container(
                                 // padding: EdgeInsets.symmetric(horizontal: 20),
                                 child: ListView.builder(
                                   controller: _scrollController,
@@ -207,7 +221,8 @@ class _NotificationsState extends State<Notifications> {
                                     _status = i['status'];
                                     // _status = true;
 
-                                    if (_openingDate != null) {
+                                    if (_openingDate != null ||
+                                        _openingDate == "") {
                                       //
                                       //Open Date
                                       //pars ISO to Flutter DateTime
@@ -225,7 +240,8 @@ class _NotificationsState extends State<Notifications> {
                                           .format(openDate);
                                     }
 
-                                    if (_closingDate != null) {
+                                    if (_closingDate != null ||
+                                        _closingDate == "") {
                                       //
                                       //Close Date
                                       //pars ISO to Flutter DateTime
@@ -246,39 +262,43 @@ class _NotificationsState extends State<Notifications> {
                                       children: [
                                         GestureDetector(
                                           onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    JobSearchDetail(
-                                                  jobId: i['jobId'],
-                                                  status: i['status'],
+                                            if (_title != "") {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      JobSearchDetail(
+                                                    jobId: i['jobId'],
+                                                    status: i['status'],
+                                                  ),
                                                 ),
-                                              ),
-                                            ).then((value) async {
-                                              print(value[1].toString());
+                                              ).then((value) async {
+                                                print(value[1].toString());
 
-                                              if ("call back noti id : " +
-                                                      value[1] !=
-                                                  "") {
-                                                setState(() {
-                                                  dynamic job =
-                                                      _listNotifications
-                                                          .firstWhere((e) =>
-                                                              e['jobId'] ==
-                                                              value[1]);
-                                                  job["status"] = false;
-                                                });
-                                                await fetchApiCheckTotalNotiUnRead();
-                                                Future.delayed(
-                                                    Duration(milliseconds: 100),
-                                                    () {
-                                                  widget.callbackTotalNoti!(
+                                                if ("call back noti id : " +
+                                                        value[1] !=
+                                                    "") {
+                                                  setState(() {
+                                                    dynamic job =
+                                                        _listNotifications
+                                                            .firstWhere((e) =>
+                                                                e['jobId'] ==
+                                                                value[1]);
+                                                    job["status"] = false;
+                                                  });
+                                                  await fetchApiCheckTotalNotiUnRead();
+                                                  Future.delayed(
+                                                      Duration(
+                                                          milliseconds: 100),
+                                                      () {
+                                                    widget.callbackTotalNoti!(
                                                       totalNotiUnRead
-                                                          .toString());
-                                                });
-                                              }
-                                            });
+                                                          .toString(),
+                                                    );
+                                                  });
+                                                }
+                                              });
+                                            }
                                           },
                                           child: Container(
                                             width: double.infinity,
@@ -288,30 +308,9 @@ class _NotificationsState extends State<Notifications> {
                                               color: _status
                                                   ? AppColors.lightPrimary
                                                   : AppColors.backgroundWhite,
-                                              // borderRadius:
-                                              //     BorderRadius.circular(10),
-                                              // border: _status
-                                              //     ? Border.all(
-                                              //         color: AppColors
-                                              //             .borderPrimary,
-                                              //         width: 2)
-                                              //     : Border.all(
-                                              //         color:
-                                              //             AppColors.borderWhite,
-                                              //         width: 2),
                                             ),
                                             child: Row(
                                               children: [
-                                                // Container(
-                                                //   padding: EdgeInsets.symmetric(horizontal: 10),
-                                                //   child: FaIcon(
-                                                //     FontAwesomeIcons.envelope,
-                                                //     size: 30,
-                                                //   ),
-                                                // ),
-                                                // SizedBox(
-                                                //   width: 10,
-                                                // ),
                                                 Expanded(
                                                   child: Column(
                                                     crossAxisAlignment:
@@ -322,7 +321,9 @@ class _NotificationsState extends State<Notifications> {
                                                         children: [
                                                           Expanded(
                                                             child: Text(
-                                                              "${_title}",
+                                                              _title == ""
+                                                                  ? "--"
+                                                                  : "${_title}",
                                                               style:
                                                                   bodyTextMaxNormal(
                                                                       null,
@@ -366,7 +367,12 @@ class _NotificationsState extends State<Notifications> {
                                                                 null),
                                                           ),
                                                           Text(
-                                                            "${_openingDate}",
+                                                            _openingDate ==
+                                                                        "" ||
+                                                                    _openingDate ==
+                                                                        null
+                                                                ? "--"
+                                                                : "${_openingDate}",
                                                             style: bodyTextSmall(
                                                                 null,
                                                                 AppColors
@@ -387,7 +393,12 @@ class _NotificationsState extends State<Notifications> {
                                                                 null),
                                                           ),
                                                           Text(
-                                                            "${_closingDate}",
+                                                            _closingDate ==
+                                                                        "" ||
+                                                                    _closingDate ==
+                                                                        null
+                                                                ? "--"
+                                                                : "${_closingDate}",
                                                             style: bodyTextSmall(
                                                                 null,
                                                                 AppColors
@@ -410,24 +421,22 @@ class _NotificationsState extends State<Notifications> {
                                     );
                                   },
                                 ),
-                              ),
-                            )
-                          : Expanded(
-                              child: ScreenNoData(
+                              )
+                            : ScreenNoData(
                                 faIcon: FontAwesomeIcons.fileCircleExclamation,
                                 colorIcon: AppColors.primary,
                                 text: "no have data".tr,
                                 colorText: AppColors.primary,
                               ),
-                            ),
-                      if (_isLoadingMoreData)
-                        Padding(
-                          padding: const EdgeInsets.all(0),
-                          child: Center(child: CircularProgressIndicator()),
-                        ),
-                    ],
+                      ),
+                if (_isLoadingMoreData)
+                  Padding(
+                    padding: const EdgeInsets.all(0),
+                    child: Center(child: CircularProgressIndicator()),
                   ),
-                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, unused_field, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_comparison, non_constant_identifier_names, prefer_if_null_operators, prefer_is_empty, prefer_typing_uninitialized_variables, unnecessary_null_in_if_null_operators, sized_box_for_whitespace, body_might_complete_normally_nullable, unused_element, file_names
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, unused_field, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_comparison, non_constant_identifier_names, prefer_if_null_operators, prefer_is_empty, prefer_typing_uninitialized_variables, unnecessary_null_in_if_null_operators, sized_box_for_whitespace, body_might_complete_normally_nullable, unused_element, file_names, prefer_adjacent_string_concatenation
 
 import 'dart:async';
 
@@ -6,6 +6,7 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
+import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
@@ -19,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,12 +30,14 @@ class JobSearch extends StatefulWidget {
       this.topWorkLocation,
       this.topIndustry,
       this.type,
-      this.selectedListItem})
+      this.selectedListItem,
+      this.hasInternet})
       : super(key: key);
   final topWorkLocation;
   final topIndustry;
   final type;
   final selectedListItem;
+  final hasInternet;
 
   @override
   State<JobSearch> createState() => _JobSearchState();
@@ -41,6 +45,8 @@ class JobSearch extends StatefulWidget {
 
 class _JobSearchState extends State<JobSearch>
     with SingleTickerProviderStateMixin {
+  late final StreamSubscription<InternetStatus> _subscription;
+  late final AppLifecycleListener _listener;
   TextEditingController _searchTitleController = TextEditingController();
   late final slidableController = SlidableController(this);
   ScrollController _scrollController = ScrollController();
@@ -96,7 +102,7 @@ class _JobSearchState extends State<JobSearch>
   bool _closeOnScroll = true;
   bool _isCheckFilterColor = false;
   bool _isSaved = false;
-  bool _isLoading = false;
+  bool _isLoadingForm = true;
   bool _isLoadingMoreData = false;
   bool _hasMoreData = true;
 
@@ -301,37 +307,45 @@ class _JobSearchState extends State<JobSearch>
   @override
   void initState() {
     super.initState();
-    _isLoading = true;
 
-    getSharedPreferences();
+    print("widget hasInternet jobsearch: " + "${widget.hasInternet}");
 
-    getJobFunctionsSeeker();
-    if (widget.topWorkLocation != null) {
-      checkProvinceFromHomePage();
-    }
-    if (widget.topIndustry != null) {
-      checkTopIndustryFromHomePage();
-    }
-    if (widget.selectedListItem == null) {
-      getJobsSearchSeeker();
-    }
+    if (widget.hasInternet == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showInternetDisconnected(context);
+      });
+    } else {
+      // _isLoadingForm = true;
+      getSharedPreferences();
 
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        setState(() {
-          _isLoadingMoreData = true;
-        });
-
+      getJobFunctionsSeeker();
+      if (widget.topWorkLocation != null) {
+        checkProvinceFromHomePage();
+      }
+      if (widget.topIndustry != null) {
+        checkTopIndustryFromHomePage();
+      }
+      if (widget.selectedListItem == null) {
         getJobsSearchSeeker();
       }
-    });
 
-    _searchTitleController.text = _searchTitle;
+      _scrollController.addListener(() {
+        if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent) {
+          setState(() {
+            _isLoadingMoreData = true;
+          });
 
-    //
-    //Start a timer when the widget is initialized
-    print('initState called');
+          getJobsSearchSeeker();
+        }
+      });
+
+      _searchTitleController.text = _searchTitle;
+
+      //
+      //Start a timer when the widget is initialized
+      print('initState called');
+    }
   }
 
   @override
@@ -341,6 +355,8 @@ class _JobSearchState extends State<JobSearch>
     _scrollController.dispose();
     _searchTitleController.dispose();
     _timer?.cancel();
+    // _subscription.cancel();
+    // _listener.dispose();
 
     print('dispose called');
     super.dispose();
@@ -364,7 +380,7 @@ class _JobSearchState extends State<JobSearch>
           //   backgroundColor: AppColors.background,
 
           body: SafeArea(
-            child: _isLoading
+            child: _isLoadingForm
                 ? Container(
                     color: AppColors.backgroundWhite,
                     width: double.infinity,
@@ -1805,14 +1821,14 @@ class _JobSearchState extends State<JobSearch>
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           JobSearchDetail(
-                                                              jobId:
-                                                                  indexJobsSearch[
-                                                                      'jobId'],
-                                                              newJob:
-                                                                  indexJobsSearch[
-                                                                      'newJob']),
+                                                        jobId: indexJobsSearch[
+                                                            'jobId'],
+                                                        newJob: indexJobsSearch[
+                                                            'newJob'],
+                                                      ),
                                                     ),
                                                   ).then((value) {
+                                                    print("${value}");
                                                     //
                                                     //
                                                     //ຖ້າມີ job id and status save/unsave job ຄ່າທີ່ໄດ້ຈາກການ Navigator.pop JobSearchDetail
@@ -2526,7 +2542,7 @@ class _JobSearchState extends State<JobSearch>
       _hasMoreData = false;
     }
     _isLoadingMoreData = false;
-    _isLoading = false;
+    _isLoadingForm = false;
 
     if (res['jobList'] != null && _statusShowLoading) {
       _statusShowLoading = false;

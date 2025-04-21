@@ -939,6 +939,7 @@ class LocalString extends Translations {
       "en": "I Presently study here",
       "la": "ບ່ອນຮຽນປະຈຸບັນ",
     },
+
     //
     //
     //
@@ -968,9 +969,49 @@ class LocalString extends Translations {
       "la": "ວຽກໃຫມ່",
     },
 
-//
-//
-//
+    //
+    //
+    //
+    //
+    //
+    //Home
+    {
+      "key": "open_whatsapp",
+      "en": "Open WhatsApp",
+      "la": "ເປີດ WhatsApp",
+    },
+    {
+      "key": "contact_us_whatsapp",
+      "en": "Contact us via WhatsApp",
+      "la": "ຕິດຕໍ່ພະນັກງານເພື່ອສອບຖາມ ຫຼື ແກ້ໄຂບັນຫາ",
+    },
+
+    //
+    //
+    //
+    //
+    //
+    //Bottom Navigator Bar
+    {
+      "key": "check_internet_again",
+      "en": "Check your internet and try again",
+      "la": "ກວດສອບອິນເຕີເນັດຂອງທ່ານແລ້ວລອງໃໝ່ອີກຄັ້ງ",
+    },
+
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
 
     {
       "key": "proficiency",
