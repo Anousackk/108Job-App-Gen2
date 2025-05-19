@@ -469,6 +469,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 DefaultMaterialLocalizations.delegate,
                 DefaultWidgetsLocalizations.delegate,
               ],
+
               routes: routes,
               onGenerateRoute: (settings) {
                 print("settings: ${settings}");
