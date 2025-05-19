@@ -292,6 +292,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                         text: "continue".tr,
                         press: () async {
                           var result = await showDialog(
+                              barrierDismissible: false,
                               context: context,
                               builder: (context) {
                                 return NewVer2CustAlertDialogWarningBtnConfirmCancel(

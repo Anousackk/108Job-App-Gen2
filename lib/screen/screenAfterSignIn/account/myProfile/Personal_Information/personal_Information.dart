@@ -13,6 +13,7 @@ import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
 import 'package:app/widget/listSingleSelectedAlertDialog.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -170,21 +171,16 @@ class _PersonalInformationState extends State<PersonalInformation> {
   }
 
   Future pickImageGallery(ImageSource source) async {
-    var statusPhotos = await Permission.photos.status;
-    var statusMediaLibrary = await Permission.mediaLibrary.status;
+    // var statusPhotos = await Permission.photos.status;
+    // var statusMediaLibrary = await Permission.mediaLibrary.status;
     //
     //
-    //Pick image type IOS
+    // Pick image device IOS
     if (Platform.isIOS) {
-      print("Platform isIOS");
-      print(statusPhotos);
+      var statusPhotosIOS = await Permission.photos.status;
+      print("Platform IOS: " + statusPhotosIOS.toString());
 
-      if (statusPhotos.isLimited) {
-        print("photos isLimited");
-
-        await openAppSettings();
-      }
-      if (statusPhotos.isGranted) {
+      if (statusPhotosIOS.isGranted) {
         print("photos isGranted");
         final ImagePicker _picker = ImagePicker();
         final XFile? image = await _picker.pickImage(source: source);
@@ -276,151 +272,316 @@ class _PersonalInformationState extends State<PersonalInformation> {
             );
           }
         }
-      }
-      if (statusPhotos.isDenied) {
-        print("photos isDenied");
-        // await Permission.photos.request();
-        var result = await showDialog(
+      } else if (statusPhotosIOS.isDenied) {
+        print("statusPhotosIOS isDenied");
+
+        await Permission.photos.request();
+      } else {
+        print("statusPhotosIOS etc...");
+
+        // Display warning dialog
+        await showDialog(
           barrierDismissible: false,
           context: context,
           builder: (context) {
-            return CupertinoAlertDialogOk(
-              title: '“108 Jobs” Would like to Access Your Photos',
-              contentText:
-                  "'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.",
-              text: 'Continue',
+            return NewVer5CustAlertDialogWarningBtnConfirm(
+              title: "warning".tr,
+              contentText: "want_access_photos".tr,
+              textButton: "ok".tr,
+              press: () async {
+                await openAppSettings();
+
+                Future.delayed(Duration(seconds: 1), () {
+                  // Close warning dialog
+                  if (Navigator.canPop(context)) Navigator.pop(context);
+                });
+              },
             );
           },
         );
-        if (result == 'Ok') {
-          await Permission.photos.request();
-        }
-      }
-      if (statusPhotos.isPermanentlyDenied) {
-        print("photos isPermanentlyDenied");
-        var result = await showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) {
-            return CupertinoAlertDialogOk(
-              title: 'Allow Access Photos',
-              contentText:
-                  "'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.",
-              text: 'Continue',
-            );
-          },
-        );
-        if (result == 'Ok') {
-          await openAppSettings();
-        }
       }
     }
+
     //
     //
-    //Pick image type Android
+    // Pick image device Android
     else if (Platform.isAndroid) {
-      print("Platform isAndroid");
-      if (statusMediaLibrary.isGranted) {
-        print("mediaLibrary isGranted");
-        final ImagePicker _picker = ImagePicker();
-        final XFile? image = await _picker.pickImage(source: source);
+      final deviceInfo = DeviceInfoPlugin();
+      final androidInfo = await deviceInfo.androidInfo;
+      final sdkInt = androidInfo.version.sdkInt;
 
-        //
-        //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
-        if (image == null) return;
+      print("sdkInt: " + sdkInt.toString());
 
-        setState(() {
-          _imageLoading = true;
-        });
+      //
+      //
+      // Android 13(API 33+)
+      if (sdkInt >= 33) {
+        var statusPhotosAndroid = await Permission.photos.status;
 
-        //
-        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
-        final allowedExtensions = ['png', 'jpg', 'jpeg'];
-        final fileExtension = image.path.split('.').last.toLowerCase();
+        print("Platform Android: " + statusPhotosAndroid.toString());
 
-        //
-        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
-        if (!allowedExtensions.contains(fileExtension)) {
-          print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
+        if (statusPhotosAndroid.isGranted) {
+          print("statusPhotosAndroid isGranted");
+          final ImagePicker _picker = ImagePicker();
+          final XFile? image = await _picker.pickImage(source: source);
+
+          //
+          //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
+          if (image == null) return;
+
           setState(() {
-            _imageLoading = false;
+            _imageLoading = true;
           });
-          await showDialog(
-            context: context,
-            builder: (context) {
-              return CustAlertDialogWarningWithoutBtn(
-                title: "warning".tr,
-                contentText: "profile_image_support".tr,
-              );
-            },
-          );
-          return;
-        }
-
-        File fileTemp = File(image.path);
-        setState(() {
-          _image = fileTemp;
-        });
-        var strImage = image.path;
-
-        print("strImage: " + strImage.toString());
-
-        //
-        //ຖ້າມີຟາຍຮູບ _image
-        if (_image != null) {
-          //
-          //api upload profile seeker
-          var valUploadFile =
-              await upLoadFile(strImage, uploadProfileApiSeeker);
 
           //
-          //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
-          //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
-          if (valUploadFile != null) {
-            print("if valUploadFile: " + valUploadFile.toString());
+          //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
+          final allowedExtensions = ['png', 'jpg', 'jpeg'];
+          final fileExtension = image.path.split('.').last.toLowerCase();
 
-            _fileValue = valUploadFile['file'];
-            print("fileValue: " + _fileValue.toString());
-
-            if (_fileValue != null || _fileValue != "") {
-              //
-              //api upload or update profile image seeker
-              await uploadOrUpdateProfileImageSeeker();
-
-              setState(() {
-                _imageSrc =
-                    "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
-              });
-            }
-          }
           //
-          //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
-          else {
-            print("else valUploadFile: " + valUploadFile.toString());
+          //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
+          if (!allowedExtensions.contains(fileExtension)) {
+            print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
             setState(() {
               _imageLoading = false;
             });
+
             await showDialog(
               context: context,
               builder: (context) {
                 return CustAlertDialogWarningWithoutBtn(
                   title: "warning".tr,
-                  contentText: "profile_image_size".tr,
+                  contentText: "profile_image_support".tr,
                 );
               },
             );
+            return;
           }
+
+          File fileTemp = File(image.path);
+          setState(() {
+            _image = fileTemp;
+          });
+          var strImage = image.path;
+
+          print("strImage: " + strImage.toString());
+
+          //
+          //ຖ້າມີຟາຍຮູບ _image
+          if (_image != null) {
+            //
+            //api upload profile seeker
+            var valUploadFile =
+                await upLoadFile(strImage, uploadProfileApiSeeker);
+
+            //
+            //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
+            //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
+            if (valUploadFile != null) {
+              print("if valUploadFile: " + valUploadFile.toString());
+
+              _fileValue = valUploadFile['file'];
+              print("fileValue: " + _fileValue.toString());
+
+              if (_fileValue != null || _fileValue != "") {
+                //
+                //api upload or update profile image seeker
+                await uploadOrUpdateProfileImageSeeker();
+
+                setState(() {
+                  _imageSrc =
+                      "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
+                });
+              }
+            }
+            //
+            //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
+            else {
+              print("else valUploadFile: " + valUploadFile.toString());
+              setState(() {
+                _imageLoading = false;
+              });
+
+              await showDialog(
+                context: context,
+                builder: (context) {
+                  return CustAlertDialogWarningWithoutBtn(
+                    title: "warning".tr,
+                    contentText: "profile_image_size".tr,
+                  );
+                },
+              );
+            }
+          }
+        } else if (statusPhotosAndroid.isDenied) {
+          print("statusPhotosAndroid isDenied");
+
+          await Permission.photos.request();
+        } else {
+          print("statusPhotosAndroid etc...");
+
+          // Display warning dialog
+          await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return NewVer5CustAlertDialogWarningBtnConfirm(
+                title: "warning".tr,
+                contentText: "want_access_photos".tr,
+                textButton: "ok".tr,
+                press: () async {
+                  await openAppSettings();
+
+                  Future.delayed(Duration(seconds: 1), () {
+                    // Close warning dialog
+                    if (Navigator.canPop(context)) Navigator.pop(context);
+                  });
+                },
+              );
+            },
+          );
         }
       }
-      if (statusMediaLibrary.isDenied) {
-        print("mediaLibrary isDenied");
-        await Permission.photos.request();
-      }
-      if (statusMediaLibrary.isPermanentlyDenied) {
-        print("mediaLibrary isPermanentlyDenied");
+      //
+      //
+      // Below Android 13 (API 33)
+      else {
+        var statusStorageAndroid = await Permission.storage.status;
 
-        await openAppSettings();
+        print("Platform Android: " + statusStorageAndroid.toString());
+
+        if (statusStorageAndroid.isGranted) {
+          print("statusStorageAndroid isGranted");
+          final ImagePicker _picker = ImagePicker();
+          final XFile? image = await _picker.pickImage(source: source);
+
+          //
+          //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
+          if (image == null) return;
+
+          setState(() {
+            _imageLoading = true;
+          });
+
+          //
+          //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
+          final allowedExtensions = ['png', 'jpg', 'jpeg'];
+          final fileExtension = image.path.split('.').last.toLowerCase();
+
+          //
+          //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
+          if (!allowedExtensions.contains(fileExtension)) {
+            print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
+            setState(() {
+              _imageLoading = false;
+            });
+
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return CustAlertDialogWarningWithoutBtn(
+                  title: "warning".tr,
+                  contentText: "profile_image_support".tr,
+                );
+              },
+            );
+            return;
+          }
+
+          File fileTemp = File(image.path);
+          setState(() {
+            _image = fileTemp;
+          });
+          var strImage = image.path;
+
+          print("strImage: " + strImage.toString());
+
+          //
+          //ຖ້າມີຟາຍຮູບ _image
+          if (_image != null) {
+            //
+            //api upload profile seeker
+            var valUploadFile =
+                await upLoadFile(strImage, uploadProfileApiSeeker);
+
+            //
+            //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
+            //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
+            if (valUploadFile != null) {
+              print("if valUploadFile: " + valUploadFile.toString());
+
+              _fileValue = valUploadFile['file'];
+              print("fileValue: " + _fileValue.toString());
+
+              if (_fileValue != null || _fileValue != "") {
+                //
+                //api upload or update profile image seeker
+                await uploadOrUpdateProfileImageSeeker();
+
+                setState(() {
+                  _imageSrc =
+                      "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
+                });
+              }
+            }
+            //
+            //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
+            else {
+              print("else valUploadFile: " + valUploadFile.toString());
+              setState(() {
+                _imageLoading = false;
+              });
+
+              await showDialog(
+                context: context,
+                builder: (context) {
+                  return CustAlertDialogWarningWithoutBtn(
+                    title: "warning".tr,
+                    contentText: "profile_image_size".tr,
+                  );
+                },
+              );
+            }
+          }
+        } else if (statusStorageAndroid.isDenied) {
+          print("statusStorageAndroid isDenied");
+
+          await Permission.storage.request();
+        } else {
+          print("statusStorageAndroid etc...");
+
+          // Display warning dialog
+          await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return NewVer5CustAlertDialogWarningBtnConfirm(
+                title: "warning".tr,
+                contentText: "want_access_storage".tr,
+                textButton: "ok".tr,
+                press: () async {
+                  await openAppSettings();
+
+                  Future.delayed(Duration(seconds: 1), () {
+                    // Close warning dialog
+                    if (Navigator.canPop(context)) Navigator.pop(context);
+                  });
+                },
+              );
+            },
+          );
+        }
       }
+
+      // if (statusMediaLibrary.isDenied) {
+      //   print("mediaLibrary isDenied");
+      //   await Permission.photos.request();
+      // }
+      // if (statusMediaLibrary.isPermanentlyDenied) {
+      //   print("mediaLibrary isPermanentlyDenied");
+
+      //   await openAppSettings();
+      // }
     }
   }
 
@@ -655,12 +816,12 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                                       //Gallery image icon at the bottom right corner
                                                       Positioned(
                                                         bottom: 0,
-                                                        right: 0,
+                                                        right: -5,
                                                         child: GestureDetector(
                                                           onTap: () {},
                                                           child: Container(
-                                                            height: 20,
-                                                            width: 20,
+                                                            height: 25,
+                                                            width: 25,
                                                             alignment: Alignment
                                                                 .center,
                                                             decoration:
@@ -668,7 +829,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                                               shape: BoxShape
                                                                   .circle,
                                                               color: AppColors
-                                                                  .dark100,
+                                                                  .backgroundWhite,
                                                             ),
                                                             child: Text(
                                                               "\uf021",

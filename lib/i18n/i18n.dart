@@ -20,7 +20,7 @@ class LocalString extends Translations {
     {"key": "login", "en": "Log in", "la": "ເຂົ້າສູ່ລະບົບ"},
     {"key": "logout", "en": "Log out", "la": "ອອກຈາກລະບົບ"},
     {"key": "register", "en": "Register", "la": "ລົງທະບຽນ"},
-    {"key": "my profile", "en": "My profile", "la": "ໂປຣໄຟສ"},
+
     {"key": "profile", "en": "Profile", "la": "ໂປຣໄຟສ"},
     {"key": "my job", "en": "My jobs", "la": "ວຽກຂອງຂ້ອຍ"},
     {"key": "notification", "en": "Notification", "la": "ແຈ້ງເຕືອນ"},
@@ -513,16 +513,7 @@ class LocalString extends Translations {
       "en": "Job",
       "la": "ວຽກ",
     },
-    {
-      "key": "saved job",
-      "en": "Saved Job",
-      "la": "ວຽກທີ່ບັນທຶກ",
-    },
-    {
-      "key": "applied job",
-      "en": "Applied Job",
-      "la": "ວຽກທີ່ສະໝັກ",
-    },
+
     {
       "key": "job alert",
       "en": "Job Alert",
@@ -538,21 +529,13 @@ class LocalString extends Translations {
       "en": "Just now",
       "la": "ດຽວນີ້",
     },
-    {
-      "key": "company view profile",
-      "en": "Company viewed your profile",
-      "la": "ບໍລິສັດເບິ່ງໂປຣໄຟສຂອງທ່ານ",
-    },
+
     {
       "key": "account setting",
       "en": "Account Setting",
       "la": "ຕັ້ງຄ່າບັນຊີ",
     },
-    {
-      "key": "login info",
-      "en": "Login Information",
-      "la": "ຂໍ້ມູນການເຂົ້າລະບົບ",
-    },
+
     {
       "key": "general info",
       "en": "General Information",
@@ -719,9 +702,16 @@ class LocalString extends Translations {
     {
       "key": "cv_file_permission_guide",
       "en":
-          "It looks like you denied access to photos and files. To use this feature, please enable access manually in your phone's settings.",
+          "It looks like you denied access to files. To use this feature, please enable access manually in your phone's settings.",
       "la":
-          "ເພື່ອອັບໂຫລດຊີວີ ກະລຸນາອະເປີດອະນຸຍາດໃຫ້ແອັບພິເຄຊັ້ນສາມາດເຂົ້າເຖິງໄຟສ ໂດຍການເຂົ້າໄປທີ່ການຕັ້ງຄ່າຂອງໂທລະສັບທ່ານ",
+          "ເພື່ອອັບໂຫລດຊີວີ ກະລຸນາອະເປີດອະນຸຍາດໃຫ້ແອັບພິເຄຊັ້ນສາມາດເຂົ້າເຖິງໄຟສ ໂດຍການເຂົ້າໄປຕັ້ງຄ່າຂອງແອັບ",
+    },
+    {
+      "key": "cv_file_permission_audio",
+      "en":
+          "It looks like you denied access to files(Music and audio) To use this feature, please enable access manually in your phone's settings.",
+      "la":
+          "ເພື່ອອັບໂຫລດຊີວີ ກະລຸນາອະເປີດອະນຸຍາດໃຫ້ແອັບພິເຄຊັ້ນສາມາດເຂົ້າເຖິງໄຟສ(ເພງ ຫຼື ສຽງ) ໂດຍການເຂົ້າໄປຕັ້ງຄ່າຂອງແອັບ",
     },
 
     //
@@ -955,6 +945,73 @@ class LocalString extends Translations {
       "key": "profile_image_size",
       "en": "File size must not exceed 10MB",
       "la": "ຂະໜາດໄຟສຕ້ອງບໍ່ເກີນ 10MB",
+    },
+    {
+      "key": "login_info",
+      "en": "Login Information",
+      "la": "ຂໍ້ມູນການເຂົ້າລະບົບ",
+    },
+    {
+      "key": "my_profile",
+      "en": "My profile",
+      "la": "ໂປຣໄຟສ",
+    },
+    {
+      "key": "job_alert",
+      "en": "Job Alert",
+      "la": "ແຈ້ງເຕືອນວຽກ",
+    },
+    {
+      "key": "member_point",
+      "en": "Member Point",
+      "la": "ຄະແນນສະສົມ",
+    },
+    {
+      "key": "company_view_profile",
+      "en": "Company viewed your profile",
+      "la": "ບໍລິສັດເບິ່ງໂປຣໄຟສ",
+    },
+    {
+      "key": "submitted_cv",
+      "en": "Submitted CV",
+      "la": "ຢື່ນສະໝັກວຽກ",
+    },
+    {
+      "key": "applied_job",
+      "en": "Applied Job",
+      "la": "ວຽກທີ່ສະໝັກ",
+    },
+    {
+      "key": "saved_job",
+      "en": "Saved Job",
+      "la": "ວຽກທີ່ບັນທຶກໄວ້",
+    },
+
+    {
+      "key": "want_access_photos",
+      "en":
+          "108 Jobs would like to access your photos(Photos and videos) is required to attach photos",
+      "la":
+          "108 Jobs ຕ້ອງການໄດ້ຮັບອະນຸຍາດເຂົ້າເຖິງຮູບພາບ(ຮູບພາບ ແລະ ວິດີໂອ) ກະລຸນາອະນຸຍາດໃນຕັ້ງຄ່າຂອງແອັບ",
+    },
+    {
+      "key": "want_access_storage",
+      "en":
+          "108 Jobs would like to access your photos(Storage) is required to attach photos",
+      "la":
+          "108 Jobs ຕ້ອງການໄດ້ຮັບອະນຸຍາດເຂົ້າເຖິງຮູບພາບ(ພື້ນທີ່ຈັດເກັບ) ກະລຸນາອະນຸຍາດໃນຕັ້ງຄ່າຂອງແອັບ",
+    },
+
+    //
+    //
+    //
+    //
+    //
+    //Seeker Scan QR Code
+    {
+      "key": "scan_qr",
+      "en": "Scan QR",
+      "la": "ສະແກນ QR",
     },
 
     //
@@ -1349,11 +1406,6 @@ class LocalString extends Translations {
       "key": "click_mee_get_it",
       "en": "Click me and get it now",
       "la": "ກົດຂ້ອຍແລ້ວຮັບເງິນໄປເລີຍ",
-    },
-    {
-      "key": "member_point",
-      "en": "Member Point",
-      "la": "ຄະແນນສະສົມ",
     },
   ];
   @override

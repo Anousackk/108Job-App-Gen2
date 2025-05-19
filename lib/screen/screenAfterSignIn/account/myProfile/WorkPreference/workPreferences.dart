@@ -5,8 +5,8 @@ import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/WorkPreference/Widget/listImageTextMultiSelectedAlertDialog.dart';
 import 'package:app/widget/appbar.dart';
-import 'package:app/widget/boxIconMutiSelectedAlertDialog.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
 import 'package:app/widget/listJobFuncSelectedAlertDialog.dart';
@@ -991,7 +991,14 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                       barrierDismissible: false,
                                       context: context,
                                       builder: (context) {
-                                        return BoxIconMultiSelectedAlertDialog(
+                                        //ຮູບແບບ Box image text
+                                        // return BoxIconMultiSelectedAlertDialog(
+                                        //   title: "benefit".tr,
+                                        //   listItems: _listBenefits,
+                                        //   selectedListItem:
+                                        //       _selectedBenefitsListItem,
+                                        // );
+                                        return ListImageTextMultiSelectedAlertDialog(
                                           title: "benefit".tr,
                                           listItems: _listBenefits,
                                           selectedListItem:
@@ -1050,7 +1057,6 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                               // SizedBox(
                               //   height: 20,
                               // ),
-
                               //
                               //
                               //Professional Summary
@@ -1062,7 +1068,6 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                               // SizedBox(
                               //   height: 10,
                               // ),
-
                               // Container(
                               //   width: double.infinity,
                               //   color: AppColors.background,
@@ -1117,7 +1122,6 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                               //       keyboardAppearance: Brightness.dark,
                               //       // requestKeyboardFocusOnCheckListChanged: true,
                               //       controller: _quillController,
-
                               //       scrollPhysics: ClampingScrollPhysics(),
                               //       readOnlyMouseCursor:
                               //           SystemMouseCursors.text,

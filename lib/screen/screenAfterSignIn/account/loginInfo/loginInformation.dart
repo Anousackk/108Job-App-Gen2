@@ -155,7 +155,7 @@ class _LoginInformationState extends State<LoginInformation> {
             )
           : Scaffold(
               appBar: AppBarDefault(
-                textTitle: "login info".tr,
+                textTitle: "login_info".tr,
                 leadingPress: () {
                   Navigator.pop(context);
                 },
@@ -196,7 +196,7 @@ class _LoginInformationState extends State<LoginInformation> {
                               ),
                               Divider(
                                 height: 1,
-                                color: AppColors.borderBG,
+                                color: AppColors.borderGrey.withOpacity(0.2),
                               ),
 
                               //
@@ -357,7 +357,7 @@ class _LoginInformationState extends State<LoginInformation> {
                               ),
                               Divider(
                                 height: 1,
-                                color: AppColors.borderBG,
+                                color: AppColors.borderGrey.withOpacity(0.2),
                               ),
 
                               //
@@ -842,7 +842,7 @@ class _AddGeneralInformationState extends State<AddGeneralInformation> {
         ),
         Divider(
           height: 1,
-          color: AppColors.borderBG,
+          color: AppColors.borderGrey.withOpacity(0.2),
         ),
       ],
     );
@@ -908,7 +908,7 @@ class _ConnectOtherPlatformState extends State<ConnectOtherPlatform> {
         ),
         Divider(
           height: 1,
-          color: AppColors.borderBG,
+          color: AppColors.borderGrey.withOpacity(0.2),
         ),
       ],
     );

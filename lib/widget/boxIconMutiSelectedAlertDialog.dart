@@ -6,7 +6,6 @@ import 'package:app/widget/boxDecorationIcon.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sizer/sizer.dart';
 
 class BoxIconMultiSelectedAlertDialog extends StatefulWidget {
   const BoxIconMultiSelectedAlertDialog({
@@ -72,7 +71,6 @@ class _BoxIconMultiSelectedAlertDialogState
           //
           //Content Selection
           content: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
             color: AppColors.backgroundWhite,
             child: Column(
               children: [
@@ -80,48 +78,54 @@ class _BoxIconMultiSelectedAlertDialogState
                   child: Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
-                    child: GridView.count(
-                      crossAxisCount: 3, // Number of columns in the grid
-                      children: List.generate(
-                        widget.listItems.length,
-                        (index) {
-                          dynamic i = widget.listItems[index];
-                          String name = i['name'];
-                          String image = "";
-                          if (i.containsKey('image')) {
-                            image = i['image'];
-                          }
-                          return BoxDecorationImageAndText(
-                            press: () {
-                              setState(() {
-                                //
-                                //ຖ້າໂຕທີ່ເລືອກ _id ກົງກັບ _selectedArray(_id) ແມ່ນລົບອອກ
-                                if (_selectedArray.contains(i['_id'])) {
-                                  _selectedArray
-                                      .removeWhere((e) => e == i['_id']);
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: GridView.count(
+                        physics: ClampingScrollPhysics(),
+                        crossAxisCount: 2, // Number of columns in the grid
+                        mainAxisSpacing: 20,
+                        crossAxisSpacing: 20,
+                        children: List.generate(
+                          widget.listItems.length,
+                          (index) {
+                            dynamic i = widget.listItems[index];
+                            String name = i['name'];
+                            String image = "";
+                            if (i.containsKey('image')) {
+                              image = i['image'];
+                            }
+                            return BoxDecorationImageAndText(
+                              press: () {
+                                setState(() {
+                                  //
+                                  //ຖ້າໂຕທີ່ເລືອກ _id ກົງກັບ _selectedArray(_id) ແມ່ນລົບອອກ
+                                  if (_selectedArray.contains(i['_id'])) {
+                                    _selectedArray
+                                        .removeWhere((e) => e == i['_id']);
 
-                                  return;
-                                }
+                                    return;
+                                  }
 
-                                //
-                                //ເອົາຂໍ້ມູນທີ່ເລືອກ Add ເຂົ້າໃນ Array _selectedArray
-                                _selectedArray.add(i['_id']);
-                              });
-                            },
-                            height: 28.w,
-                            width: 28.w,
-                            imageType: 'imageNetwork',
-                            borderColor: _selectedArray.contains(i['_id'])
-                                ? AppColors.borderPrimary
-                                : AppColors.borderWhite,
-                            imageStr:
-                                "https://storage.googleapis.com/108-bucket/${image}",
-                            text: name,
-                            textColor: _selectedArray.contains(i['_id'])
-                                ? AppColors.fontPrimary
-                                : null,
-                          );
-                        },
+                                  //
+                                  //ເອົາຂໍ້ມູນທີ່ເລືອກ Add ເຂົ້າໃນ Array _selectedArray
+                                  _selectedArray.add(i['_id']);
+                                });
+                              },
+                              // height: 150,
+                              // width: 150,
+                              imageType: 'imageNetwork',
+                              borderColor: _selectedArray.contains(i['_id'])
+                                  ? AppColors.borderPrimary
+                                  : AppColors.borderWhite,
+                              imageStr:
+                                  "https://storage.googleapis.com/108-bucket/${image}",
+                              text: name,
+                              textColor: _selectedArray.contains(i['_id'])
+                                  ? AppColors.fontPrimary
+                                  : null,
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -129,12 +133,15 @@ class _BoxIconMultiSelectedAlertDialogState
                 SizedBox(
                   height: 20,
                 ),
-                Button(
-                  text: "confirm".tr,
-                  textFontWeight: FontWeight.bold,
-                  press: () {
-                    Navigator.of(context).pop(_selectedArray);
-                  },
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Button(
+                    text: "confirm".tr,
+                    textFontWeight: FontWeight.bold,
+                    press: () {
+                      Navigator.of(context).pop(_selectedArray);
+                    },
+                  ),
                 ),
                 SizedBox(
                   height: 30,

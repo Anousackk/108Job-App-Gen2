@@ -362,7 +362,7 @@ class _MyJobsState extends State<MyJobs> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                "saved job".tr,
+                                "saved_job".tr,
                                 style: bodyTextNormal(
                                     null,
                                     _typeMyJob == "SeekerSaveJob"
@@ -388,7 +388,7 @@ class _MyJobsState extends State<MyJobs> {
                                       : AppColors.buttonGrey,
                                   borderRadius: BorderRadius.circular(8)),
                               child: Text(
-                                "applied job".tr,
+                                "applied_job".tr,
                                 style: bodyTextNormal(
                                     null,
                                     _typeMyJob == "AppliedJob"

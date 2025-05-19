@@ -1146,7 +1146,7 @@ class _CompanyState extends State<Company> {
                                                 horizontal: 20),
                                             padding: EdgeInsets.all(12),
                                             decoration: BoxDecoration(
-                                              color: AppColors.white,
+                                              color: AppColors.backgroundWhite,
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),

@@ -70,13 +70,19 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow “108 Jobs to access your camera to take a picture and detect your face.</string>
+	<string>Allow 108 Jobs to access your camera to take a picture and detect your face.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Would like to Access Your Location This app needs access to your location to enable the check in and check out feature.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need permission to save photos and videos to your library for your convenience.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.</string>
+	<string>108 Jobs would like to access your Photos Access to your photo library is required to attach photos to change profile images.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>We need access to your Documents folder to upload and manage your files.</string>
+	<key>NSUserSelectedFileUsageDescription</key>
+	<string>We need access to the files you select in order to open and process them.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

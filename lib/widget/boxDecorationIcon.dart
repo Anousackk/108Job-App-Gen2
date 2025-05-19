@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_if_null_operators, non_constant_identifier_names, unnecessary_string_interpolations, file_names
+// ignore_for_file: prefer_const_constructors, prefer_if_null_operators, non_constant_identifier_names, unnecessary_string_interpolations, file_names, sized_box_for_whitespace, avoid_unnecessary_containers
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
@@ -206,43 +206,65 @@ class _BoxDecorationImageAndTextState extends State<BoxDecorationImageAndText> {
             color:
                 widget.boxColor == null ? AppColors.greyWhite : widget.boxColor,
           ),
-          padding: EdgeInsets.all(8),
+          padding: EdgeInsets.all(10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              widget.imageType == "imageNetwork"
-                  ? Image.network(
-                      "${widget.imageStr}",
-                      height: widget.imageHeight == null ? 14.w : null,
-                      width: widget.imageWidth == null ? 14.w : null,
-                      fit: BoxFit.cover,
-                    )
-                  : Image(
-                      image: AssetImage(
-                        "${widget.imageStr}",
-                      ),
-                      height: widget.imageHeight == null ? 14.w : null,
-                      width: widget.imageWidth == null ? 14.w : null,
-                      fit: BoxFit.cover,
-                    ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  // color: AppColors.primary,
+                  child: widget.imageType == "imageNetwork"
+                      ? Image.network(
+                          "${widget.imageStr}",
+                          height: widget.imageHeight == null ? 14.w : null,
+                          width: widget.imageWidth == null ? 14.w : null,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              // 'assets/image/108job-logo-text.png',
+                              'assets/image/no-image-available.png',
+
+                              // height: 50,
+                              // width: 50,
+                            ); // Display an error message
+                          },
+                        )
+                      : Image(
+                          image: AssetImage(
+                            "${widget.imageStr}",
+                          ),
+                          height: widget.imageHeight == null ? 14.w : null,
+                          width: widget.imageWidth == null ? 14.w : null,
+                          // fit: BoxFit.cover,
+                        ),
+                ),
+              ),
               SizedBox(
                 height: 5,
               ),
-              Text(
-                '${widget.text}',
-                style: bodyTextNormal(
-                  null,
-                  widget.textColor == null
-                      ? AppColors.fontDark
-                      : widget.textColor,
-                  widget.fontWeight == null
-                      ? FontWeight.bold
-                      : widget.fontWeight,
+              Expanded(
+                flex: 1,
+                child: Container(
+                  width: double.infinity,
+                  // color: AppColors.red,
+                  child: Text(
+                    '${widget.text}',
+                    style: bodyTextNormal(
+                      null,
+                      widget.textColor == null
+                          ? AppColors.fontDark
+                          : widget.textColor,
+                      widget.fontWeight == null
+                          ? FontWeight.bold
+                          : widget.fontWeight,
+                    ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
                 ),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
               ),
             ],
           ),

@@ -6,7 +6,14 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" /> -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> -->
+
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+
 <!--    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />-->
     <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
@@ -17,6 +24,7 @@
         android:icon="@mipmap/ic_launcher"
         tools:targetApi="35"
         android:allowBackup="true"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true">
         <property
             android:name="android.adservices.AD_SERVICES_CONFIG"

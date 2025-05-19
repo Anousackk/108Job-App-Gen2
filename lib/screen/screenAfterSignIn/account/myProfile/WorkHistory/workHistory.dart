@@ -166,7 +166,6 @@ class _WorkHistoryState extends State<WorkHistory> {
 
     if (res['workHistory'] != null) {
       await showDialog(
-        barrierDismissible: false,
         context: context,
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(

@@ -60,8 +60,8 @@ android {
         applicationId "com.onehundredeightjobs.app"
         minSdkVersion 23
         targetSdk 35
-        versionCode 83
-        versionName "3.2.3"
+        versionCode 87
+        versionName "3.2.7"
         multiDexEnabled true
         //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

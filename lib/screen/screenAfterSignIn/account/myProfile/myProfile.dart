@@ -90,142 +90,6 @@ class _MyProfileState extends State<MyProfile>
   bool _isSearchable = false;
   bool _isReview = false;
 
-  Future pickImageGallery(ImageSource source) async {
-    var statusPhotos = await Permission.photos.status;
-    var statusMediaLibrary = await Permission.mediaLibrary.status;
-
-    if (Platform.isIOS) {
-      print("Platform isIOS");
-      print(statusPhotos);
-
-      if (statusPhotos.isLimited) {
-        print("photos isLimited");
-
-        await openAppSettings();
-      }
-      if (statusPhotos.isGranted) {
-        print("photos isGranted");
-
-        final ImagePicker _picker = ImagePicker();
-        final XFile? image = await _picker.pickImage(source: source);
-
-        if (image == null) return;
-        File fileTemp = File(image.path);
-        setState(() {
-          _image = fileTemp;
-        });
-
-        var strImage = image.path;
-
-        print(strImage);
-        _imageLoading = true;
-
-        if (_image != null) {
-          //
-          //api upload profile seeker
-          var value = await upLoadFile(strImage, uploadProfileApiSeeker);
-          if (mounted) {
-            setState(() {
-              _fileValue = value['file'];
-              print(_fileValue);
-
-              if (_fileValue != null || _fileValue != "") {
-                //
-                //api upload or update profile image seeker
-                uploadOrUpdateProfileImageSeeker();
-                _imageLoading = false;
-                _statusUploadImage = "Success";
-              }
-            });
-          }
-        }
-      }
-      if (statusPhotos.isDenied) {
-        print("photos isDenied");
-        // await Permission.photos.request();
-        var result = await showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) {
-            return CupertinoAlertDialogOk(
-              title: '“108 Jobs” Would like to Access Your Photos',
-              contentText:
-                  "'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.",
-              text: 'Continue',
-            );
-          },
-        );
-        if (result == 'Ok') {
-          await Permission.photos.request();
-        }
-      }
-      if (statusPhotos.isPermanentlyDenied) {
-        print("photos isPermanentlyDenied");
-        var result = await showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) {
-            return CupertinoAlertDialogOk(
-              title: 'Allow Access Photos',
-              contentText:
-                  "'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.",
-              text: 'Continue',
-            );
-          },
-        );
-        if (result == 'Ok') {
-          await openAppSettings();
-        }
-      }
-    } else if (Platform.isAndroid) {
-      print("Platform isAndroid");
-      if (statusMediaLibrary.isGranted) {
-        print("mediaLibrary isGranted");
-        final ImagePicker _picker = ImagePicker();
-        final XFile? image = await _picker.pickImage(source: source);
-
-        if (image == null) return;
-        File fileTemp = File(image.path);
-        setState(() {
-          _image = fileTemp;
-        });
-
-        var strImage = image.path;
-
-        print(strImage);
-
-        _imageLoading = true;
-
-        if (_image != null) {
-          //
-          //api upload profile seeker
-          var value = await upLoadFile(strImage, uploadProfileApiSeeker);
-          setState(() {
-            _fileValue = value['file'];
-            print(_fileValue);
-
-            if (_fileValue != null || _fileValue != "") {
-              //
-              //api upload or update profile image seeker
-              uploadOrUpdateProfileImageSeeker();
-              _imageLoading = false;
-              _statusUploadImage = "Success";
-            }
-          });
-        }
-      }
-      if (statusMediaLibrary.isDenied) {
-        print("mediaLibrary isDenied");
-        await Permission.photos.request();
-      }
-      if (statusMediaLibrary.isPermanentlyDenied) {
-        print("mediaLibrary isPermanentlyDenied");
-
-        await openAppSettings();
-      }
-    }
-  }
-
   uploadOrUpdateProfileImageSeeker() async {
     var res = await postData(
         uploadOrUpdateProfileImageApiSeeker, {"file": _fileValue});
@@ -426,7 +290,7 @@ class _MyProfileState extends State<MyProfile>
                       //Widget Title
                       //Text title
                       title: Text(
-                        'my profile'.tr,
+                        "my_profile".tr,
                         style: appbarTextMedium(
                             "NotoSansLaoLoopedBold", AppColors.fontWhite, null),
                       ),
@@ -618,22 +482,22 @@ class _MyProfileState extends State<MyProfile>
                                                                           null
                                                                       ? Image
                                                                           .asset(
-                                                                          'assets/image/no-image-available.png',
+                                                                          'assets/image/defprofile.jpg',
                                                                           fit: BoxFit
-                                                                              .cover,
+                                                                              .contain,
                                                                         )
                                                                       : Image
                                                                           .network(
                                                                           "${_avatarScr}",
                                                                           fit: BoxFit
-                                                                              .cover,
+                                                                              .contain,
                                                                           errorBuilder: (context,
                                                                               error,
                                                                               stackTrace) {
                                                                             print(error);
                                                                             return Image.asset(
-                                                                              'assets/image/no-image-available.png',
-                                                                              fit: BoxFit.cover,
+                                                                              'assets/image/defprofile.jpg',
+                                                                              fit: BoxFit.contain,
                                                                             ); // Display an error message
                                                                           },
                                                                         ),
@@ -645,20 +509,20 @@ class _MyProfileState extends State<MyProfile>
                                                   //Gallery image icon at the bottom right corner
                                                   Positioned(
                                                     bottom: 0,
-                                                    right: 0,
+                                                    right: -5,
                                                     child: GestureDetector(
                                                       onTap: () {},
                                                       child: Container(
-                                                        height: 20,
-                                                        width: 20,
+                                                        height: 25,
+                                                        width: 25,
                                                         alignment:
                                                             Alignment.center,
                                                         decoration:
                                                             BoxDecoration(
                                                           shape:
                                                               BoxShape.circle,
-                                                          color:
-                                                              AppColors.dark100,
+                                                          color: AppColors
+                                                              .backgroundWhite,
                                                         ),
                                                         child: Text(
                                                           "\uf021",
@@ -933,7 +797,7 @@ class _MyProfileState extends State<MyProfile>
                                                     color:
                                                         AppColors.primary600),
                                                 child: Text(
-                                                  "Current",
+                                                  "curret_member_level".tr,
                                                   style: bodyTextSmall(
                                                       null,
                                                       AppColors.fontWhite,
@@ -1110,7 +974,7 @@ class _MyProfileState extends State<MyProfile>
                                                     color:
                                                         AppColors.primary600),
                                                 child: Text(
-                                                  "Current",
+                                                  "curret_member_level".tr,
                                                   style: bodyTextSmall(
                                                       null,
                                                       AppColors.fontWhite,

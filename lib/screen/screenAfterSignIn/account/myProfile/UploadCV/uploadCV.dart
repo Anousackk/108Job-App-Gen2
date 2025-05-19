@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, unnecessary_null_comparison, unused_local_variable, avoid_print, prefer_final_fields, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unrelated_type_equality_checks, prefer_typing_uninitialized_variables, file_names
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, unnecessary_null_comparison, unused_local_variable, avoid_print, prefer_final_fields, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unrelated_type_equality_checks, prefer_typing_uninitialized_variables, file_names, prefer_adjacent_string_concatenation
 
 import 'dart:io';
 
@@ -12,6 +12,7 @@ import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/UploadCV/Widget/b
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/boxDecDottedBorderProfileDetail.dart';
 import 'package:app/widget/button.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -39,7 +40,7 @@ class _UploadCVState extends State<UploadCV> {
   pickFile() async {
     //
     //
-    //ສະແດງ AlertDialog Loading
+    // Display loading dialog
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -48,98 +49,306 @@ class _UploadCVState extends State<UploadCV> {
       },
     );
 
-    var statusStorage = await Permission.storage.status;
-    print("${statusStorage}");
-    if (statusStorage.isGranted) {
-      print("storage isGranted");
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'docx', 'doc'],
-      );
-      print(result);
-      if (result != null && result.files.single.path != null) {
-        PlatformFile file = result.files.first;
+    //
+    //
+    //Pick file device IOS
+    if (Platform.isIOS) {
+      //
+      //
+      //Status storage IOS access to folders like Documents or Downloads. Implicitly granted.
+      var statusStorageIOS = await Permission.storage.status;
+      print("Platform IOS: " + "${statusStorageIOS}");
 
-        File _file = File(result.files.single.path!);
-        setState(() {
-          var listFile = file.name.split(".")[1];
+      if (statusStorageIOS.isGranted) {
+        print("statusStorageIOS isGranted");
 
-          _strFilePath = _file.path;
-          _strFileType = listFile.toString();
-          _strFileName = file.name;
-        });
-        print(_strFilePath);
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['pdf', 'docx', 'doc'],
+        );
+        print("result: " + result.toString());
 
-        if (_strFilePath != null) {
+        //
+        //ຖ້າເລືອກຟາຍຮູບ ເຮັດເງືອນໄຂໄປ
+        if (result != null && result.files.single.path != null) {
+          PlatformFile file = result.files.first;
+
+          File _file = File(result.files.single.path!);
+          setState(() {
+            var listFile = file.name.split(".")[1];
+
+            _strFilePath = _file.path;
+            _strFileType = listFile.toString();
+            _strFileName = file.name;
+          });
+          print("_strFilePath: " + _strFilePath.toString());
+
+          if (_strFilePath != null) {
+            //
+            //
+            //Api upload file CV
+            var value = await upLoadFile(_strFilePath, uploadFileCVApiSeeker);
+            print("value: " + value.toString());
+
+            _fileValue = await value['myFile'];
+            print("_fileValue" + _fileValue.toString());
+
+            //
+            //
+            //ປິດ AlertDialog Loading ຫຼັງຈາກ _fileValue ມີຄ່າ
+            if (_fileValue != null) {
+              Navigator.pop(context);
+            }
+
+            setState(() {});
+          }
+        }
+        //
+        //ບໍ່ເລືອກຟາຍຮູບແລ້ວປິດ loading dialog
+        else if (result == null) {
+          print("result == null");
+
+          Navigator.pop(context);
+        }
+      } else {
+        print("statusStorageIOS is etc...");
+        // Close loading dialog first
+        if (Navigator.of(context, rootNavigator: true).canPop()) {
+          Navigator.of(context, rootNavigator: true).pop();
+        }
+
+        // Display warning dialog
+        await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (dialogContext) {
+            return NewVer5CustAlertDialogWarningBtnConfirm(
+              title: "warning".tr,
+              contentText: "cv_file_permission_guide".tr,
+              textButton: "ok".tr,
+              press: () async {
+                await openAppSettings();
+
+                // Close warning dialog
+                Navigator.of(dialogContext).pop();
+
+                Future.delayed(Duration(seconds: 1), () {
+                  // ກັບໄປໜ້າ Personal Information
+                  if (Navigator.canPop(context)) Navigator.pop(context);
+                });
+              },
+            );
+          },
+        );
+      }
+    }
+
+    //
+    //
+    //Pick file device Android
+    else if (Platform.isAndroid) {
+      final deviceInfo = DeviceInfoPlugin();
+      final androidInfo = await deviceInfo.androidInfo;
+      final sdkInt = androidInfo.version.sdkInt;
+
+      print("sdkInt: " + sdkInt.toString());
+
+      //
+      //
+      // Android 13(API 33+)
+      if (sdkInt >= 33) {
+        var statusAudio = await Permission.audio.status;
+        print("Platform Android: " + statusAudio.toString());
+
+        if (statusAudio.isGranted) {
+          print("statusAudio isGranted");
+          FilePickerResult? result = await FilePicker.platform.pickFiles(
+            type: FileType.custom,
+            allowedExtensions: ['pdf', 'docx', 'doc'],
+          );
+          print("result: " + result.toString());
+
           //
-          //
-          //Api upload file CV
-          var value = await upLoadFile(_strFilePath, uploadFileCVApiSeeker);
-          print("value: " + value.toString());
+          //ຖ້າເລືອກຟາຍຮູບ ເຮັດເງືອນໄຂໄປ
+          if (result != null && result.files.single.path != null) {
+            PlatformFile file = result.files.first;
 
-          _fileValue = await value['myFile'];
-          print("_fileValue" + _fileValue.toString());
+            File _file = File(result.files.single.path!);
+            setState(() {
+              var listFile = file.name.split(".")[1];
 
-          //
-          //
-          //ປິດ AlertDialog Loading ຫຼັງຈາກ _fileValue ມີຄ່າ
-          if (_fileValue != null) {
-            Navigator.pop(context);
+              _strFilePath = _file.path;
+              _strFileType = listFile.toString();
+              _strFileName = file.name;
+            });
+            print("_strFilePath: " + _strFilePath.toString());
+
+            if (_strFilePath != null) {
+              //Api upload file CV
+              var value = await upLoadFile(_strFilePath, uploadFileCVApiSeeker);
+              print("value: " + value.toString());
+
+              _fileValue = await value['myFile'];
+              print("_fileValue" + _fileValue.toString());
+
+              //ປິດ loading dialog ຫຼັງຈາກ _fileValue ມີຄ່າ
+              if (_fileValue != null) {
+                Navigator.pop(context);
+              }
+
+              setState(() {});
+            }
           }
 
-          setState(() {});
+          //
+          //ບໍ່ເລືອກຟາຍຮູບແລ້ວປິດ loading dialog
+          else if (result == null) {
+            print("result == null");
+            Navigator.pop(context);
+          }
+        } else if (statusAudio.isDenied) {
+          print("statusAudio isDenied");
+
+          // Close loading dialog first
+          if (Navigator.of(context, rootNavigator: true).canPop()) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+
+          await Permission.audio.request();
+        } else {
+          print("statusAudio etc...");
+
+          // ປິດ loading dialog first
+          if (Navigator.of(context, rootNavigator: true).canPop()) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+
+          // Display warning dialog
+          await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (dialogContext) {
+              return NewVer5CustAlertDialogWarningBtnConfirm(
+                title: "warning".tr,
+                contentText: "cv_file_permission_audio".tr,
+                textButton: "ok".tr,
+                press: () async {
+                  await openAppSettings();
+
+                  // Close warning dialog
+                  Navigator.of(dialogContext).pop();
+
+                  Future.delayed(Duration(seconds: 1), () {
+                    // ກັບໄປໜ້າ Personal Information
+                    if (Navigator.canPop(context)) Navigator.pop(context);
+                  });
+                },
+              );
+            },
+          );
         }
-      } else if (result == null) {
-        print("result == null");
-        Navigator.pop(context);
       }
-    } else if (statusStorage.isDenied) {
-      print("storage isDenied");
-      await Permission.storage.request();
-      Navigator.pop(context);
-    } else if (statusStorage.isPermanentlyDenied) {
-      print("storage isPermanentlyDenied");
-      // await openAppSettings();
-      Navigator.pop(context);
+      //
+      //
+      // Below Android 13 (API 33)
+      else {
+        var statusStorageAndroid = await Permission.storage.status;
+        print("Platform Android: " + "${statusStorageAndroid}");
 
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer5CustAlertDialogWarningBtnConfirm(
-            title: "warning".tr,
-            contentText: "cv_file_permission_guide".tr,
-            textButton: "ok".tr,
-            press: () async {
-              Navigator.pop(context);
-              await openAppSettings();
+        if (statusStorageAndroid.isGranted) {
+          print("statusStorageAndroid isGranted");
+
+          FilePickerResult? result = await FilePicker.platform.pickFiles(
+            type: FileType.custom,
+            allowedExtensions: ['pdf', 'docx', 'doc'],
+          );
+          print("result: " + result.toString());
+
+          //
+          //ຖ້າເລືອກຟາຍຮູບ ເຮັດເງືອນໄຂໄປ
+          if (result != null && result.files.single.path != null) {
+            PlatformFile file = result.files.first;
+
+            File _file = File(result.files.single.path!);
+            setState(() {
+              var listFile = file.name.split(".")[1];
+
+              _strFilePath = _file.path;
+              _strFileType = listFile.toString();
+              _strFileName = file.name;
+            });
+            print("_strFilePath: " + _strFilePath.toString());
+
+            if (_strFilePath != null) {
+              //
+              //
+              //Api upload file CV
+              var value = await upLoadFile(_strFilePath, uploadFileCVApiSeeker);
+              print("value: " + value.toString());
+
+              _fileValue = await value['myFile'];
+              print("_fileValue" + _fileValue.toString());
+
+              //
+              //
+              //ປິດ AlertDialog Loading ຫຼັງຈາກ _fileValue ມີຄ່າ
+              if (_fileValue != null) {
+                Navigator.pop(context);
+              }
+
+              setState(() {});
+            }
+          }
+
+          //
+          //ບໍ່ເລືອກຟາຍຮູບແລ້ວປິດ loading dialog
+          else if (result == null) {
+            print("result == null");
+
+            Navigator.pop(context);
+          }
+        } else if (statusStorageAndroid.isDenied) {
+          print("statusStorageAndroid isDenied");
+
+          // Close loading dialog first
+          if (Navigator.of(context, rootNavigator: true).canPop()) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+
+          await Permission.storage.request();
+        } else {
+          print("statusStorageAndroid is etc...");
+
+          // Close loading dialog first
+          if (Navigator.of(context, rootNavigator: true).canPop()) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+
+          // Display warning dialog
+          await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (dialogContext) {
+              return NewVer5CustAlertDialogWarningBtnConfirm(
+                title: "warning".tr,
+                contentText: "cv_file_permission_guide".tr,
+                textButton: "ok".tr,
+                press: () async {
+                  await openAppSettings();
+
+                  // Close warning dialog
+                  Navigator.of(dialogContext).pop();
+
+                  Future.delayed(Duration(seconds: 1), () {
+                    // ກັບໄປໜ້າ Personal Information
+                    if (Navigator.canPop(context)) Navigator.pop(context);
+                  });
+                },
+              );
             },
           );
-        },
-      );
-    } else {
-      print("storage is etc...");
-      // await openAppSettings();
-      // Future.delayed(Duration(seconds: 1), () {
-      //   Navigator.pop(context);
-      // });
-      Navigator.pop(context);
-
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer5CustAlertDialogWarningBtnConfirm(
-            title: "warning".tr,
-            contentText: "cv_file_permission_guide".tr,
-            textButton: "ok".tr,
-            press: () async {
-              Navigator.pop(context);
-              await openAppSettings();
-            },
-          );
-        },
-      );
+        }
+      }
     }
   }
 
