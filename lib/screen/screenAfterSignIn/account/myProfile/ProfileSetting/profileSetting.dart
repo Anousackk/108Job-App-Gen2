@@ -212,7 +212,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                 //Widget Title
                 //Text title
                 title: Text(
-                  "profile setting".tr,
+                  "profile_setting".tr,
                   style: appbarTextMedium(
                       "NotoSansLaoLoopedBold", AppColors.fontWhite, null),
                 ),
@@ -258,7 +258,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "profile status".tr,
+                                      "profile_status".tr,
                                       style: bodyTextMaxNormal(
                                         "NotoSansLaoLoopedBold",
                                         null,
@@ -270,7 +270,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                     ),
 
                                     BoxDecInputProfileSettingPrefixTextSuffixWidget(
-                                      text: "Profile Searchable",
+                                      text: "profile_searchable".tr,
                                       press: () {
                                         pressSearchable();
                                       },
@@ -390,7 +390,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                     // ),
 
                                     Text(
-                                      "Hide from companies below",
+                                      "hide_from_companies".tr,
                                       style: bodyTextMaxNormal(
                                         "NotoSansLaoLoopedBold",
                                         null,
@@ -403,7 +403,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
 
                                     BoxDecInputHideCompanies(
                                       prefixImage: null,
-                                      text: "Add Company",
+                                      text: "add_company".tr,
                                       press: () async {
                                         var result = await showDialog(
                                             barrierDismissible: false,

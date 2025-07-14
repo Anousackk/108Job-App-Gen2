@@ -3,6 +3,7 @@
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/SecurityVerify/securityPhoneOrMail.dart';
 import 'package:app/screen/SecurityVerify/verificationCode.dart';
@@ -59,11 +60,13 @@ class _BodySecurityVerificationState extends State<BodySecurityVerification> {
   bool _isloading = true;
 
   checkTokenLogin() async {
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
     //
     //get token from shared preferences.
-    var employeeToken = prefs.getString('employeeToken');
+    // var employeeToken = prefs.getString('employeeToken');
     // print("eiei" + "$employeeToken");
+
+    String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
 
     if (employeeToken != null) {
       _isToken = employeeToken;

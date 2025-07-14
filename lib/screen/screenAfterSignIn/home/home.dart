@@ -10,7 +10,9 @@ import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/launchInBrowser.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/screen/ScreenAfterSignIn/Account/account_renew.dart';
 import 'package:app/screen/ScreenAfterSignIn/Company/company.dart';
 import 'package:app/screen/ScreenAfterSignIn/Company/companyDetail.dart';
 import 'package:app/screen/ScreenAfterSignIn/Home/Widget/companyHiringShirmmerWidget.dart';
@@ -84,8 +86,17 @@ class _HomeState extends State<Home> {
     setState(() {
       _currentIndex = index;
       if (_currentIndex == 4) {
-        _systemOverlayStyle = SystemUiOverlayStyle.light;
-        _backgroundColor = AppColors.backgroundAppBar;
+        _systemOverlayStyle = SystemUiOverlayStyle.dark;
+        _backgroundColor = AppColors.dark100;
+      } else if (_currentIndex == 3) {
+        _systemOverlayStyle = SystemUiOverlayStyle.dark;
+        _backgroundColor = AppColors.dark100;
+      } else if (_currentIndex == 2) {
+        _systemOverlayStyle = SystemUiOverlayStyle.dark;
+        _backgroundColor = AppColors.dark100;
+      } else if (_currentIndex == 1) {
+        _systemOverlayStyle = SystemUiOverlayStyle.dark;
+        _backgroundColor = AppColors.dark100;
       } else {
         // Reset the style and color if index is not 4
         _systemOverlayStyle = SystemUiOverlayStyle.dark;
@@ -163,10 +174,13 @@ class _HomeState extends State<Home> {
   }
 
   removeSharedPreTokenAndLogOut() async {
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
     await logOut();
 
-    var removeEmployeeToken = await prefs.remove('employeeToken');
+    // var removeEmployeeToken = await prefs.remove('employeeToken');
+
+    var removeEmployeeToken = await SharedPrefsHelper.remove("employeeToken");
+
     AuthService().facebookSignOut();
     AuthService().googleSignOut();
 
@@ -243,7 +257,24 @@ class _HomeState extends State<Home> {
         myJobStatus: _myJobStatus,
         hasInternet: _hasInternet,
       ),
-      Account(
+      // Account(
+      //   callBackToMyJobsSavedJob: () {
+      //     setState(() {
+      //       _currentIndex = 3;
+      //       _onTapBottomNav(3);
+      //     });
+      //   },
+      //   callBackToMyJobsAppliedJob: (val) {
+      //     setState(() {
+      //       _myJobStatus = val;
+      //       _currentIndex = 3;
+      //       _onTapBottomNav(3);
+      //     });
+      //   },
+      //   hasInternet: _hasInternet,
+      // ),
+
+      AccountRenew(
         callBackToMyJobsSavedJob: () {
           setState(() {
             _currentIndex = 3;
@@ -258,7 +289,7 @@ class _HomeState extends State<Home> {
           });
         },
         hasInternet: _hasInternet,
-      ),
+      )
     ];
 
     return MediaQuery(
@@ -569,10 +600,11 @@ class _MainHomeState extends State<MainHome> {
   }
 
   removeSharedPreTokenAndLogOut() async {
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
     await logOut();
 
-    var removeEmployeeToken = await prefs.remove('employeeToken');
+    // var removeEmployeeToken = await prefs.remove('employeeToken');
+    var removeEmployeeToken = await SharedPrefsHelper.remove("employeeToken");
     AuthService().facebookSignOut();
     AuthService().googleSignOut();
 
@@ -593,8 +625,9 @@ class _MainHomeState extends State<MainHome> {
   }
 
   getTokenSharedPre() async {
-    final prefs = await SharedPreferences.getInstance();
-    var employeeToken = prefs.getString("employeeToken");
+    // final prefs = await SharedPreferences.getInstance();
+    // var employeeToken = prefs.getString("employeeToken");
+    var employeeToken = await SharedPrefsHelper.getString("employeeToken");
     fcm();
 
     print("employeeToken: " + "${employeeToken}");
@@ -602,11 +635,11 @@ class _MainHomeState extends State<MainHome> {
 
   fetchTopBanner() async {
     var res = await postData(getTopBannerEmployee, {});
-    _listTopBanners = res['info'];
+    _listTopBanners = res['info'] ?? [];
 
-    if (_listTopBanners.isNotEmpty) {
-      _isLoadingTopBanner = false;
-    }
+    print("list top banner" + "${_listTopBanners}");
+
+    _isLoadingTopBanner = false;
 
     if (mounted) {
       setState(() {});
@@ -621,7 +654,7 @@ class _MainHomeState extends State<MainHome> {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => Login()), (route) => false);
     }
-    _listPopupBanner = res['info'];
+    _listPopupBanner = res['info'] ?? [];
     print("List popup banner " + _listPopupBanner.toString());
     if (_listPopupBanner.length > 0) {
       _imagePopupBanner = _listPopupBanner[0]['image'];
@@ -644,7 +677,7 @@ class _MainHomeState extends State<MainHome> {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => Login()), (route) => false);
     }
-    _listSpotLights = res['info'];
+    _listSpotLights = res['info'] ?? [];
 
     if (mounted) {
       setState(() {});
@@ -659,11 +692,9 @@ class _MainHomeState extends State<MainHome> {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => Login()), (route) => false);
     }
-    _listHirings = res['info'];
+    _listHirings = res['info'] ?? [];
 
-    if (_listHirings.isNotEmpty) {
-      _isLoadingCompanyHiring = false;
-    }
+    _isLoadingCompanyHiring = false;
 
     if (mounted) {
       setState(() {});
@@ -673,11 +704,9 @@ class _MainHomeState extends State<MainHome> {
   fetchProvince(String lang) async {
     var res = await fetchData(groupIndustryWorkingLocationEmployee +
         "lang=${lang}&type=WorkingLocation");
-    _listProvince = res['info'];
+    _listProvince = res['info'] ?? [];
 
-    if (_listProvince.isNotEmpty) {
-      _isLoadingJobByProvince = false;
-    }
+    _isLoadingJobByProvince = false;
 
     if (mounted) {
       setState(() {});
@@ -687,11 +716,9 @@ class _MainHomeState extends State<MainHome> {
   fetchTopIndustry(String lang) async {
     var res = await fetchData(
         groupIndustryWorkingLocationEmployee + "lang=${lang}&type=Industry");
-    _listTopIndustry = res['info'];
+    _listTopIndustry = res['info'] ?? [];
 
-    if (_listTopIndustry.isNotEmpty) {
-      _isLoadingJobByIndustry = false;
-    }
+    _isLoadingJobByIndustry = false;
 
     if (mounted) {
       setState(() {});
@@ -718,15 +745,21 @@ class _MainHomeState extends State<MainHome> {
   }
 
   getSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    var getLanguageSharePref = prefs.getString('setLanguage');
-    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // final prefs = await SharedPreferences.getInstance();
+    // var getLanguageSharePref = prefs.getString('setLanguage');
+    // var getLanguageApiSharePref = prefs.getString('setLanguageApi');
     // print("local " + getLanguageSharePref.toString());
     // print("api " + getLanguageApiSharePref.toString());
 
-    setState(() {
-      _localeLanguageApi = getLanguageApiSharePref.toString();
-    });
+    var getLanguageSharePref = await SharedPrefsHelper.getString("setLanguage");
+    var getLanguageApiSharePref =
+        await SharedPrefsHelper.getString("setLanguageApi");
+
+    if (mounted) {
+      setState(() {
+        _localeLanguageApi = getLanguageApiSharePref.toString();
+      });
+    }
 
     fetchTopIndustry(_localeLanguageApi);
     fetchProvince(_localeLanguageApi);
@@ -886,7 +919,7 @@ class _MainHomeState extends State<MainHome> {
     fetchHiring();
   }
 
-  void openWhatsApp({required String phone, String message = ''}) async {
+  openWhatsApp({required String phone, String message = ''}) async {
     final url =
         Uri.parse('https://wa.me/$phone?text=${Uri.encodeComponent(message)}');
     if (await canLaunchUrl(url)) {

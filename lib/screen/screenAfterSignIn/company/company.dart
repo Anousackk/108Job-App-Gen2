@@ -309,7 +309,7 @@ class _CompanyState extends State<Company> {
           body: SafeArea(
             child: _isLoading
                 ? Container(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.dark100,
                     width: double.infinity,
                     height: double.infinity,
                     child: Center(child: CustomLoadingLogoCircle()),

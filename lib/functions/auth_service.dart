@@ -2,13 +2,13 @@
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/screen/screenAfterSignIn/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthService {
@@ -64,8 +64,10 @@ class AuthService {
                 //
                 //
                 //set token use shared preferences.
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.setString('employeeToken', employeeToken);
+                // final prefs = await SharedPreferences.getInstance();
+                // await prefs.setString('employeeToken', employeeToken);
+                await SharedPrefsHelper.setString(
+                    "employeeToken", employeeToken);
 
                 var resAddToken = await postData(apiAddTokenSeeker, {
                   "notifyToken": [
@@ -172,8 +174,10 @@ class AuthService {
           //
           //
           //set token use shared preferences.
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('employeeToken', employeeToken);
+          // final prefs = await SharedPreferences.getInstance();
+          // await prefs.setString('employeeToken', employeeToken);
+
+          await SharedPrefsHelper.setString("employeeToken", employeeToken);
 
           var resAddToken = await postData(apiAddTokenSeeker, {
             "notifyToken": [
@@ -239,29 +243,42 @@ class AuthService {
         //
         //
         //set userIdentifier shared preferences.
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(
-          'appleUserIdentifier',
+        // final prefs = await SharedPreferences.getInstance();
+        // await prefs.setString(
+        //   'appleUserIdentifier',
+        //   credential.userIdentifier.toString(),
+        // );
+        await SharedPrefsHelper.setString(
+          "appleUserIdentifier",
           credential.userIdentifier.toString(),
         );
+
         print("userIdentifier: " + "${credential.userIdentifier!}");
         appleSigninId = credential.userIdentifier.toString();
       } else {
-        final prefs = await SharedPreferences.getInstance();
-        appleSigninId = await prefs.getString("appleUserIdentifier");
+        // final prefs = await SharedPreferences.getInstance();
+        // appleSigninId = await prefs.getString("appleUserIdentifier");
+        appleSigninId =
+            await SharedPrefsHelper.getString("appleUserIdentifier");
       }
 
       if (credential.email != null) {
         //
         //
         //set userIdentifier shared preferences.
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('appleEmail', credential.email.toString());
+        // final prefs = await SharedPreferences.getInstance();
+        // await prefs.setString('appleEmail', credential.email.toString());
+        await SharedPrefsHelper.setString(
+          "appleEmail",
+          credential.email.toString(),
+        );
+
         print("email: " + "${credential.email!}");
         appleSigninEmail = credential.email.toString();
       } else {
-        final prefs = await SharedPreferences.getInstance();
-        appleSigninEmail = await prefs.getString("appleEmail");
+        // final prefs = await SharedPreferences.getInstance();
+        // appleSigninEmail = await prefs.getString("appleEmail");
+        appleSigninEmail = await SharedPrefsHelper.getString("appleEmail");
       }
 
       if (appleSigninId != null && appleSigninEmail != null) {
@@ -279,8 +296,9 @@ class AuthService {
           //
           //
           //set token use shared preferences.
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('employeeToken', employeeToken);
+          // final prefs = await SharedPreferences.getInstance();
+          // await prefs.setString('employeeToken', employeeToken);
+          await SharedPrefsHelper.setString("employeeToken", employeeToken);
 
           var resAddToken = await postData(apiAddTokenSeeker, {
             "notifyToken": [
@@ -574,27 +592,40 @@ class AuthService {
           //
           //
           //set userIdentifier shared preferences.
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString(
-              'appleUserIdentifier', credential.userIdentifier.toString());
+          // final prefs = await SharedPreferences.getInstance();
+          // await prefs.setString(
+          //     'appleUserIdentifier', credential.userIdentifier.toString());
+          await SharedPrefsHelper.setString(
+            "appleUserIdentifier",
+            credential.userIdentifier.toString(),
+          );
+
           print("userIdentifier: " + "${credential.userIdentifier!}");
           appleSigninId = credential.userIdentifier.toString();
         } else {
-          final prefs = await SharedPreferences.getInstance();
-          appleSigninId = await prefs.getString("appleUserIdentifier");
+          // final prefs = await SharedPreferences.getInstance();
+          // appleSigninId = await prefs.getString("appleUserIdentifier");
+          appleSigninId =
+              await SharedPrefsHelper.getString("appleUserIdentifier");
         }
 
         if (credential.email != null) {
           //
           //
           //set userIdentifier shared preferences.
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('appleEmail', credential.email.toString());
+          // final prefs = await SharedPreferences.getInstance();
+          // await prefs.setString('appleEmail', credential.email.toString());
+          await SharedPrefsHelper.setString(
+            "appleEmail",
+            credential.email.toString(),
+          );
+
           print("email: " + "${credential.email!}");
           appleSigninEmail = credential.email.toString();
         } else {
-          final prefs = await SharedPreferences.getInstance();
-          appleSigninEmail = await prefs.getString("appleEmail");
+          // final prefs = await SharedPreferences.getInstance();
+          // appleSigninEmail = await prefs.getString("appleEmail");
+          appleSigninEmail = await SharedPrefsHelper.getString("appleEmail");
         }
 
         if (appleSigninId != null && appleSigninEmail != null) {

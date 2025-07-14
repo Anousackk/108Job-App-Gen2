@@ -3,6 +3,7 @@
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/login/login.dart';
 import 'package:app/widget/appbar.dart';
@@ -31,6 +32,8 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
 
   String _password = "";
   String _confirmPassword = "";
+  bool _isObscurePassword = true;
+  bool _isObscureConfirmPassword = true;
 
   resetFormValidation() {
     formkey.currentState!.reset();
@@ -91,6 +94,7 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                           //Password
                           TextFormField(
                             controller: _passwordController,
+                            obscureText: _isObscurePassword,
                             onChanged: (value) {
                               setState(() {
                                 _password = value;
@@ -109,6 +113,19 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                                 color: AppColors.fontGreyOpacity,
                               ),
                               labelText: "password".tr,
+                              suffixIcon: IconButton(
+                                iconSize: IconSize.sIcon,
+                                icon: Icon(
+                                  _isObscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isObscurePassword = !_isObscurePassword;
+                                  });
+                                },
+                              ),
                             ),
                             validator: MultiValidator([
                               RequiredValidator(errorText: 'required'.tr),
@@ -127,6 +144,7 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                           //Confirm password
                           TextFormField(
                             controller: _confirmPasswordController,
+                            obscureText: _isObscureConfirmPassword,
                             onChanged: (value) {
                               setState(() {
                                 _confirmPassword = value;
@@ -147,6 +165,20 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                                 color: AppColors.fontGreyOpacity,
                               ),
                               labelText: "confirm".tr + " " + "password".tr,
+                              suffixIcon: IconButton(
+                                iconSize: IconSize.sIcon,
+                                icon: Icon(
+                                  _isObscureConfirmPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isObscureConfirmPassword =
+                                        !_isObscureConfirmPassword;
+                                  });
+                                },
+                              ),
                             ),
                             validator: MultiValidator([
                               RequiredValidator(errorText: 'required'.tr),

@@ -513,12 +513,6 @@ class LocalString extends Translations {
       "en": "Job",
       "la": "ວຽກ",
     },
-
-    {
-      "key": "job alert",
-      "en": "Job Alert",
-      "la": "ແຈ້ງເຕືອນວຽກ",
-    },
     {
       "key": "you have hidded",
       "en": "you have hidded",
@@ -528,12 +522,6 @@ class LocalString extends Translations {
       "key": "just now",
       "en": "Just now",
       "la": "ດຽວນີ້",
-    },
-
-    {
-      "key": "account setting",
-      "en": "Account Setting",
-      "la": "ຕັ້ງຄ່າບັນຊີ",
     },
 
     {
@@ -664,6 +652,39 @@ class LocalString extends Translations {
       "en":
           "To upgrade your membership, you'll need to provide the required information for each level.",
       "la": "ກະລຸນາຕື່ມຂໍ້ມູນດ້ານລຸ່ມ ເພື່ອອັບເກດລະດັບສະມາຊິກ.",
+    },
+
+    //
+    //
+    //
+    //
+    //
+    //Seeker Profile - Profile setting
+    {
+      "key": "profile_setting",
+      "en": "Profile Setting",
+      "la": "ຕັ້ງຄ່າໂປຣໄຟສ",
+    },
+    {
+      "key": "profile_status",
+      "en": "Profile Status",
+      "la": "ສະຖານະໂປຣໄຟສ",
+    },
+    {
+      "key": "profile_searchable",
+      "en": "Profile Searchable",
+      "la": "ຄົ້ນຫາໂປຣໄຟສໄດ້",
+    },
+
+    {
+      "key": "hide_from_companies",
+      "en": "Hide from companies below",
+      "la": "ເຊື່ອງຈາກບໍລິສັດທາງລຸ່ມນີ້",
+    },
+    {
+      "key": "add_company",
+      "en": "Add Company",
+      "la": "ເພີ່ມບໍລິສັດ",
     },
 
     //
@@ -947,6 +968,31 @@ class LocalString extends Translations {
       "la": "ຂະໜາດໄຟສຕ້ອງບໍ່ເກີນ 10MB",
     },
     {
+      "key": "status",
+      "en": "Status",
+      "la": "ລະດັບສະມາຊິກ",
+    },
+    {
+      "key": "complete_your_profile",
+      "en": "Complete your profile",
+      "la": "ຄວາມສົມບູນຂອງໂປຣໄຟສ",
+    },
+    {
+      "key": "completed",
+      "en": "Completed",
+      "la": "ສຳເລັດແລ້ວ",
+    },
+    {
+      "key": "account setting",
+      "en": "Account Setting",
+      "la": "ຕັ້ງຄ່າບັນຊີ",
+    },
+    {
+      "key": "activity",
+      "en": "Activity",
+      "la": "ກິດຈະກຳ",
+    },
+    {
       "key": "login_info",
       "en": "Login Information",
       "la": "ຂໍ້ມູນການເຂົ້າລະບົບ",
@@ -959,7 +1005,7 @@ class LocalString extends Translations {
     {
       "key": "job_alert",
       "en": "Job Alert",
-      "la": "ແຈ້ງເຕືອນວຽກ",
+      "la": "Job Alert",
     },
     {
       "key": "member_point",
@@ -1001,17 +1047,116 @@ class LocalString extends Translations {
       "la":
           "108 Jobs ຕ້ອງການໄດ້ຮັບອະນຸຍາດເຂົ້າເຖິງຮູບພາບ(ພື້ນທີ່ຈັດເກັບ) ກະລຸນາອະນຸຍາດໃນຕັ້ງຄ່າຂອງແອັບ",
     },
+    {
+      "key": "registered_attend",
+      "en": "You have successfully registered to attend the event.",
+      "la": "ທ່ານໄດ້ລົງທະບຽນເຂົ້າຮ່ວມງານສຳເລັດ",
+    },
+    {
+      "key": "already_registered_attend",
+      "en": "You have already registered to attend the event.",
+      "la": "ທ່ານໄດ້ລົງທະບຽນເຂົ້າຮ່ວມງານແລ້ວ",
+    },
+    {
+      "key": "attend_event",
+      "en": "Attend the event",
+      "la": "ເຂົ້າຮ່ວມງານ",
+    },
+    {
+      "key": "event_details",
+      "en": "Event details",
+      "la": "ລາຍລະອຽດງານ",
+    },
 
     //
     //
     //
     //
     //
-    //Seeker Scan QR Code
+    //Seeker register event
+    {
+      "key": "back",
+      "en": "Back",
+      "la": "ກັບຄືນ",
+    },
+
+    //
+    //
+    //
+    //
+    //
+    //Seeker scan QR Code
     {
       "key": "scan_qr",
       "en": "Scan QR",
       "la": "ສະແກນ QR",
+    },
+    {
+      "key": "applied_success",
+      "en": "Successfully applied for this job",
+      "la": "ສະໝັກວຽກສຳເລັດ",
+    },
+    {
+      "key": "already_applied",
+      "en": "You have already applied for this job.",
+      "la": "ວຽກນີ້ໄດ້ສະໝັກແລ້ວ",
+    },
+    {
+      "key": "incorrect_qr_code",
+      "en": "Incorrect QR Code",
+      "la": "QR Code ບໍ່ຖືກຕ້ອງ",
+    },
+
+    //
+    //
+    //
+    //
+    //
+    //Seeker Events Tricket
+    {
+      "key": "event_name",
+      "en": "Event",
+      "la": "ງານທີ່ຈັດ",
+    },
+    {
+      "key": "event_address",
+      "en": "Address",
+      "la": "ສະຖານທີ່",
+    },
+    {
+      "key": "event_map",
+      "en": "Map",
+      "la": "ແຜນທີ່",
+    },
+    {
+      "key": "event_click_map",
+      "en": "Click to open the map",
+      "la": "ກົດເບິ່ງແຜນທີ່",
+    },
+    {
+      "key": "event_date_time",
+      "en": "Date and time",
+      "la": "ວັນທີ່ຈັດງານ",
+    },
+    {
+      "key": "event_attendee_code",
+      "en": "Attendee Code ",
+      "la": "ລະຫັດຜູ້ເຂົ້າຮ່ວມງານ",
+    },
+    {
+      "key": "create_qr_code",
+      "en": "Create QR Code",
+      "la": "ສ້າງ QR Code",
+    },
+    {
+      "key": "photo_saved",
+      "en": "Photo saved to this device",
+      "la": "ບັນທຶກຮູບພາບສຳເລັດ",
+    },
+    {
+      "key": "can_not_save_photo",
+      "en": "Can't save this photo",
+      "la": "ບໍ່ສາມາດບັນທຶກຮູບພາບໄດ້",
     },
 
     //
@@ -1075,16 +1220,7 @@ class LocalString extends Translations {
       "en": "Proficiency",
       "la": "ຄວາມສາມາດ",
     },
-    {
-      "key": "profile setting",
-      "en": "Profile Setting",
-      "la": "ຕັ້ງຄ່າໂປຣໄຟສ",
-    },
-    {
-      "key": "profile status",
-      "en": "Profile Status",
-      "la": "ສະຖານະໂປຣໄຟສ",
-    },
+
     {
       "key": "how to set profile status",
       "en":
@@ -1247,22 +1383,22 @@ class LocalString extends Translations {
     },
     {
       "key": "delete_success",
-      "en": "Delete Success",
+      "en": "Delete Successful",
       "la": "ລົບຂໍ້ມູນສຳເລັດ",
     },
     {
       "key": "delete_cv_success",
-      "en": "Delete CV Success",
+      "en": "Delete CV Successfull",
       "la": "ລົບ CV ສຳເລັດ",
     },
     {
       "key": "add_company_success",
-      "en": "Add Company Success",
+      "en": "Add Company Successful",
       "la": "ເພີ່ມບໍລິສັດສຳເລັດ",
     },
     {
       "key": "change_information_success",
-      "en": "Change Information Success",
+      "en": "Change Information Successful",
       "la": "ປ່ຽນຂໍ້ມູນສຳເລັດ",
     },
     {
@@ -1342,7 +1478,7 @@ class LocalString extends Translations {
     },
     {
       "key": "Sync successfully",
-      "en": "Sync successful.",
+      "en": "Sync Successfully.",
       "la": "ເຊື່ອມຕໍ່ສຳເລັດ",
     },
     {

@@ -4,6 +4,7 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
@@ -129,7 +130,7 @@ class _JobAlertState extends State<JobAlert> {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
             title: "successful".tr,
             contentText:
-                "save".tr + " " + "job alert".tr + " " + "successful".tr,
+                "save".tr + " " + "job_alert".tr + " " + "successful".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
@@ -207,9 +208,13 @@ class _JobAlertState extends State<JobAlert> {
   }
 
   getSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    var getLanguageSharePref = prefs.getString('setLanguage');
-    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // final prefs = await SharedPreferences.getInstance();
+    // var getLanguageSharePref = prefs.getString('setLanguage');
+    // var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    var getLanguageSharePref = await SharedPrefsHelper.getString("setLanguage");
+    var getLanguageApiSharePref =
+        await SharedPrefsHelper.getString("setLanguageApi");
+
     // print("local " + getLanguageSharePref.toString());
     // print("api " + getLanguageApiSharePref.toString());
 
@@ -248,7 +253,7 @@ class _JobAlertState extends State<JobAlert> {
             )
           : Scaffold(
               appBar: AppBarDefault(
-                textTitle: "job alert".tr,
+                textTitle: "job_alert".tr,
                 // fontWeight: FontWeight.bold,
                 leadingIcon: Icon(Icons.arrow_back),
                 leadingPress: () {
@@ -431,7 +436,7 @@ class _JobAlertState extends State<JobAlert> {
                                       Expanded(
                                         child: Center(
                                           child: Text(
-                                            "job alert".tr,
+                                            "job_alert".tr,
                                             style: bodyTextMedium(
                                                 null, null, FontWeight.bold),
                                           ),

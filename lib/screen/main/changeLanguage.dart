@@ -1,4 +1,5 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, unused_field, prefer_final_fields, avoid_print, unused_local_variable, file_names
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,9 +16,12 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
   String _isLocaleLanguage = "";
   // String _isLanguageApi = "";
   checkLanguage() async {
-    final prefs = await SharedPreferences.getInstance();
-    var getLanguageSharePref = prefs.getString('setLanguage');
-    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // final prefs = await SharedPreferences.getInstance();
+    // var getLanguageSharePref = prefs.getString('setLanguage');
+    // var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    var getLanguageSharePref = await SharedPrefsHelper.getString("setLanguage");
+    var getLanguageApiSharePref =
+        await SharedPrefsHelper.getString("setLanguageApi");
 
     // if (getLanguageSharePref == 'lo') {
     //   setState(() {
@@ -105,9 +109,11 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
   }
 
   setLanguage(lang, langString, langApi) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('setLanguage', langString);
-    await prefs.setString('setLanguageApi', langApi);
+    // final prefs = await SharedPreferences.getInstance();
+    // await prefs.setString('setLanguage', langString);
+    // await prefs.setString('setLanguageApi', langApi);
+    await SharedPrefsHelper.setString("setLanguage", langString);
+    await SharedPrefsHelper.setString("setLanguageApi", langApi);
 
     widget.callBackSetLanguage!("Set Language Success");
     print("Set Language Success");

@@ -6,6 +6,7 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/login/login.dart';
 import 'package:app/widget/appbar.dart';
@@ -78,11 +79,13 @@ class _DeleteAccountState extends State<DeleteAccount> {
   }
 
   deleteAccoutnRemoveSharedPreTokenLogOut() async {
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
     await logOut();
     await deleteAccount();
 
-    var removeEmployeeToken = await prefs.remove('employeeToken');
+    // var removeEmployeeToken = await prefs.remove('employeeToken');
+    await SharedPrefsHelper.clearAll();
+
     AuthService().facebookSignOut();
     AuthService().googleSignOut();
 

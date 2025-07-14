@@ -111,6 +111,8 @@ class AppColors {
   static Color success300 = HexColor("#D7FEC8");
   static Color success200 = HexColor("#E8FEDF");
   static Color success100 = HexColor("#F9FFF6");
+  static Color teal = HexColor("#06BF8B");
+  // static Color teal = Color(0xFF26A69A);
 
   //cyan
   static Color cyan600 = HexColor("#00E2E2");

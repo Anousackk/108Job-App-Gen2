@@ -9,6 +9,7 @@ import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/launchInBrowser.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/Main/changeLanguage.dart';
 import 'package:app/screen/ScreenAfterSignIn/Home/home.dart';
@@ -162,8 +163,9 @@ class _LoginState extends State<Login> {
 
       //
       //set token use shared preferences.
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('employeeToken', employeeToken);
+      // final prefs = await SharedPreferences.getInstance();
+      // await prefs.setString('employeeToken', employeeToken);
+      await SharedPrefsHelper.setString("employeeToken", employeeToken);
 
       var resAddToken = await postData(apiAddTokenSeeker, {
         "notifyToken": [
@@ -315,8 +317,6 @@ class _LoginState extends State<Login> {
                   child: SafeArea(
                       child: Column(
                     children: [
-                      //
-                      //
                       //Change Language Lao-Eng
                       // Expanded(
                       //   flex: 1,
@@ -325,8 +325,6 @@ class _LoginState extends State<Login> {
                       //   ),
                       // ),
 
-                      //
-                      //
                       //Text Log in with Phone Number
                       // Expanded(
                       //   flex: 4,

@@ -6,6 +6,7 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/cupertinoDatePicker.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/parsDateTime.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
@@ -58,9 +59,14 @@ class _EducationState extends State<Education> {
   DateTime _dateTimeNow = DateTime.now();
 
   getSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    var getLanguageSharePref = prefs.getString('setLanguage');
-    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // final prefs = await SharedPreferences.getInstance();
+    // var getLanguageSharePref = prefs.getString('setLanguage');
+    // var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+
+    var getLanguageSharePref = await SharedPrefsHelper.getString("setLanguage");
+    var getLanguageApiSharePref =
+        await SharedPrefsHelper.getString("setLanguageApi");
+
     // print("local " + getLanguageSharePref.toString());
     // print("api " + getLanguageApiSharePref.toString());
 

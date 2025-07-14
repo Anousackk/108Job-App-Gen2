@@ -3,11 +3,13 @@ buildscript {
     // ext.kotlin_version = '1.9.23'
     ext.kotlin_version = '2.1.0'
 
+
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
         // Check that you have the following line (if not, add it) 
-		maven { url 'https://developer.huawei.com/repo/' } // HUAWEI Maven repository 
+		// maven { url 'https://developer.huawei.com/repo/' } // HUAWEI Maven repository 
     }
 
     dependencies {
@@ -16,7 +18,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:8.5.2'
         classpath 'com.google.firebase:firebase-dynamic-links:22.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.huawei.agconnect:agcp:1.6.2.300'   // HUAWEI agcp plugin 
+        // classpath 'com.huawei.agconnect:agcp:1.6.2.300'   // HUAWEI agcp plugin 
     }
 }
 
@@ -25,8 +27,10 @@ allprojects {
         google()
         mavenCentral()
         // Check that you have the following line (if not, add it): 
-		maven { url 'https://developer.huawei.com/repo/' } // HUAWEI Maven repository 
+		// maven { url 'https://developer.huawei.com/repo/' } // HUAWEI Maven repository 
     }
+    
+
 }
 
 rootProject.buildDir = '../build'

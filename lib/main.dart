@@ -20,8 +20,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:sizer/sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sizer/sizer.dart';
 import 'package:upgrader/upgrader.dart';
 
 //Background messages
@@ -40,7 +40,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 //
 //main()
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  await WidgetsFlutterBinding.ensureInitialized();
 
   await Upgrader.sharedInstance.initialize();
 
@@ -262,8 +262,17 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   checkLanguage() async {
     final prefs = await SharedPreferences.getInstance();
+
+    final cachePrefs = await SharedPreferencesWithCache.create(
+      cacheOptions: const SharedPreferencesWithCacheOptions(allowList: null),
+    );
+
+    print("cachePrefs: " + cachePrefs.toString());
+
     var employeeToken = prefs.getString('employeeToken');
     getLanguageSharePref = prefs.getString('setLanguage');
+    // String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
+    // getLanguageSharePref = await SharedPrefsHelper.getString("setLanguage");
 
     if (employeeToken != null) {
       setState(() {
@@ -343,7 +352,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     // DynamicLinkService.dynamicLinkPushScreen;
-    checkLanguage();
+    // 🔥 Delay checkLanguage until after first frame to ensure platform channel is ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // checkLanguage();
+    });
     initializeFCM();
     handleDynamicLinks();
   }

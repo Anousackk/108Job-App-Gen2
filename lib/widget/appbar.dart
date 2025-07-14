@@ -4,6 +4,7 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 
 class AppBarDefault extends StatefulWidget implements PreferredSizeWidget {
@@ -58,6 +59,7 @@ class _AppBarDefaultState extends State<AppBarDefault> {
             widget.textColor == null ? AppColors.fontWhite : widget.textColor,
             widget.fontWeight == null ? FontWeight.normal : widget.fontWeight,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
       ),
       actions: [
@@ -85,7 +87,9 @@ class AppBarAddAction extends StatefulWidget implements PreferredSizeWidget {
     this.action,
     this.fontWeight,
     this.toolbarHeightAppBar,
+    this.systemOverlayStyleColor,
   }) : super(key: key);
+  final SystemUiOverlayStyle? systemOverlayStyleColor;
   final double? toolbarHeightAppBar;
   final String textTitle;
   final FontWeight? fontWeight;
@@ -108,6 +112,9 @@ class _AppBarAddActionState extends State<AppBarAddAction> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      systemOverlayStyle: widget.systemOverlayStyleColor == null
+          ? SystemUiOverlayStyle.dark
+          : widget.systemOverlayStyleColor,
       backgroundColor: widget.backgroundColor == null
           ? AppColors.backgroundAppBar
           : widget.backgroundColor,

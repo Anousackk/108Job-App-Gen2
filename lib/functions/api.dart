@@ -1,9 +1,9 @@
-// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use, prefer_if_null_operators, prefer_if_null_operators, deprecated_member_use, avoid_print, avoid_print, avoid_print, deprecated_member_use, avoid_print
+// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use, prefer_if_null_operators, prefer_if_null_operators, deprecated_member_use, avoid_print, avoid_print, avoid_print, deprecated_member_use, avoid_print, avoid_print, avoid_print
 import 'dart:convert';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 //Url Server Dev
 // const String globalURL = 'https://db-dev.108.jobs/application-api';
@@ -174,6 +174,17 @@ var deleteWorkHistorySeekerApi = globalURL + "/delete-workhistory-seeker-app/";
 //No Experience
 var noExperienceSeekerApi = globalURL + "/update-no-experience-seeker-app";
 
+//Event
+var getEventAvailableSeekerApi = globalURL + "/get-event-available-app";
+var applyEventSeekerApi = globalURL + "/apply-event-app";
+var applyJobIdSeekerApi = globalURL + "/apply-job-wii-app";
+var getStatisticEventSeekerApi = globalURL + "/get-statistic-event-app";
+var getCompanyAvailableEventSeekerApi =
+    globalURL + "/get-event-company-job-available-app";
+var getCompanyIdAvailableEventSeekerApi =
+    globalURL + "/get-event-company-job-list-app";
+//get-event-company-job-list-app
+
 //Get reuse type
 var getReuseTypeApiSeeker = globalURL + "/get-reuse-in-seeker-app?";
 //Type Api reuse
@@ -185,8 +196,9 @@ var getReuseTypeApiSeeker = globalURL + "/get-reuse-in-seeker-app?";
 // 'JobLevel', 'Province', 'BlogType', 'District'
 
 fetchData(url) async {
-  final prefs = await SharedPreferences.getInstance();
-  var employeeToken = prefs.getString('employeeToken');
+  // final prefs = await SharedPreferences.getInstance();
+  // var employeeToken = prefs.getString('employeeToken');
+  String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
 
   var res = await http.get(Uri.parse(url), headers: {
     "content-type": "application/json",
@@ -207,8 +219,9 @@ fetchData(url) async {
 }
 
 postData(url, bodyJsonDecode) async {
-  final prefs = await SharedPreferences.getInstance();
-  var employeeToken = prefs.getString('employeeToken');
+  // final prefs = await SharedPreferences.getInstance();
+  // var employeeToken = prefs.getString('employeeToken');
+  String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
 
   var res = await http.post(
     Uri.parse(url),
@@ -249,8 +262,9 @@ postData(url, bodyJsonDecode) async {
 // }
 
 putData(url, bodyJsonDecode) async {
-  final prefs = await SharedPreferences.getInstance();
-  var employeeToken = prefs.getString("employeeToken");
+  // final prefs = await SharedPreferences.getInstance();
+  // var employeeToken = prefs.getString("employeeToken");
+  String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
 
   var res = await http.put(
     Uri.parse(url),
@@ -272,8 +286,9 @@ putData(url, bodyJsonDecode) async {
 }
 
 deleteData(url) async {
-  final prefs = await SharedPreferences.getInstance();
-  var employeeToken = prefs.getString("employeeToken");
+  // final prefs = await SharedPreferences.getInstance();
+  // var employeeToken = prefs.getString("employeeToken");
+  String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
 
   var res = await http.delete(
     Uri.parse(url),
@@ -296,8 +311,9 @@ deleteData(url) async {
 upLoadFile(String fileName, String url) async {
   // Dio dio = new Dio();
 
-  final prefs = await SharedPreferences.getInstance();
-  var employeeToken = prefs.getString("employeeToken");
+  // final prefs = await SharedPreferences.getInstance();
+  // var employeeToken = prefs.getString("employeeToken");
+  String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
 
   FormData formData = FormData.fromMap({
     "file": await MultipartFile.fromFile(

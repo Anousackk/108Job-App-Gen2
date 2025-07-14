@@ -3,6 +3,7 @@
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/securityVerify/securityVerification.dart';
 import 'package:app/widget/appbar.dart';
@@ -30,6 +31,9 @@ class _ChangePasswordState extends State<ChangePassword> {
   String _currentPassword = "";
   String _password = "";
   String _confirmPassword = "";
+  bool _isObscureCurrentPassword = true;
+  bool _isObscurePassword = true;
+  bool _isObscureConfirmPassword = true;
 
   changePassword() async {
     showDialog(
@@ -152,6 +156,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             //Current Password
                             TextFormField(
                               controller: _currentPasswordController,
+                              obscureText: _isObscureCurrentPassword,
                               onChanged: (value) {
                                 setState(() {
                                   _currentPassword = value;
@@ -172,32 +177,19 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 ),
                                 alignLabelWithHint: true, // set label to bottom
                                 labelText: "current password".tr,
-                                suffixIcon: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        FocusScope.of(context)
-                                            .requestFocus(focusNode);
-
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                SecurityVerification(),
-                                          ),
-                                        );
-                                      },
-                                      child: Text(
-                                        "reset pass".tr,
-                                        style: bodyTextNormal(
-                                          null,
-                                          AppColors.fontWaring,
-                                          null,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                suffixIcon: IconButton(
+                                  iconSize: IconSize.sIcon,
+                                  icon: Icon(
+                                    _isObscureCurrentPassword
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isObscureCurrentPassword =
+                                          !_isObscureCurrentPassword;
+                                    });
+                                  },
                                 ),
                               ),
                               validator: MultiValidator([
@@ -217,6 +209,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             //Password
                             TextFormField(
                               controller: _passwordController,
+                              obscureText: _isObscurePassword,
                               onChanged: (value) {
                                 setState(() {
                                   _password = value;
@@ -235,8 +228,20 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   color: AppColors.fontGreyOpacity,
                                 ),
                                 alignLabelWithHint: true, // set label to bottom
-
                                 labelText: "password".tr,
+                                suffixIcon: IconButton(
+                                  iconSize: IconSize.sIcon,
+                                  icon: Icon(
+                                    _isObscurePassword
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isObscurePassword = !_isObscurePassword;
+                                    });
+                                  },
+                                ),
                               ),
                               validator: MultiValidator([
                                 RequiredValidator(errorText: 'required'.tr),
@@ -255,6 +260,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             //Confirm password
                             TextFormField(
                               controller: _confirmPasswordController,
+                              obscureText: _isObscureConfirmPassword,
                               onChanged: (value) {
                                 setState(() {
                                   _confirmPassword = value;
@@ -275,8 +281,21 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   color: AppColors.fontGreyOpacity,
                                 ),
                                 alignLabelWithHint: true, // set label to bottom
-
                                 labelText: "confirm password".tr,
+                                suffixIcon: IconButton(
+                                  iconSize: IconSize.sIcon,
+                                  icon: Icon(
+                                    _isObscureConfirmPassword
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isObscureConfirmPassword =
+                                          !_isObscureConfirmPassword;
+                                    });
+                                  },
+                                ),
                               ),
                               validator: MultiValidator([
                                 RequiredValidator(errorText: 'required'.tr),
@@ -284,9 +303,34 @@ class _ChangePasswordState extends State<ChangePassword> {
                                     errorText: "enter8password".tr),
                               ]),
                             ),
-
                             SizedBox(
-                              height: 30,
+                              height: 20,
+                            ),
+
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: GestureDetector(
+                                onTap: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(focusNode);
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          SecurityVerification(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  "reset pass".tr,
+                                  style: bodyTextNormal(
+                                    null,
+                                    AppColors.fontWaring,
+                                    null,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),

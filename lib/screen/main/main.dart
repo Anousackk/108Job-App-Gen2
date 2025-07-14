@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, unused_local_variable, avoid_unnecessary_containers, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, avoid_print, prefer_final_fields, unused_field, prefer_const_literals_to_create_immutables
 
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/screenAfterSignIn/home/home.dart';
 import 'package:app/screen/login/login.dart';
@@ -40,10 +41,11 @@ class _MainBodyState extends State<MainBody> {
   //
 
   checkTokenLogin() async {
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
     //
     //get token from shared preferences.
-    var employeeToken = prefs.getString('employeeToken');
+    // var employeeToken = prefs.getString('employeeToken');
+    var employeeToken = await SharedPrefsHelper.getString("employeeToken");
 
     if (employeeToken != null) {
       // _isLoading = false;

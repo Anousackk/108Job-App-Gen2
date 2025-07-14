@@ -4,6 +4,7 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/WorkPreference/Widget/listImageTextMultiSelectedAlertDialog.dart';
 import 'package:app/widget/appbar.dart';
@@ -145,11 +146,15 @@ class _WorkPreferencesState extends State<WorkPreferences> {
   }
 
   getSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    var getLanguageSharePref = prefs.getString('setLanguage');
-    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // final prefs = await SharedPreferences.getInstance();
+    // var getLanguageSharePref = prefs.getString('setLanguage');
+    // var getLanguageApiSharePref = prefs.getString('setLanguageApi');
     // print("local " + getLanguageSharePref.toString());
     // print("api " + getLanguageApiSharePref.toString());
+
+    var getLanguageSharePref = await SharedPrefsHelper.getString("setLanguage");
+    var getLanguageApiSharePref =
+        await SharedPrefsHelper.getString("setLanguageApi");
 
     setState(() {
       _localeLanguageApi = getLanguageApiSharePref.toString();

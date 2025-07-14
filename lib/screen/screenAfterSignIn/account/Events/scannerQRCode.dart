@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print, sdk_version_since, avoid_unnecessary_containers, unused_local_variable
 
 import 'package:app/functions/alert_dialog.dart';
+import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,64 @@ class _QRScannerState extends State<QRScanner> {
   bool isScannerActive = true;
   bool isMobileScanner = true;
 
-  openLaunchURL(String url) async {
+  applyByJobId(String jobId) async {
+    var res = await postData(applyJobIdSeekerApi, {"_id": jobId});
+    print("res applyByJobId: " + res.toString());
+
+    if (res["message"] == "Your applied is complete.") {
+      // ສະແດງ success dialog
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (dialogContext) {
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "successful".tr,
+            contentText: "applied_success".tr,
+            textButton: "ok".tr,
+            press: () async {
+              // ປິດ success dialog
+              Navigator.of(dialogContext).pop();
+
+              // ຖ້າ success dialog ປີດກ່ອນແລ້ວຈຶ່ງກັບໄປໜ້າ Account
+              await Future.delayed(Duration(milliseconds: 200));
+
+              // ກັບໄປໜ້າ Account
+              if (Navigator.canPop(context)) Navigator.pop(context);
+            },
+          );
+        },
+      );
+
+      return true;
+    } else {
+      // ສະແດງ warning dialog
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (dialogContext) {
+          return NewVer5CustAlertDialogWarningBtnConfirm(
+            title: "warning".tr,
+            contentText: "already_applied".tr,
+            textButton: "ok".tr,
+            press: () async {
+              // ປິດ success dialog
+              Navigator.of(dialogContext).pop();
+
+              // ຖ້າ success dialog ປີດກ່ອນແລ້ວຈຶ່ງກັບໄປໜ້າ Account
+              await Future.delayed(Duration(milliseconds: 200));
+
+              // ກັບໄປໜ້າ Account
+              if (Navigator.canPop(context)) Navigator.pop(context);
+            },
+          );
+        },
+      );
+
+      return true;
+    }
+  }
+
+  openLaunchURLBrowser(String url) async {
     print("openLaunchURL: ${url}");
 
     final uri = Uri.tryParse(url);
@@ -60,27 +118,34 @@ class _QRScannerState extends State<QRScanner> {
   onDetect(BarcodeCapture barcode) async {
     final code = barcode.barcodes.firstOrNull?.rawValue;
     print("Print Code: ${code}");
+
     if (code != null) {
-      //ປິດສະແກນ
+      // ປິດສະແກນ
       await scannerController.stop();
       setState(() {
         isScannerActive = false;
       });
       print("Scanned code: $code");
 
-      if (Uri.tryParse(code)?.hasAbsolutePath == true) {
-        print("Open LaunchURL working");
+      // ຖ້າວ່າ code ມີ "id" ຈະຕັດຄຳອອກ(id)ແລ້ວເອົາແຕ່ຄ່າທີ່ຢູ່ຫຼັງ id
+      if (code.contains("id")) {
+        String id = code.split("id").last;
+        print("job wii/ job fest id: $id");
 
-        await openLaunchURL(code);
-      } else {
-        // ຫຼັງຈາກນັ້ນສະແດງ success dialog
+        applyByJobId(id.toString());
+      }
+      // ຖ້າວ່າ code ບໍ່ມີ "id" ຈະສະແດງ warning dialog
+      else {
+        print("no id found.");
+
+        // ສະແດງ warning dialog
         showDialog(
           barrierDismissible: false,
           context: context,
           builder: (dialogContext) {
-            return NewVer2CustAlertDialogSuccessBtnConfirm(
-              title: "scan_qr".tr + " " + "successful".tr,
-              contentText: "${code}",
+            return NewVer5CustAlertDialogWarningBtnConfirm(
+              title: "warning".tr,
+              contentText: "incorrect_qr_code".tr + "\n(${code})",
               textButton: "ok".tr,
               press: () async {
                 // ປິດ success dialog
@@ -95,8 +160,13 @@ class _QRScannerState extends State<QRScanner> {
             );
           },
         );
+      }
 
-        return true;
+      // ຖ້າວ່າ code ເປັນແບບ url ຈະເຮັດຟັງຊັ້ນ openLaunchURLBrowser() ເພື່ອເປີດຢູ່ browser
+      if (Uri.tryParse(code)?.hasAbsolutePath == true) {
+        print("Open LaunchURL working");
+
+        await openLaunchURLBrowser(code);
       }
     }
   }

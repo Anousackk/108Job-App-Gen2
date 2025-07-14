@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_field, avoid_print
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, unused_local_variable, prefer_final_fields, prefer_if_null_operators
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -7,8 +7,10 @@ import 'dart:ui' as ui;
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/launchInBrowser.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/widget/appbar.dart';
+import 'package:app/widget/button.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -17,44 +19,49 @@ import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class WiiFairTicket extends StatefulWidget {
-  const WiiFairTicket(
+class EventTicket extends StatefulWidget {
+  const EventTicket(
       {Key? key,
       required this.imageSrc,
       required this.firstName,
-      required this.lastName})
+      required this.lastName,
+      this.objEventAvailable})
       : super(key: key);
   final String imageSrc;
   final String firstName;
   final String lastName;
+  final objEventAvailable;
 
   @override
-  State<WiiFairTicket> createState() => _WiiFairTicketState();
+  State<EventTicket> createState() => _EventTicketState();
 }
 
-class _WiiFairTicketState extends State<WiiFairTicket> {
+class _EventTicketState extends State<EventTicket> {
   final GlobalKey _globalKey = GlobalKey();
+
+  dynamic _myAppliedInfo;
+  dynamic _eventInfo;
+
+  String _qrString = "";
+  String _userId = "";
+  String _name = "";
+  String _address = "";
+  String _openingTime = "";
+
+  double _latitude = 0;
+  double _longtitude = 0;
 
   saveLocalImage() async {
     //
     //
-    //Request photos permission
-    var statusPhotos = await Permission.photos.status; //IOS
-    var statusMediaLibrary = await Permission.mediaLibrary.status; //Android
-
-    //
-    //
-    //Device IOS
+    //Save device IOS
     if (Platform.isIOS) {
-      print("Platform isIOS");
-      print(statusPhotos);
+      var statusPhotosIOS = await Permission.photos.status; //IOS
+      print("Platform IOS: " + statusPhotosIOS.toString());
 
-      if (statusPhotos.isLimited) {
-        print("photos isLimited");
+      if (statusPhotosIOS.isGranted) {
+        print("statusPhotosIOS isGranted");
 
-        await openAppSettings();
-      }
-      if (statusPhotos.isGranted) {
         //display loading dialog
         showDialog(
           context: context,
@@ -74,7 +81,7 @@ class _WiiFairTicketState extends State<WiiFairTicket> {
         ByteData? byteData =
             await image.toByteData(format: ui.ImageByteFormat.png);
 
-        // Save to gallery
+        // Save to photo
         if (byteData != null) {
           //close loading dialog
           Navigator.pop(context);
@@ -87,65 +94,68 @@ class _WiiFairTicketState extends State<WiiFairTicket> {
             builder: (context) {
               return CustAlertDialogSuccessWithoutBtn(
                 title: "successful".tr,
-                contentText: "ບັນທຶກຮູບພາບສຳເລັດ",
+                contentText: "photo_saved".tr,
               );
             },
           );
 
           print("IOS saved to photos: $result");
+        } else {
+          Navigator.pop(context);
+
+          print("byteData == null andriod can not save image");
+
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return CustAlertDialogWarningWithoutBtn(
+                title: "warning".tr,
+                contentText: "can_not_save_photo".tr,
+              );
+            },
+          );
         }
-      }
-      if (statusPhotos.isDenied) {
-        print("photos isDenied");
-        // await Permission.photos.request();
-        var result = await showDialog(
+      } else if (statusPhotosIOS.isDenied) {
+        print("statusPhotosIOS isDenied");
+
+        await Permission.photos.request();
+      } else {
+        print("statusPhotosIOS etc...");
+
+        // Display warning dialog
+        await showDialog(
           barrierDismissible: false,
           context: context,
           builder: (context) {
-            return CupertinoAlertDialogOk(
-              title: '“108 Jobs” Would like to Access Your Photos',
-              contentText:
-                  "'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.",
-              text: 'Continue',
+            return NewVer5CustAlertDialogWarningBtnConfirm(
+              title: "warning".tr,
+              contentText: "want_access_photos".tr,
+              textButton: "ok".tr,
+              press: () async {
+                await openAppSettings();
+
+                Future.delayed(Duration(seconds: 1), () {
+                  // Close warning dialog
+                  if (Navigator.canPop(context)) Navigator.pop(context);
+                });
+              },
             );
           },
         );
-        if (result == 'Ok') {
-          await Permission.photos.request();
-        }
-      }
-      if (statusPhotos.isPermanentlyDenied) {
-        print("photos isPermanentlyDenied");
-        var result = await showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) {
-            return CupertinoAlertDialogOk(
-              title: '“108 Jobs” Would like to Access Your Photos',
-              contentText:
-                  "'108Jobs' would like to access your Photos Access to your photo library is required to attach photos to change profile images.",
-              text: 'Continue',
-            );
-          },
-        );
-        if (result == 'Ok') {
-          await openAppSettings();
-        }
       }
     }
 
     //
     //
-    //Device Android
+    //Save device Android
     else if (Platform.isAndroid) {
-      print("Platform isAndroid");
-      print(statusMediaLibrary);
+      var statusMediaLibraryAndroid =
+          await Permission.mediaLibrary.status; //Android
+      print("Platform Android: " + "${statusMediaLibraryAndroid}");
 
-      if (statusMediaLibrary.isLimited) {
-        print("mediaLibrary isLimited");
-        await openAppSettings();
-      }
-      if (statusMediaLibrary.isGranted) {
+      if (statusMediaLibraryAndroid.isGranted) {
+        print("statusMediaLibraryAndroid isGranted");
+
         //display loading dialog
         showDialog(
           context: context,
@@ -179,7 +189,7 @@ class _WiiFairTicketState extends State<WiiFairTicket> {
             builder: (context) {
               return CustAlertDialogSuccessWithoutBtn(
                 title: "successful".tr,
-                contentText: "ບັນທຶກຮູບພາບສຳເລັດ",
+                contentText: "photo_saved".tr,
               );
             },
           );
@@ -193,21 +203,86 @@ class _WiiFairTicketState extends State<WiiFairTicket> {
             builder: (context) {
               return CustAlertDialogWarningWithoutBtn(
                 title: "warning".tr,
-                contentText: "ບໍ່ສາມາດບັນທຶກຮູບພາບໄດ້".tr,
+                contentText: "can_not_save_photo".tr,
               );
             },
           );
         }
-      }
-      if (statusMediaLibrary.isDenied) {
-        print("mediaLibrary isDenied");
+      } else if (statusMediaLibraryAndroid.isDenied) {
+        print("statusMediaLibraryAndroid isDenied");
+
         await Permission.photos.request();
-      }
-      if (statusMediaLibrary.isPermanentlyDenied) {
-        print("mediaLibrary isPermanentlyDenied");
-        await openAppSettings();
+      } else {
+        print("statusMediaLibraryAndroid etc...");
+
+        // Display warning dialog
+        await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return NewVer5CustAlertDialogWarningBtnConfirm(
+              title: "warning".tr,
+              contentText: "want_access_photos".tr,
+              textButton: "ok".tr,
+              press: () async {
+                await openAppSettings();
+
+                Future.delayed(Duration(seconds: 1), () {
+                  // Close warning dialog
+                  if (Navigator.canPop(context)) Navigator.pop(context);
+                });
+              },
+            );
+          },
+        );
       }
     }
+  }
+
+  getEventAvailable() async {
+    var qrStringSharePrefs =
+        await SharedPrefsHelper.getString("qrString") ?? "";
+
+    setState(() {
+      var i = widget.objEventAvailable;
+      _myAppliedInfo = i["myAppliedInfo"];
+      _eventInfo = i["eventInfo"];
+
+      _latitude = double.parse(_eventInfo["map"]["coordinates"][1].toString());
+      _longtitude =
+          double.parse(_eventInfo["map"]["coordinates"][0].toString());
+
+      _name = _eventInfo["name"];
+      _address = _eventInfo["address"];
+      _qrString = qrStringSharePrefs;
+
+      if (_myAppliedInfo != null) {
+        _userId = _myAppliedInfo["id"];
+      }
+
+      if (_eventInfo.containsKey("openingTime")) {
+        print("have openingTime");
+        _openingTime =
+            _eventInfo["openingTime"] == null ? "" : _eventInfo["openingTime"];
+      }
+    });
+
+    print("_qrString: " + _qrString.toString());
+  }
+
+  genQrStringSetPreference(String valQrString) async {
+    setState(() {
+      _qrString = valQrString;
+    });
+
+    await SharedPrefsHelper.setString("qrString", _qrString.toString());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    getEventAvailable();
   }
 
   @override
@@ -342,7 +417,7 @@ class _WiiFairTicketState extends State<WiiFairTicket> {
                               ),
 
                               SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
 
                               //
@@ -356,7 +431,7 @@ class _WiiFairTicketState extends State<WiiFairTicket> {
                                 maxLines: 2,
                               ),
                               SizedBox(
-                                height: 15,
+                                height: 10,
                               ),
                             ],
                           ),
@@ -392,16 +467,24 @@ class _WiiFairTicketState extends State<WiiFairTicket> {
                                 width: double.infinity,
                                 child: Column(
                                   children: [
-                                    QrImageView(
-                                      padding: EdgeInsets.zero,
-                                      data: 'WF-41X1D',
-                                      size: 150,
-                                    ),
+                                    _qrString == ""
+                                        ? ButtonDefault(
+                                            text: "create_qr_code".tr,
+                                            press: () async {
+                                              genQrStringSetPreference(
+                                                  _myAppliedInfo["qrString"]);
+                                            },
+                                          )
+                                        : QrImageView(
+                                            padding: EdgeInsets.zero,
+                                            data: _qrString.toString(),
+                                            size: 150,
+                                          ),
                                     SizedBox(
                                       height: 10,
                                     ),
                                     Text(
-                                      'WF-41X1D',
+                                      "${_userId}",
                                       style: bodyTextMaxNormal(
                                           "NotoSansLaoLoopedSemiBold",
                                           null,
@@ -486,47 +569,42 @@ class _WiiFairTicketState extends State<WiiFairTicket> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    TicketWiiFairInfo(
-                                      title: "ລາຍລະອຽດ:",
-                                      text:
-                                          "ງານຍ່າງເຂົ້າມາສຳພາດວຽກ WIIFAIR ຄັ້ງທີ່ 10",
+                                    EventTicketInfo(
+                                      title: "event_name".tr + ":",
+                                      text: "${_name}",
                                     ),
                                     SizedBox(
                                       height: 15,
                                     ),
-
-                                    TicketWiiFairInfo(
-                                      title: "ສະຖານທີ່:",
-                                      text: "ຫໍປະຊຸມແຫ່ງຊາດ",
+                                    EventTicketInfo(
+                                      title: "event_address".tr + ":",
+                                      text: "${_address}",
                                     ),
                                     SizedBox(
                                       height: 15,
                                     ),
-
-                                    TicketWiiFairInfo(
-                                      title: "ແຜນທີ່:",
-                                      text: "ກົດເບິ່ງແຜນທີ່",
+                                    EventTicketInfo(
+                                      title: "event_map".tr + ":",
+                                      text: "event_click_map".tr,
                                       statusMap: "GoogleMap",
                                       link:
-                                          "https://maps.app.goo.gl/uZwTyzZvtbbF1zRq8",
+                                          //17.976837621717973, 102.6365003105264
+                                          "https://www.google.com/maps?q=$_latitude,$_longtitude",
                                     ),
                                     SizedBox(
                                       height: 15,
                                     ),
-
-                                    TicketWiiFairInfo(
-                                      title: "ວັນທີ່ຈັດງານ:",
-                                      text: "26 Aug 2025 ເວລາ 08:00 - 17:00",
+                                    EventTicketInfo(
+                                      title: "event_date_time".tr + ":",
+                                      text: "${_openingTime}",
                                     ),
                                     SizedBox(
                                       height: 15,
                                     ),
-
-                                    TicketWiiFairInfo(
-                                      title: "ລະຫັດຜູ້ເຂົ້າຮ່ວມງານ:",
-                                      text: "WF-41X1D",
+                                    EventTicketInfo(
+                                      title: "event_attendee_code".tr + ":",
+                                      text: "${_userId}",
                                     ),
-                                    //
                                   ],
                                 ),
                               ),
@@ -549,13 +627,13 @@ class _WiiFairTicketState extends State<WiiFairTicket> {
   }
 }
 
-class TicketWiiFairInfo extends StatefulWidget {
+class EventTicketInfo extends StatefulWidget {
   final String title;
   final String text;
   final statusMap;
   final link;
 
-  const TicketWiiFairInfo(
+  const EventTicketInfo(
       {required this.title,
       required this.text,
       Key? key,
@@ -564,10 +642,10 @@ class TicketWiiFairInfo extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<TicketWiiFairInfo> createState() => _TicketWiiFairInfoState();
+  State<EventTicketInfo> createState() => _EventTicketInfoState();
 }
 
-class _TicketWiiFairInfoState extends State<TicketWiiFairInfo> {
+class _EventTicketInfoState extends State<EventTicketInfo> {
   @override
   Widget build(BuildContext context) {
     return Column(

@@ -8,18 +8,18 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/screen/ScreenAfterSignIn/Account/Events/scannerQRCode.dart';
+import 'package:app/screen/ScreenAfterSignIn/Account/Events/eventTicket.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/JobAlert/jobAlert.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/LoginInfo/loginInformation.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/myProfile.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/WiiFair/wiifairTicket.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/WiiFair/scannerQRCode.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 class Account extends StatefulWidget {
   const Account(
@@ -38,7 +38,11 @@ class Account extends StatefulWidget {
 
 class _AccountState extends State<Account> {
   dynamic _seekerProfile;
+  dynamic _eventInfo;
+  dynamic _objEventAvailable;
 
+  String _eventInfoId = "";
+  String _eventInfoName = "";
   String _firstName = "";
   String _lastName = "";
   String _imageSrc = "";
@@ -59,6 +63,73 @@ class _AccountState extends State<Account> {
 
   bool _isLoading = true;
   bool _imageLoading = false;
+  bool _isApplied = false;
+
+  getEvnetAvailable() async {
+    var res = await fetchData(getEventAvailableSeekerApi);
+    print("api get event available: " + res.toString());
+
+    if (res.containsKey("message")) {
+      print("res containsKey message: " + res["message"]);
+
+      return;
+    } else {
+      _objEventAvailable = res;
+      _eventInfo = res["eventInfo"];
+      _isApplied = res["isApplied"] as bool? ?? false;
+      // _eventInfo = null;
+      // _isApplied = false;
+
+      // ຖ້າວ່າ _eventInfo == null ຈະລົບຄ່າຂອງ qrString ອອກ
+      if (_eventInfo == null || !_isApplied) {
+        await SharedPrefsHelper.remove("qrString");
+        print("removed qrString");
+      }
+
+      if (_eventInfo != null) {
+        _eventInfoId = _eventInfo["_id"];
+        _eventInfoName = _eventInfo["name"];
+      }
+      print("_isApplied: " + _isApplied.toString());
+
+      setState(() {});
+    }
+  }
+
+  applyEvent() async {
+    var res = await postData(applyEventSeekerApi, {"eventId": _eventInfoId});
+    print("res apply event: " + res.toString());
+
+    if (res["message"] == "Applied succeed") {
+      await getEvnetAvailable();
+
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return NewVer2CustAlertDialogSuccessBtnConfirm(
+            title: "successful".tr,
+            contentText: "registered_attend".tr,
+            textButton: "ok".tr,
+            press: () {
+              Navigator.pop(context);
+            },
+          );
+        },
+      );
+    } else {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "already_registered_attend".tr,
+            textButton: "ok".tr,
+          );
+        },
+      );
+    }
+  }
 
   getProfileSeeker() async {
     print("api get profile working account screen");
@@ -110,7 +181,7 @@ class _AccountState extends State<Account> {
       print("Platform IOS: " + statusPhotosIOS.toString());
 
       if (statusPhotosIOS.isGranted) {
-        print("photos isGranted");
+        print("statusPhotosIOS isGranted");
         final ImagePicker _picker = ImagePicker();
         final XFile? image = await _picker.pickImage(source: source);
 
@@ -510,6 +581,7 @@ class _AccountState extends State<Account> {
     } else {
       getProfileSeeker();
       getTotalJobSeeker();
+      getEvnetAvailable();
     }
   }
 
@@ -650,7 +722,8 @@ class _AccountState extends State<Account> {
                                               top: -20,
                                               child: Container(
                                                 padding: EdgeInsets.symmetric(
-                                                    horizontal: 8, vertical: 5),
+                                                    horizontal: 10,
+                                                    vertical: 5),
                                                 decoration: BoxDecoration(
                                                   color: AppColors.success600,
                                                   borderRadius:
@@ -730,82 +803,104 @@ class _AccountState extends State<Account> {
                                 ),
                                 // Container(),
 
-                                // Container(
-                                //   margin: EdgeInsets.only(top: 10),
-                                //   child: Row(
-                                //     mainAxisAlignment: MainAxisAlignment.center,
-                                //     children: [
-                                //       //
-                                //       //
-                                //       //Button register Wiifair
-                                //       GestureDetector(
-                                //         onTap: () {
-                                //           Navigator.push(
-                                //             context,
-                                //             MaterialPageRoute(
-                                //               builder: (context) =>
-                                //                   WiiFairTicket(
-                                //                 imageSrc: _imageSrc,
-                                //                 firstName: _firstName,
-                                //                 lastName: _lastName,
-                                //               ),
-                                //             ),
-                                //           );
-                                //         },
-                                //         child: Container(
-                                //           padding: EdgeInsets.symmetric(
-                                //               horizontal: 15, vertical: 8),
-                                //           decoration: BoxDecoration(
-                                //             color: AppColors.warning600,
-                                //             borderRadius:
-                                //                 BorderRadius.circular(100),
-                                //           ),
-                                //           child: Text(
-                                //             "ເຂົ້າຮ່ວມງານ Wiifair",
-                                //             style: bodyTextNormal(
-                                //                 null, null, FontWeight.bold),
-                                //           ),
-                                //         ),
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
+                                //
+                                //
+                                //ກວດສະຖານະເປັນ Expert Job Seeker ແລະ ສະຖານະງານຈັດຂຶ້ນ
+                                if (_memberLevel == "Expert Job Seeker" &&
+                                    _eventInfo != null)
+
+                                  //
+                                  //
+                                  //Button register Events
+                                  Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            if (!_isApplied) {
+                                              await applyEvent();
+                                            } else {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      EventTicket(
+                                                    imageSrc: _imageSrc,
+                                                    firstName: _firstName,
+                                                    lastName: _lastName,
+                                                    objEventAvailable:
+                                                        _objEventAvailable,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 15, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.warning600,
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                            ),
+                                            child: Text(
+                                              _isApplied
+                                                  ? "${_eventInfoName}"
+                                                  : "attend_event".tr +
+                                                      " ${_eventInfoName}",
+                                              style: bodyTextNormal(
+                                                  null, null, FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
 
                                 SizedBox(
-                                  height: 30,
+                                  height: 20,
                                 ),
                               ],
                             ),
-                            // Positioned(
-                            //   top: 10,
-                            //   right: -10,
 
-                            //   //
-                            //   //
-                            //   //Button scan QR code
-                            //   child: GestureDetector(
-                            //     onTap: () {
-                            //       Navigator.push(
-                            //         context,
-                            //         MaterialPageRoute(
-                            //           builder: (context) => QRScanner(),
-                            //         ),
-                            //       );
-                            //     },
-                            //     child: Container(
-                            //       padding: EdgeInsets.all(8),
-                            //       decoration: BoxDecoration(
-                            //         color: AppColors.dark100,
-                            //         borderRadius: BorderRadius.circular(100),
-                            //       ),
-                            //       child: Icon(
-                            //         Icons.qr_code_scanner_outlined,
-                            //         color: AppColors.primary,
-                            //         size: 30,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
+                            //
+                            //
+                            //ກວດສະຖານະເປັນ Expert Job Seeker ແລະ ສະຖານະງານຈັດຂຶ້ນ
+                            if (_memberLevel == "Expert Job Seeker" &&
+                                _eventInfo != null)
+                              Positioned(
+                                top: 0,
+                                right: 0,
+
+                                //
+                                //
+                                //Button scan QR code
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => QRScanner(),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.dark100,
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    child: Icon(
+                                      Icons.qr_code_scanner_outlined,
+                                      color: AppColors.primary,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -959,9 +1054,8 @@ class _AccountState extends State<Account> {
                               ),
                             ),
                             Divider(
-                              height: 1,
-                              thickness: 1,
-                              color: AppColors.dark500,
+                              thickness: 2,
+                              color: AppColors.borderGrey.withOpacity(0.3),
                             ),
 
                             //
@@ -1037,7 +1131,7 @@ class _AccountState extends State<Account> {
                             // ElevatedButton(
                             //   onPressed: () {
                             //     setState(() {
-                            //       qrData = 'WF-41X1D';
+                            //       qrData = 'WF-104';
                             //     });
                             //   },
                             //   child: Text('Generate QR Code'),

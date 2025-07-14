@@ -9,6 +9,7 @@ import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/parsDateTime.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:app/widget/button.dart';
@@ -282,11 +283,15 @@ class _JobSearchState extends State<JobSearch>
   }
 
   getSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    var getLanguageSharePref = prefs.getString('setLanguage');
-    var getLanguageApiSharePref = prefs.getString('setLanguageApi');
+    // final prefs = await SharedPreferences.getInstance();
+    // var getLanguageSharePref = prefs.getString('setLanguage');
+    // var getLanguageApiSharePref = prefs.getString('setLanguageApi');
     // print("local " + getLanguageSharePref.toString());
     // print("api " + getLanguageApiSharePref.toString());
+
+    var getLanguageSharePref = await SharedPrefsHelper.getString("setLanguage");
+    var getLanguageApiSharePref =
+        await SharedPrefsHelper.getString("setLanguageApi");
 
     setState(() {
       _localeLanguageApi = getLanguageApiSharePref.toString();
@@ -382,7 +387,7 @@ class _JobSearchState extends State<JobSearch>
           body: SafeArea(
             child: _isLoadingForm
                 ? Container(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.dark100,
                     width: double.infinity,
                     height: double.infinity,
                     child: Center(child: CustomLoadingLogoCircle()),
@@ -2126,9 +2131,8 @@ class _JobSearchState extends State<JobSearch>
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        height: 15,
-                                                      ),
+
+                                                      SizedBox(height: 15),
 
                                                       //
                                                       //

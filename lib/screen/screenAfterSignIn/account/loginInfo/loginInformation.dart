@@ -6,6 +6,7 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/login/login.dart';
 import 'package:app/screen/screenAfterSignIn/account/loginInfo/add_updatePhoneEmail.dart';
@@ -112,10 +113,11 @@ class _LoginInformationState extends State<LoginInformation> {
   }
 
   removeSharedPreTokenAndLogOut() async {
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
     await logOut();
 
-    var removeEmployeeToken = await prefs.remove('employeeToken');
+    // var removeEmployeeToken = await prefs.remove('employeeToken');
+    await SharedPrefsHelper.remove("employeeToken");
     AuthService().facebookSignOut();
     AuthService().googleSignOut();
     if (Platform.isIOS) {
