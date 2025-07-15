@@ -15,7 +15,7 @@ import FBSDKCoreKit
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     FirebaseApp.configure()
-//    GeneratedPluginRegistrant.register(with: self)
+    //GeneratedPluginRegistrant.register(with: self)
 
     ApplicationDelegate.shared.application(
     application,
@@ -25,7 +25,7 @@ import FBSDKCoreKit
 
     return true
     
-    if #available(iOS 10.0, *) {
+    if #available(iOS 17.0, *) {
       UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
           UNUserNotificationCenter.current().requestAuthorization(
@@ -36,7 +36,7 @@ import FBSDKCoreKit
         let settings: UIUserNotificationSettings =
           UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
         application.registerUserNotificationSettings(settings)
-      }
+    }
     application.registerForRemoteNotifications()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

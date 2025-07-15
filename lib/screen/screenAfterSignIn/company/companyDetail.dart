@@ -16,7 +16,8 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+// import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
 
 // _typeTapCompanyDetail == "jobOpening"
 class CompanyDetail extends StatefulWidget {
@@ -117,10 +118,10 @@ class _CompanyDetailState extends State<CompanyDetail>
       });
     }
 
-    _youtubeController = YoutubePlayerController(
-      initialVideoId: '${_videoLink}', // Your video ID
+    _youtubeController = YoutubePlayerController.fromVideoId(
+      videoId: '${_videoLink}', // Your video ID
+      autoPlay: false,
       params: YoutubePlayerParams(
-        autoPlay: false,
         mute: false,
         showControls: true,
         showFullscreenButton: true,
@@ -1316,9 +1317,14 @@ class _CompanyDetailState extends State<CompanyDetail>
                                       ),
                                       child: SingleChildScrollView(
                                         physics: ClampingScrollPhysics(),
-                                        child: YoutubePlayerIFrame(
-                                          controller: _youtubeController,
-                                          aspectRatio: 16 / 9,
+                                        child: Column(
+                                          children: [
+                                            if (_videoLink != "")
+                                              YoutubePlayer(
+                                                controller: _youtubeController,
+                                                aspectRatio: 16 / 9,
+                                              ),
+                                          ],
                                         ),
                                       ),
                                     ),

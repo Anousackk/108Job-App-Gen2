@@ -9,9 +9,9 @@ import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_quill_delta_from_html/parser/html_to_delta.dart';
-import 'package:flutter_quill_extensions/flutter_quill_embeds.dart';
+import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
+// import 'package:flutter_quill_extensions/flutter_quill_embeds.dart';
 import 'package:get/get.dart';
 
 class DetailPositionComapny extends StatefulWidget {
@@ -32,6 +32,9 @@ class DetailPositionComapny extends StatefulWidget {
 
 class _DetailPositionComapnyState extends State<DetailPositionComapny> {
   QuillController _quillController = QuillController.basic();
+  FocusNode editorFocusNode = FocusNode();
+  final ScrollController _editorScrollController = ScrollController();
+
   String _salary = "";
 
   fetchValue() async {
@@ -215,13 +218,14 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
                         decoration: BoxDecoration(
                             color: AppColors.backgroundWhite,
                             borderRadius: BorderRadius.circular(10)),
-                        child: QuillEditor.basic(
-                          // focusNode: editorFocusNode,
-                          configurations: QuillEditorConfigurations(
+                        child: QuillEditor(
+                          focusNode: editorFocusNode,
+                          scrollController: _editorScrollController,
+                          controller: _quillController,
+                          config: QuillEditorConfig(
                             embedBuilders: FlutterQuillEmbeds.editorBuilders(),
                             keyboardAppearance: Brightness.dark,
                             requestKeyboardFocusOnCheckListChanged: false,
-                            controller: _quillController,
                             scrollPhysics: NeverScrollableScrollPhysics(),
                             readOnlyMouseCursor: SystemMouseCursors.text,
                             // maxHeight: 400,

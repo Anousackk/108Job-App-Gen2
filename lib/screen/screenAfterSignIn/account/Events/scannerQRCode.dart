@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print, sdk_version_since, avoid_unnecessary_containers, unused_local_variable
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print, sdk_version_since, avoid_unnecessary_containers, unused_local_variable, prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -18,7 +18,8 @@ class QRScanner extends StatefulWidget {
 class _QRScannerState extends State<QRScanner> {
   Key scannerKey = UniqueKey(); // used to force rebuild
   MobileScannerController scannerController = MobileScannerController(
-    useNewCameraSelector: true,
+    // useNewCameraSelector: true,
+    detectionSpeed: DetectionSpeed.noDuplicates,
     detectionTimeoutMs: 1000,
   );
   bool isScannerActive = true;
@@ -296,7 +297,7 @@ class _QRScannerState extends State<QRScanner> {
                 )
               : Container();
         },
-        errorBuilder: (context, error, stackTrace) {
+        errorBuilder: (context, error) {
           print("Mobile scanner error: " + "${error.errorCode.message}");
           if (error.errorCode.message.isNotEmpty) {
             checkCameraPermission();

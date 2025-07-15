@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, body_might_complete_normally_nullable, prefer_const_constructors, avoid_print, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_adjacent_string_concatenation, unnecessary_string_interpolations, await_only_futures
+// ignore_for_file: unused_local_variable, body_might_complete_normally_nullable, prefer_const_constructors, avoid_print, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_adjacent_string_concatenation, unnecessary_string_interpolations, await_only_futures, use_build_context_synchronously
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -336,6 +336,10 @@ class AuthService {
 
   googleSignOut() async {
     await GoogleSignIn().signOut();
+
+    // Disconnect instead of just signing out, to reset the example state as
+    // much as possible.
+    // await GoogleSignIn.instance.disconnect();
     print("Google sign out");
   }
 

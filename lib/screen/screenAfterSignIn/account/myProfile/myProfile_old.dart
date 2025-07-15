@@ -493,11 +493,13 @@ class _MyProfileState extends State<MyProfile>
                                           //
                                           //Placeholder circle for profile picture
                                           DottedBorder(
-                                            dashPattern: [6, 7],
-                                            strokeWidth: 2,
-                                            borderType: BorderType.Circle,
-                                            color: AppColors.borderPrimary,
-                                            borderPadding: EdgeInsets.all(1),
+                                            options: RectDottedBorderOptions(
+                                              dashPattern: [6, 7],
+                                              strokeWidth: 2,
+                                              // borderType: BorderType.Circle,
+                                              color: AppColors.borderPrimary,
+                                              borderPadding: EdgeInsets.all(1),
+                                            ),
                                             child: _imageLoading
                                                 ? Container(
                                                     width: 150,

@@ -7,12 +7,10 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
   firebase_auth
   firebase_core
+  flutter_inappwebview_windows
   flutter_secure_storage_windows
-  gal
-  irondash_engine_context
   permission_handler_windows
   share_plus
-  super_native_extensions
   url_launcher_windows
 )
 

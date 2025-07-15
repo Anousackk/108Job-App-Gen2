@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_in_if_null_operators, avoid_init_to_null, file_names, sized_box_for_whitespace, deprecated_member_use, prefer_adjacent_string_concatenation, avoid_unnecessary_containers
 
+import 'dart:convert';
+
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
@@ -19,7 +21,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-import 'package:quill_html_converter/quill_html_converter.dart';
+// import 'package:quill_html_converter/quill_html_converter.dart';
 
 class WorkHistory extends StatefulWidget {
   const WorkHistory({
@@ -42,6 +44,7 @@ class _WorkHistoryState extends State<WorkHistory> {
   FocusNode focusNode = FocusNode();
   FocusNode editorFocusNode = FocusNode();
   QuillController _quillController = QuillController.basic();
+  final ScrollController _editorScrollController = ScrollController();
 
   String? _id;
   String _company = "";
@@ -127,9 +130,9 @@ class _WorkHistoryState extends State<WorkHistory> {
   }
 
   addWorkHistorySeeker() async {
-    String quillConvertDeltaToHTML =
-        _quillController.document.toDelta().toHtml();
-    print(quillConvertDeltaToHTML.toString());
+    // String quillConvertDeltaToHTML =
+    //     _quillController.document.toDelta().toHtml();
+    // print(quillConvertDeltaToHTML.toString());
     //
     //
     //ສະແດງ AlertDialog Loading
@@ -149,8 +152,8 @@ class _WorkHistoryState extends State<WorkHistory> {
       "endYear": _toMonthYear != null ? _toMonthYear.toString() : _toMonthYear,
       "position": _jobTitle,
       "responsibility":
-          // jsonEncode(_quillController.document.toDelta().toJson()),
-          quillConvertDeltaToHTML,
+          jsonEncode(_quillController.document.toDelta().toJson()),
+      // quillConvertDeltaToHTML,
       "isCurrentJob": _isCurrentJob
     });
 
@@ -201,6 +204,7 @@ class _WorkHistoryState extends State<WorkHistory> {
   @override
   void dispose() {
     _quillController.dispose();
+    _editorScrollController.dispose();
     super.dispose();
   }
 
@@ -753,11 +757,11 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                 Container(
                                                   width: double.infinity,
                                                   color: AppColors.background,
-                                                  child: QuillToolbar.simple(
-                                                    configurations:
-                                                        QuillSimpleToolbarConfigurations(
-                                                      controller:
-                                                          _quillController,
+                                                  child: QuillSimpleToolbar(
+                                                    controller:
+                                                        _quillController,
+                                                    config:
+                                                        QuillSimpleToolbarConfig(
                                                       toolbarIconAlignment:
                                                           WrapAlignment.start,
                                                       toolbarSectionSpacing: 0,
@@ -796,6 +800,49 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                       showDividers: false,
                                                     ),
                                                   ),
+                                                  // child: QuillToolbar.simple(
+                                                  //   configurations:
+                                                  //       QuillSimpleToolbarConfigurations(
+                                                  //     controller:
+                                                  //         _quillController,
+                                                  //     toolbarIconAlignment:
+                                                  //         WrapAlignment.start,
+                                                  //     toolbarSectionSpacing: 0,
+                                                  //     showFontFamily: false,
+                                                  //     showFontSize: false,
+                                                  //     showHeaderStyle: false,
+                                                  //     showAlignmentButtons:
+                                                  //         false,
+                                                  //     showBackgroundColorButton:
+                                                  //         false,
+                                                  //     showClipboardCopy: false,
+                                                  //     showClipboardCut: false,
+                                                  //     showClipboardPaste: false,
+                                                  //     showColorButton: false,
+                                                  //     showCodeBlock: false,
+                                                  //     showDirection: false,
+                                                  //     showQuote: false,
+                                                  //     showUndo: false,
+                                                  //     showSuperscript: false,
+                                                  //     showLeftAlignment: false,
+                                                  //     showRedo: false,
+                                                  //     showRightAlignment: false,
+                                                  //     showSearchButton: false,
+                                                  //     showJustifyAlignment:
+                                                  //         false,
+                                                  //     showLineHeightButton:
+                                                  //         false,
+                                                  //     showSubscript: false,
+                                                  //     showCenterAlignment:
+                                                  //         false,
+                                                  //     showInlineCode: false,
+                                                  //     showSmallButton: false,
+                                                  //     // showClearFormat: false,
+                                                  //     showIndent: false,
+                                                  //     showListCheck: false,
+                                                  //     showDividers: false,
+                                                  //   ),
+                                                  // ),
                                                 ),
 
                                                 //
@@ -805,28 +852,26 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                   child: Container(
                                                     width: double.infinity,
                                                     decoration: BoxDecoration(
-                                                        color: AppColors
-                                                            .background,
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          bottomLeft:
-                                                              Radius.circular(
-                                                                  8),
-                                                          bottomRight:
-                                                              Radius.circular(
-                                                                  8),
-                                                        )),
-                                                    child: QuillEditor.basic(
+                                                      color:
+                                                          AppColors.background,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        bottomLeft:
+                                                            Radius.circular(8),
+                                                        bottomRight:
+                                                            Radius.circular(8),
+                                                      ),
+                                                    ),
+                                                    child: QuillEditor(
                                                       focusNode:
                                                           editorFocusNode,
-                                                      configurations:
-                                                          QuillEditorConfigurations(
+                                                      scrollController:
+                                                          _editorScrollController,
+                                                      controller:
+                                                          _quillController,
+                                                      config: QuillEditorConfig(
                                                         keyboardAppearance:
                                                             Brightness.dark,
-                                                        // requestKeyboardFocusOnCheckListChanged: true,
-                                                        controller:
-                                                            _quillController,
-
                                                         scrollPhysics:
                                                             ClampingScrollPhysics(),
                                                         readOnlyMouseCursor:
@@ -855,6 +900,45 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                         ),
                                                       ),
                                                     ),
+                                                    // child: QuillEditor.basic(
+                                                    //   focusNode:
+                                                    //       editorFocusNode,
+                                                    //   configurations:
+                                                    //       QuillEditorConfigurations(
+                                                    //     keyboardAppearance:
+                                                    //         Brightness.dark,
+                                                    //     // requestKeyboardFocusOnCheckListChanged: true,
+                                                    //     controller:
+                                                    //         _quillController,
+
+                                                    //     scrollPhysics:
+                                                    //         ClampingScrollPhysics(),
+                                                    //     readOnlyMouseCursor:
+                                                    //         SystemMouseCursors
+                                                    //             .text,
+                                                    //     maxHeight: 400,
+                                                    //     minHeight: 400,
+                                                    //     placeholder:
+                                                    //         "work_responsibility_detail"
+                                                    //             .tr,
+                                                    //     padding:
+                                                    //         EdgeInsets.all(10),
+                                                    //     dialogTheme:
+                                                    //         QuillDialogTheme(
+                                                    //       labelTextStyle: TextStyle(
+                                                    //           color: AppColors
+                                                    //               .fontPrimary),
+                                                    //       buttonStyle:
+                                                    //           ButtonStyle(
+                                                    //         backgroundColor:
+                                                    //             WidgetStateProperty
+                                                    //                 .all(
+                                                    //           AppColors.red,
+                                                    //         ),
+                                                    //       ),
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
                                                   ),
                                                 ),
                                                 Row(
@@ -1054,5 +1138,3 @@ class _WorkHistoryState extends State<WorkHistory> {
 //     ),
 //   ),
 // ),
-
-

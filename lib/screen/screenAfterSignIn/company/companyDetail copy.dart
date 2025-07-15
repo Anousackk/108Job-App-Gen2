@@ -18,7 +18,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
+// import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
 
 class CompanyDetail extends StatefulWidget {
   const CompanyDetail({Key? key, this.companyId}) : super(key: key);
@@ -32,7 +32,7 @@ class CompanyDetail extends StatefulWidget {
 class _CompanyDetailState extends State<CompanyDetail>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late YoutubePlayerController _youtubeController;
+  // late YoutubePlayerController _youtubeController;
 
   List _listJobOnlines = [];
   List _listBenefits = [];
@@ -114,15 +114,15 @@ class _CompanyDetailState extends State<CompanyDetail>
       });
     }
 
-    _youtubeController = YoutubePlayerController(
-      initialVideoId: '${_videoLink}', // Your video ID
-      params: YoutubePlayerParams(
-        autoPlay: false,
-        mute: false,
-        showControls: true,
-        showFullscreenButton: true,
-      ),
-    );
+    // _youtubeController = YoutubePlayerController(
+    //   initialVideoId: '${_videoLink}', // Your video ID
+    //   params: YoutubePlayerParams(
+    //     autoPlay: false,
+    //     mute: false,
+    //     showControls: true,
+    //     showFullscreenButton: true,
+    //   ),
+    // );
 
     if (mounted) {
       setState(() {});
@@ -1096,17 +1096,17 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                       left: 20,
                                                       right: 20,
                                                     ),
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      physics:
-                                                          ClampingScrollPhysics(),
-                                                      child:
-                                                          YoutubePlayerIFrame(
-                                                        controller:
-                                                            _youtubeController,
-                                                        aspectRatio: 16 / 9,
-                                                      ),
-                                                    ),
+                                                    // child:
+                                                    //     SingleChildScrollView(
+                                                    //   physics:
+                                                    //       ClampingScrollPhysics(),
+                                                    //   child:
+                                                    //       YoutubePlayerIFrame(
+                                                    //     controller:
+                                                    //         _youtubeController,
+                                                    //     aspectRatio: 16 / 9,
+                                                    //   ),
+                                                    // ),
                                                   ),
                                                 ),
 

@@ -1,0 +1,14 @@
+name: flutter_local_notifications_linux
+description: Stub package to silence plugin error
+version: 0.0.1
+publish_to: "none"
+
+environment:
+  sdk: ">=2.17.0 <4.0.0"
+
+flutter:
+  plugin:
+    platforms:
+      linux:
+        pluginClass: DummyPlugin
+        dartPluginClass: DummyPlugin

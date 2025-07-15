@@ -31,7 +31,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 late AndroidNotificationChannel channel;
-late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -40,7 +40,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 //
 //main()
 Future<void> main() async {
-  await WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
   await Upgrader.sharedInstance.initialize();
 
@@ -168,33 +168,33 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         final android = message.notification?.android;
         final iOS = message.notification?.apple;
 
-        if (notification != null && android != null) {
-          flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                channelDescription: channel.description,
-                importance: Importance.max,
-                priority: Priority.high,
-                ticker: 'ticker',
-                icon: "@mipmap/ic_launcher",
-              ),
-            ),
-          );
-        } else if (notification != null && iOS != null) {
-          flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              iOS: DarwinNotificationDetails(),
-            ),
-          );
-        }
+        // if (notification != null && android != null) {
+        //   flutterLocalNotificationsPlugin.show(
+        //     notification.hashCode,
+        //     notification.title,
+        //     notification.body,
+        //     NotificationDetails(
+        //       android: AndroidNotificationDetails(
+        //         channel.id,
+        //         channel.name,
+        //         channelDescription: channel.description,
+        //         importance: Importance.max,
+        //         priority: Priority.high,
+        //         ticker: 'ticker',
+        //         icon: "@mipmap/ic_launcher",
+        //       ),
+        //     ),
+        //   );
+        // } else if (notification != null && iOS != null) {
+        //   flutterLocalNotificationsPlugin.show(
+        //     notification.hashCode,
+        //     notification.title,
+        //     notification.body,
+        //     NotificationDetails(
+        //       iOS: DarwinNotificationDetails(),
+        //     ),
+        //   );
+        // }
       }
     });
 

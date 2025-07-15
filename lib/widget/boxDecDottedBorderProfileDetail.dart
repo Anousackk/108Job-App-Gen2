@@ -53,12 +53,14 @@ class _BoxDecDottedBorderProfileDetailState
   @override
   Widget build(BuildContext context) {
     return DottedBorder(
-      dashPattern: [4, 5],
-      strokeWidth: 2,
-      borderType: BorderType.RRect,
-      radius: Radius.circular(10),
-      color: widget.dotBorderColor ?? AppColors.borderPrimary,
-      borderPadding: EdgeInsets.all(1),
+      options: RoundedRectDottedBorderOptions(
+        dashPattern: [4, 5],
+        strokeWidth: 2,
+        // borderType: BorderType.RRect,
+        radius: Radius.circular(10),
+        color: widget.dotBorderColor ?? AppColors.borderPrimary,
+        borderPadding: EdgeInsets.all(1),
+      ),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(20),
@@ -439,12 +441,14 @@ class _BoxDecDottedBorderUploadCVState
   @override
   Widget build(BuildContext context) {
     return DottedBorder(
-      dashPattern: [7, 4],
-      strokeWidth: 1,
-      borderType: BorderType.RRect,
-      radius: Radius.circular(10),
-      color: widget.dotBorderColor ?? AppColors.borderPrimary,
-      borderPadding: EdgeInsets.all(1),
+      options: RoundedRectDottedBorderOptions(
+        dashPattern: [7, 4],
+        strokeWidth: 1,
+        // borderType: BorderType.RRect,
+        radius: Radius.circular(10),
+        color: widget.dotBorderColor ?? AppColors.borderPrimary,
+        borderPadding: EdgeInsets.all(1),
+      ),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
