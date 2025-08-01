@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, unused_local_variable, avoid_unnecessary_containers, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, avoid_print, prefer_final_fields, unused_field, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, unused_local_variable, avoid_unnecessary_containers, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, avoid_print, prefer_final_fields, unused_field, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';

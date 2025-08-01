@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, prefer_if_null_operators, non_constant_identifier_names, unused_local_variable, unused_field, unnecessary_string_interpolations, prefer_final_fields, unnecessary_null_in_if_null_operators, avoid_print, prefer_adjacent_string_concatenation, unnecessary_this
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, prefer_if_null_operators, non_constant_identifier_names, unused_local_variable, unused_field, unnecessary_string_interpolations, prefer_final_fields, unnecessary_null_in_if_null_operators, avoid_print, prefer_adjacent_string_concatenation, unnecessary_this, prefer_interpolation_to_compose_strings, use_build_context_synchronously, deprecated_member_use
 
 import 'dart:io';
 
@@ -10,7 +10,6 @@ import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/Events/eventTicket.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/Events/registerEvent.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/JobAlert/jobAlert.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/LoginInfo/loginInformation.dart';
@@ -101,41 +100,6 @@ class _AccountRenewState extends State<AccountRenew> {
       print("_isApplied: " + _isApplied.toString());
 
       setState(() {});
-    }
-  }
-
-  applyEvent() async {
-    var res = await postData(applyEventSeekerApi, {"eventId": _eventInfoId});
-    print("res apply event: " + res.toString());
-
-    if (res["message"] == "Applied succeed") {
-      await getEvnetAvailable();
-
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "successful".tr,
-            contentText: "registered_attend".tr,
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-            },
-          );
-        },
-      );
-    } else {
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return CustAlertDialogWarningWithoutBtn(
-            title: "warning".tr,
-            contentText: "already_registered_attend".tr,
-            textButton: "ok".tr,
-          );
-        },
-      );
     }
   }
 
@@ -867,114 +831,118 @@ class _AccountRenewState extends State<AccountRenew> {
                             ],
                           ),
 
-                          SizedBox(
-                            height: 40,
-                          ),
+                          //
+                          //
+                          //ກວດສະຖານະງານຈັດຂຶ້ນ eventInfo ຕ້ອງມີຄ່າ
+                          if (_eventInfo != null)
+                            GestureDetector(
+                              onTap: () {
+                                // if (!_isApplied) {
 
-                          GestureDetector(
-                            onTap: () {
-                              // if (!_isApplied) {
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegisterEvent(
-                                    imageSrc: _imageSrc,
-                                    firstName: _firstName,
-                                    lastName: _lastName,
-                                    objEventAvailable: _objEventAvailable,
-                                    eventInfo: _eventInfo,
-                                    eventInfoId: _eventInfoId,
-                                    eventInfoName: _eventInfoName,
-                                    eventInfoAddress: _eventInfoAddress,
-                                    eventInfoOpeningTime: _eventInfoOpeningTime,
-                                    isApplied: _isApplied,
-                                    memberLevel: _memberLevel,
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RegisterEvent(
+                                      imageSrc: _imageSrc,
+                                      firstName: _firstName,
+                                      lastName: _lastName,
+                                      objEventAvailable: _objEventAvailable,
+                                      eventInfo: _eventInfo,
+                                      eventInfoId: _eventInfoId,
+                                      eventInfoName: _eventInfoName,
+                                      eventInfoAddress: _eventInfoAddress,
+                                      eventInfoOpeningTime:
+                                          _eventInfoOpeningTime,
+                                      isApplied: _isApplied,
+                                      memberLevel: _memberLevel,
+                                    ),
                                   ),
-                                ),
-                              ).then((value) {
-                                if (value == "Applied Succeed") {
-                                  getEvnetAvailable();
-                                }
-                              });
-                            },
-                            onTapDown: onTapDownBoxEvent,
-                            onTapUp: onTapUpBoxEvent,
-                            child: AnimatedScale(
-                              scale: _scale,
-                              duration: Duration(milliseconds: 100),
-                              child: Stack(
-                                clipBehavior: Clip.none,
-                                alignment: Alignment.topRight,
-                                children: [
-                                  Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.all(20),
-                                    decoration: BoxDecoration(
-                                        color: AppColors.teal,
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            // color: AppColors.red,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                if (!_isApplied)
-                                                  Text(
-                                                    "ລົງທະບຽນເພື່ອເຂົ້າຮ່ວມງານ!",
-                                                    style: bodyTextMedium(
-                                                        null,
-                                                        AppColors.fontWhite,
-                                                        FontWeight.bold),
-                                                  ),
-                                                Text(
-                                                  "${_eventInfoName}",
-                                                  style: bodyTextMedium(
-                                                      null,
-                                                      AppColors.fontWhite,
-                                                      FontWeight.bold),
+                                ).then((value) {
+                                  if (value == "Applied Succeed") {
+                                    getProfileSeeker();
+                                    getEvnetAvailable();
+                                  }
+                                });
+                              },
+                              onTapDown: onTapDownBoxEvent,
+                              onTapUp: onTapUpBoxEvent,
+                              child: AnimatedScale(
+                                scale: _scale,
+                                duration: Duration(milliseconds: 100),
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 40),
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    alignment: Alignment.topRight,
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.all(20),
+                                        decoration: BoxDecoration(
+                                            color: AppColors.teal,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                // color: AppColors.red,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    if (!_isApplied)
+                                                      Text(
+                                                        "ລົງທະບຽນເພື່ອເຂົ້າຮ່ວມງານ!",
+                                                        style: bodyTextMedium(
+                                                            null,
+                                                            AppColors.fontWhite,
+                                                            FontWeight.bold),
+                                                      ),
+                                                    Text(
+                                                      "${_eventInfoName}",
+                                                      style: bodyTextMedium(
+                                                          null,
+                                                          AppColors.fontWhite,
+                                                          FontWeight.bold),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 70,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: -20,
+                                        right: 15,
+                                        child: Container(
+                                          width: 70,
+                                          height: 70,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.backgroundWhite,
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                            border: Border.all(
+                                              color: AppColors.teal,
                                             ),
                                           ),
-                                        ),
-                                        Container(
-                                          width: 70,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Positioned(
-                                    top: -20,
-                                    right: 15,
-                                    child: Container(
-                                      width: 70,
-                                      height: 70,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.backgroundWhite,
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        border: Border.all(
-                                          color: AppColors.teal,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                            child: Image.asset(
+                                                'assets/image/logo_wiifair_10.jpg'),
+                                          ),
                                         ),
                                       ),
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        child: Image.asset(
-                                          'assets/image/logo_wiifair_10.jpg',
-                                        ),
-                                      ),
-                                    ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
 
                           SizedBox(
                             height: 20,

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_if_null_operators, unnecessary_null_comparison, camel_case_types, unnecessary_null_in_if_null_operators, use_key_in_widget_constructors, unused_field
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_if_null_operators, unnecessary_null_comparison, camel_case_types, unnecessary_null_in_if_null_operators, use_key_in_widget_constructors, unused_field, sort_child_properties_last
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
@@ -1248,8 +1248,14 @@ class NewVer3CustAlertDialogWarningPictrueBtnConfirmCancel
     this.textButtonLeftColor,
     this.textButtonRightColor,
     this.widgetBottomColor,
+    this.statusLogo,
   }) : super(key: key);
-  final String? logo, title, contentText, textButtonLeft, textButtonRight;
+  final String? logo,
+      statusLogo,
+      title,
+      contentText,
+      textButtonLeft,
+      textButtonRight;
   final Color? boxCircleBorderColor,
       titleColor,
       textColor,
@@ -1405,9 +1411,9 @@ class _NewVer3CustAlertDialogWarningPictrueBtnConfirmCancelState
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
                           child: Center(
-                            child: widget.logo == ""
+                            child: widget.statusLogo == "ImageAsset"
                                 ? Image.asset(
-                                    'assets/image/no-image-available.png',
+                                    "${widget.logo}",
                                     fit: BoxFit.contain,
                                   )
                                 : Image.network(

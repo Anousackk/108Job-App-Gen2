@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, sized_box_for_whitespace, unnecessary_null_comparison, prefer_if_null_operators, avoid_unnecessary_containers, camel_case_types
+// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, sized_box_for_whitespace, unnecessary_null_comparison, prefer_if_null_operators, avoid_unnecessary_containers, camel_case_types, deprecated_member_use
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';

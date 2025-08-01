@@ -21,6 +21,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 // import 'package:quill_html_converter/quill_html_converter.dart';
 
 class WorkHistory extends StatefulWidget {
@@ -130,9 +131,16 @@ class _WorkHistoryState extends State<WorkHistory> {
   }
 
   addWorkHistorySeeker() async {
+    final converter = QuillDeltaToHtmlConverter(
+      _quillController.document.toDelta().toJson(),
+    );
+    String quillConvertDeltaToHTML = converter.convert();
+    print(quillConvertDeltaToHTML.toString());
+
     // String quillConvertDeltaToHTML =
     //     _quillController.document.toDelta().toHtml();
     // print(quillConvertDeltaToHTML.toString());
+
     //
     //
     //ສະແດງ AlertDialog Loading
@@ -152,8 +160,8 @@ class _WorkHistoryState extends State<WorkHistory> {
       "endYear": _toMonthYear != null ? _toMonthYear.toString() : _toMonthYear,
       "position": _jobTitle,
       "responsibility":
-          jsonEncode(_quillController.document.toDelta().toJson()),
-      // quillConvertDeltaToHTML,
+          // jsonEncode(_quillController.document.toDelta().toJson()),
+          quillConvertDeltaToHTML,
       "isCurrentJob": _isCurrentJob
     });
 
@@ -755,8 +763,8 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                 //
                                                 //QuillToolbar
                                                 Container(
-                                                  width: double.infinity,
-                                                  color: AppColors.background,
+                                                  // width: double.infinity,
+                                                  // color: AppColors.background,
                                                   child: QuillSimpleToolbar(
                                                     controller:
                                                         _quillController,
@@ -910,7 +918,6 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                     //     // requestKeyboardFocusOnCheckListChanged: true,
                                                     //     controller:
                                                     //         _quillController,
-
                                                     //     scrollPhysics:
                                                     //         ClampingScrollPhysics(),
                                                     //     readOnlyMouseCursor:
@@ -954,7 +961,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                                           top: 20,
                                                         ),
                                                         child: Button(
-                                                          text: "Done",
+                                                          text: "done".tr,
                                                           press: () {
                                                             Navigator.pop(
                                                                 context);

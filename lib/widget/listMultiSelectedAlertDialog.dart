@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_local_variable, file_names, avoid_print
+// ignore_for_file: prefer_const_constructors, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_local_variable, file_names, avoid_print, deprecated_member_use
 
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
@@ -129,7 +129,7 @@ class _ListMultiSelectedAlertDialogState
                               });
                             },
                             child: Container(
-                              // color: AppColors.blue,
+                              color: AppColors.backgroundWhite,
                               padding: EdgeInsets.symmetric(
                                   vertical: 15, horizontal: 20),
                               child: Row(

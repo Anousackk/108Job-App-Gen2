@@ -595,7 +595,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                   .buttonGreyWhite),
                                                     ),
                                                     child: Text(
-                                                      "job open".tr,
+                                                      "job_opening".tr,
                                                       style: bodyTextNormal(
                                                           null,
                                                           _tabController

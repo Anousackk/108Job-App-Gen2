@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace, body_might_complete_normally_nullable, prefer_final_fields
+// ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace, body_might_complete_normally_nullable, prefer_final_fields, prefer_interpolation_to_compose_strings
 import 'dart:io';
 import 'package:app/alertUpgraderMessages.dart';
 import 'package:app/firebase_options.dart';
@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -168,33 +169,33 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         final android = message.notification?.android;
         final iOS = message.notification?.apple;
 
-        // if (notification != null && android != null) {
-        //   flutterLocalNotificationsPlugin.show(
-        //     notification.hashCode,
-        //     notification.title,
-        //     notification.body,
-        //     NotificationDetails(
-        //       android: AndroidNotificationDetails(
-        //         channel.id,
-        //         channel.name,
-        //         channelDescription: channel.description,
-        //         importance: Importance.max,
-        //         priority: Priority.high,
-        //         ticker: 'ticker',
-        //         icon: "@mipmap/ic_launcher",
-        //       ),
-        //     ),
-        //   );
-        // } else if (notification != null && iOS != null) {
-        //   flutterLocalNotificationsPlugin.show(
-        //     notification.hashCode,
-        //     notification.title,
-        //     notification.body,
-        //     NotificationDetails(
-        //       iOS: DarwinNotificationDetails(),
-        //     ),
-        //   );
-        // }
+        if (notification != null && android != null) {
+          flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channelDescription: channel.description,
+                importance: Importance.max,
+                priority: Priority.high,
+                ticker: 'ticker',
+                icon: "@mipmap/ic_launcher",
+              ),
+            ),
+          );
+        } else if (notification != null && iOS != null) {
+          flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              iOS: DarwinNotificationDetails(),
+            ),
+          );
+        }
       }
     });
 
@@ -263,14 +264,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   checkLanguage() async {
     final prefs = await SharedPreferences.getInstance();
 
-    final cachePrefs = await SharedPreferencesWithCache.create(
-      cacheOptions: const SharedPreferencesWithCacheOptions(allowList: null),
-    );
-
-    print("cachePrefs: " + cachePrefs.toString());
-
     var employeeToken = prefs.getString('employeeToken');
     getLanguageSharePref = prefs.getString('setLanguage');
+
     // String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
     // getLanguageSharePref = await SharedPrefsHelper.getString("setLanguage");
 
@@ -351,11 +347,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // DynamicLinkService.dynamicLinkPushScreen;
-    // 🔥 Delay checkLanguage until after first frame to ensure platform channel is ready
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // checkLanguage();
-    });
+
+    checkLanguage();
     initializeFCM();
     handleDynamicLinks();
   }
@@ -480,6 +473,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 // add your localizations delegates here
                 DefaultMaterialLocalizations.delegate,
                 DefaultWidgetsLocalizations.delegate,
+                // GlobalMaterialLocalizations.delegate,
+                // GlobalCupertinoLocalizations.delegate,
+                // GlobalWidgetsLocalizations.delegate,
+                FlutterQuillLocalizations.delegate,
               ],
 
               routes: routes,

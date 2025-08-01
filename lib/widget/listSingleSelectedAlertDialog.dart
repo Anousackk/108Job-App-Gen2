@@ -94,7 +94,7 @@ class _ListSingleSelectedAlertDialogState
                               });
                             },
                             child: Container(
-                              // color: AppColors.blue,
+                              color: AppColors.backgroundWhite,
                               padding: EdgeInsets.symmetric(vertical: 15),
                               child: Row(
                                 children: [

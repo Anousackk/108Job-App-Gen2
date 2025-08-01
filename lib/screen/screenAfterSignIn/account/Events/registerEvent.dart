@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, avoid_print, prefer_final_fields, unused_field, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, avoid_print, prefer_final_fields, unused_field, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, deprecated_member_use, prefer_interpolation_to_compose_strings, use_build_context_synchronously, unused_local_variable, unnecessary_string_interpolations, prefer_adjacent_string_concatenation
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -7,8 +7,8 @@ import 'package:app/functions/textSize.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/Events/eventTicket.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/Events/positionCompany.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/Events/scannerQRCode.dart';
+import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/myProfile.dart';
 import 'package:app/widget/appbar.dart';
-import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -47,6 +47,7 @@ class _RegisterEventState extends State<RegisterEvent> {
 
   String _companyName = "";
   String _logo = "";
+  String _memberLevel = "";
 
   int _companyJobTotals = 0;
   int _candidateTotals = 0;
@@ -55,6 +56,7 @@ class _RegisterEventState extends State<RegisterEvent> {
   int? _pressIndexBox;
 
   bool _isLoading = true;
+  bool _isOnline = false;
 
   applyEvent() async {
     var res =
@@ -106,10 +108,21 @@ class _RegisterEventState extends State<RegisterEvent> {
         getCompanyAvailableEventSeekerApi, {"page": "", "perPage": ""});
 
     setState(() {
+      _memberLevel = widget.memberLevel.toString();
+      print(
+          "_memberLevel from method getCompanyAvailable: " + "${_memberLevel}");
       company = res["info"];
-
       _isLoading = false;
     });
+  }
+
+  getProfileSeeker() async {
+    var res = await fetchData(getProfileSeekerApi);
+    _memberLevel = res['profile']['memberLevel'];
+    print("_memberLevel from method getProfileSeeker: " +
+        _memberLevel.toString());
+
+    setState(() {});
   }
 
   @override
@@ -149,7 +162,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                   //
                   //Button Ticket Event
                   //ກວດສະຖານະເປັນ Expert Job Seeker ແລະ ສະຖານະງານຈັດຂຶ້ນ ແລະ ກົດລົງທະບຽນແລ້ວ
-                  if (widget.memberLevel == "Expert Job Seeker" &&
+                  if (_memberLevel == "Expert Job Seeker" &&
                       widget.eventInfo != null &&
                       widget.isApplied == true)
                     GestureDetector(
@@ -189,7 +202,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                   //
                   //Button scan QR code
                   //ກວດສະຖານະເປັນ Expert Job Seeker ແລະ ສະຖານະງານຈັດຂຶ້ນ
-                  if (widget.memberLevel == "Expert Job Seeker" &&
+                  if (_memberLevel == "Expert Job Seeker" &&
                       widget.eventInfo != null &&
                       widget.isApplied == true)
                     GestureDetector(
@@ -269,7 +282,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                         //       //
                         //       //Button Ticket Event
                         //       //ກວດສະຖານະເປັນ Expert Job Seeker ແລະ ສະຖານະງານຈັດຂຶ້ນ ແລະ ກົດລົງທະບຽນແລ້ວ
-                        //       if (widget.memberLevel == "Expert Job Seeker" &&
+                        //       if (_memberLevel == "Expert Job Seeker" &&
                         //           widget.eventInfo != null &&
                         //           widget.isApplied == true)
                         //         GestureDetector(
@@ -308,7 +321,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                         //       //
                         //       //Button scan QR code
                         //       //ກວດສະຖານະເປັນ Expert Job Seeker ແລະ ສະຖານະງານຈັດຂຶ້ນ
-                        //       if (widget.memberLevel == "Expert Job Seeker" &&
+                        //       if (_memberLevel == "Expert Job Seeker" &&
                         //           widget.eventInfo != null &&
                         //           widget.isApplied == true)
                         //         GestureDetector(
@@ -356,6 +369,9 @@ class _RegisterEventState extends State<RegisterEvent> {
                                   clipBehavior: Clip.none,
                                   alignment: Alignment.bottomCenter,
                                   children: [
+                                    //
+                                    //
+                                    //Image Event
                                     Container(
                                       color: AppColors.teal,
                                       padding: EdgeInsets.only(
@@ -390,6 +406,10 @@ class _RegisterEventState extends State<RegisterEvent> {
                                         ),
                                       ),
                                     ),
+
+                                    //
+                                    //
+                                    //Box Statistic Event
                                     Positioned(
                                       bottom: -60,
                                       left: 0,
@@ -562,8 +582,6 @@ class _RegisterEventState extends State<RegisterEvent> {
                                   child: Container(
                                     width: double.infinity,
                                     child: Column(
-                                      // crossAxisAlignment:
-                                      //     CrossAxisAlignment.start,
                                       children: [
                                         //
                                         //
@@ -596,6 +614,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                                             _companyName = i["companyName"];
                                             _logo = i["logo"];
                                             _companyJobTotals = i["jobTotals"];
+                                            _isOnline = i["isOnline"];
 
                                             bool isPressBox =
                                                 _pressIndexBox == index;
@@ -626,160 +645,218 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                         PositionCompany(
                                                       companyAvailableEventId:
                                                           i["_id"] ?? "",
+                                                      logo: i["logo"],
                                                       isApplied:
                                                           widget.isApplied,
                                                     ),
                                                   ),
                                                 );
                                               },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: AppColors.teal),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  color: isPressBox
-                                                      ? AppColors.teal
-                                                          .withOpacity(0.2)
-                                                      : AppColors
-                                                          .backgroundWhite,
-                                                ),
-                                                padding: EdgeInsets.all(15),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    //
-                                                    //
-                                                    //Image company
-                                                    Container(
-                                                      width: 70,
-                                                      height: 70,
-                                                      decoration: BoxDecoration(
-                                                        color: AppColors
-                                                            .backgroundWhite,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                        border: Border.all(
-                                                          color: AppColors.teal,
-                                                        ),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.all(10),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5),
-                                                          child: _logo == ""
-                                                              ? Image.asset(
-                                                                  "assets/image/logo_wiifair_10.jpg",
-                                                                )
-                                                              : Image.network(
-                                                                  "https://storage.googleapis.com/108-bucket/${_logo}",
-                                                                  fit: BoxFit
-                                                                      .contain,
-                                                                  errorBuilder:
-                                                                      (context,
-                                                                          error,
-                                                                          stackTrace) {
-                                                                    return Image
-                                                                        .asset(
-                                                                      "assets/image/logo_wiifair_10.jpg",
-                                                                      fit: BoxFit
-                                                                          .contain,
-                                                                    ); // Display an error message
-                                                                  },
-                                                                ),
-                                                        ),
-                                                      ),
-                                                    ),
-
-                                                    SizedBox(height: 10),
-
-                                                    //
-                                                    //
-                                                    //Company name
-                                                    Flexible(
-                                                      child: Text(
-                                                        _companyName,
-                                                        style: bodyTextNormal(
-                                                            null,
-                                                            isPressBox
-                                                                ? AppColors.teal
-                                                                : null,
-                                                            FontWeight.bold),
-                                                        maxLines: 2,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-
-                                                    SizedBox(height: 10),
-
-                                                    //
-                                                    //
-                                                    //Company need position
-                                                    Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 0,
-                                                              vertical: 8),
-                                                      decoration: BoxDecoration(
+                                              child: Stack(
+                                                clipBehavior: Clip.none,
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
                                                           color: isPressBox
                                                               ? AppColors.teal
-                                                              : AppColors.teal
-                                                                  .withOpacity(
-                                                                      0.2),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5)),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
+                                                              : AppColors
+                                                                  .borderGreyOpacity),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      color: isPressBox
+                                                          ? AppColors.teal
+                                                              .withOpacity(0.2)
+                                                          : AppColors
+                                                              .backgroundWhite,
+                                                    ),
+                                                    padding: EdgeInsets.all(15),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        //
+                                                        //
+                                                        //Image company
+                                                        Container(
+                                                          width: 70,
+                                                          height: 70,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: AppColors
+                                                                .backgroundWhite,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5),
+                                                            border: Border.all(
+                                                              color: AppColors
+                                                                  .teal,
+                                                            ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                              child: _logo == ""
+                                                                  ? Image.asset(
+                                                                      "assets/image/logo_wiifair_10.jpg",
+                                                                    )
+                                                                  : Image
+                                                                      .network(
+                                                                      "https://storage.googleapis.com/108-bucket/${_logo}",
+                                                                      fit: BoxFit
+                                                                          .contain,
+                                                                      errorBuilder: (context,
+                                                                          error,
+                                                                          stackTrace) {
+                                                                        return Image
+                                                                            .asset(
+                                                                          "assets/image/logo_wiifair_10.jpg",
+                                                                          fit: BoxFit
+                                                                              .contain,
+                                                                        ); // Display an error message
+                                                                      },
+                                                                    ),
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        SizedBox(height: 10),
+
+                                                        //
+                                                        //
+                                                        //Company name
+                                                        Flexible(
+                                                          child: Text(
+                                                            _companyName,
+                                                            style: bodyTextNormal(
+                                                                null,
+                                                                isPressBox
+                                                                    ? AppColors
+                                                                        .teal
+                                                                    : null,
+                                                                FontWeight
+                                                                    .bold),
+                                                            maxLines: 2,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            textAlign: TextAlign
                                                                 .center,
-                                                        children: [
-                                                          Text(
-                                                            "ເປີດຮັບ",
-                                                            style: bodyTextNormal(
-                                                                null,
-                                                                isPressBox
-                                                                    ? AppColors
-                                                                        .fontWhite
-                                                                    : AppColors
-                                                                        .fontGrey,
-                                                                null),
                                                           ),
-                                                          Text(
-                                                            " ${_companyJobTotals} ",
-                                                            style: bodyTextNormal(
-                                                                "SatoshiBlack",
-                                                                isPressBox
-                                                                    ? AppColors
-                                                                        .fontWhite
-                                                                    : AppColors
-                                                                        .teal,
-                                                                null),
+                                                        ),
+
+                                                        SizedBox(height: 10),
+
+                                                        //
+                                                        //
+                                                        //Company need position
+                                                        Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal: 0,
+                                                                  vertical: 8),
+                                                          decoration: BoxDecoration(
+                                                              color: isPressBox
+                                                                  ? AppColors
+                                                                      .teal
+                                                                  : AppColors
+                                                                      .buttonBG,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5)),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Text(
+                                                                "ເປີດຮັບ",
+                                                                style: bodyTextNormal(
+                                                                    null,
+                                                                    isPressBox
+                                                                        ? AppColors
+                                                                            .fontWhite
+                                                                        : AppColors
+                                                                            .fontGrey,
+                                                                    null),
+                                                              ),
+                                                              Text(
+                                                                " ${_companyJobTotals} ",
+                                                                style: bodyTextNormal(
+                                                                    "SatoshiBold",
+                                                                    isPressBox
+                                                                        ? AppColors
+                                                                            .fontWhite
+                                                                        : AppColors
+                                                                            .teal,
+                                                                    FontWeight
+                                                                        .bold),
+                                                              ),
+                                                              Text(
+                                                                "ຕຳແໜ່ງ",
+                                                                style: bodyTextNormal(
+                                                                    null,
+                                                                    isPressBox
+                                                                        ? AppColors
+                                                                            .fontWhite
+                                                                        : AppColors
+                                                                            .fontGrey,
+                                                                    null),
+                                                              ),
+                                                            ],
                                                           ),
-                                                          Text(
-                                                            "ຕຳແໜ່ງ",
-                                                            style: bodyTextNormal(
-                                                                null,
-                                                                isPressBox
-                                                                    ? AppColors
-                                                                        .fontWhite
-                                                                    : AppColors
-                                                                        .fontGrey,
-                                                                null),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  if (i["isOnline"])
+                                                    Positioned(
+                                                      top: 0,
+                                                      right: 0,
+                                                      child: Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 3),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: AppColors.teal,
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                            bottomLeft:
+                                                                Radius.circular(
+                                                                    10),
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    10),
                                                           ),
-                                                        ],
+                                                        ),
+                                                        child: Text(
+                                                          "Online",
+                                                          style:
+                                                              bodyTextMiniSmall(
+                                                                  null,
+                                                                  AppColors
+                                                                      .fontWhite,
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
                                                       ),
                                                     )
-                                                  ],
-                                                ),
+                                                ],
                                               ),
                                             );
                                           },
@@ -792,175 +869,10 @@ class _RegisterEventState extends State<RegisterEvent> {
                                 SizedBox(
                                   height: widget.isApplied ? 20 : 100,
                                 ),
-
-                                // ກິດຈະກຳພາຍໃນງານຈະມີ
-                                //
-                                // Padding(
-                                //   padding: EdgeInsets.symmetric(horizontal: 20),
-                                //   child: Column(
-                                //     crossAxisAlignment: CrossAxisAlignment.start,
-                                //     children: [
-                                //       Text(
-                                //         "ກິດຈະກຳພາຍໃນງານຈະມີ:",
-                                //         style:
-                                //             bodyTextMedium(null, null, FontWeight.bold),
-                                //       ),
-                                //       SizedBox(
-                                //         height: 10,
-                                //       ),
-                                //       ItemCircleLine(
-                                //         widgetTopLine: Container(),
-                                //         text: "ພົບກັບບໍລິສັດທີ່ເຂົ້າຮ່ວມ 25 ບໍລິສັດ",
-                                //         widgetBottomLine: Container(
-                                //           width: 2,
-                                //           color: AppColors.teal,
-                                //         ),
-                                //       ),
-                                //       ItemCircleLine(
-                                //         widgetTopLine: Container(
-                                //           width: 2,
-                                //           color: AppColors.teal,
-                                //         ),
-                                //         text: "ຂຽນ CV ສະໝັກວຽກ",
-                                //         widgetBottomLine: Container(
-                                //           width: 2,
-                                //           color: AppColors.teal,
-                                //         ),
-                                //       ),
-                                //       ItemCircleLine(
-                                //         widgetTopLine: Container(
-                                //           width: 2,
-                                //           color: AppColors.teal,
-                                //         ),
-                                //         text: "ພາລົງທະບຽນສະໝັກວຽກ",
-                                //         widgetBottomLine: Container(
-                                //           width: 2,
-                                //           color: AppColors.teal,
-                                //         ),
-                                //       ),
-                                //       ItemCircleLine(
-                                //         widgetTopLine: Container(
-                                //           width: 2,
-                                //           color: AppColors.teal,
-                                //         ),
-                                //         text: "ທົດລອງສຳພາດວຽກ",
-                                //         widgetBottomLine: Container(
-                                //           width: 2,
-                                //           color: AppColors.teal,
-                                //         ),
-                                //       ),
-                                //       ItemCircleLine(
-                                //         widgetTopLine: Container(
-                                //           width: 2,
-                                //           color: AppColors.teal,
-                                //         ),
-                                //         text: "ຮ່ວມຫຼິ້ນກິດຈະກຳພາຍໃນງານ",
-                                //         widgetBottomLine: Container(
-                                //           width: 2,
-                                //           color: AppColors.teal,
-                                //         ),
-                                //       ),
-                                //       ItemCircleLine(
-                                //         widgetTopLine: Container(
-                                //           width: 2,
-                                //           color: AppColors.teal,
-                                //         ),
-                                //         text: "ຮັບຂອງລາງວັນຈາກກິດຈະກຳ",
-                                //         widgetBottomLine: Container(),
-                                //       ),
-                                //       SizedBox(height: 20)
-                                //     ],
-                                //   ),
-                                // ),
                               ],
                             ),
                           ),
                         ),
-
-                        //Bottom Button Register / Back
-                        // Container(
-                        //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        //   decoration: BoxDecoration(
-                        //     color: AppColors.backgroundWhite,
-                        //     // borderRadius: BorderRadius.only(
-                        //     //   topLeft: Radius.circular(10),
-                        //     //   topRight: Radius.circular(10),
-                        //     // ),
-                        //     boxShadow: [
-                        //       BoxShadow(
-                        //         color: AppColors.dark.withOpacity(0.05),
-                        //         offset: Offset(0, -6),
-                        //         blurRadius: 4,
-                        //         spreadRadius: 0,
-                        //       ),
-                        //     ],
-                        //   ),
-                        //   child: Stack(
-                        //     clipBehavior: Clip.none,
-                        //     alignment: AlignmentDirectional.topCenter,
-                        //     children: [
-                        //       Container(
-                        //         // color: AppColors.red,
-                        //         child: Row(
-                        //           children: [
-                        //             Expanded(
-                        //               flex: 1,
-                        //               child: Button(
-                        //                 text: "back".tr,
-                        //                 textColor: AppColors.fontDark,
-                        //                 buttonColor: AppColors.backgroundWhite,
-                        //                 press: () {
-                        //                   Navigator.pop(context);
-                        //                 },
-                        //               ),
-                        //             ),
-                        //             Expanded(
-                        //               flex: 1,
-                        //               child: Button(
-                        //                 text: "register".tr,
-                        //                 textColor: AppColors.fontDark,
-                        //                 buttonColor: AppColors.backgroundWhite,
-                        //                 press: () {
-                        //                   applyEvent();
-                        //                 },
-                        //               ),
-                        //             )
-                        //           ],
-                        //         ),
-                        //       ),
-                        //       Positioned(
-                        //         top: -40,
-                        //         left: 0,
-                        //         right: 0,
-                        //         child: Container(
-                        //           height: 70,
-                        //           width: 70,
-                        //           decoration: BoxDecoration(
-                        //             color: AppColors.teal,
-                        //             shape: BoxShape.circle,
-                        //             border: Border.all(
-                        //               color: AppColors.backgroundWhite,
-                        //               width: 5,
-                        //             ),
-                        //             boxShadow: [
-                        //               BoxShadow(
-                        //                 color: AppColors.dark.withOpacity(0.05),
-                        //                 offset: Offset(0, -6),
-                        //                 blurRadius: 4,
-                        //                 spreadRadius: 0,
-                        //               ),
-                        //             ],
-                        //           ),
-                        //           child: Icon(
-                        //             Icons.qr_code_scanner_outlined,
-                        //             color: AppColors.fontWhite,
-                        //             size: 30,
-                        //           ),
-                        //         ),
-                        //       )
-                        //     ],
-                        //   ),
-                        // )
                       ],
                     ),
 
@@ -969,33 +881,66 @@ class _RegisterEventState extends State<RegisterEvent> {
                     //
                     //
                     //
-                    //ກວດສະຖານະເປັນ Expert Job Seeker ແລະ ສະຖານະງານຈັດຂຶ້ນ ແລະ ຍັງບໍ່ທັນກົດລົງທະບຽນ
-                    if (widget.memberLevel == "Expert Job Seeker" &&
-                        widget.eventInfo != null &&
-                        widget.isApplied == false)
-                      Positioned(
-                        bottom: 20,
-                        left: 0,
-                        right: 0,
-                        child: Row(
-                          children: [
+                    //Button register event / continue to profile
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Row(
+                        children: [
+                          //
+                          //
+                          //ກວດສະຖານະງານຈັດຂຶ້ນ ແລະ ຍັງບໍ່ທັນກົດລົງທະບຽນ
+                          if (widget.eventInfo != null &&
+                              widget.isApplied == false)
                             Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: Button(
-                                  buttonColor: AppColors.teal,
-                                  text: "register".tr,
-                                  textColor: AppColors.fontWhite,
-                                  press: () {
+                              child: GestureDetector(
+                                onTap: () async {
+                                  if (_memberLevel == "Expert Job Seeker") {
                                     applyEvent();
-                                  },
+                                  } else {
+                                    var result = await showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) {
+                                          return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                            title: "ກະລຸນາອັບເດດຂໍ້ມູນ",
+                                            contentText:
+                                                "ໄປໜ້າໂປຣໄຟສແລ້ວຕື່ມຂໍ້ມູນໃຫ້ຄົບ. \nຈຶ່ງສາມາດລົງທະບຽນເຂົ້າຮ່ວມງານໄດ້.",
+                                            textButtonLeft: "cancel".tr,
+                                            textButtonRight: 'continue'.tr,
+                                          );
+                                        });
+                                    if (result == "Ok") {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MyProfile(),
+                                        ),
+                                      ).then((val) {
+                                        getProfileSeeker();
+                                      });
+                                    }
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 20),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.warning600,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "ລົງທະບຽນເຂົ້າຮ່ວມງານ",
+                                      style: buttonTextMedium(null,
+                                          AppColors.fontDark, FontWeight.bold),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      )
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),

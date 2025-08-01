@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '17.0'
+platform :ios, '12.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -32,11 +32,13 @@ target 'Runner' do
   use_modular_headers!
 #  use_modular_headers!
 #  pod 'Firebase/Analytics'
+# pod 'firebase_auth', :path => '.symlinks/plugins/firebase_auth/ios'
+# pod 'Firebase/Auth'
 
-
-  # pod 'firebase_auth', :path => '.symlinks/plugins/firebase_auth/ios'
-  # pod 'Firebase/Auth'
-  
+  flutter_install_all_ios_pods(File.dirname(File.realpath(__FILE__)))
+  # target 'RunnerTests' do
+  #   inherit! :search_paths
+  # end
 end
 
 
@@ -48,7 +50,7 @@ post_install do |installer|
 
       # EXCLUDED_ARCHS[sdk=iphonesimulator*] = $(inherited) arm64
 
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '17.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
     end
     #Start of the permission_handler configuration
     target.build_configurations.each do |config|

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, unused_field, avoid_print, unused_local_variable, prefer_typing_uninitialized_variables, prefer_final_fields, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_is_empty, unused_element, unnecessary_null_in_if_null_operators, prefer_if_null_operators, prefer_adjacent_string_concatenation, unnecessary_null_comparison, avoid_init_to_null, file_names
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, unused_field, avoid_print, unused_local_variable, prefer_typing_uninitialized_variables, prefer_final_fields, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_is_empty, unused_element, unnecessary_null_in_if_null_operators, prefer_if_null_operators, prefer_adjacent_string_concatenation, unnecessary_null_comparison, avoid_init_to_null, file_names, prefer_interpolation_to_compose_strings
 
 import 'dart:io';
 
@@ -58,6 +58,7 @@ class _MyProfileState extends State<MyProfile>
   dynamic _reviewStatus;
   dynamic _workPreferences;
   dynamic _cv;
+  dynamic _vipoCV;
   dynamic _personalInformationStatus;
   dynamic _workPreferenceStatus;
   dynamic _resumeStatus;
@@ -154,6 +155,7 @@ class _MyProfileState extends State<MyProfile>
 
     _workPreferences = res["workPreferences"] ?? null;
     _cv = res["cv"] ?? null;
+    _vipoCV = !res.containsKey("vipoCV") ? null : res["vipoCV"];
     _education = res["education"] ?? [];
     _workHistory = res["workHistory"] ?? [];
     _languageSkill = res["languageSkill"] ?? [];
@@ -885,6 +887,18 @@ class _MyProfileState extends State<MyProfile>
                                               MaterialPageRoute(
                                                 builder: (context) => UploadCV(
                                                   cv: _cv,
+                                                  vipoCV: _vipoCV,
+                                                  personalInformationStatus:
+                                                      _personalInformationStatus,
+                                                  workPreferenceStatus:
+                                                      _workPreferenceStatus,
+                                                  educationStatus:
+                                                      _educationStatus,
+                                                  workHistoryStatus:
+                                                      _workHistoryStatus,
+                                                  languageStatus:
+                                                      _languageStatus,
+                                                  skillStatus: _skillStatus,
                                                 ),
                                               ),
                                             ).then((val) => onGoBack(val));

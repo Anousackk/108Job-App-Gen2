@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, unused_field, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_comparison, non_constant_identifier_names, prefer_if_null_operators, prefer_is_empty, prefer_typing_uninitialized_variables, unnecessary_null_in_if_null_operators, sized_box_for_whitespace, body_might_complete_normally_nullable, unused_element, file_names, prefer_adjacent_string_concatenation
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, unused_field, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_comparison, non_constant_identifier_names, prefer_if_null_operators, prefer_is_empty, prefer_typing_uninitialized_variables, unnecessary_null_in_if_null_operators, sized_box_for_whitespace, body_might_complete_normally_nullable, unused_element, file_names, prefer_adjacent_string_concatenation, deprecated_member_use, use_build_context_synchronously, prefer_interpolation_to_compose_strings
 
 import 'dart:async';
 
@@ -11,6 +11,7 @@ import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/screen/ScreenAfterSignIn/JobSearch/jobSearchDetail_renew.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
@@ -324,6 +325,7 @@ class _JobSearchState extends State<JobSearch>
       getSharedPreferences();
 
       getJobFunctionsSeeker();
+
       if (widget.topWorkLocation != null) {
         checkProvinceFromHomePage();
       }
@@ -404,21 +406,14 @@ class _JobSearchState extends State<JobSearch>
 
                         //
                         //
+                        //
+                        //
+                        //
                         //Box job search and box filter
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Row(
                             children: [
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
                               //
                               //
                               //Search keywords
@@ -461,16 +456,6 @@ class _JobSearchState extends State<JobSearch>
                                 width: 10,
                               ),
 
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
                               //
                               //
                               //Box filter
@@ -795,7 +780,6 @@ class _JobSearchState extends State<JobSearch>
                                                       //       ),
                                                       //     ),
                                                       //     SizedBox(width: 10),
-
                                                       //     //
                                                       //     //Higher Diploma
                                                       //     Container(
@@ -842,7 +826,6 @@ class _JobSearchState extends State<JobSearch>
                                                       //       ),
                                                       //     ),
                                                       //     SizedBox(width: 10),
-
                                                       //     //
                                                       //     //Master Degree
                                                       //     Container(
@@ -1465,17 +1448,6 @@ class _JobSearchState extends State<JobSearch>
                                 ),
                               ),
 
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
                               //BoxDecoration Filter
                               // Expanded(
                               //   flex: 2,
@@ -1519,13 +1491,6 @@ class _JobSearchState extends State<JobSearch>
                         //
                         //
                         //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
                         //Count Jobs available
                         Padding(
                           padding: const EdgeInsets.symmetric(
@@ -1545,14 +1510,6 @@ class _JobSearchState extends State<JobSearch>
                           ),
                         ),
 
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
                         //
                         //
                         //
@@ -1609,6 +1566,7 @@ class _JobSearchState extends State<JobSearch>
                                                       Text('no have data'.tr)),
                                             );
                                     }
+
                                     var indexJobsSearch =
                                         _listJobsSearch[index];
                                     _title = indexJobsSearch['title'];
@@ -2080,7 +2038,7 @@ class _JobSearchState extends State<JobSearch>
 
                                                                 //
                                                                 //
-                                                                //Status Job New/Saved
+                                                                //Status new job/Saved
                                                                 if (indexJobsSearch[
                                                                     'newJob'])
                                                                   Container(
@@ -2179,9 +2137,9 @@ class _JobSearchState extends State<JobSearch>
                                                           right: 15,
                                                         ),
                                                         child: Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
+                                                          // crossAxisAlignment:
+                                                          //     CrossAxisAlignment
+                                                          //         .start,
                                                           children: [
                                                             Text(
                                                               "\uf5a0",
@@ -2226,9 +2184,9 @@ class _JobSearchState extends State<JobSearch>
                                                           right: 15,
                                                         ),
                                                         child: Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
+                                                          // crossAxisAlignment:
+                                                          //     CrossAxisAlignment
+                                                          //         .start,
                                                           children: [
                                                             Text(
                                                               "\uf073",

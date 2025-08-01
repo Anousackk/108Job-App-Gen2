@@ -191,6 +191,7 @@ class _ListJobFuncSelectedAlertDialogState
                                 });
                               },
                               child: Container(
+                                color: AppColors.backgroundWhite,
                                 padding: EdgeInsets.symmetric(vertical: 15),
                                 child: Row(
                                   children: [
@@ -328,6 +329,7 @@ class _ListJobFuncSelectedAlertDialogState
                                       //
                                       //checkbox icon Parents
                                       child: Container(
+                                        color: AppColors.backgroundWhite,
                                         child: i['item'].every(
                                                     (eCheckBoxParents) =>
                                                         _selectedListItemsChilds
@@ -474,6 +476,7 @@ class _ListJobFuncSelectedAlertDialogState
                                             });
                                           },
                                           child: Container(
+                                            color: AppColors.backgroundWhite,
                                             padding: EdgeInsets.symmetric(
                                                 vertical: 15),
                                             margin: EdgeInsets.only(left: 20),

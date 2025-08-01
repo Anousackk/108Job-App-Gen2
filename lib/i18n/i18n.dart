@@ -129,7 +129,7 @@ class LocalString extends Translations {
     {"key": "about company", "en": "About Company", "la": "ກ່ຽວກັບບໍລິສັດ"},
 
     {"key": "video", "en": "Video", "la": "ວິດີໂອ"},
-    {"key": "job open", "en": "Job opening", "la": "ວຽກທີ່ເປີດຮັບສະໝັກ"},
+    {"key": "job_opening", "en": "Job opening", "la": "ວຽກທີ່ເປີດຮັບສະໝັກ"},
     {"key": "opening date", "en": "Opening Date", "la": "ມື້ເປີດຮັບສະໝັກ"},
     {"key": "closing date", "en": "Closing Date", "la": "ມື້ປິດຮັບສະໝັກ"},
     {"key": "contact", "en": "Contact", "la": "ຕິດຕໍ່"},
@@ -709,6 +709,11 @@ class LocalString extends Translations {
       "la": "ໄຟສທີ່ອັບເໂຫລດແລ້ວ",
     },
     {
+      "key": "download_file_cv",
+      "en": "Lownload File CV",
+      "la": "ດາວໂຫລດໄຟສຊີວີ້",
+    },
+    {
       "key": "cv_tip_1",
       "en":
           "1. Please upload only your CV and avoid including other documents like certificates or transcripts.",
@@ -733,6 +738,16 @@ class LocalString extends Translations {
           "It looks like you denied access to files(Music and audio) To use this feature, please enable access manually in your phone's settings.",
       "la":
           "ເພື່ອອັບໂຫລດຊີວີ ກະລຸນາອະເປີດອະນຸຍາດໃຫ້ແອັບພິເຄຊັ້ນສາມາດເຂົ້າເຖິງໄຟສ(ເພງ ຫຼື ສຽງ) ໂດຍການເຂົ້າໄປຕັ້ງຄ່າຂອງແອັບ",
+    },
+    {
+      "key": "i_have_cv",
+      "en": "I Have CV",
+      "la": "ຂ້ອຍມີຊີວີ້",
+    },
+    {
+      "key": "vipo_gen_cv",
+      "en": "VIPO Generate CV",
+      "la": "ໃຫ້ VIPO ສ້າງຊີວີ້ໃຫ້",
     },
 
     //
@@ -860,6 +875,7 @@ class LocalString extends Translations {
     {"key": "province", "en": "Province", "la": "ແຂວງ"},
     {"key": "industry", "en": "Industry", "la": "ອຸດສາຫະກຳ"},
     {"key": "benefit", "en": "Beneftis", "la": "ສະຫວັດດີການ"},
+    {"key": "done", "en": "Done", "la": "ສຳເລັດ"},
 
     //
     //
@@ -1067,6 +1083,16 @@ class LocalString extends Translations {
       "en": "Event details",
       "la": "ລາຍລະອຽດງານ",
     },
+    {
+      "key": "image",
+      "en": "Image",
+      "la": "ຮູບພາບ",
+    },
+    {
+      "key": "file",
+      "en": "File",
+      "la": "ເອກະສານ",
+    },
 
     //
     //
@@ -1078,6 +1104,11 @@ class LocalString extends Translations {
       "key": "back",
       "en": "Back",
       "la": "ກັບຄືນ",
+    },
+    {
+      "key": "register_event",
+      "en": "Register Event",
+      "la": "ລົງທະບຽນເຂົ້າຮ່ວມງານ"
     },
 
     //
@@ -1169,6 +1200,29 @@ class LocalString extends Translations {
       "key": "job_card_new_job",
       "en": "New",
       "la": "ວຽກໃຫມ່",
+    },
+
+    //
+    //
+    //
+    //
+    //
+    //Seeker JobSearch Detail
+    {
+      "key": "view_job_detail",
+      "en": "View Job Detail",
+      "la": "ເບິ່ງລາຍລະອຽດວຽກ",
+    },
+    {
+      "key": "job_detail",
+      "en": "Job Detail",
+      "la": "ລາຍລະອຽດວຽກ",
+    },
+    //More from this company
+    {
+      "key": "more_from_company",
+      "en": "More from this company",
+      "la": "ວຽກທັງໝົດຂອງບໍລິສັດນີ້",
     },
 
     //

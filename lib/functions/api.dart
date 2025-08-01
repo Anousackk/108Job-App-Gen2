@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use, prefer_if_null_operators, prefer_if_null_operators, deprecated_member_use, avoid_print, avoid_print, avoid_print, deprecated_member_use, avoid_print, avoid_print, avoid_print
+// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use, prefer_if_null_operators, prefer_if_null_operators, deprecated_member_use, avoid_print, avoid_print, avoid_print, deprecated_member_use, avoid_print, avoid_print, avoid_print, prefer_interpolation_to_compose_strings, prefer_interpolation_to_compose_strings, prefer_interpolation_to_compose_strings, depend_on_referenced_packages
 import 'dart:convert';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:dio/dio.dart';

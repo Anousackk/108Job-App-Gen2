@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, non_constant_identifier_names, prefer_interpolation_to_compose_strings, avoid_print, use_build_context_synchronously, deprecated_member_use
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -14,9 +14,11 @@ class PositionCompany extends StatefulWidget {
   const PositionCompany(
       {Key? key,
       required this.companyAvailableEventId,
-      required this.isApplied})
+      required this.isApplied,
+      this.logo})
       : super(key: key);
   final String companyAvailableEventId;
+  final String? logo;
   final bool isApplied;
 
   @override
@@ -39,10 +41,15 @@ class _PositionCompanyState extends State<PositionCompany> {
       "companyId": "${widget.companyAvailableEventId}"
     });
 
-    _companyName = res["companyName"];
-    _companayPosition = res["info"];
+    // var res = await postData(getCompanyIdAvailableEventSeekerApi,
+    //     {"page": "", "perPage": "", "companyId": "6167b3718c52d99b8c469570"});
 
-    setState(() {});
+    setState(() {
+      _companayPosition = res["info"];
+      _companyName = res["companyName"];
+
+      print("${_companayPosition}");
+    });
   }
 
   applyByJobId(String jobId) async {
@@ -117,12 +124,10 @@ class _PositionCompanyState extends State<PositionCompany> {
             color: AppColors.dark100,
             height: double.infinity,
             width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-              ),
-              child: SingleChildScrollView(
-                physics: ClampingScrollPhysics(),
+            child: SingleChildScrollView(
+              physics: ClampingScrollPhysics(),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -133,6 +138,7 @@ class _PositionCompanyState extends State<PositionCompany> {
                       "${_companyName}",
                       style: bodyTextMedium(null, null, FontWeight.bold),
                     ),
+                    // Text("${_companayPosition}"),
 
                     SizedBox(height: 20),
 
@@ -147,9 +153,12 @@ class _PositionCompanyState extends State<PositionCompany> {
                           var i = _companayPosition[index];
                           _title = i["title"];
                           _description = i["description"];
-                          int IntSalary = int.parse(i["salary"].toString());
-                          _salary = formatNumSalary(IntSalary);
-                          _staffQTY = int.parse(i["staffQTY"].toString());
+
+                          if (i["salary"] != null && i["salary"] != "") {
+                            int IntSalary = int.parse(i["salary"].toString());
+                            _salary = formatNumSalary(IntSalary);
+                            _staffQTY = int.parse(i["staffQTY"].toString());
+                          }
 
                           return Padding(
                             padding: EdgeInsets.only(bottom: 10),
@@ -160,13 +169,21 @@ class _PositionCompanyState extends State<PositionCompany> {
                                   MaterialPageRoute(
                                     builder: (context) => DetailPositionComapny(
                                       id: i["_id"],
+                                      logo: widget.logo,
                                       title: i["title"],
                                       salary: i["salary"].toString(),
                                       description: i["description"],
+                                      isNegotiable: i["isNegotiable"],
                                       isApplied: widget.isApplied,
+                                      isAppliedEvenJobCompany: i["isApplied"],
                                     ),
                                   ),
-                                );
+                                ).then((val) {
+                                  print(val.toString());
+                                  if (val == "AppliedEventJobCompany") {
+                                    getCompanyIdJobAvailable();
+                                  }
+                                });
                               },
                               child: Container(
                                 padding: EdgeInsets.all(20),
@@ -204,18 +221,23 @@ class _PositionCompanyState extends State<PositionCompany> {
                                         ),
                                         SizedBox(width: 5),
                                         Text(
-                                          "${_salary}",
+                                          i["isNegotiable"]
+                                              ? "ສາມາດຕໍ່ລອງໄດ້"
+                                              : "${_salary}",
                                           style: bodyTextMaxNormal(
-                                              "SatoshiBlack",
-                                              null,
+                                              i["isNegotiable"]
+                                                  ? null
+                                                  : "SatoshiBlack",
+                                              AppColors.teal,
                                               FontWeight.bold),
                                         ),
                                         SizedBox(width: 5),
-                                        Text(
-                                          "ກີບ",
-                                          style: bodyTextMaxNormal(
-                                              null, null, null),
-                                        ),
+                                        if (!i["isNegotiable"])
+                                          Text(
+                                            "ກີບ",
+                                            style: bodyTextMaxNormal(
+                                                null, null, null),
+                                          ),
                                       ],
                                     ),
 
@@ -236,7 +258,7 @@ class _PositionCompanyState extends State<PositionCompany> {
                                           "${_staffQTY}",
                                           style: bodyTextMaxNormal(
                                               "SatoshiBlack",
-                                              null,
+                                              AppColors.teal,
                                               FontWeight.bold),
                                         ),
                                         SizedBox(width: 5),
@@ -266,14 +288,26 @@ class _PositionCompanyState extends State<PositionCompany> {
                                                 builder: (context) =>
                                                     DetailPositionComapny(
                                                   id: i["_id"],
+                                                  logo: widget.logo,
                                                   title: i["title"],
                                                   salary:
                                                       i["salary"].toString(),
                                                   description: i["description"],
+                                                  isNegotiable:
+                                                      i["isNegotiable"],
                                                   isApplied: widget.isApplied,
+                                                  isAppliedEvenJobCompany:
+                                                      i["isApplied"],
                                                 ),
                                               ),
-                                            );
+                                            ).then((val) {
+                                              print("then status: " +
+                                                  val.toString());
+                                              if (val ==
+                                                  "AppliedEventJobCompany") {
+                                                getCompanyIdJobAvailable();
+                                              }
+                                            });
                                           },
                                           child: Container(
                                             padding: EdgeInsets.symmetric(
@@ -300,26 +334,95 @@ class _PositionCompanyState extends State<PositionCompany> {
                                         //Button Register
                                         if (widget.isApplied == true)
                                           GestureDetector(
-                                            onTap: () {
-                                              applyByJobId(i["_id"].toString());
+                                            onTap: () async {
+                                              if (!i["isApplied"]) {
+                                                print(
+                                                    "approved event company isAppliedEvenJobCompany = false");
+                                                var result = await showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return NewVer3CustAlertDialogWarningPictrueBtnConfirmCancel(
+                                                        statusLogo: widget
+                                                                        .logo !=
+                                                                    "" &&
+                                                                widget.logo !=
+                                                                    null
+                                                            ? ""
+                                                            : "ImageAsset",
+                                                        logo: widget.logo !=
+                                                                    "" &&
+                                                                widget.logo !=
+                                                                    null
+                                                            ? widget.logo
+                                                            : "no-image-available.png",
+                                                        title:
+                                                            "apply_job_modal_title"
+                                                                .tr,
+                                                        contentText:
+                                                            "${i["title"]}",
+                                                        textButtonLeft:
+                                                            'cancel'.tr,
+                                                        textButtonRight:
+                                                            'confirm'.tr,
+                                                      );
+                                                    });
+                                                if (result == 'Ok') {
+                                                  setState(() {
+                                                    i["isApplied"] = true;
+                                                  });
+
+                                                  applyByJobId(
+                                                    i["_id"].toString(),
+                                                  );
+                                                }
+                                              }
                                             },
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 15, vertical: 8),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.teal,
-                                                borderRadius:
-                                                    BorderRadius.circular(100),
-                                                border: Border.all(
-                                                    color: AppColors.teal),
-                                              ),
-                                              child: Text(
-                                                "ສະໝັກ",
-                                                style: bodyTextNormal(null,
-                                                    AppColors.fontWhite, null),
-                                              ),
-                                            ),
-                                          )
+                                            child: !i["isApplied"]
+                                                ? Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 15,
+                                                            vertical: 8),
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors.teal,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              100),
+                                                      border: Border.all(
+                                                          color:
+                                                              AppColors.teal),
+                                                    ),
+                                                    child: Text(
+                                                      "ສະໝັກ",
+                                                      style: bodyTextNormal(
+                                                          null,
+                                                          AppColors.fontWhite,
+                                                          null),
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 15,
+                                                            vertical: 8),
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors.dark400,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              100),
+                                                      border: Border.all(
+                                                          color: AppColors
+                                                              .dark400),
+                                                    ),
+                                                    child: Text(
+                                                      "ສະໝັກແລ້ວ",
+                                                      style: bodyTextNormal(
+                                                          null,
+                                                          AppColors.fontWhite,
+                                                          null),
+                                                    ),
+                                                  ),
+                                          ),
                                       ],
                                     )
                                   ],
