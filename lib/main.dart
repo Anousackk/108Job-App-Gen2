@@ -53,38 +53,38 @@ Future<void> main() async {
   //2. Initialize firebase messaging
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  if (!kIsWeb) {
-    channel = AndroidNotificationChannel(
-      'high_importance_channel', // id
-      'High Importance Notifications', // title
-      description: 'This channel is used for important .', // description
-      importance: Importance.high,
-    );
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  // if (!kIsWeb) {
+  //   channel = AndroidNotificationChannel(
+  //     'high_importance_channel', // id
+  //     'High Importance Notifications', // title
+  //     description: 'This channel is used for important .', // description
+  //     importance: Importance.high,
+  //   );
+  //   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+  //   await flutterLocalNotificationsPlugin
+  //       .resolvePlatformSpecificImplementation<
+  //           AndroidFlutterLocalNotificationsPlugin>()
+  //       ?.createNotificationChannel(channel);
 
-    /// Update the iOS foreground notification presentation options to allow
-    /// heads up notifications.
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+  //   /// Update the iOS foreground notification presentation options to allow
+  //   /// heads up notifications.
+  //   await FirebaseMessaging.instance
+  //       .setForegroundNotificationPresentationOptions(
+  //     alert: true,
+  //     badge: true,
+  //     sound: true,
+  //   );
 
-    // await flutterLocalNotificationsPlugin
-    //     .resolvePlatformSpecificImplementation<
-    //         IOSFlutterLocalNotificationsPlugin>()
-    //     ?.requestPermissions(
-    //       alert: true,
-    //       badge: true,
-    //       sound: true,
-    //     );
-  }
+  // await flutterLocalNotificationsPlugin
+  //     .resolvePlatformSpecificImplementation<
+  //         IOSFlutterLocalNotificationsPlugin>()
+  //     ?.requestPermissions(
+  //       alert: true,
+  //       badge: true,
+  //       sound: true,
+  //     );
+  // }
 
   //Application in foreground(flutter_local_notifications)
   var initializationSettingsAndroid =

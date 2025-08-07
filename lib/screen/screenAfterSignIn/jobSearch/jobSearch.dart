@@ -1783,7 +1783,7 @@ class _JobSearchState extends State<JobSearch>
                                                     context,
                                                     MaterialPageRoute(
                                                       builder: (context) =>
-                                                          JobSearchDetail(
+                                                          JobSearchDetailRenew(
                                                         jobId: indexJobsSearch[
                                                             'jobId'],
                                                         newJob: indexJobsSearch[

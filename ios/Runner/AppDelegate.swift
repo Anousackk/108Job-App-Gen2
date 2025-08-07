@@ -23,9 +23,9 @@ import FBSDKCoreKit
     )
     GeneratedPluginRegistrant.register(with: self)
 
-    return true
+    // return true
     
-    if #available(iOS 17.0, *) {
+    if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
           UNUserNotificationCenter.current().requestAuthorization(
