@@ -23,7 +23,7 @@ import FBSDKCoreKit
     )
     GeneratedPluginRegistrant.register(with: self)
 
-    // return true
+    return true
     
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
