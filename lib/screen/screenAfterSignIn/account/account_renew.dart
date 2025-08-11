@@ -1023,6 +1023,10 @@ class _AccountRenewState extends State<AccountRenew> {
                                             print(
                                                 "navigator.pop imageSrc from MyProfile scree :" +
                                                     "${value}");
+
+                                            getProfileSeeker();
+                                            getTotalJobSeeker();
+                                            getEvnetAvailable();
                                             setState(() {
                                               _imageSrc = value;
                                             });
