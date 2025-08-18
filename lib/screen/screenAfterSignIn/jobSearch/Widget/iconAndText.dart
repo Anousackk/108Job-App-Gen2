@@ -42,7 +42,7 @@ class _SpaceBetweenTitleAndTextState extends State<SpaceBetweenTitleAndText> {
             ],
           ),
         ),
-        SizedBox(width: 10),
+        SizedBox(width: 20),
         Expanded(
           child: Container(
             // color: AppColors.success,

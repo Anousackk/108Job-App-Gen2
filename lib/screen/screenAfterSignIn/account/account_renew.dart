@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, prefer_if_null_operators, non_constant_identifier_names, unused_local_variable, unused_field, unnecessary_string_interpolations, prefer_final_fields, unnecessary_null_in_if_null_operators, avoid_print, prefer_adjacent_string_concatenation, unnecessary_this, prefer_interpolation_to_compose_strings, use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, prefer_if_null_operators, non_constant_identifier_names, unused_local_variable, unused_field, unnecessary_string_interpolations, prefer_final_fields, unnecessary_null_in_if_null_operators, avoid_print, prefer_adjacent_string_concatenation, unnecessary_this, prefer_interpolation_to_compose_strings, use_build_context_synchronously, deprecated_member_use, no_leading_underscores_for_local_identifiers
 
 import 'dart:io';
 
@@ -110,6 +110,7 @@ class _AccountRenewState extends State<AccountRenew> {
     _firstName = _seekerProfile['firstName'];
     _lastName = _seekerProfile['lastName'];
     _memberLevel = _seekerProfile['memberLevel'];
+
     if (_seekerProfile['file'] != "") {
       _imageSrc = !_seekerProfile['file'].containsKey("src") ||
               _seekerProfile['file']["src"] == null
@@ -605,10 +606,6 @@ class _AccountRenewState extends State<AccountRenew> {
                       padding: EdgeInsets.all(20),
                       child: Column(
                         children: [
-                          SizedBox(
-                            height: 70,
-                          ),
-
                           //
                           //
                           //
@@ -623,108 +620,118 @@ class _AccountRenewState extends State<AccountRenew> {
                             clipBehavior: Clip.none,
                             alignment: Alignment.center,
                             children: [
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //Box card Profile image
                               Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: AppColors.backgroundWhite,
-                                ),
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      height: 60,
+                                      height: 70,
                                     ),
-
-                                    //
-                                    //
-                                    //Profile Name
-                                    Text(
-                                      "${_firstName} ${_lastName}",
-                                      style: bodyTextMedium(
-                                          null, null, FontWeight.bold),
-                                      textAlign: TextAlign.center,
-                                    ),
-
-                                    //
-                                    //
-                                    //Currnet Job / Position
-                                    Text(
-                                      _currentJobTitle == ""
-                                          ? "- -"
-                                          : "${_currentJobTitle}",
-                                      style: bodyTextNormal(null, null, null),
-                                      textAlign: TextAlign.center,
-                                    ),
-
-                                    SizedBox(height: 5),
-                                    Divider(color: AppColors.borderGreyOpacity),
-                                    SizedBox(height: 5),
-
-                                    //
-                                    //
-                                    //Status employee / percent completed
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                    Container(
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.all(20),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: AppColors.backgroundWhite,
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
+                                            SizedBox(height: 60),
+
+                                            //
+                                            //
+                                            //Profile Name
                                             Text(
-                                              "status".tr,
-                                              style: bodyTextMaxSmall(null,
-                                                  AppColors.dark500, null),
+                                              "${_firstName} ${_lastName}",
+                                              style: bodyTextMedium(
+                                                  null, null, FontWeight.bold),
+                                              textAlign: TextAlign.center,
                                             ),
+
+                                            //
+                                            //
+                                            //Currnet Job / Position
                                             Text(
-                                              "${_memberLevel}",
-                                              style: bodyTextMaxSmall(
-                                                  null,
-                                                  AppColors.primary600,
-                                                  FontWeight.bold),
+                                              _currentJobTitle == ""
+                                                  ? "- -"
+                                                  : "${_currentJobTitle}",
+                                              style: bodyTextNormal(
+                                                  null, null, null),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            SizedBox(height: 5),
+                                            Divider(
+                                                color: AppColors
+                                                    .borderGreyOpacity),
+                                            SizedBox(height: 5),
+
+                                            //
+                                            //
+                                            //Status employee / percent completed
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "status".tr,
+                                                      style: bodyTextMaxSmall(
+                                                          null,
+                                                          AppColors.dark500,
+                                                          null),
+                                                    ),
+                                                    Text(
+                                                      "${_memberLevel}",
+                                                      style: bodyTextMaxSmall(
+                                                          null,
+                                                          AppColors.primary600,
+                                                          FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      "complete_your_profile"
+                                                          .tr,
+                                                      style: bodyTextMaxSmall(
+                                                          null,
+                                                          AppColors.dark500,
+                                                          null),
+                                                    ),
+                                                    Text(
+                                                      "${(_percentageUsed * 100).round()}% ",
+                                                      style: bodyTextMaxSmall(
+                                                          null,
+                                                          AppColors.primary600,
+                                                          FontWeight.bold),
+                                                    )
+                                                  ],
+                                                )
+                                              ],
                                             )
                                           ],
                                         ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              "complete_your_profile".tr,
-                                              style: bodyTextMaxSmall(null,
-                                                  AppColors.dark500, null),
-                                            ),
-                                            Text(
-                                              "${(_percentageUsed * 100).round()}% ",
-                                              style: bodyTextMaxSmall(
-                                                  null,
-                                                  AppColors.primary600,
-                                                  FontWeight.bold),
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    )
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
 
                               //
                               //
-                              //
-                              //
-                              //
                               //Positioned Profile image
                               Positioned(
-                                top: -70,
+                                top: 0,
                                 child: _imageLoading
                                     ? Container(
                                         width: 120,
@@ -738,7 +745,10 @@ class _AccountRenewState extends State<AccountRenew> {
                                           child: Text("uploading".tr),
                                         ),
                                       )
-                                    : Container(
+                                    : GestureDetector(
+                                        onTap: () {
+                                          pickImageGallery(ImageSource.gallery);
+                                        },
                                         child: Stack(
                                           clipBehavior: Clip.none,
                                           alignment: Alignment.center,
@@ -761,11 +771,12 @@ class _AccountRenewState extends State<AccountRenew> {
                                                 width: 120,
                                                 height: 120,
                                                 decoration: BoxDecoration(
-                                                    color: AppColors
-                                                        .backgroundWhite,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            100)),
+                                                  color:
+                                                      AppColors.backgroundWhite,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100),
+                                                ),
                                                 child: ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -797,30 +808,24 @@ class _AccountRenewState extends State<AccountRenew> {
                                             Positioned(
                                               bottom: 5,
                                               right: 10,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  pickImageGallery(
-                                                      ImageSource.gallery);
-                                                },
-                                                child: Container(
-                                                  alignment: Alignment.center,
-                                                  padding: EdgeInsets.all(8),
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: AppColors
-                                                        .backgroundWhite,
-                                                    border: Border.all(
-                                                        color:
-                                                            AppColors.borderBG),
-                                                  ),
-                                                  child: Text(
-                                                    "\uf03e",
-                                                    style: fontAwesomeRegular(
-                                                        null,
-                                                        15,
-                                                        AppColors.iconPrimary,
-                                                        null),
-                                                  ),
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                padding: EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color:
+                                                      AppColors.backgroundWhite,
+                                                  border: Border.all(
+                                                      color:
+                                                          AppColors.borderBG),
+                                                ),
+                                                child: Text(
+                                                  "\uf03e",
+                                                  style: fontAwesomeRegular(
+                                                      null,
+                                                      15,
+                                                      AppColors.iconPrimary,
+                                                      null),
                                                 ),
                                               ),
                                             ),

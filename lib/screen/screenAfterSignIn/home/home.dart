@@ -15,6 +15,7 @@ import 'package:app/functions/textSize.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/account_renew.dart';
 import 'package:app/screen/ScreenAfterSignIn/Company/company.dart';
 import 'package:app/screen/ScreenAfterSignIn/Company/companyDetail.dart';
+import 'package:app/screen/ScreenAfterSignIn/Company/company_renew.dart';
 import 'package:app/screen/ScreenAfterSignIn/Home/Widget/companyHiringShirmmerWidget.dart';
 import 'package:app/screen/ScreenAfterSignIn/Home/Widget/homeHeaderShirmmerWidget.dart';
 import 'package:app/screen/ScreenAfterSignIn/Home/Widget/jobByIndustryShimmerWidget.dart';
@@ -249,7 +250,7 @@ class _HomeState extends State<Home> {
         selectedListItem: _selectedListItem,
         hasInternet: _hasInternet,
       ),
-      Company(
+      CompanyRenew(
         companyType: _companyType,
         hasInternet: _hasInternet,
       ),

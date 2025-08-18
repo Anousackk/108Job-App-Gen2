@@ -12,7 +12,6 @@ import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/ScreenAfterSignIn/JobSearch/jobSearchDetail_renew.dart';
-import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
 import 'package:app/widget/listJobFuncSelectedAlertDialog.dart';
@@ -24,7 +23,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class JobSearch extends StatefulWidget {
   const JobSearch(
@@ -1562,8 +1560,8 @@ class _JobSearchState extends State<JobSearch>
                                               padding:
                                                   const EdgeInsets.all(8.0),
                                               child: Center(
-                                                  child:
-                                                      Text('no have data'.tr)),
+                                                child: Text('no have data'.tr),
+                                              ),
                                             );
                                     }
 

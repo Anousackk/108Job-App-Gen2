@@ -1,6 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names, use_full_hex_values_for_flutter_colors, deprecated_member_use, prefer_adjacent_string_concatenation, prefer_if_null_operators, prefer_interpolation_to_compose_strings, no_leading_underscores_for_local_identifiers, use_build_context_synchronously, prefer_is_empty
-
-import 'dart:convert';
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, unused_local_variable, avoid_print, file_names, use_full_hex_values_for_flutter_colors, deprecated_member_use, prefer_adjacent_string_concatenation, prefer_if_null_operators, prefer_interpolation_to_compose_strings, no_leading_underscores_for_local_identifiers, use_build_context_synchronously, prefer_is_empty, unused_element
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -24,7 +22,6 @@ import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sizer/sizer.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class JobSearchDetailRenew extends StatefulWidget {
@@ -165,56 +162,56 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
 
     print("from screen jobsearch newJob: " + widget.newJob.toString());
 
-    _webViewController = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      // ..enableZoom(true)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onNavigationRequest: (request) {
-            final uri = Uri.parse(request.url);
-            //Link http
-            if (uri.scheme.startsWith('http')) {
-              launchInBrowser(uri);
-              return NavigationDecision.prevent;
-            }
-            //Email
-            if (uri.scheme == 'mailto') {
-              launchUrl(uri);
-              return NavigationDecision.prevent;
-            }
-            //Tel
-            if (uri.scheme == 'tel') {
-              launchUrl(uri);
-              return NavigationDecision.prevent;
-            }
-            //SMS
-            if (uri.scheme == 'sms') {
-              launchUrl(uri);
-              return NavigationDecision.prevent;
-            }
+    // _webViewController = WebViewController()
+    //   ..setJavaScriptMode(JavaScriptMode.unrestricted)
+    //   // ..enableZoom(true)
+    //   ..setNavigationDelegate(
+    //     NavigationDelegate(
+    //       onNavigationRequest: (request) {
+    //         final uri = Uri.parse(request.url);
+    //         //Link http
+    //         if (uri.scheme.startsWith('http')) {
+    //           launchInBrowser(uri);
+    //           return NavigationDecision.prevent;
+    //         }
+    //         //Email
+    //         if (uri.scheme == 'mailto') {
+    //           launchUrl(uri);
+    //           return NavigationDecision.prevent;
+    //         }
+    //         //Tel
+    //         if (uri.scheme == 'tel') {
+    //           launchUrl(uri);
+    //           return NavigationDecision.prevent;
+    //         }
+    //         //SMS
+    //         if (uri.scheme == 'sms') {
+    //           launchUrl(uri);
+    //           return NavigationDecision.prevent;
+    //         }
 
-            return NavigationDecision.navigate;
-          },
-          onPageFinished: (url) async {
-            final heightStr =
-                await _webViewController.runJavaScriptReturningResult(
-                    "document.documentElement.scrollHeight.toString()");
-            final newHeight =
-                double.tryParse(heightStr.toString().replaceAll('"', ''));
+    //         return NavigationDecision.navigate;
+    //       },
+    //       onPageFinished: (url) async {
+    //         final heightStr =
+    //             await _webViewController.runJavaScriptReturningResult(
+    //                 "document.documentElement.scrollHeight.toString()");
+    //         final newHeight =
+    //             double.tryParse(heightStr.toString().replaceAll('"', ''));
 
-            if (newHeight != null && mounted) {
-              setState(() => _webViewHeight = newHeight);
-            }
-          },
-        ),
-      )
-      ..loadRequest(
-        Uri.dataFromString(
-          _wrapHtml(_description),
-          mimeType: 'text/html',
-          encoding: Encoding.getByName('utf-8'),
-        ),
-      );
+    //         if (newHeight != null && mounted) {
+    //           setState(() => _webViewHeight = newHeight);
+    //         }
+    //       },
+    //     ),
+    //   )
+    //   ..loadRequest(
+    //     Uri.dataFromString(
+    //       _wrapHtml(_description),
+    //       mimeType: 'text/html',
+    //       encoding: Encoding.getByName('utf-8'),
+    //     ),
+    //   );
     //
     //
     //ກວດວ່າເປັນວຽກໃໝ່ບໍ່ ມາຈາກໜ້າຄົ້ນຫາວຽກ ຖ້າເປັນວຽກໃໝ່ຈະສົ່ງ newJob ເປັນ false ກັບຄືນ
@@ -669,6 +666,19 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
               onTapUrl: (url) {
                 launchInBrowser(Uri.parse(url));
                 return true;
+              },
+              onTapImage: (imageMetadata) {
+                // Pick the first source available
+                final src = imageMetadata.sources.isNotEmpty
+                    ? imageMetadata.sources.first.url
+                    : null;
+
+                if (src != null) {
+                  // For example, open in browser or show full-screen preview
+                  launchInBrowser(Uri.parse(src));
+                } else {
+                  print('print: No image URL found.');
+                }
               },
               customStylesBuilder: (element) {
                 // print(element.localName.toString());

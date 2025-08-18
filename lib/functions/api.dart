@@ -1,4 +1,5 @@
-// ignore_for_file: prefer_typing_uninitialized_variabimport 'dart:convert' as convert;, unnecessary_null_comparison, prefer_if_null_operators, unused_local_variable, await_only_futures, unnecessary_new, avoid_print, deprecated_member_use, prefer_if_null_operators, prefer_if_null_operators, deprecated_member_use, avoid_print, avoid_print, avoid_print, deprecated_member_use, avoid_print, avoid_print, avoid_print, prefer_interpolation_to_compose_strings, prefer_interpolation_to_compose_strings, prefer_interpolation_to_compose_strings, depend_on_referenced_packages
+// ignore_for_file: prefer_interpolation_to_compose_strings, depend_on_referenced_packages
+
 import 'dart:convert';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:dio/dio.dart';
@@ -21,172 +22,181 @@ const apiDisconnectGoogleFacebookAip =
     globalURL + "/disconnect-google-facebook-seeker-app";
 
 //Register
-var apiRegisterSeeker = globalURL + '/new-register-basic-member-seeker-app';
-var apiVerifyCodeSeeker = globalURL + '/verify-register-code-seeker-app';
-var apiNewVerifyCodeSeeker = globalURL + '/seeker-verify-request-register-app';
-var apirequestOTPRegisterSeeker =
+const apiRegisterSeeker = globalURL + '/new-register-basic-member-seeker-app';
+const apiVerifyCodeSeeker = globalURL + '/verify-register-code-seeker-app';
+const apiNewVerifyCodeSeeker =
+    globalURL + '/seeker-verify-request-register-app';
+const apirequestOTPRegisterSeeker =
     globalURL + '/seeker-request-otp-register-app';
 
 //Reset new Password
-var apiResetNewPasswordSeeker = globalURL + "/seeker-reset-password-app";
+const apiResetNewPasswordSeeker = globalURL + "/seeker-reset-password-app";
 
 //Set Password
-var apiSetPasswordSeeker = globalURL + "/seeker-set-password-app";
+const apiSetPasswordSeeker = globalURL + "/seeker-set-password-app";
 
 //Delere Account
-var apiDeleteAccountSeeker = globalURL + "/seeker-delete-account-app";
+const apiDeleteAccountSeeker = globalURL + "/seeker-delete-account-app";
 
 //Login
-var apiSigInSeeker = globalURL + "/seeker-login-app";
-var apiAddTokenSeeker = globalURL + "/add-token";
-var apiLogoutSeeker = globalURL + "/logout";
+const apiSigInSeeker = globalURL + "/seeker-login-app";
+const apiAddTokenSeeker = globalURL + "/add-token";
+const apiLogoutSeeker = globalURL + "/logout";
 
 //Information
 //['Basic Member', 'Basic Job Seeker', 'Expert Job Seeker']
-var informationApiSeeker = globalURL + "/seeker-login-information-app";
-var changePasswordApiSeeker = globalURL + "/seeker-change-password-app";
-// var addPhoneNumEmailPassApiSeeker = globalURL + "/seeker-set-mobile-email-app";
+const informationApiSeeker = globalURL + "/seeker-login-information-app";
+const changePasswordApiSeeker = globalURL + "/seeker-change-password-app";
+// const addPhoneNumEmailPassApiSeeker = globalURL + "/seeker-set-mobile-email-app";
 
 //
 //new add/update phone number/email in Login Infomation screen
-var addPhoneEmailRequestOTPSeekerApi =
+const addPhoneEmailRequestOTPSeekerApi =
     globalURL + "/seeker-request-verifycode-app";
-var verifyCodeLoginInfoSeekerApi = globalURL + "/seeker-verify-code-app";
-var changePhoneEmailLoginInfoSeekerApi = globalURL + "/seeker-change-email-app";
-var resendOTPLoginInfoSeekerApi = globalURL + "/seeker-resend-verifycode-app";
+const verifyCodeLoginInfoSeekerApi = globalURL + "/seeker-verify-code-app";
+const changePhoneEmailLoginInfoSeekerApi =
+    globalURL + "/seeker-change-email-app";
+const resendOTPLoginInfoSeekerApi = globalURL + "/seeker-resend-verifycode-app";
 
 //Forgot Password
-var requestOTPCodeApiSeeker = globalURL + "/seeker-request-verification-app";
-var resendOTPCodeApiSeeker = globalURL + "/seeker-resend-verification-app";
-var apiNewResendOTPCodeApiSeeker =
+const requestOTPCodeApiSeeker = globalURL + "/seeker-request-verification-app";
+const resendOTPCodeApiSeeker = globalURL + "/seeker-resend-verification-app";
+const apiNewResendOTPCodeApiSeeker =
     globalURL + "/seeker-resend-request-otp-register-verify-code-app";
 
 //
 //Job Search
-var getJobsSearchSeekerApi = globalURL + "/get-job-search-app";
-var getJobSearchDetailSeekerApi = globalURL + "/get-job-detail-app/";
-var checkNewJobSearchSeekerApi = globalURL + "/save-new-job-app";
-var getReuseFilterJobSearchSeekerApi =
+const getJobsSearchSeekerApi = globalURL + "/get-job-search-app";
+const getJobSearchDetailSeekerApi = globalURL + "/get-job-detail-app/";
+const checkNewJobSearchSeekerApi = globalURL + "/save-new-job-app";
+const getReuseFilterJobSearchSeekerApi =
     globalURL + "/get-reuse-filter-injob-search-app?";
 
 //
 //Company
-var getCompaniesSeekerApi = globalURL + "/get-search-employer-seeker-app";
-var getCompaniesFeatureApi = globalURL + "/get-employer-feature-seeker-app";
-var getCompanyDetailSeekerApi = globalURL + '/get-employer-detail-seeker-app/';
+const getCompaniesSeekerApi = globalURL + "/get-search-employer-seeker-app";
+const getCompaniesFeatureApi = globalURL + "/get-employer-feature-seeker-app";
+const getCompanyDetailSeekerApi =
+    globalURL + '/get-employer-detail-seeker-app/';
 //follow
-var addFollowCompanySeekerApi = globalURL + "/add-seeker-follow-employer-app/";
-var unFollowCompanySeekerApi = globalURL + "/seeker-unfollow-employer-app/";
+const addFollowCompanySeekerApi =
+    globalURL + "/add-seeker-follow-employer-app/";
+const unFollowCompanySeekerApi = globalURL + "/seeker-unfollow-employer-app/";
 //submit
-var submitCVSeekerApi = globalURL + "/seeker-submit-cv-employer-app/";
-var unSubmitCVSeekerApi = globalURL + "/seeker-unsubmit-cv-employer-app/";
-var getSubmitCVSeekerApi = globalURL + "/get-seeker-submit-cv-employer-app";
+const submitCVSeekerApi = globalURL + "/seeker-submit-cv-employer-app/";
+const unSubmitCVSeekerApi = globalURL + "/seeker-unsubmit-cv-employer-app/";
+const getSubmitCVSeekerApi = globalURL + "/get-seeker-submit-cv-employer-app";
 
 //
 //Home Page
-var getTopBannerEmployee = globalURL + "/get-topbanner-seeker";
-var getSpotLightEmployee = globalURL + "/get-spotlight-seeker";
-var getHiringEmployee = globalURL + "/get-hiring-employer-seeker-app";
-var getTopWorkingLocationEmployee = globalURL + "/get-top-workinglocation-app";
-var groupIndustryWorkingLocationEmployee =
+const getTopBannerEmployee = globalURL + "/get-topbanner-seeker";
+const getSpotLightEmployee = globalURL + "/get-spotlight-seeker";
+const getHiringEmployee = globalURL + "/get-hiring-employer-seeker-app";
+const getTopWorkingLocationEmployee =
+    globalURL + "/get-top-workinglocation-app";
+const groupIndustryWorkingLocationEmployee =
     globalURL + "/get-grouy-by-industry-workinglocation-app?";
-var getPopupBanner = globalURL + "/get-popup-banner-seeker";
+const getPopupBanner = globalURL + "/get-popup-banner-seeker";
 
 //
 //Job Search && My Job
-var saveJobSeekerApi = globalURL + "/seeker-save-job-app";
-var hideJobSeekerApi = globalURL + "/seeker-hide-job-app";
-var deleteMyJobSeekerApi = globalURL + "/seeker-delete-my-job-app";
-var applyJobSeekerApi = globalURL + "/seeker-apply-job-app";
-var catchDuckSeekerApi = globalURL + "/catch-duck-seeker-app";
+const saveJobSeekerApi = globalURL + "/seeker-save-job-app";
+const hideJobSeekerApi = globalURL + "/seeker-hide-job-app";
+const deleteMyJobSeekerApi = globalURL + "/seeker-delete-my-job-app";
+const applyJobSeekerApi = globalURL + "/seeker-apply-job-app";
+const catchDuckSeekerApi = globalURL + "/catch-duck-seeker-app";
 
 //
 //My Job
-var getMyJobSeekerApi = globalURL + "/seeker-get-my-job-app";
+const getMyJobSeekerApi = globalURL + "/seeker-get-my-job-app";
 
 //
 //Notifications
-var getNotificationsSeeker = globalURL + "/notify-historied-app";
+const getNotificationsSeeker = globalURL + "/notify-historied-app";
 
 //
 //Messages
-var getMessageDetailSeeker = globalURL + "/message-detail-app/";
+const getMessageDetailSeeker = globalURL + "/message-detail-app/";
 
 //
 //My Profile
-var getProfileSeekerApi = globalURL + "/seeker-profile-app";
-var getTotalMyJobSeekerApi = globalURL + "/seeker-get-totals-myjob-app";
+const getProfileSeekerApi = globalURL + "/seeker-profile-app";
+const getTotalMyJobSeekerApi = globalURL + "/seeker-get-totals-myjob-app";
 
 //
 //Avatar
-var getAvatarSeekerApi = globalURL + "/seeker-get-avatar-app";
-var updateAvatarSeekerApi = globalURL + "/seeker-update-avatar-app";
+const getAvatarSeekerApi = globalURL + "/seeker-get-avatar-app";
+const updateAvatarSeekerApi = globalURL + "/seeker-update-avatar-app";
 
 //Profile Setting
-var searchableProfileSettingSeeker = globalURL + "/issearchable-seeker-app";
-var getCompaniesProfileSetting = globalURL + "/get-employer-list-in-seeker-app";
-var getSeekerSearchableCompaniesProfileSetting =
+const searchableProfileSettingSeeker = globalURL + "/issearchable-seeker-app";
+const getCompaniesProfileSetting =
+    globalURL + "/get-employer-list-in-seeker-app";
+const getSeekerSearchableCompaniesProfileSetting =
     globalURL + "/get-hide-employer-profile-list-app";
-var hideCompanyProfileSetting = globalURL + "/seeker-hide-employer-profile-app";
+const hideCompanyProfileSetting =
+    globalURL + "/seeker-hide-employer-profile-app";
 
 //Job Aert
-var getJobAlertSeekerApi = globalURL + "/seeker-get-job-alert-app";
-var addJobAlertSeekerApi = globalURL + "/seeker-create-job-alert-app";
+const getJobAlertSeekerApi = globalURL + "/seeker-get-job-alert-app";
+const addJobAlertSeekerApi = globalURL + "/seeker-create-job-alert-app";
 
 //Personal Information
-var addProfileApiSeeker = globalURL + "/add-seeker-profile-app";
-var uploadOrUpdateProfileImageApiSeeker =
+const addProfileApiSeeker = globalURL + "/add-seeker-profile-app";
+const uploadOrUpdateProfileImageApiSeeker =
     globalURL + "/seeker-reupload-profile-app";
-var uploadProfileApiSeeker = globalURL + "/upload-seeker-profile-app";
+const uploadProfileApiSeeker = globalURL + "/upload-seeker-profile-app";
 
 //Province and district
-var getProvinceAndDistrictApiSeeker = globalURL + "/get-province-seeker-app?";
+const getProvinceAndDistrictApiSeeker = globalURL + "/get-province-seeker-app?";
 
 //Work Preferences
-var addWorkPreferenceSeekerApi = globalURL + "/add-seeker-work-preferences-app";
+const addWorkPreferenceSeekerApi =
+    globalURL + "/add-seeker-work-preferences-app";
 
 //Benefits
-var benefitsSeekerApi = globalURL + "/get-seeker-benefit-app?";
-var getJobFunctionsSeekerApi = globalURL + "/jobfunction-in-seeker-app";
+const benefitsSeekerApi = globalURL + "/get-seeker-benefit-app?";
+const getJobFunctionsSeekerApi = globalURL + "/jobfunction-in-seeker-app";
 
 //Upload file CV
-var uploadFileCVApiSeeker = globalURL + "/upload-resume-app";
-var uploadOrUpdateCVApiSeeker = globalURL + "/create-cv-seeker-app";
-var deleteCVApiSeeker = globalURL + "/delete-cv-seeker-app";
+const uploadFileCVApiSeeker = globalURL + "/upload-resume-app";
+const uploadOrUpdateCVApiSeeker = globalURL + "/create-cv-seeker-app";
+const deleteCVApiSeeker = globalURL + "/delete-cv-seeker-app";
 
 //Skill
-var addSkillSeekerApi = globalURL + "/add-skill-seeker-app";
-var deleteSkillSeekerApi = globalURL + "/delete-skill-seeker-app/";
+const addSkillSeekerApi = globalURL + "/add-skill-seeker-app";
+const deleteSkillSeekerApi = globalURL + "/delete-skill-seeker-app/";
 
 //Language
-var getKeySkillSeekerApi = globalURL + "/get-keyskills-job-seeker-new-app";
-var addLanguageSeekerApi = globalURL + "/add-languageskill-seeker-app";
-var deleteLanguageSeekerApi = globalURL + "/delete-languageskill-seeker-app/";
+const getKeySkillSeekerApi = globalURL + "/get-keyskills-job-seeker-new-app";
+const addLanguageSeekerApi = globalURL + "/add-languageskill-seeker-app";
+const deleteLanguageSeekerApi = globalURL + "/delete-languageskill-seeker-app/";
 
 //Education
-var addEducationSeekerApi = globalURL + "/create-educations-seeker-app";
-var deleteEducationSeekerApi = globalURL + "/delete-educations-seeker-app/";
+const addEducationSeekerApi = globalURL + "/create-educations-seeker-app";
+const deleteEducationSeekerApi = globalURL + "/delete-educations-seeker-app/";
 
 //Work history
-var addWorkHistorySeekerApi = globalURL + "/create-workhistory-seeker-app";
-var deleteWorkHistorySeekerApi = globalURL + "/delete-workhistory-seeker-app/";
+const addWorkHistorySeekerApi = globalURL + "/create-workhistory-seeker-app";
+const deleteWorkHistorySeekerApi =
+    globalURL + "/delete-workhistory-seeker-app/";
 
 //No Experience
-var noExperienceSeekerApi = globalURL + "/update-no-experience-seeker-app";
+const noExperienceSeekerApi = globalURL + "/update-no-experience-seeker-app";
 
 //Event
-var getEventAvailableSeekerApi = globalURL + "/get-event-available-app";
-var applyEventSeekerApi = globalURL + "/apply-event-app";
-var applyJobIdSeekerApi = globalURL + "/apply-job-wii-app";
-var getStatisticEventSeekerApi = globalURL + "/get-statistic-event-app";
-var getCompanyAvailableEventSeekerApi =
+const getEventAvailableSeekerApi = globalURL + "/get-event-available-app";
+const applyEventSeekerApi = globalURL + "/apply-event-app";
+const applyJobIdSeekerApi = globalURL + "/apply-job-wii-app";
+const getStatisticEventSeekerApi = globalURL + "/get-statistic-event-app";
+const getCompanyAvailableEventSeekerApi =
     globalURL + "/get-event-company-job-available-app";
-var getCompanyIdAvailableEventSeekerApi =
+const getCompanyIdAvailableEventSeekerApi =
     globalURL + "/get-event-company-job-list-app";
 //get-event-company-job-list-app
 
 //Get reuse type
-var getReuseTypeApiSeeker = globalURL + "/get-reuse-in-seeker-app?";
+const getReuseTypeApiSeeker = globalURL + "/get-reuse-in-seeker-app?";
 //Type Api reuse
 // 'Degree', 'Gender', 'Industry', 'SkillLevel', 'KeySkills',
 // 'Language', 'LanguageLevel', 'MaritalStatus',
