@@ -1430,9 +1430,12 @@ class _JobSearchState extends State<JobSearch>
                                   height: 45,
                                   padding: EdgeInsets.symmetric(horizontal: 20),
                                   decoration: BoxDecoration(
-                                    color: AppColors.backgroundWhite,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
+                                      color: AppColors.backgroundWhite,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                          color: _isCheckFilterColor
+                                              ? AppColors.borderPrimary
+                                              : AppColors.borderWhite)),
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: FaIcon(
@@ -1501,7 +1504,7 @@ class _JobSearchState extends State<JobSearch>
                                     AppColors.fontPrimary, FontWeight.bold),
                               ),
                               Text(
-                                "job available".tr,
+                                "job_opening".tr,
                                 style: bodyTextNormal(null, null, null),
                               ),
                             ],

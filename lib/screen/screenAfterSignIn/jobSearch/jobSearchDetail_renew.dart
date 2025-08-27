@@ -973,7 +973,7 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
                                         Align(
                                           alignment: Alignment.centerLeft,
                                           child: Text(
-                                            "ລາຍລະອຽດວຽກໂດຍຫຍໍ້",
+                                            "job_summary".tr,
                                             style: bodyTextMaxNormal(
                                                 null, null, FontWeight.bold),
                                           ),
@@ -1060,7 +1060,7 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
                                             Row(
                                               children: [
                                                 Text(
-                                                  "more_from_company".tr,
+                                                  "job_opening".tr,
                                                   style: bodyTextMaxNormal(null,
                                                       null, FontWeight.bold),
                                                 ),
@@ -1076,12 +1076,12 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
                                             ),
                                             SizedBox(height: 20),
 
-                                            //
-                                            //
-                                            //ListView box more job
                                             SizedBox(
-                                              height: 130,
+                                              height: 120,
                                               width: double.infinity,
+                                              //
+                                              //
+                                              //ListView box more job
                                               child: ListView.builder(
                                                   shrinkWrap: true,
                                                   physics:
@@ -1166,13 +1166,15 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
                                                             ),
                                                           );
                                                         },
+
+                                                        //
+                                                        //
+                                                        //Box card more job
                                                         child: Container(
                                                           width: 75.w,
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      15,
-                                                                  vertical: 15),
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  15),
                                                           decoration:
                                                               BoxDecoration(
                                                             color: AppColors
@@ -1193,18 +1195,19 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
                                                                 MainAxisAlignment
                                                                     .spaceBetween,
                                                             children: [
-                                                              //
-                                                              //
-                                                              //Title position more job
                                                               Row(
                                                                 children: [
+                                                                  //
+                                                                  //
+                                                                  //Title position more job
                                                                   Expanded(
                                                                     child: Text(
                                                                       "${i["title"]}",
                                                                       style: bodyTextNormal(
                                                                           null,
                                                                           null,
-                                                                          null),
+                                                                          FontWeight
+                                                                              .bold),
                                                                       maxLines:
                                                                           1,
                                                                       overflow:
@@ -1213,116 +1216,97 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
                                                                     ),
                                                                   ),
 
-                                                                  //
-                                                                  //
                                                                   //Status new job
-                                                                  if (i[
-                                                                      'newJob'])
-                                                                    Container(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .topCenter,
-                                                                      margin: EdgeInsets.only(
-                                                                          left:
-                                                                              5),
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              8,
-                                                                          vertical:
-                                                                              4),
-                                                                      // margin: EdgeInsets.only(
-                                                                      //     right:
-                                                                      //         15),
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: AppColors
-                                                                            .primary,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5),
-                                                                      ),
-                                                                      child:
-                                                                          Text(
-                                                                        "job_card_new_job"
-                                                                            .tr,
-                                                                        style:
-                                                                            bodyTextMiniSmall(
-                                                                          null,
-                                                                          AppColors
-                                                                              .fontWhite,
-                                                                          null,
-                                                                        ),
-                                                                      ),
-                                                                    ),
+                                                                  // if (i[
+                                                                  //     'newJob'])
+                                                                  //   Container(
+                                                                  //     alignment:
+                                                                  //         Alignment
+                                                                  //             .topCenter,
+                                                                  //     margin: EdgeInsets.only(
+                                                                  //         left:
+                                                                  //             5),
+                                                                  //     padding: EdgeInsets.symmetric(
+                                                                  //         horizontal:
+                                                                  //             8,
+                                                                  //         vertical:
+                                                                  //             4),
+                                                                  //     // margin: EdgeInsets.only(
+                                                                  //     //     right:
+                                                                  //     //         15),
+                                                                  //     decoration:
+                                                                  //         BoxDecoration(
+                                                                  //       color: AppColors
+                                                                  //           .primary,
+                                                                  //       borderRadius:
+                                                                  //           BorderRadius.circular(5),
+                                                                  //     ),
+                                                                  //     child:
+                                                                  //         Text(
+                                                                  //       "job_card_new_job"
+                                                                  //           .tr,
+                                                                  //       style:
+                                                                  //           bodyTextMiniSmall(
+                                                                  //         null,
+                                                                  //         AppColors
+                                                                  //             .fontWhite,
+                                                                  //         null,
+                                                                  //       ),
+                                                                  //     ),
+                                                                  //   ),
                                                                 ],
                                                               ),
-
-                                                              Column(
+                                                              Row(
                                                                 children: [
-                                                                  //
-                                                                  //
-                                                                  //Working location more job
-                                                                  Row(
-                                                                    children: [
-                                                                      Text(
-                                                                        "\uf5a0",
-                                                                        style: fontAwesomeLight(
-                                                                            null,
-                                                                            12,
-                                                                            AppColors.iconPrimary,
-                                                                            null),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            5,
-                                                                      ),
-                                                                      Expanded(
-                                                                        child:
+                                                                  Expanded(
+                                                                    child:
+                                                                        Column(
+                                                                      children: [
+                                                                        //
+                                                                        //
+                                                                        //Working location more job
+                                                                        Row(
+                                                                          children: [
                                                                             Text(
-                                                                          "${i["workingLocations"]}",
-                                                                          style: bodyTextSmall(
-                                                                              null,
-                                                                              null,
-                                                                              null),
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          maxLines:
-                                                                              1,
+                                                                              "\uf5a0",
+                                                                              style: fontAwesomeLight(null, 12, AppColors.iconPrimary, null),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: 5,
+                                                                            ),
+                                                                            Expanded(
+                                                                              child: Text(
+                                                                                "${i["workingLocations"]}",
+                                                                                style: bodyTextSmall(null, null, null),
+                                                                                overflow: TextOverflow.ellipsis,
+                                                                                maxLines: 1,
+                                                                              ),
+                                                                            ),
+                                                                          ],
                                                                         ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
 
-                                                                  SizedBox(
-                                                                      height:
-                                                                          5),
+                                                                        SizedBox(
+                                                                            height:
+                                                                                5),
 
-                                                                  //
-                                                                  //
-                                                                  //Start date - end date more job
-                                                                  Row(
-                                                                    children: [
-                                                                      Text(
-                                                                        "\uf073",
-                                                                        style: fontAwesomeLight(
-                                                                            null,
-                                                                            12,
-                                                                            AppColors.iconPrimary,
-                                                                            null),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            5,
-                                                                      ),
-                                                                      Text(
-                                                                        "${_allOnlineJobOpenDate}" +
-                                                                            " - " +
-                                                                            "${_allOnlineJobCloseDate} ",
-                                                                        style: bodyTextSmall(
-                                                                            null,
-                                                                            null,
-                                                                            null),
-                                                                      ),
-                                                                    ],
+                                                                        //
+                                                                        //
+                                                                        //Start date - end date more job
+                                                                        Row(
+                                                                          children: [
+                                                                            Text(
+                                                                              "\uf073",
+                                                                              style: fontAwesomeLight(null, 12, AppColors.iconPrimary, null),
+                                                                            ),
+                                                                            SizedBox(width: 5),
+                                                                            Text(
+                                                                              "${_allOnlineJobOpenDate}" + " - " + "${_allOnlineJobCloseDate} ",
+                                                                              style: bodyTextSmall(null, null, null),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                 ],
                                                               )
@@ -1342,8 +1326,8 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
 
                                   //
                                   //
-                                  //Section body content
-                                  //Box company
+                                  //
+                                  //Box card company
                                   //Profile Image, Company, Industry, Job Opening
                                   Container(
                                     // margin:
@@ -1432,6 +1416,9 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
                                                             .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
                                                     children: [
                                                       //
                                                       //
@@ -1472,38 +1459,38 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
                                                       //
                                                       //
                                                       //Job Opening
-                                                      Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            "${_allOnlineJob.length} ",
-                                                            style:
-                                                                bodyTextSmall(
-                                                                    null,
-                                                                    null,
-                                                                    null),
-                                                          ),
-                                                          Text(
-                                                            "job_opening".tr,
-                                                            style:
-                                                                bodyTextSmall(
-                                                                    null,
-                                                                    null,
-                                                                    null),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                      if (_allOnlineJob.length >
+                                                          0)
+                                                        Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              "${_allOnlineJob.length} ",
+                                                              style: bodyTextSmall(
+                                                                  null,
+                                                                  AppColors
+                                                                      .fontPrimary,
+                                                                  null),
+                                                            ),
+                                                            Text(
+                                                              "job_opening".tr,
+                                                              style:
+                                                                  bodyTextSmall(
+                                                                      null,
+                                                                      null,
+                                                                      null),
+                                                            ),
+                                                          ],
+                                                        ),
                                                     ],
                                                   ),
                                                 ),
                                               ),
+
                                               SizedBox(width: 10),
 
-                                              //
-                                              //
-                                              //Icon chevronRight
                                               //Bottom follower / following
                                               // GestureDetector(
                                               //   onTap: () {
@@ -1644,6 +1631,12 @@ class _JobSearchDetailState extends State<JobSearchDetailRenew> {
                                               _isSaved = !_isSaved;
                                               _callBackJobSearchId = _id;
                                               _callBackIsSave = _isSaved;
+
+                                              print("id: " +
+                                                  _callBackJobSearchId
+                                                      .toString());
+                                              print("isSave: " +
+                                                  _callBackIsSave.toString());
                                             });
                                             saveAndUnSaveJob();
                                           },

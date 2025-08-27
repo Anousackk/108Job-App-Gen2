@@ -104,7 +104,7 @@ class LocalString extends Translations {
     {"key": "search", "en": "Search ", "la": "ຄົ້ນຫາ"},
     {"key": "all article", "en": "All article", "la": "ບົດຄວາມທັງໝົດ"},
     {"key": "all categories", "en": "All categories", "la": "ໝວດໝູ່ທັງໝົດ"},
-    {"key": "job available", "en": "Job Available", "la": "ວຽກທີ່ເປີດຮັບສະໝັກ"},
+
     {
       "key": "all job available",
       "en": "Job Available Total",
@@ -123,13 +123,10 @@ class LocalString extends Translations {
     {"key": "clear all", "en": "Clear all", "la": "ລ້າງທັງໝົດ"},
     {"key": "view more", "en": "View more", "la": "ເບິ່ງເພີ່ມຕື່ມ"},
     {"key": "photo", "en": "Photos", "la": "ຮູບພາບ"},
-    {"key": "photo gallery", "en": "Photo gallery", "la": "ຄັງຮູບພາບ"},
+
     {"key": "people", "en": "People", "la": "ບຸກຄະລາກອນ"},
     {"key": "address", "en": "Address", "la": "ທີ່ຢູ່"},
-    {"key": "about company", "en": "About Company", "la": "ກ່ຽວກັບບໍລິສັດ"},
 
-    {"key": "video", "en": "Video", "la": "ວິດີໂອ"},
-    {"key": "job_opening", "en": "Job opening", "la": "ວຽກທີ່ເປີດຮັບສະໝັກ"},
     {"key": "opening date", "en": "Opening Date", "la": "ມື້ເປີດຮັບສະໝັກ"},
     {"key": "closing date", "en": "Closing Date", "la": "ມື້ປິດຮັບສະໝັກ"},
     {"key": "contact", "en": "Contact", "la": "ຕິດຕໍ່"},
@@ -272,7 +269,7 @@ class LocalString extends Translations {
     {"key": "expired on", "en": "Expired on", "la": "ໝົດກຳນົດພາຍໃນ"},
     {"key": "share on", "en": "Share on", "la": "ແບ່ງປັນ"},
     {"key": "total view", "en": "Total views", "la": "ຍອດເຂົ້າຊົມ"},
-    {"key": "job summary", "en": "Job summary", "la": "ລາຍລະອຽດວຽກໂດຍຫຍໍ້"},
+
     {"key": "minute", "en": "minute", "la": "ນາທີ"},
     {"key": "minute ago", "en": "minute ago", "la": "ນາທີຜ່ານມາ"},
     {"key": "minutes ago", "en": "minutes ago", "la": "ນາທີຜ່ານມາ"},
@@ -447,11 +444,6 @@ class LocalString extends Translations {
       "key": "enter8password",
       "en": "Password should be atleast 8 characters",
       "la": "ລະຫັດຕ້ອງບໍ່ນ້ອຍກວ່າ 8 ຕົວ",
-    },
-    {
-      "key": "seemore",
-      "en": "See more",
-      "la": "ເບິ່ງເພີ່ມ",
     },
     {
       "key": "no have data",
@@ -1196,11 +1188,7 @@ class LocalString extends Translations {
     //
     //
     //Seeker JobSearch - Job Card
-    {
-      "key": "job_card_new_job",
-      "en": "New",
-      "la": "ວຽກໃຫມ່",
-    },
+    {"key": "job_card_new_job", "en": "New", "la": "ວຽກໃຫມ່"},
 
     //
     //
@@ -1211,18 +1199,16 @@ class LocalString extends Translations {
     {
       "key": "view_job_detail",
       "en": "View Job Detail",
-      "la": "ເບິ່ງລາຍລະອຽດວຽກ",
+      "la": "ເບິ່ງລາຍລະອຽດວຽກ"
     },
-    {
-      "key": "job_detail",
-      "en": "Job Detail",
-      "la": "ລາຍລະອຽດວຽກ",
-    },
-    //More from this company
+    {"key": "job_detail", "en": "Job Detail", "la": "ລາຍລະອຽດວຽກ"},
+    {"key": "job_summary", "en": "Job Summary", "la": "ລາຍລະອຽດວຽກໂດຍຫຍໍ້"},
+    {"key": "job_available", "en": "Job Available", "la": "ວຽກທີ່ເປີດຮັບສະໝັກ"},
+    {"key": "job_opening", "en": "Job opening", "la": "ວຽກທີ່ເປີດຮັບສະໝັກ"},
     {
       "key": "more_from_company",
       "en": "More from this company",
-      "la": "ວຽກທັງໝົດຂອງບໍລິສັດນີ້",
+      "la": "ວຽກທັງໝົດຂອງບໍລິສັດນີ້"
     },
 
     //
@@ -1230,17 +1216,24 @@ class LocalString extends Translations {
     //
     //
     //
-    //Home
-    {
-      "key": "open_whatsapp",
-      "en": "Open WhatsApp",
-      "la": "ເປີດ WhatsApp",
-    },
+    //Seeker Home
+    {"key": "see_more", "en": "See more", "la": "ເບິ່ງເພີ່ມ"},
+    {"key": "open_whatsapp", "en": "Open WhatsApp", "la": "ເປີດ WhatsApp"},
     {
       "key": "contact_us_whatsapp",
       "en": "Contact us via WhatsApp",
-      "la": "ຕິດຕໍ່ພະນັກງານເພື່ອສອບຖາມ ຫຼື ແກ້ໄຂບັນຫາ",
+      "la": "ຕິດຕໍ່ພະນັກງານເພື່ອສອບຖາມ ຫຼື ແກ້ໄຂບັນຫາ"
     },
+
+    //
+    //
+    //
+    //
+    //
+    //Seeker Company Detail
+    {"key": "photo_gallery", "en": "Photo gallery", "la": "ຄັງຮູບພາບ"},
+    {"key": "video", "en": "Video", "la": "ວິດີໂອ"},
+    {"key": "about_company", "en": "About Company", "la": "ກ່ຽວກັບບໍລິສັດ"},
 
     //
     //

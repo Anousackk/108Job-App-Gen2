@@ -8,6 +8,7 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/screen/ScreenAfterSignIn/Company/companyDetail_renew.dart';
 import 'package:app/screen/screenAfterSignIn/company/companyDetail.dart';
 import 'package:app/widget/input.dart';
 import 'package:flutter/material.dart';
@@ -404,6 +405,7 @@ class _CompanyRenewState extends State<CompanyRenew> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.center,
                                                 children: [
+                                                  //Filter title
                                                   Padding(
                                                     padding: const EdgeInsets
                                                         .symmetric(
@@ -417,6 +419,8 @@ class _CompanyRenewState extends State<CompanyRenew> {
                                                     ),
                                                   ),
                                                   SizedBox(height: 10),
+
+                                                  // Type AllCompanies
                                                   ListTile(
                                                     leading: _searchType ==
                                                             "AllCompanies"
@@ -437,6 +441,8 @@ class _CompanyRenewState extends State<CompanyRenew> {
                                                           "AllCompanies");
                                                     },
                                                   ),
+
+                                                  // Type Hiring
                                                   ListTile(
                                                     leading: _searchType ==
                                                             "Hiring"
@@ -457,6 +463,8 @@ class _CompanyRenewState extends State<CompanyRenew> {
                                                           "Hiring");
                                                     },
                                                   ),
+
+                                                  // Type Following
                                                   ListTile(
                                                     leading: _searchType ==
                                                             "Following"
@@ -476,6 +484,8 @@ class _CompanyRenewState extends State<CompanyRenew> {
                                                           "Following");
                                                     },
                                                   ),
+
+                                                  // Type SubmittedCV
                                                   ListTile(
                                                     leading: _searchType ==
                                                             "SubmittedCV"
@@ -521,13 +531,6 @@ class _CompanyRenewState extends State<CompanyRenew> {
                                       size: 15,
                                       color: AppColors.iconPrimary,
                                     ),
-                                    // child: Text(
-                                    //   "Filter",
-                                    //   style: bodyTextNormal(
-                                    //       null,
-                                    //       AppColors.fontPrimary,
-                                    //       FontWeight.bold),
-                                    // ),
                                   ),
                                 ),
                               )
@@ -568,6 +571,9 @@ class _CompanyRenewState extends State<CompanyRenew> {
                               _isFollow = i['follow'];
                               return Column(
                                 children: [
+                                  //
+                                  //
+                                  //onTap company box card
                                   GestureDetector(
                                     onTap: () {
                                       FocusScope.of(context)
@@ -575,7 +581,8 @@ class _CompanyRenewState extends State<CompanyRenew> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => CompanyDetail(
+                                          builder: (context) =>
+                                              CompanyDetailRenew(
                                             companyId: i['_id'],
                                           ),
                                         ),
@@ -590,6 +597,10 @@ class _CompanyRenewState extends State<CompanyRenew> {
                                         }
                                       });
                                     },
+
+                                    //
+                                    //
+                                    //Company box card
                                     child: Container(
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 20),
@@ -814,7 +825,7 @@ class _CompanyRenewState extends State<CompanyRenew> {
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
-                                                                            8),
+                                                                            100),
                                                                 child: _isFollow
                                                                     ? Container(
                                                                         padding: EdgeInsets.symmetric(

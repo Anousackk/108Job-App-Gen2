@@ -480,7 +480,7 @@ class _MyProfileState extends State<MyProfile>
                                                 size: IconSize.sIcon,
                                                 color: AppColors.iconPrimary,
                                               ),
-                                              "photo gallery".tr,
+                                              "photo_gallery".tr,
                                             );
                                           });
                                     },

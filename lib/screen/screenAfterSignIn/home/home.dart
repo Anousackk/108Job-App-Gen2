@@ -1469,7 +1469,7 @@ class _MainHomeState extends State<MainHome> {
                                             );
                                           },
                                           child: Text(
-                                            "seemore".tr,
+                                            "see_more".tr,
                                             style: bodyTextMinNormal(null,
                                                 AppColors.fontPrimary, null),
                                           ),
@@ -1553,7 +1553,7 @@ class _MainHomeState extends State<MainHome> {
                                                             null),
                                                       ),
                                                       Text(
-                                                        "job available".tr,
+                                                        "job_opening".tr,
                                                         style:
                                                             bodyTextMinNormal(
                                                                 null,
@@ -1797,7 +1797,7 @@ class _MainHomeState extends State<MainHome> {
                                             );
                                           },
                                           child: Text(
-                                            "seemore".tr,
+                                            "see_more".tr,
                                             style: bodyTextMinNormal(null,
                                                 AppColors.fontPrimary, null),
                                           ),
@@ -1877,7 +1877,7 @@ class _MainHomeState extends State<MainHome> {
                                                               null),
                                                         ),
                                                         Text(
-                                                          "job available".tr,
+                                                          "job_opening".tr,
                                                           style:
                                                               bodyTextMinNormal(
                                                                   null,
@@ -2278,7 +2278,7 @@ class _MainHomeState extends State<MainHome> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                "seemore".tr,
+                                                "see_more".tr,
                                                 style: bodyTextMinNormal(
                                                     null,
                                                     AppColors.fontPrimary,

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_const_declarations, unused_local_variable, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_final_fields, unused_field, avoid_print, unnecessary_overrides, file_names, unused_element, prefer_is_empty
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_const_declarations, unused_local_variable, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_final_fields, unused_field, avoid_print, unnecessary_overrides, file_names, unused_element, prefer_is_empty, prefer_interpolation_to_compose_strings
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -868,7 +868,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                 .buttonGreyWhite),
                                               ),
                                               child: Text(
-                                                "photo gallery".tr,
+                                                "photo_gallery".tr,
                                                 style: bodyTextNormal(
                                                     null,
                                                     _typeTapCompanyDetail ==

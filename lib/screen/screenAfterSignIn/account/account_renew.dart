@@ -11,6 +11,7 @@ import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/Events/registerEvent.dart';
+import 'package:app/screen/ScreenAfterSignIn/Account/Events/webview_wiifair.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/JobAlert/jobAlert.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/LoginInfo/loginInformation.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/myProfile.dart';
@@ -834,6 +835,28 @@ class _AccountRenewState extends State<AccountRenew> {
                                       ),
                               )
                             ],
+                          ),
+
+                          //
+                          //
+                          //Webview Wii Fair
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WebViewWiiFair(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: AppColors.teal,
+                              ),
+                              child: Text("Wii Fair"),
+                            ),
                           ),
 
                           //

@@ -677,7 +677,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                                   .buttonGreyWhite),
                                                     ),
                                                     child: Text(
-                                                      "photo gallery".tr,
+                                                      "photo_gallery".tr,
                                                       style: bodyTextNormal(
                                                           null,
                                                           _tabController
