@@ -153,11 +153,11 @@ class _PositionCompanyState extends State<PositionCompany> {
                           var i = _companayPosition[index];
                           _title = i["title"];
                           _description = i["description"];
+                          _staffQTY = int.parse(i["staffQTY"].toString());
 
                           if (i["salary"] != null && i["salary"] != "") {
                             int IntSalary = int.parse(i["salary"].toString());
                             _salary = formatNumSalary(IntSalary);
-                            _staffQTY = int.parse(i["staffQTY"].toString());
                           }
 
                           return Padding(
@@ -171,7 +171,9 @@ class _PositionCompanyState extends State<PositionCompany> {
                                       id: i["_id"],
                                       logo: widget.logo,
                                       title: i["title"],
-                                      salary: i["salary"].toString(),
+                                      salary: i["salary"] == null
+                                          ? ""
+                                          : i["salary"].toString(),
                                       description: i["description"],
                                       isNegotiable: i["isNegotiable"],
                                       isApplied: widget.isApplied,
@@ -290,8 +292,9 @@ class _PositionCompanyState extends State<PositionCompany> {
                                                   id: i["_id"],
                                                   logo: widget.logo,
                                                   title: i["title"],
-                                                  salary:
-                                                      i["salary"].toString(),
+                                                  salary: i["salary"] == null
+                                                      ? ""
+                                                      : i["salary"].toString(),
                                                   description: i["description"],
                                                   isNegotiable:
                                                       i["isNegotiable"],

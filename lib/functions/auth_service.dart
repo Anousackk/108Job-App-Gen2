@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, body_might_complete_normally_nullable, prefer_const_constructors, avoid_print, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_adjacent_string_concatenation, unnecessary_string_interpolations, await_only_futures, use_build_context_synchronously
+// ignore_for_file: unused_local_variable, body_might_complete_normally_nullable, prefer_const_constructors, avoid_print, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_adjacent_string_concatenation, unnecessary_string_interpolations, await_only_futures, use_build_context_synchronously, no_leading_underscores_for_local_identifiers
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -124,9 +124,10 @@ class AuthService {
       //   'https://www.googleapis.com/auth/userinfo.profile	',
       // ];
 
-      final GoogleSignInAccount? gUser = await GoogleSignIn(
-        scopes: ['email'],
-      ).signIn();
+      final googleSignIn = GoogleSignIn(scopes: ['email']);
+      await googleSignIn.signOut(); // ensure fresh sign-in
+
+      final GoogleSignInAccount? gUser = await googleSignIn.signIn();
 
       final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -473,11 +474,10 @@ class AuthService {
 
       try {
         //Google Sign in
-        final GoogleSignInAccount? gUser = await GoogleSignIn(
-          scopes: [
-            'email',
-          ],
-        ).signIn();
+        final googleSignIn = GoogleSignIn(scopes: ['email']);
+        await googleSignIn.signOut(); // ensure fresh sign-in
+
+        final GoogleSignInAccount? gUser = await googleSignIn.signIn();
 
         print(gUser);
         print(gUser?.id);
@@ -485,6 +485,7 @@ class AuthService {
         print(gUser?.email);
 
         if (gUser != null) {
+          print("gUser isn't null");
           //obtaiin auth details from request
           final GoogleSignInAuthentication gAuth = await gUser.authentication;
 
@@ -550,9 +551,11 @@ class AuthService {
             );
           }
         } else {
+          print("gUser is null");
           Navigator.pop(context);
         }
       } catch (error) {
+        print("catch error");
         Navigator.pop(context);
       }
     }

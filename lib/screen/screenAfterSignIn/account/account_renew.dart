@@ -840,24 +840,24 @@ class _AccountRenewState extends State<AccountRenew> {
                           //
                           //
                           //Webview Wii Fair
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => WebViewWiiFair(),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: AppColors.teal,
-                              ),
-                              child: Text("Wii Fair"),
-                            ),
-                          ),
+                          // GestureDetector(
+                          //   onTap: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //         builder: (context) => WebViewWiiFair(),
+                          //       ),
+                          //     );
+                          //   },
+                          //   child: Container(
+                          //     width: double.infinity,
+                          //     padding: EdgeInsets.all(20),
+                          //     decoration: BoxDecoration(
+                          //       color: AppColors.teal,
+                          //     ),
+                          //     child: Text("Wii Fair"),
+                          //   ),
+                          // ),
 
                           //
                           //

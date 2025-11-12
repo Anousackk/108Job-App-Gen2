@@ -72,12 +72,11 @@ class _NotificationsState extends State<Notifications> {
   fetchApiCheckTotalNotiUnRead() async {
     var e = await postData(getNotificationsSeeker,
         {"page": page, "perPage": perPage, "type": "Notification_Page"});
-    setState(() {
-      totalNotiUnRead = e['unreadTotals'].toString();
-    });
-    print(totalNotiUnRead);
+
     if (mounted) {
-      setState(() {});
+      setState(() {
+        totalNotiUnRead = e['unreadTotals'].toString();
+      });
     }
   }
 
@@ -91,9 +90,12 @@ class _NotificationsState extends State<Notifications> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        setState(() {
-          _isLoadingMoreData = true;
-        });
+        if (mounted) {
+          setState(() {
+            _isLoadingMoreData = true;
+          });
+        }
+
         fetchNotifications();
       }
     });

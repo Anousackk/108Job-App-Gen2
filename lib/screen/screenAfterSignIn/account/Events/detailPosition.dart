@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, non_constant_identifier_names, unused_field, prefer_final_fields, prefer_const_literals_to_create_immutables, avoid_print, use_build_context_synchronously, curly_braces_in_flow_control_structures, prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, non_constant_identifier_names, unused_field, prefer_final_fields, prefer_const_literals_to_create_immutables, avoid_print, use_build_context_synchronously, curly_braces_in_flow_control_structures, prefer_interpolation_to_compose_strings, unnecessary_null_comparison
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -46,8 +46,10 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
 
   fetchValue() async {
     setState(() {
-      int IntSalary = int.parse("${widget.salary}");
-      _salary = formatNumSalary(IntSalary);
+      if (widget.salary != "" && widget.salary != null) {
+        int IntSalary = int.parse("${widget.salary}");
+        _salary = formatNumSalary(IntSalary);
+      }
       _isAppliedEvenJobCompany = widget.isAppliedEvenJobCompany;
 
       try {

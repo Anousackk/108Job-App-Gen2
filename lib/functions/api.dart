@@ -193,6 +193,8 @@ const getCompanyAvailableEventSeekerApi =
     globalURL + "/get-event-company-job-available-app";
 const getCompanyIdAvailableEventSeekerApi =
     globalURL + "/get-event-company-job-list-app";
+const getEventBannerApi =
+    globalURL + "/get-wii-fair-banners?supportedDevice=app";
 //get-event-company-job-list-app
 
 //Get reuse type

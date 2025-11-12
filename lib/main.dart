@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace, body_might_complete_normally_nullable, prefer_final_fields, prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace, body_might_complete_normally_nullable, prefer_final_fields, prefer_interpolation_to_compose_strings, unnecessary_import
 import 'dart:io';
 import 'package:app/alertUpgraderMessages.dart';
 import 'package:app/firebase_options.dart';
@@ -433,41 +433,26 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                       ? UpgradeDialogStyle.cupertino
                       : UpgradeDialogStyle.material,
                   upgrader: Upgrader(
-                    // debugLogging: true,
                     // debugDisplayAlways: true,
-                    // debugDisplayOnce: true,
+                    // debugLogging: true,
                     durationUntilAlertAgain: Duration.zero,
-                    // messages: UpgraderMessages(),
                     messages: MyUpgraderMessages(),
-                    upgraderDevice: UpgraderDevice(),
-
-                    storeController: UpgraderStoreController(
-                      onAndroid: () => UpgraderPlayStore(),
-                      oniOS: () => UpgraderAppStore(),
-                    ),
-                    // storeController: MyStoreController(),
                   ),
+                  // upgrader: Upgrader(
+                  // debugDisplayAlways: true,
+                  // debugLogging: true,
+                  // durationUntilAlertAgain: Duration.zero,
+                  // messages: UpgraderMessages(),
+                  // messages: MyUpgraderMessages(),
+                  // upgraderDevice: UpgraderDevice(),
+                  // storeController: UpgraderStoreController(
+                  //   onAndroid: () => UpgraderPlayStore(),
+                  //   oniOS: () => UpgraderAppStore(),
+                  // ),
+                  // storeController: MyStoreController(),
+                  // ),
                   child: _sharePreEmpToken == null ? Login() : Home(),
                 ),
-                // body: UpgradeAlert(
-                //   showIgnore: false,
-                //   showLater: false,
-                //   barrierDismissible: false,
-                //   // showReleaseNotes: false,
-                //   dialogStyle: Platform.isIOS
-                //       ? UpgradeDialogStyle.cupertino
-                //       : UpgradeDialogStyle.material,
-                //   upgrader: Upgrader(
-                //     // debugLogging: true,
-                //     debugDisplayAlways: true,
-                //     durationUntilAlertAgain: Duration(seconds: 1),
-
-                //     messages: UpgraderMessages(),
-                //     // messages: MySpanishMessages(),
-                //     // upgraderDevice: UpgraderDevice(),
-                //   ),
-                //   child: Login(),
-                // ),
               ),
               localizationsDelegates: [
                 // add your localizations delegates here

@@ -48,6 +48,7 @@ class _RegisterEventState extends State<RegisterEvent> {
   String _companyName = "";
   String _logo = "";
   String _memberLevel = "";
+  String _eventBannerImage = "";
 
   int _companyJobTotals = 0;
   int _candidateTotals = 0;
@@ -125,12 +126,21 @@ class _RegisterEventState extends State<RegisterEvent> {
     setState(() {});
   }
 
+  getEventInfo() async {
+    var res = await fetchData(getEventBannerApi);
+    _eventBannerImage = res["info"][0]["image"];
+    print("res event banner image: " + _eventBannerImage.toString());
+
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
 
     getCompanyAvailable();
     getStatisticEvent();
+    getEventInfo();
   }
 
   @override
@@ -375,14 +385,17 @@ class _RegisterEventState extends State<RegisterEvent> {
                                     Container(
                                       color: AppColors.teal,
                                       padding: EdgeInsets.only(
-                                          left: 20,
-                                          right: 20,
-                                          top: 20,
-                                          bottom: 90),
+                                        left: 20,
+                                        right: 20,
+                                        top: 20,
+                                        bottom: 90,
+                                      ),
                                       child: AspectRatio(
-                                        aspectRatio: 16 / 9,
+                                        // aspectRatio: 16 / 9,
+                                        aspectRatio: 16 / 6,
                                         child: Container(
                                           decoration: BoxDecoration(
+                                            color: AppColors.dark100,
                                             borderRadius:
                                                 BorderRadius.circular(20),
                                             boxShadow: [
@@ -399,8 +412,20 @@ class _RegisterEventState extends State<RegisterEvent> {
                                           child: ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(20),
-                                            child: Image.asset(
-                                              'assets/image/cover_wiifair_10.jpg',
+                                            // child: Image.asset(
+                                            //   'assets/image/cover_wiifair_10.jpg',
+                                            // ),
+
+                                            child: Image.network(
+                                              "${_eventBannerImage}",
+                                              fit: BoxFit.contain,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Image.asset(
+                                                  'assets/image/cover_wiifair_10.jpg',
+                                                  fit: BoxFit.contain,
+                                                ); // Display an error message
+                                              },
                                             ),
                                           ),
                                         ),
@@ -745,7 +770,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                                     : null,
                                                                 FontWeight
                                                                     .bold),
-                                                            maxLines: 2,
+                                                            maxLines: 1,
                                                             overflow:
                                                                 TextOverflow
                                                                     .ellipsis,

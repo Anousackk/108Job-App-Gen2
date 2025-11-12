@@ -15,7 +15,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 3.5.7+1
+version: 3.5.9+1
 
 environment:
   sdk: ">=2.12.0 <3.32.6"
@@ -70,7 +70,7 @@ dependencies:
   flutter_local_notifications: ^17.0.0
   sms_autofill:
   flutter_smart_dialog:
-  upgrader:
+  # upgrader:
   sizer: ^3.0.5
   form_field_validator:
   get:
@@ -107,6 +107,7 @@ dependencies:
   flutter_inappwebview: ^6.1.5
   vsc_quill_delta_to_html: ^1.0.5
   html_editor_enhanced: ^2.7.1
+  upgrader: ^12.3.0
 
 
   # money_formatter: ^0.0.6

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_is_empty, avoid_print, unnecessary_null_in_if_null_operators
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_is_empty, avoid_print, unnecessary_null_in_if_null_operators, depend_on_referenced_packages, prefer_interpolation_to_compose_strings
 
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
@@ -73,12 +73,11 @@ class _MessagesState extends State<Messages> {
   fetchApiCheckTotalMessageUnRead() async {
     var e = await postData(getNotificationsSeeker,
         {"page": page, "perPage": perPage, "type": "Messages_Page"});
-    setState(() {
-      totalMessageUnRead = e['unreadTotals'].toString();
-    });
-    print(totalMessageUnRead);
+
     if (mounted) {
-      setState(() {});
+      setState(() {
+        totalMessageUnRead = e['unreadTotals'].toString();
+      });
     }
   }
 
@@ -97,9 +96,11 @@ class _MessagesState extends State<Messages> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        setState(() {
-          _isLoadingMoreData = true;
-        });
+        if (mounted) {
+          setState(() {
+            _isLoadingMoreData = true;
+          });
+        }
         fetchMessages();
       }
     });

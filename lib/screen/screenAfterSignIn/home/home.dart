@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_final_fields, unused_field, prefer_const_literals_to_create_immutables, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, unused_element, prefer_is_empty, sized_box_for_whitespace, unnecessary_import, unnecessary_null_in_if_null_operators, avoid_init_to_null, avoid_unnecessary_containers, unnecessary_string_interpolations, prefer_typing_uninitialized_variables, await_only_futures
+// ignore_for_file: prefer_const_constructors, prefer_final_fields, unused_field, prefer_const_literals_to_create_immutables, unused_local_variable, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, unused_element, prefer_is_empty, sized_box_for_whitespace, unnecessary_import, unnecessary_null_in_if_null_operators, avoid_init_to_null, avoid_unnecessary_containers, unnecessary_string_interpolations, prefer_typing_uninitialized_variables, await_only_futures, prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
 import 'dart:async';
 import 'dart:io';
@@ -657,6 +657,7 @@ class _MainHomeState extends State<MainHome> {
     }
     _listPopupBanner = res['info'] ?? [];
     print("List popup banner " + _listPopupBanner.toString());
+    print(_listPopupBanner);
     if (_listPopupBanner.length > 0) {
       _imagePopupBanner = _listPopupBanner[0]['image'];
       _urlPopupBanner = _listPopupBanner[0]['url'].toString().trim();
@@ -1271,7 +1272,8 @@ class _MainHomeState extends State<MainHome> {
                                             carouselController:
                                                 _controllerTopBanner,
                                             options: CarouselOptions(
-                                              aspectRatio: 16 / 9,
+                                              // aspectRatio: 16 / 9,
+                                              aspectRatio: 16 / 6,
                                               viewportFraction:
                                                   1.0, // Show one item at a time
                                               enlargeCenterPage: true,
@@ -1300,7 +1302,7 @@ class _MainHomeState extends State<MainHome> {
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            10),
+                                                            0),
                                                   ),
                                                   //
                                                   //
@@ -1319,37 +1321,40 @@ class _MainHomeState extends State<MainHome> {
                                                       );
                                                     },
                                                     child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      child: objTopBanner[
-                                                                      'image'] ==
-                                                                  "" ||
-                                                              objTopBanner[
-                                                                      'image'] ==
-                                                                  null
-                                                          ? Image.asset(
-                                                              'assets/image/no-image-available.png',
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                            )
-                                                          : Image.network(
-                                                              "https://storage.googleapis.com/108-bucket/${objTopBanner['image']}",
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                              errorBuilder:
-                                                                  (context,
-                                                                      error,
-                                                                      stackTrace) {
-                                                                return Image
-                                                                    .asset(
-                                                                  'assets/image/no-image-available.png',
-                                                                  fit: BoxFit
-                                                                      .contain,
-                                                                ); // Display an error message
-                                                              },
-                                                            ),
-                                                    ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(0),
+                                                        child:
+                                                            // objTopBanner[
+                                                            //                 'image'] ==
+                                                            //             "" ||
+                                                            //         objTopBanner[
+                                                            //                 'image'] ==
+                                                            //             null
+                                                            //     ?
+                                                            Image.asset(
+                                                          // 'assets/image/no-image-available.png',
+                                                          'assets/image/top01.png',
+
+                                                          fit: BoxFit.contain,
+                                                        )
+                                                        // : Image.network(
+                                                        //     "https://storage.googleapis.com/108-bucket/${objTopBanner['image']}",
+                                                        //     fit: BoxFit
+                                                        //         .contain,
+                                                        //     errorBuilder:
+                                                        //         (context,
+                                                        //             error,
+                                                        //             stackTrace) {
+                                                        //       return Image
+                                                        //           .asset(
+                                                        //         'assets/image/no-image-available.png',
+                                                        //         fit: BoxFit
+                                                        //             .contain,
+                                                        //       ); // Display an error message
+                                                        //     },
+                                                        //   ),
+                                                        ),
                                                   ),
                                                 );
                                               });
