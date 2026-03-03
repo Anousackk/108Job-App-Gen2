@@ -34,7 +34,7 @@ class _SetPasswordPlatformsState extends State<SetPasswordPlatforms> {
       barrierDismissible: false,
       builder: (context) {
         return NewVer2CustAlertDialogSuccessBtnConfirm(
-          title: "successful".tr,
+          title: "successfully".tr,
           contentText: "${res['message']}",
           textButton: "ok".tr,
           press: () {

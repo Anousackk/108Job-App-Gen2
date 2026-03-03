@@ -59,7 +59,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         context: context,
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "successful".tr,
+            title: "successfully".tr,
             contentText: "Password has changed".tr,
             textButton: "ok".tr,
             press: () {

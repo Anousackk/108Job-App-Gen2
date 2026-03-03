@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_is_empty, avoid_print
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_is_empty, avoid_print, prefer_interpolation_to_compose_strings
 
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
@@ -6,6 +6,7 @@ import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/ScreenAfterSignIn/Notifications/Widget/notiShimmerWidget.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
+import 'package:app/widget/appbar.dart';
 import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -106,6 +107,16 @@ class _NotificationsState extends State<Notifications> {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
+        appBar: AppBarDefault(
+          backgroundColor: AppColors.backgroundWhite,
+          elevation: 1.0,
+          textTitle: "notification".tr,
+          textColor: AppColors.fontDark,
+          leadingPress: () {
+            Navigator.of(context).pop(totalNotiUnRead);
+          },
+          leadingIcon: Icon(Icons.arrow_back),
+        ),
         body: SafeArea(
           child: Container(
             color: AppColors.backgroundWhite,
@@ -115,43 +126,37 @@ class _NotificationsState extends State<Notifications> {
               children: [
                 //
                 //
-                //
-                //
-                //
                 //AppBar Custom
-                Container(
-                  padding: EdgeInsets.all(20),
-                  color: AppColors.backgroundWhite,
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  child: Row(
-                    children: [
-                      // if (widget.statusFromScreen == "HomeScreen")
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop(totalNotiUnRead);
-                        },
-                        child: FaIcon(
-                          FontAwesomeIcons.arrowLeft,
-                          size: 20,
-                        ),
-                      ),
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "notification".tr,
-                            style: bodyTextMedium(null, null, FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // Container(
+                //   padding: EdgeInsets.all(20),
+                //   color: AppColors.backgroundWhite,
+                //   width: double.infinity,
+                //   alignment: Alignment.center,
+                //   child: Row(
+                //     children: [
+                //       // if (widget.statusFromScreen == "HomeScreen")
+                //       GestureDetector(
+                //         onTap: () {
+                //           Navigator.of(context).pop(totalNotiUnRead);
+                //         },
+                //         child: FaIcon(
+                //           FontAwesomeIcons.arrowLeft,
+                //           size: 20,
+                //         ),
+                //       ),
+                //       Expanded(
+                //         child: Align(
+                //           alignment: Alignment.center,
+                //           child: Text(
+                //             "notification".tr,
+                //             style: bodyTextMedium(null, null, FontWeight.bold),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
 
-                //
-                //
-                //
                 //
                 //
                 //isLoading Shimmer

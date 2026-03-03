@@ -1,10 +1,12 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_is_empty, avoid_print
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_local_variable, prefer_final_fields, unused_field, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_is_empty, avoid_print, prefer_interpolation_to_compose_strings
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/htmlWidget.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/widget/dialogDisplayImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -107,16 +109,46 @@ class _MessageDetailState extends State<MessageDetail> {
                       Expanded(
                         child: Container(
                           width: double.infinity,
-                          padding: EdgeInsets.all(20),
-                          child: HtmlWidget(
-                            '$_message',
-                            onTapUrl: (url) {
-                              launchInBrowser(Uri.parse(url));
-                              return true;
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: buildScrollableHtmlWidget(
+                            "${_message}",
+                            (imageMetadata) {
+                              // Pick the first source available
+                              final src = imageMetadata.sources.isNotEmpty
+                                  ? imageMetadata.sources.first.url
+                                  : null;
+
+                              if (src != null) {
+                                print("onTapImage src: " + src.toString());
+
+                                // Display dialog image
+                                showDialog(
+                                    context: context,
+                                    builder: (
+                                      context,
+                                    ) {
+                                      return DialogSingleImage(
+                                        imagePath: src.toString(),
+                                      );
+                                    });
+
+                                // For example, open in browser or show full-screen preview
+                                // launchInBrowser(Uri.parse(src));
+                              } else {
+                                print('print: No image URL found.');
+                              }
                             },
-                            // textStyle: bodyTextNormal(null,
-                            //     null, null),
                           ),
+                          // child: SingleChildScrollView(
+                          //   physics: ClampingScrollPhysics(),
+                          //   child: HtmlWidget(
+                          //     '$_message',
+                          //     onTapUrl: (url) {
+                          //       launchInBrowser(Uri.parse(url));
+                          //       return true;
+                          //     },
+                          //   ),
+                          // ),
                         ),
                       )
                     ],

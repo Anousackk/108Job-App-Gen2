@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, sized_box_for_whitespace, avoid_print, unused_local_variable, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, unused_element, prefer_is_empty, empty_statements, prefer_typing_uninitialized_variables, prefer_adjacent_string_concatenation
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, sized_box_for_whitespace, avoid_print, unused_local_variable, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, unused_element, prefer_is_empty, empty_statements, prefer_typing_uninitialized_variables, prefer_adjacent_string_concatenation, prefer_interpolation_to_compose_strings, use_build_context_synchronously, deprecated_member_use
 
 import 'dart:async';
 
@@ -9,6 +9,7 @@ import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/screenAfterSignIn/company/companyDetail.dart';
+import 'package:app/widget/appbar.dart';
 import 'package:app/widget/input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -138,14 +139,14 @@ class _CompanyState extends State<Company> {
     }
   }
 
-  fetchCompanyFeature() async {
-    var res = await postData(getCompaniesFeatureApi, {});
-    _companiesFeatured = res['employerList'];
+  // fetchCompanyFeature() async {
+  //   var res = await postData(getCompaniesFeatureApi, {});
+  //   _companiesFeatured = res['employerList'];
 
-    if (mounted) {
-      setState(() {});
-    }
-  }
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+  // }
 
   pressTapMyJobType(String val) async {
     setState(() {
@@ -169,7 +170,7 @@ class _CompanyState extends State<Company> {
         _searchType = widget.companyType;
 
         fetchCompanies(_searchType);
-        fetchCompanyFeature();
+        // fetchCompanyFeature();
       });
     }
   }
@@ -201,7 +202,7 @@ class _CompanyState extends State<Company> {
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
             strIcon: "\uf004",
-            title: "follow".tr + " " + "successful".tr,
+            title: "follow".tr + " " + "successfully".tr,
             contentText: "$companyName ",
             textButton: "ok".tr,
             press: () {
@@ -221,7 +222,7 @@ class _CompanyState extends State<Company> {
             strIcon: "\uf7a9",
             boxCircleColor: AppColors.warning200,
             iconColor: AppColors.warning600,
-            title: "unfollow".tr + " " + "successful".tr,
+            title: "unfollow".tr + " " + "successfully".tr,
             contentText: "$companyName",
             textButton: "ok".tr,
             buttonColor: AppColors.warning200,
@@ -239,7 +240,7 @@ class _CompanyState extends State<Company> {
   onGoBack(dynamic value) async {
     print("onGoBack");
     await fetchCompanies(_searchType);
-    await fetchCompanyFeature();
+    // await fetchCompanyFeature();
   }
 
   //error setState() called after dispose(). it can help!!!
@@ -264,7 +265,7 @@ class _CompanyState extends State<Company> {
         checkTypeMyJobFromHomePage();
       } else {
         fetchCompanies("AllCompanies");
-        fetchCompanyFeature();
+        // fetchCompanyFeature();
       }
 
       _scrollController.addListener(() {
@@ -301,10 +302,20 @@ class _CompanyState extends State<Company> {
           }
         },
         child: Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 0,
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
+          // appBar: AppBar(
+          //   toolbarHeight: 0,
+          //   systemOverlayStyle: SystemUiOverlayStyle.dark,
+          //   backgroundColor: AppColors.backgroundWhite,
+          // ),
+
+          appBar: AppBarDefault(
             backgroundColor: AppColors.backgroundWhite,
+            textTitle: 'company'.tr,
+            textColor: AppColors.fontDark,
+            leadingIcon: Icon(Icons.arrow_back, color: AppColors.fontDark),
+            leadingPress: () {
+              Navigator.pop(context);
+            },
           ),
           body: SafeArea(
             child: _isLoading
@@ -322,15 +333,8 @@ class _CompanyState extends State<Company> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          height: 20,
-                        ),
+                        SizedBox(height: 20),
 
-                        //
-                        //
-                        //
-                        //
-                        //
                         //
                         //
                         //
@@ -343,13 +347,10 @@ class _CompanyState extends State<Company> {
                             children: [
                               //
                               //
-                              //Search keywords
+                              //Search company name
                               Expanded(
-                                // flex: 8,
                                 child: SimpleTextFieldSingleValidate(
                                   codeController: _searchCompanyNameController,
-                                  // contenPadding: EdgeInsets.symmetric(
-                                  //     vertical: 2.5.w, horizontal: 3.5.w),
                                   contenPadding: EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 15),
                                   enabledBorder: enableOutlineBorder(
@@ -382,987 +383,424 @@ class _CompanyState extends State<Company> {
                                   inputColor: AppColors.inputWhite,
                                 ),
                               ),
+
+                              SizedBox(width: 10),
+
+                              //
+                              //
+                              //Filter type company
+                              GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(10),
+                                      ),
+                                    ),
+                                    isScrollControlled: true,
+                                    builder: (context) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                          bottom: MediaQuery.of(context)
+                                              .viewInsets
+                                              .bottom,
+                                        ),
+                                        child: Wrap(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 30, horizontal: 0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  //Filter title
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 20),
+                                                    child: Text(
+                                                      "ເລືອກປະເພດ",
+                                                      style: bodyTextMedium(
+                                                          null,
+                                                          null,
+                                                          FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 10),
+
+                                                  // Type AllCompanies
+                                                  ListTile(
+                                                    leading: _searchType ==
+                                                            "AllCompanies"
+                                                        ? Icon(
+                                                            Icons
+                                                                .check_circle_sharp,
+                                                            color: AppColors
+                                                                .iconPrimary,
+                                                          )
+                                                        : Icon(Icons
+                                                            .circle_outlined),
+                                                    title:
+                                                        Text("all company".tr),
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+
+                                                      pressTapMyJobType(
+                                                          "AllCompanies");
+                                                    },
+                                                  ),
+
+                                                  // Type Hiring
+                                                  ListTile(
+                                                    leading: _searchType ==
+                                                            "Hiring"
+                                                        ? Icon(
+                                                            Icons
+                                                                .check_circle_sharp,
+                                                            color: AppColors
+                                                                .iconPrimary,
+                                                          )
+                                                        : Icon(Icons
+                                                            .circle_outlined),
+                                                    title:
+                                                        Text("hiring now".tr),
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+
+                                                      pressTapMyJobType(
+                                                          "Hiring");
+                                                    },
+                                                  ),
+
+                                                  // Type Following
+                                                  ListTile(
+                                                    leading: _searchType ==
+                                                            "Following"
+                                                        ? Icon(
+                                                            Icons
+                                                                .check_circle_sharp,
+                                                            color: AppColors
+                                                                .iconPrimary,
+                                                          )
+                                                        : Icon(Icons
+                                                            .circle_outlined),
+                                                    title: Text("following".tr),
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+
+                                                      pressTapMyJobType(
+                                                          "Following");
+                                                    },
+                                                  ),
+
+                                                  // Type SubmittedCV
+                                                  ListTile(
+                                                    leading: _searchType ==
+                                                            "SubmittedCV"
+                                                        ? Icon(
+                                                            Icons
+                                                                .check_circle_sharp,
+                                                            color: AppColors
+                                                                .iconPrimary,
+                                                          )
+                                                        : Icon(Icons
+                                                            .circle_outlined),
+                                                    title: Text("applied".tr),
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+
+                                                      pressTapMyJobType(
+                                                          "SubmittedCV");
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  height: 45,
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.backgroundWhite,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color: AppColors.borderPrimary,
+                                        width: 1),
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: FaIcon(
+                                      FontAwesomeIcons.barsStaggered,
+                                      size: 15,
+                                      color: AppColors.iconPrimary,
+                                    ),
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ),
 
-                        SizedBox(
-                          height: 20,
-                        ),
+                        SizedBox(height: 20),
 
                         Expanded(
-                          child: CustomScrollView(
+                          child: ListView.builder(
                             controller: _scrollController,
-                            shrinkWrap: true,
                             physics: ClampingScrollPhysics(),
-                            slivers: <Widget>[
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //SliverToBoxAdapter Companies Feature
-                              if (_companiesFeatured.length > 0)
-                                SliverToBoxAdapter(
-                                  child: Column(
-                                    children: [
-                                      //
-                                      //
-                                      // Featured title
-                                      Padding(
+                            itemCount: _companies.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index == _companies.length) {
+                                return _hasMoreData
+                                    ? Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 20),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              "Sponsored companies",
-                                              style: bodyTextMedium(
-                                                  null, null, FontWeight.bold),
+                                            horizontal: 0, vertical: 10),
+                                        child: Container(
+                                            // child: Text("Loading"),
                                             ),
-                                          ],
+                                      )
+                                    : Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Center(
+                                          child: Text('no have data'.tr),
                                         ),
-                                      ),
-
-                                      //
-                                      //
-                                      //Featured list company card
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15),
-                                        height: 340,
-                                        width: double.infinity,
-                                        child: ListView.builder(
-                                          physics: ClampingScrollPhysics(),
-                                          shrinkWrap: true,
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: _companiesFeatured.length,
-                                          itemBuilder: (context, index) {
-                                            dynamic i =
-                                                _companiesFeatured[index];
-                                            _companyName = i['companyName'];
-                                            _industry = i['industry'];
-                                            _address = i['address'];
-                                            _logo = i['logo'];
-                                            _followerTotals =
-                                                i['followerTotals'].toString();
-                                            _isFollow = i['follow'];
-
-                                            //
-                                            //
-                                            //Featured card
-                                            return GestureDetector(
-                                              onTap: () {
-                                                FocusScope.of(context)
-                                                    .requestFocus(focusNode);
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        CompanyDetail(
-                                                      companyId: i['_id'],
-                                                    ),
-                                                  ),
-                                                ).then((value) {
-                                                  if (value == "Success") {
-                                                    setState(() {
-                                                      _statusShowLoading = true;
-                                                    });
-                                                    onGoBack(value);
-                                                  }
-                                                });
-                                              },
-                                              child: Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 5),
-                                                height: 340,
-                                                width: 280,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    //
-                                                    //
-                                                    //Featured card cover
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                        color: AppColors
-                                                            .greyShimmer,
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  8),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  8),
-                                                        ),
-                                                      ),
-                                                      child: AspectRatio(
-                                                        aspectRatio: 5 / 2,
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    8),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    8),
-                                                          ),
-                                                          child:
-                                                              i['cardCover'] ==
-                                                                      ""
-                                                                  ? Center(
-                                                                      child:
-                                                                          Container(
-                                                                        padding:
-                                                                            EdgeInsets.only(bottom: 30),
-                                                                        child:
-                                                                            FaIcon(
-                                                                          FontAwesomeIcons
-                                                                              .image,
-                                                                          size:
-                                                                              40,
-                                                                          color:
-                                                                              AppColors.secondary,
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  : Image
-                                                                      .network(
-                                                                      "https://storage.googleapis.com/108-bucket/${i['cardCover']}",
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                      errorBuilder: (context,
-                                                                          error,
-                                                                          stackTrace) {
-                                                                        return Center(
-                                                                          child:
-                                                                              Container(
-                                                                            padding:
-                                                                                EdgeInsets.only(bottom: 30),
-                                                                            child:
-                                                                                FaIcon(
-                                                                              FontAwesomeIcons.image,
-                                                                              size: 40,
-                                                                              color: AppColors.secondary,
-                                                                            ),
-                                                                          ),
-                                                                        ); // Display an error message
-                                                                      },
-                                                                    ),
-                                                        ),
-                                                      ),
-                                                    ),
-
-                                                    //
-                                                    //
-                                                    //
-                                                    //
-                                                    //Featured details
-                                                    Expanded(
-                                                      flex: 4,
-                                                      child: Stack(
-                                                        clipBehavior: Clip.none,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        children: [
-                                                          Container(
-                                                            width:
-                                                                double.infinity,
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    20),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: AppColors
-                                                                  .backgroundWhite,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .only(
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        8),
-                                                                bottomRight:
-                                                                    Radius
-                                                                        .circular(
-                                                                            8),
-                                                              ),
-                                                              // border: Border(
-                                                              //   left: BorderSide(
-                                                              //       color: AppColors
-                                                              //           .borderGreyOpacity),
-                                                              //   right: BorderSide(
-                                                              //       color: AppColors
-                                                              //           .borderGreyOpacity),
-                                                              //   bottom: BorderSide(
-                                                              //       color: AppColors
-                                                              //           .borderGreyOpacity),
-                                                              // ),
-                                                            ),
-                                                            child: Column(
-                                                              children: [
-                                                                SizedBox(
-                                                                  height: 40,
-                                                                ),
-                                                                Expanded(
-                                                                  child: Column(
-                                                                    children: [
-                                                                      //
-                                                                      //
-                                                                      //Company Name
-                                                                      Text(
-                                                                        "${_companyName}",
-                                                                        style: bodyTextMaxNormal(
-                                                                            null,
-                                                                            null,
-                                                                            FontWeight.bold),
-                                                                        textAlign:
-                                                                            TextAlign.center,
-                                                                        maxLines:
-                                                                            2,
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-
-                                                                Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    //
-                                                                    //
-                                                                    //Industry
-                                                                    Text(
-                                                                      "${_industry}",
-                                                                      style: bodyTextSmall(
-                                                                          null,
-                                                                          null,
-                                                                          null),
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 5,
-                                                                    ),
-
-                                                                    //
-                                                                    //
-                                                                    //Address
-                                                                    Text(
-                                                                      "${_address}",
-                                                                      style: bodyTextSmall(
-                                                                          null,
-                                                                          null,
-                                                                          null),
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 10,
-                                                                ),
-
-                                                                //
-                                                                //
-                                                                //Bottom follower / following
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    //
-                                                                    //
-                                                                    //Follower
-                                                                    Row(
-                                                                      children: [
-                                                                        Text(
-                                                                          "${_followerTotals} ",
-                                                                          style: bodyTextSmall(
-                                                                              null,
-                                                                              null,
-                                                                              null),
-                                                                        ),
-                                                                        Text(
-                                                                          "follower"
-                                                                              .tr,
-                                                                          style: bodyTextSmall(
-                                                                              null,
-                                                                              null,
-                                                                              null),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-
-                                                                    //
-                                                                    //
-                                                                    //Button following / follow
-                                                                    Material(
-                                                                      color: Colors
-                                                                          .transparent,
-                                                                      child:
-                                                                          InkWell(
-                                                                        onTap:
-                                                                            () {
-                                                                          FocusScope.of(context)
-                                                                              .requestFocus(focusNode);
-                                                                          setState(
-                                                                              () {
-                                                                            i['follow'] =
-                                                                                !i['follow'];
-                                                                          });
-                                                                          followCompany(
-                                                                            i['companyName'],
-                                                                            i['_id'],
-                                                                          );
-                                                                        },
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8),
-                                                                        child: _isFollow
-                                                                            ? Container(
-                                                                                padding: EdgeInsets.all(8),
-                                                                                decoration: BoxDecoration(
-                                                                                  color: AppColors.buttonPrimary,
-                                                                                  borderRadius: BorderRadius.circular(8),
-                                                                                  // border: Border.all(color: AppColors.borderGreyOpacity),
-                                                                                ),
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    FaIcon(
-                                                                                      FontAwesomeIcons.heart,
-                                                                                      size: 13,
-                                                                                      color: AppColors.iconLight,
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      width: 8,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      "following".tr,
-                                                                                      style: bodyTextSmall(null, AppColors.fontWhite, null),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              )
-                                                                            : Container(
-                                                                                padding: EdgeInsets.all(8),
-                                                                                decoration: BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(8),
-                                                                                  border: Border.all(
-                                                                                    color: AppColors.borderGreyOpacity,
-                                                                                  ),
-                                                                                ),
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    FaIcon(
-                                                                                      FontAwesomeIcons.heart,
-                                                                                      size: 13,
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      width: 8,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      "follow".tr,
-                                                                                      style: bodyTextSmall(null, null, null),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-
-                                                          //
-                                                          //
-                                                          //Featured company logo
-                                                          Positioned(
-                                                            top: -40,
-                                                            child: Container(
-                                                              height: 90,
-                                                              width: 90,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                border:
-                                                                    Border.all(
-                                                                  color: AppColors
-                                                                      .borderSecondary,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                                color: AppColors
-                                                                    .backgroundWhite,
-                                                              ),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(5),
-                                                                child:
-                                                                    ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                  child: _logo ==
-                                                                          ""
-                                                                      ? Image
-                                                                          .asset(
-                                                                          'assets/image/no-image-available.png',
-                                                                          fit: BoxFit
-                                                                              .contain,
-                                                                        )
-                                                                      : Image
-                                                                          .network(
-                                                                          "https://storage.googleapis.com/108-bucket/${_logo}",
-                                                                          fit: BoxFit
-                                                                              .contain,
-                                                                          errorBuilder: (context,
-                                                                              error,
-                                                                              stackTrace) {
-                                                                            return Image.asset(
-                                                                              'assets/image/no-image-available.png',
-                                                                              fit: BoxFit.contain,
-                                                                            ); // Display an error message
-                                                                          },
-                                                                        ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //List Tap All Companies, Hiring Now, Following, Applied
-                              SliverPersistentHeader(
-                                pinned: true,
-                                delegate: _SliverAppBarDelegate(
-                                  maxHeight: 65,
-                                  minHeight: 65,
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        color: AppColors.background,
-                                        // height: 30,
-                                        margin: EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                        ),
-                                        padding: EdgeInsets.only(bottom: 15),
-                                        width: double.infinity,
-                                        child: SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          physics: ClampingScrollPhysics(),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(context)
-                                                      .requestFocus(focusNode);
-                                                  pressTapMyJobType(
-                                                      "AllCompanies");
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 12),
-                                                  decoration: BoxDecoration(
-                                                    color: _searchType ==
-                                                            "AllCompanies"
-                                                        ? AppColors
-                                                            .buttonPrimary
-                                                        : AppColors.buttonGrey,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Text(
-                                                    "all company".tr,
-                                                    style: bodyTextNormal(
-                                                        null,
-                                                        _searchType ==
-                                                                "AllCompanies"
-                                                            ? AppColors
-                                                                .fontWhite
-                                                            : AppColors
-                                                                .fontGreyOpacity,
-                                                        _searchType ==
-                                                                "AllCompanies"
-                                                            ? FontWeight.bold
-                                                            : null),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  pressTapMyJobType("Hiring");
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 12),
-                                                  decoration: BoxDecoration(
-                                                    color: _searchType ==
-                                                            "Hiring"
-                                                        ? AppColors
-                                                            .buttonPrimary
-                                                        : AppColors.buttonGrey,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Text(
-                                                    "hiring now".tr,
-                                                    style: bodyTextNormal(
-                                                        null,
-                                                        _searchType == "Hiring"
-                                                            ? AppColors
-                                                                .fontWhite
-                                                            : AppColors
-                                                                .fontGreyOpacity,
-                                                        _searchType == "Hiring"
-                                                            ? FontWeight.bold
-                                                            : null),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  pressTapMyJobType(
-                                                      "Following");
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 12),
-                                                  decoration: BoxDecoration(
-                                                    color: _searchType ==
-                                                            "Following"
-                                                        ? AppColors
-                                                            .buttonPrimary
-                                                        : AppColors.buttonGrey,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Text(
-                                                    "following".tr,
-                                                    style: bodyTextNormal(
-                                                        null,
-                                                        _searchType ==
-                                                                "Following"
-                                                            ? AppColors
-                                                                .fontWhite
-                                                            : AppColors
-                                                                .fontGreyOpacity,
-                                                        _searchType ==
-                                                                "Following"
-                                                            ? FontWeight.bold
-                                                            : null),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  pressTapMyJobType(
-                                                      "SubmittedCV");
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 12),
-                                                  decoration: BoxDecoration(
-                                                    color: _searchType ==
-                                                            "SubmittedCV"
-                                                        ? AppColors
-                                                            .buttonPrimary
-                                                        : AppColors.buttonGrey,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Text(
-                                                    "applied".tr,
-                                                    style: bodyTextNormal(
-                                                        null,
-                                                        _searchType ==
-                                                                "SubmittedCV"
-                                                            ? AppColors
-                                                                .fontWhite
-                                                            : AppColors
-                                                                .fontGreyOpacity,
-                                                        _searchType ==
-                                                                "SubmittedCV"
-                                                            ? FontWeight.bold
-                                                            : null),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
+                                      );
+                              }
+                              dynamic i = _companies[index];
+                              _companyName = i['companyName'];
+                              _industry = i['industry'];
+                              _address = i['address'];
+                              _logo = i['logo'];
+                              _followerTotals = i['followerTotals'].toString();
+                              _isFollow = i['follow'];
+                              return Column(
+                                children: [
+                                  //
+                                  //
+                                  //onTap company box card
+                                  GestureDetector(
+                                    onTap: () {
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CompanyDetail(
+                                            companyId: i['_id'],
                                           ),
                                         ),
+                                      ).then((value) {
+                                        if (value[1] != "") {
+                                          setState(() {
+                                            dynamic company =
+                                                _companies.firstWhere((e) =>
+                                                    e['_id'] == value[1]);
+                                            company['follow'] = value[2];
+                                          });
+                                        }
+                                      });
+                                    },
+
+                                    //
+                                    //
+                                    //Company box card
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      height: 350,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //SliverList of company
-                              // _companies.length > 0
-                              //     ?
-                              SliverList(
-                                delegate: SliverChildBuilderDelegate(
-                                  (BuildContext context, int index) {
-                                    if (index == _companies.length) {
-                                      return _hasMoreData
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 0,
-                                                      vertical: 10),
-                                              child: Container(
-                                                  // child: Text("Loading"),
-                                                  ),
-                                            )
-                                          : Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Center(
-                                                  child:
-                                                      Text('no have data'.tr)),
-                                            );
-                                    }
-
-                                    dynamic i = _companies[index];
-                                    _companyName = i['companyName'];
-                                    _industry = i['industry'];
-                                    _address = i['address'];
-                                    _logo = i['logo'];
-                                    _followerTotals =
-                                        i['followerTotals'].toString();
-                                    _isFollow = i['follow'];
-
-                                    return Column(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            FocusScope.of(context)
-                                                .requestFocus(focusNode);
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CompanyDetail(
-                                                  companyId: i['_id'],
-                                                ),
-                                              ),
-                                            ).then((value) {
-                                              // if (value == "Success") {
-                                              //   setState(() {
-                                              //     _statusShowLoading =
-                                              //         true;
-                                              //   });
-                                              //   onGoBack(value);
-                                              // }
-                                              if (value[1] != "") {
-                                                setState(() {
-                                                  dynamic company = _companies
-                                                      .firstWhere((e) =>
-                                                          e['_id'] == value[1]);
-
-                                                  company['follow'] = value[2];
-                                                });
-                                              }
-                                            });
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.symmetric(
-                                                horizontal: 20),
-                                            padding: EdgeInsets.all(12),
+                                      child: Column(
+                                        children: [
+                                          //
+                                          //
+                                          //Company card cover
+                                          Container(
                                             decoration: BoxDecoration(
-                                              color: AppColors.backgroundWhite,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
+                                              color: AppColors
+                                                  .backgroundGreyOpacity
+                                                  .withOpacity(0.3),
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(8),
+                                                topRight: Radius.circular(8),
+                                              ),
                                             ),
-                                            child: Row(
-                                              children: [
-                                                //
-                                                //
-                                                //Content card company
-                                                Expanded(
-                                                  flex: 7,
-                                                  child: Row(
-                                                    children: [
-                                                      //
-                                                      //
-                                                      //Logo Company
-                                                      Container(
-                                                        height: 90,
-                                                        width: 90,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          border: Border.all(
-                                                            color: AppColors
-                                                                .borderSecondary,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                          color: AppColors
-                                                              .backgroundWhite,
-                                                        ),
-                                                        child: Padding(
+                                            child: AspectRatio(
+                                              aspectRatio: 5 / 2,
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(8),
+                                                  topRight: Radius.circular(8),
+                                                ),
+                                                child: i['cardCover'] == ""
+                                                    ? Center(
+                                                        child: Container(
                                                           padding:
-                                                              const EdgeInsets
-                                                                  .all(5),
-                                                          child: ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                            child: _logo == ""
-                                                                ? Image.asset(
-                                                                    'assets/image/no-image-available.png',
-                                                                    fit: BoxFit
-                                                                        .contain,
-                                                                  )
-                                                                : Image.network(
-                                                                    "https://storage.googleapis.com/108-bucket/${_logo}",
-                                                                    fit: BoxFit
-                                                                        .contain,
-                                                                    errorBuilder:
-                                                                        (context,
-                                                                            error,
-                                                                            stackTrace) {
-                                                                      return Image
-                                                                          .asset(
-                                                                        'assets/image/no-image-available.png',
-                                                                        fit: BoxFit
-                                                                            .contain,
-                                                                      ); // Display an error message
-                                                                    },
-                                                                  ),
+                                                              EdgeInsets.only(
+                                                                  bottom: 30),
+                                                          child: FaIcon(
+                                                            FontAwesomeIcons
+                                                                .image,
+                                                            size: 40,
+                                                            color: AppColors
+                                                                .secondary,
                                                           ),
                                                         ),
+                                                      )
+                                                    : Image.network(
+                                                        "https://storage.googleapis.com/108-bucket/${i['cardCover']}",
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return Center(
+                                                            child: Container(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      bottom:
+                                                                          30),
+                                                              child: FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .image,
+                                                                size: 40,
+                                                                color: AppColors
+                                                                    .secondary,
+                                                              ),
+                                                            ),
+                                                          ); // Display an error message
+                                                        },
                                                       ),
-                                                      SizedBox(
-                                                        width: 15,
-                                                      ),
+                                              ),
+                                            ),
+                                          ),
 
-                                                      //
-                                                      //
-                                                      //Content Company
+                                          //
+                                          //
+                                          //Company details
+                                          Expanded(
+                                            child: Stack(
+                                              clipBehavior: Clip.none,
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Container(
+                                                  width: double.infinity,
+                                                  padding: EdgeInsets.all(20),
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors
+                                                        .backgroundWhite,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      bottomLeft:
+                                                          Radius.circular(8),
+                                                      bottomRight:
+                                                          Radius.circular(8),
+                                                    ),
+                                                  ),
+                                                  child: Column(
+                                                    children: [
+                                                      SizedBox(height: 35),
+
                                                       Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
+                                                        child: Container(
+                                                          // color: AppColors.red,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              //
+                                                              //
+                                                              //Company Name
+                                                              Text(
                                                                 "${_companyName}",
-                                                                style: bodyTextNormal(
-                                                                    null,
+                                                                style: bodyTextMaxNormal(
+                                                                    "NotoSansLaoLoopedBold",
                                                                     null,
                                                                     FontWeight
                                                                         .bold),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                maxLines: 1,
                                                                 overflow:
                                                                     TextOverflow
-                                                                        .ellipsis),
-                                                            Text("${_industry}",
-                                                                style:
-                                                                    bodyTextSmall(
-                                                                        null,
-                                                                        null,
-                                                                        null),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis),
-                                                            Text("${_address}",
-                                                                style:
-                                                                    bodyTextSmall(
-                                                                        null,
-                                                                        null,
-                                                                        null),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis),
-                                                            Text(
-                                                              "${_followerTotals} " +
-                                                                  "follower".tr,
-                                                              style:
-                                                                  bodyTextSmall(
-                                                                      null,
-                                                                      null,
-                                                                      null),
-                                                            )
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-
-                                                //
-                                                //
-                                                //Button follow / following
-                                                Material(
-                                                  color: Colors.transparent,
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      FocusScope.of(context)
-                                                          .requestFocus(
-                                                              focusNode);
-                                                      setState(() {
-                                                        i['follow'] =
-                                                            !i['follow'];
-                                                      });
-                                                      followCompany(
-                                                        i['companyName'],
-                                                        i['_id'],
-                                                      );
-                                                    },
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    child: _isFollow
-                                                        ? Container(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                              8,
-                                                            ),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: AppColors
-                                                                  .buttonPrimary,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
-                                                            ),
-                                                            child: Row(
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .heart,
-                                                                  size: 13,
-                                                                  color: AppColors
-                                                                      .iconLight,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 8,
-                                                                ),
-                                                                Text(
-                                                                    "following"
-                                                                        .tr,
-                                                                    style:
-                                                                        bodyTextSmall(
-                                                                      null,
-                                                                      AppColors
-                                                                          .fontWhite,
-                                                                      null,
-                                                                    )),
-                                                              ],
-                                                            ),
-                                                          )
-                                                        : Container(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                              8,
-                                                            ),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              border:
-                                                                  Border.all(
-                                                                color: AppColors
-                                                                    .borderSecondary,
+                                                                        .ellipsis,
                                                               ),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
-                                                            ),
-                                                            child: Row(
+                                                              SizedBox(
+                                                                  height: 5),
+
+                                                              //
+                                                              //
+                                                              //Industry
+                                                              Text(
+                                                                  "${_industry}",
+                                                                  style:
+                                                                      bodyTextSmall(
+                                                                          null,
+                                                                          null,
+                                                                          null),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis),
+
+                                                              //
+                                                              //
+                                                              //Address
+                                                              Text(
+                                                                  "${_address}",
+                                                                  style:
+                                                                      bodyTextSmall(
+                                                                          null,
+                                                                          null,
+                                                                          null),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                      // SizedBox(height: 5),
+                                                      // Divider(
+                                                      //     color: AppColors
+                                                      //         .borderBG,
+                                                      //     thickness: 1),
+                                                      // SizedBox(height: 5),
+
+                                                      //
+                                                      //
+                                                      //Bottom follower / following
+                                                      Container(
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          // crossAxisAlignment:
+                                                          //     CrossAxisAlignment
+                                                          //         .end,
+                                                          children: [
+                                                            //
+                                                            //
+                                                            //Follower
+                                                            Row(
                                                               children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .heart,
-                                                                  size: 13,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 8,
+                                                                Text(
+                                                                  "${_followerTotals} ",
+                                                                  style: bodyTextSmall(
+                                                                      "SatoshiBlack",
+                                                                      AppColors
+                                                                          .fontPrimary,
+                                                                      null),
                                                                 ),
                                                                 Text(
-                                                                  "follow".tr,
+                                                                  "follower".tr,
                                                                   style:
                                                                       bodyTextSmall(
                                                                           null,
@@ -1371,39 +809,168 @@ class _CompanyState extends State<Company> {
                                                                 ),
                                                               ],
                                                             ),
-                                                          ),
+
+                                                            //
+                                                            //
+                                                            //Button following / follow
+                                                            Material(
+                                                              color: Colors
+                                                                  .transparent,
+                                                              child: InkWell(
+                                                                onTap: () {
+                                                                  FocusScope.of(
+                                                                          context)
+                                                                      .requestFocus(
+                                                                          focusNode);
+                                                                  setState(() {
+                                                                    i['follow'] =
+                                                                        !i['follow'];
+                                                                  });
+                                                                  followCompany(
+                                                                    i['companyName'],
+                                                                    i['_id'],
+                                                                  );
+                                                                },
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            100),
+                                                                child: _isFollow
+                                                                    ? Container(
+                                                                        padding: EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                                20,
+                                                                            vertical:
+                                                                                10),
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              AppColors.buttonPrimary,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(100),
+                                                                        ),
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            FaIcon(
+                                                                              FontAwesomeIcons.solidHeart,
+                                                                              size: 13,
+                                                                              color: AppColors.iconLight,
+                                                                            ),
+                                                                            SizedBox(width: 8),
+                                                                            Text(
+                                                                              "following".tr,
+                                                                              style: bodyTextSmall(null, AppColors.fontWhite, null),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      )
+                                                                    : Container(
+                                                                        padding: EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                                20,
+                                                                            vertical:
+                                                                                10),
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(100),
+                                                                          border:
+                                                                              Border.all(
+                                                                            color:
+                                                                                AppColors.borderDark,
+                                                                          ),
+                                                                        ),
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            FaIcon(FontAwesomeIcons.heart,
+                                                                                size: 13),
+                                                                            SizedBox(width: 8),
+                                                                            Text(
+                                                                              "follow".tr,
+                                                                              style: bodyTextSmall(null, null, null),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+
+                                                //
+                                                //
+                                                //Company logo
+                                                Positioned(
+                                                  top: -45,
+                                                  child: Container(
+                                                    height: 90,
+                                                    width: 90,
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color: AppColors
+                                                            .borderSecondary,
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      color: AppColors
+                                                          .backgroundWhite,
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              5),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                        child: _logo == ""
+                                                            ? Image.asset(
+                                                                'assets/image/no-image-available.png',
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                              )
+                                                            : Image.network(
+                                                                "https://storage.googleapis.com/108-bucket/${_logo}",
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                                errorBuilder:
+                                                                    (context,
+                                                                        error,
+                                                                        stackTrace) {
+                                                                  return Image
+                                                                      .asset(
+                                                                    'assets/image/no-image-available.png',
+                                                                    fit: BoxFit
+                                                                        .contain,
+                                                                  ); // Display an error message
+                                                                },
+                                                              ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 )
                                               ],
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: 15,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                  childCount: _companies.length + 1,
-                                ),
-                              ),
-                              // : SliverToBoxAdapter(
-                              //     child: Container(
-                              //       // color: AppColors.red,
-                              //       child: ScreenNoData(
-                              //         faIcon: FontAwesomeIcons
-                              //             .fileCircleExclamation,
-                              //         colorIcon: AppColors.primary,
-                              //         text: "no have data".tr,
-                              //         colorText: AppColors.primary,
-                              //       ),
-                              //     ),
-                              //   ),
-                            ],
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 15),
+                                ],
+                              );
+                            },
                           ),
                         ),
                         // SizedBox(
-                        //   height: 10,
+                        //   height: 10
                         // ),
                         if (_isLoadingMoreData)
                           Padding(

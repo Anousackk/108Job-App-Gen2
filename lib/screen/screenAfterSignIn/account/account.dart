@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, prefer_if_null_operators, non_constant_identifier_names, unused_local_variable, unused_field, unnecessary_string_interpolations, prefer_final_fields, unnecessary_null_in_if_null_operators, avoid_print, prefer_adjacent_string_concatenation, unnecessary_this, use_build_context_synchronously, prefer_interpolation_to_compose_strings, deprecated_member_use
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, prefer_if_null_operators, non_constant_identifier_names, unused_local_variable, unused_field, unnecessary_string_interpolations, prefer_final_fields, unnecessary_null_in_if_null_operators, avoid_print, prefer_adjacent_string_concatenation, unnecessary_this, prefer_interpolation_to_compose_strings, use_build_context_synchronously, deprecated_member_use, no_leading_underscores_for_local_identifiers
 
 import 'dart:io';
 
@@ -6,20 +6,21 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
-import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
-import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/Events/scannerQRCode.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/Events/eventTicket.dart';
+import 'package:app/provider/profileProvider.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/JobAlert/jobAlert.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/LoginInfo/loginInformation.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/myProfile.dart';
+import 'package:app/screen/screenAfterSignIn/myJob/myJob.dart';
+import 'package:app/widget/appbar.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class Account extends StatefulWidget {
   const Account(
@@ -37,142 +38,14 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
-  dynamic _seekerProfile;
-  dynamic _eventInfo;
-  dynamic _objEventAvailable;
-
-  String _eventInfoId = "";
-  String _eventInfoName = "";
-  String _firstName = "";
-  String _lastName = "";
-  String _imageSrc = "";
-  String _memberLevel = "";
-  String _currentJobTitle = "";
-  String? qrData;
-
-  int _savedJobs = 0;
-  int _appliedJobs = 0;
-  int _epmSavedSeeker = 0;
-  int _submitedCV = 0;
-  int _totalPoint = 0;
-
-  dynamic _workPreferences;
   dynamic _fileValue;
 
   File? _image;
 
-  bool _isLoading = true;
   bool _imageLoading = false;
-  bool _isApplied = false;
-
-  getEvnetAvailable() async {
-    var res = await fetchData(getEventAvailableSeekerApi);
-    print("api get event available: " + res.toString());
-
-    if (res.containsKey("message")) {
-      print("res containsKey message: " + res["message"]);
-
-      return;
-    } else {
-      _objEventAvailable = res;
-      _eventInfo = res["eventInfo"];
-      _isApplied = res["isApplied"] as bool? ?? false;
-      // _eventInfo = null;
-      // _isApplied = false;
-
-      // ຖ້າວ່າ _eventInfo == null ຈະລົບຄ່າຂອງ qrString ອອກ
-      if (_eventInfo == null || !_isApplied) {
-        await SharedPrefsHelper.remove("qrString");
-        print("removed qrString");
-      }
-
-      if (_eventInfo != null) {
-        _eventInfoId = _eventInfo["_id"];
-        _eventInfoName = _eventInfo["name"];
-      }
-      print("_isApplied: " + _isApplied.toString());
-
-      setState(() {});
-    }
-  }
-
-  applyEvent() async {
-    var res = await postData(applyEventSeekerApi, {"eventId": _eventInfoId});
-    print("res apply event: " + res.toString());
-
-    if (res["message"] == "Applied succeed") {
-      await getEvnetAvailable();
-
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "successful".tr,
-            contentText: "registered_attend".tr,
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-            },
-          );
-        },
-      );
-    } else {
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return CustAlertDialogWarningWithoutBtn(
-            title: "warning".tr,
-            contentText: "already_registered_attend".tr,
-            textButton: "ok".tr,
-          );
-        },
-      );
-    }
-  }
-
-  getProfileSeeker() async {
-    print("api get profile working account screen");
-    var res = await fetchData(getProfileSeekerApi);
-    _seekerProfile = res['profile'];
-    _firstName = _seekerProfile['firstName'];
-    _lastName = _seekerProfile['lastName'];
-    _memberLevel = _seekerProfile['memberLevel'];
-    if (_seekerProfile['file'] != "") {
-      _imageSrc = !_seekerProfile['file'].containsKey("src") ||
-              _seekerProfile['file']["src"] == null
-          ? ""
-          : _seekerProfile['file']["src"];
-    }
-
-    _workPreferences = res['workPreferences'] ?? null;
-    if (_workPreferences != null) {
-      _currentJobTitle = _workPreferences['currentJobTitle'];
-    }
-
-    _isLoading = false;
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  getTotalJobSeeker() async {
-    var res = await fetchData(getTotalMyJobSeekerApi);
-    print("${res}");
-
-    _savedJobs = int.parse(res['saveJobTotals'].toString());
-    _appliedJobs = int.parse(res['appliedJobTotals'].toString());
-    _submitedCV = int.parse(res['submittedTotals'].toString());
-    _epmSavedSeeker = int.parse(res['empViewTotals'].toString());
-    _totalPoint = int.parse(res['totalPoint'].toString());
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
 
   pickImageGallery(ImageSource source) async {
+    final profileProvider = context.read<ProfileProvider>();
     //
     //
     // Pick image device IOS
@@ -246,7 +119,14 @@ class _AccountState extends State<Account> {
             if (_fileValue != null || _fileValue != "") {
               //
               //api upload or update profile image seeker
-              uploadOrUpdateProfileImageSeeker();
+              await uploadOrUpdateProfileImageSeeker();
+
+              profileProvider.fetchProfileSeeker();
+
+              // setState(() {
+              //   profileProvider.imageSrc =
+              //       "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
+              // });
             }
           }
           //
@@ -380,7 +260,14 @@ class _AccountState extends State<Account> {
               if (_fileValue != null || _fileValue != "") {
                 //
                 //api upload or update profile image seeker
-                uploadOrUpdateProfileImageSeeker();
+                await uploadOrUpdateProfileImageSeeker();
+
+                profileProvider.fetchProfileSeeker();
+
+                // setState(() {
+                //   profileProvider.imageSrc =
+                //       "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
+                // });
               }
             }
             //
@@ -503,7 +390,14 @@ class _AccountState extends State<Account> {
               if (_fileValue != null || _fileValue != "") {
                 //
                 //api upload or update profile image seeker
-                uploadOrUpdateProfileImageSeeker();
+                await uploadOrUpdateProfileImageSeeker();
+
+                profileProvider.fetchProfileSeeker();
+
+                // setState(() {
+                //   profileProvider.imageSrc =
+                //       "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
+                // });
               }
             }
             //
@@ -561,8 +455,10 @@ class _AccountState extends State<Account> {
     var res = await postData(
         uploadOrUpdateProfileImageApiSeeker, {"file": _fileValue});
 
+    print("api uploadOrUpdateProfileImageApiSeeker: " + '${res}');
+
     if (res != null) {
-      await getProfileSeeker();
+      // await getProfileSeeker();
       _imageLoading = false;
     }
 
@@ -572,17 +468,8 @@ class _AccountState extends State<Account> {
   @override
   void initState() {
     super.initState();
-    print("widget hasInternet account: " + "${widget.hasInternet}");
 
-    if (widget.hasInternet == false) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        showInternetDisconnected(context);
-      });
-    } else {
-      getProfileSeeker();
-      getTotalJobSeeker();
-      getEvnetAvailable();
-    }
+    context.read<ProfileProvider>().fetchTotalJobSeeker();
   }
 
   @override
@@ -592,96 +479,182 @@ class _AccountState extends State<Account> {
 
   @override
   Widget build(BuildContext context) {
+    final profileProvider = context.watch<ProfileProvider>();
+
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
-        // appBar: AppBar(
-        //   toolbarHeight: 0,
-        //   systemOverlayStyle: SystemUiOverlayStyle.light,
-        //   backgroundColor: AppColors.backgroundAppBar,
-        // ),
-
+        appBar: AppBarDefault(
+          backgroundColor: AppColors.backgroundWhite,
+          textTitle: "account".tr,
+          textColor: AppColors.fontDark,
+          leadingPress: () {
+            Navigator.pop(context);
+          },
+          leadingIcon: Icon(Icons.arrow_back),
+        ),
         body: SafeArea(
-          child: _isLoading
-              ? Container(
-                  color: AppColors.backgroundWhite,
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Center(
-                    child: CustomLoadingLogoCircle(),
-                  ),
-                )
-              : SingleChildScrollView(
-                  physics: ClampingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //Section Profile Image
-                      Container(
-                        color: AppColors.primary,
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          alignment: Alignment.center,
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 40,
-                                ),
-                                _imageLoading
-                                    ? Container(
-                                        width: 150,
-                                        height: 150,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: AppColors.backgroundWhite
-                                              .withOpacity(0.5),
-                                        ),
-                                        child: Center(
-                                          child: Text("uploading".tr),
-                                        ),
-                                      )
-                                    : Container(
-                                        child: Stack(
-                                          clipBehavior: Clip.none,
-                                          alignment: Alignment.center,
-                                          children: [
-                                            //
-                                            //
-                                            //Placeholder circle for profile picture
-                                            // DottedBorder(
-                                            // dashPattern: [6, 7],
-                                            // strokeWidth: 2,
-                                            // borderType: BorderType.Circle,
-                                            // color: AppColors.borderWhite,
-                                            // borderPadding: EdgeInsets.all(1),
+          child: Container(
+            color: AppColors.dark100.withOpacity(0.7),
+            height: double.infinity,
+            child: SingleChildScrollView(
+              physics: ClampingScrollPhysics(),
+              child: Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    //
+                    //
+                    //Section Profile Image
+                    Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 70),
+                              Container(
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: AppColors.backgroundWhite,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(height: 60),
 
-                                            //
-                                            //
-                                            //Profile Image
-                                            Container(
-                                              width: 150,
-                                              height: 150,
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(100),
-                                                child: _imageSrc == ""
+                                      //Profile Name
+                                      Text(
+                                        "${profileProvider.firstName} ${profileProvider.lastName}",
+                                        style: bodyTextMedium(
+                                            null, null, FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                      ),
+
+                                      //Currnet Job / Position
+                                      Text(
+                                        profileProvider.currentJobTitle == ""
+                                            ? "- -"
+                                            : "${profileProvider.currentJobTitle}",
+                                        style: bodyTextNormal(null, null, null),
+                                        textAlign: TextAlign.center,
+                                      ),
+
+                                      SizedBox(height: 5),
+                                      Divider(
+                                          color: AppColors.borderGreyOpacity),
+                                      SizedBox(height: 5),
+
+                                      //Status employee / percent completed
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "status".tr,
+                                                style: bodyTextMaxSmall(null,
+                                                    AppColors.dark500, null),
+                                              ),
+                                              Text(
+                                                "${profileProvider.memberLevel}",
+                                                style: bodyTextMaxSmall(
+                                                    null,
+                                                    AppColors.primary600,
+                                                    FontWeight.bold),
+                                              )
+                                            ],
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                "complete_your_profile".tr,
+                                                style: bodyTextMaxSmall(null,
+                                                    AppColors.dark500, null),
+                                              ),
+                                              Text(
+                                                "${(profileProvider.percentageUsed * 100).round()}% ",
+                                                style: bodyTextMaxSmall(
+                                                    null,
+                                                    AppColors.primary600,
+                                                    FontWeight.bold),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        //Positioned Profile image
+                        Positioned(
+                          top: 0,
+                          child: _imageLoading
+                              ? Container(
+                                  width: 120,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColors.backgroundWhite
+                                        .withOpacity(0.5),
+                                  ),
+                                  child: Center(
+                                    child: Text("uploading".tr),
+                                  ),
+                                )
+                              : GestureDetector(
+                                  onTap: () {
+                                    pickImageGallery(ImageSource.gallery);
+                                  },
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    alignment: Alignment.center,
+                                    children: [
+                                      //Profile Image
+                                      CircularPercentIndicator(
+                                        radius: 70.0,
+                                        lineWidth: 4.0,
+                                        animation: true,
+                                        percent: profileProvider.percentageUsed,
+                                        animationDuration: 500,
+                                        startAngle: 140.0,
+                                        // progressColor: AppColors.primary600,
+                                        linearGradient:
+                                            AppColors.primaryRingGradient,
+                                        backgroundColor: AppColors.primary200,
+                                        center: Container(
+                                          width: 120,
+                                          height: 120,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.backgroundWhite,
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                            child:
+                                                profileProvider.imageSrc == ""
                                                     ? Image.asset(
                                                         'assets/image/defprofile.jpg',
                                                         fit: BoxFit.cover,
                                                       )
                                                     : Image.network(
-                                                        "${_imageSrc}",
+                                                        "${profileProvider.imageSrc}",
                                                         fit: BoxFit.cover,
                                                         errorBuilder: (context,
                                                             error, stackTrace) {
@@ -691,520 +664,418 @@ class _AccountState extends State<Account> {
                                                           ); // Display an error message
                                                         },
                                                       ),
-                                              ),
+                                          ),
+                                        ),
+                                      ),
 
-                                              // decoration: BoxDecoration(
-                                              //   shape: BoxShape.circle,
-                                              //   color: AppColors.greyOpacity,
-                                              //   image: _imageSrc == ""
-                                              //       ? DecorationImage(
-                                              //           image: AssetImage(
-                                              //               'assets/image/def-profile.png'),
-                                              //           fit: BoxFit.cover,
-                                              //         )
-                                              //       : DecorationImage(
-                                              //           image: NetworkImage(_imageSrc),
-                                              //           fit: BoxFit.cover,
-                                              //         ),
-                                              // ),
-                                              // child: CircleAvatar(
-                                              //   radius: 90,
-                                              //   backgroundImage:
-                                              //       AssetImage('assets/image/def-profile.png'),
-                                              // ),
-                                            ),
-                                            // ),
-
-                                            //
-                                            //
-                                            //Status Seeker on top profile image
-                                            Positioned(
-                                              top: -20,
+                                      //Gallery icon to choose upload image profile
+                                      profileProvider.isProfileVerified
+                                          ? Positioned(
+                                              bottom: 5,
+                                              right: 13,
                                               child: Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10,
-                                                    vertical: 5),
+                                                alignment: Alignment.center,
+                                                padding: EdgeInsets.all(0),
                                                 decoration: BoxDecoration(
-                                                  color: AppColors.success600,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          100),
+                                                  shape: BoxShape.circle,
                                                 ),
                                                 child: Text(
-                                                  _memberLevel,
-                                                  style: bodyTextSmall(
+                                                  "\uf2f7",
+                                                  style: fontAwesomeSolid(
                                                       null,
-                                                      AppColors.fontWhite,
+                                                      IconSize.sIcon,
+                                                      AppColors.iconPrimary,
+                                                      null),
+                                                ),
+                                              ),
+                                            )
+                                          : Positioned(
+                                              bottom: 5,
+                                              right: 8,
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                padding: EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color:
+                                                      AppColors.backgroundWhite,
+                                                  border: Border.all(
+                                                      color:
+                                                          AppColors.borderBG),
+                                                ),
+                                                child: Text(
+                                                  "\uf03e",
+                                                  style: fontAwesomeRegular(
+                                                      null,
+                                                      IconSize.xsIcon,
+                                                      AppColors.iconPrimary,
                                                       null),
                                                 ),
                                               ),
                                             ),
-
-                                            //
-                                            //
-                                            //Gallery icon to choose upload image profile
-                                            Positioned(
-                                              bottom: 0,
-                                              right: 5,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  pickImageGallery(
-                                                      ImageSource.gallery);
-                                                },
-                                                child: Container(
-                                                  alignment: Alignment.center,
-                                                  padding: EdgeInsets.all(8),
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: AppColors
-                                                        .backgroundWhite,
-                                                    border: Border.all(
-                                                        color: AppColors
-                                                            .borderWhite),
-                                                  ),
-                                                  child: Text(
-                                                    "\uf03e",
-                                                    style: fontAwesomeRegular(
-                                                        null,
-                                                        15,
-                                                        AppColors.iconPrimary,
-                                                        null),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-
-                                //
-                                //
-                                //Profile Name
-                                Text(
-                                  "${_firstName} ${_lastName}",
-                                  style: bodyTextMedium(null,
-                                      AppColors.fontWhite, FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                ),
-
-                                //
-                                //
-                                //Currnet Job / Position
-                                Text(
-                                  _currentJobTitle == ""
-                                      ? "- -"
-                                      : "${_currentJobTitle}",
-                                  style: bodyTextNormal(
-                                      null, AppColors.fontWhite, null),
-                                  textAlign: TextAlign.center,
-                                ),
-                                // Container(),
-
-                                //
-                                //
-                                //ກວດສະຖານະເປັນ Expert Job Seeker ແລະ ສະຖານະງານຈັດຂຶ້ນ
-                                if (_memberLevel == "Expert Job Seeker" &&
-                                    _eventInfo != null)
-
-                                  //
-                                  //
-                                  //Button register Events
-                                  Container(
-                                    margin: EdgeInsets.only(top: 10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () async {
-                                            if (!_isApplied) {
-                                              await applyEvent();
-                                            } else {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      EventTicket(
-                                                    imageSrc: _imageSrc,
-                                                    firstName: _firstName,
-                                                    lastName: _lastName,
-                                                    objEventAvailable:
-                                                        _objEventAvailable,
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 15, vertical: 8),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.warning600,
-                                              borderRadius:
-                                                  BorderRadius.circular(100),
-                                            ),
-                                            child: Text(
-                                              _isApplied
-                                                  ? "${_eventInfoName}"
-                                                  : "attend_event".tr +
-                                                      " ${_eventInfoName}",
-                                              style: bodyTextNormal(
-                                                  null, null, FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                SizedBox(
-                                  height: 20,
-                                ),
-                              ],
-                            ),
-
-                            //
-                            //
-                            //ກວດສະຖານະເປັນ Expert Job Seeker ແລະ ສະຖານະງານຈັດຂຶ້ນ
-                            if (_memberLevel == "Expert Job Seeker" &&
-                                _eventInfo != null)
-                              Positioned(
-                                top: 0,
-                                right: 0,
-
-                                //
-                                //
-                                //Button scan QR code
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => QRScanner(),
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.dark100,
-                                      borderRadius: BorderRadius.circular(100),
-                                    ),
-                                    child: Icon(
-                                      Icons.qr_code_scanner_outlined,
-                                      color: AppColors.primary,
-                                      size: 30,
-                                    ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                          ],
-                        ),
-                      ),
+                        )
+                      ],
+                    ),
 
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //Section profile content
-                      Container(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    //Webview Wii Fair
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => WebViewWiiFair(),
+                    //       ),
+                    //     );
+                    //   },
+                    //   child: Container(
+                    //     width: double.infinity,
+                    //     padding: EdgeInsets.all(20),
+                    //     decoration: BoxDecoration(
+                    //       color: AppColors.teal,
+                    //     ),
+                    //     child: Text("Wii Fair"),
+                    //   ),
+                    // ),
+
+                    SizedBox(height: 20),
+
+                    //
+                    //
+                    //Section Account Setting
+                    Column(
+                      children: [
+                        //Account Setting
+                        Row(
                           children: [
-                            //
-                            //
-                            //Box profile
                             Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 20),
-                              child: Column(
-                                children: [
-                                  //
-                                  //
-                                  //
-                                  //
-                                  //
-                                  //
-                                  //Profile Statisics
-                                  //First row 3 box(save job, applied job, submitted cv)
-                                  Row(
-                                    children: [
-                                      //
-                                      //
-                                      //Save job / ວຽກທີ່ບັນທຶກໄວ້
-                                      Expanded(
-                                        flex: 1,
-                                        child: StatisicBox(
-                                          // boxColor: AppColors.lightPrimary,
-                                          amount: "${_savedJobs}",
-                                          text: "saved_job".tr,
-                                          press:
-                                              widget.callBackToMyJobsSavedJob,
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-
-                                      //
-                                      //
-                                      //Applied job / ວຽກທີ່ສະໝັກ
-                                      Expanded(
-                                        flex: 1,
-                                        child: StatisicBox(
-                                          // boxColor: AppColors.lightOrange,
-                                          amount: "${_appliedJobs}",
-                                          text: "applied_job".tr,
-                                          press: () {
-                                            setState(() {
-                                              widget.callBackToMyJobsAppliedJob!(
-                                                  "AppliedJob");
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-
-                                      //
-                                      //
-                                      //Submitted CV / ຢື່ນສະໝັກວຽກ
-                                      Expanded(
-                                        flex: 1,
-                                        child: StatisicBox(
-                                          // boxColor: AppColors.lightGreen,
-                                          amount: "${_submitedCV}",
-                                          text: "submitted_cv".tr,
-                                          press: () {},
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-
-                                  //
-                                  //
-                                  //Second row 2 box(company view profile, member point)
-                                  Row(
-                                    children: [
-                                      //
-                                      //
-                                      //Company view profile / ບໍລິສັດເບິ່ງໂປຣໄຟສ
-                                      Expanded(
-                                        flex: 1,
-                                        child: StatisicBox(
-                                          // boxColor: AppColors.lightGrayishCyan,
-                                          amount: "${_epmSavedSeeker}",
-                                          text: "company_view_profile".tr,
-                                          press: () {},
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-
-                                      //
-                                      //
-                                      //Member Point / ຄະແນນສະສົມ
-                                      Expanded(
-                                        flex: 1,
-                                        child: StatisicBox(
-                                          // boxColor: AppColors.lightYellow,
-                                          amount: "${_totalPoint}",
-                                          text: "member_point".tr,
-                                          press: () {},
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-
-                                      //
-                                      //
-                                      //
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                          height: 110,
-                                          width: double.infinity,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
+                              width: 5,
+                              height: 16,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary600,
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-
-                            //
-                            //
-                            //Account Setting
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              child: Text(
-                                "account setting".tr,
-                                style: bodyTextMaxNormal(
-                                    "NotoSansLaoLoopedBold",
-                                    null,
-                                    FontWeight.bold),
-                              ),
+                            SizedBox(width: 8),
+                            Text(
+                              "account setting".tr,
+                              style: bodyTextMaxNormal("NotoSansLaoLoopedBold",
+                                  null, FontWeight.bold),
                             ),
-                            Divider(
-                              thickness: 2,
-                              color: AppColors.borderGrey.withOpacity(0.3),
-                            ),
-
-                            //
-                            //
-                            //Login Information
-                            AccountSetting(
-                              prefixIconStr: "\uf023",
-                              text: "login_info".tr,
-                              suffixIconStr: "\uf054",
-                              press: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LoginInformation(),
-                                  ),
-                                );
-                              },
-                            ),
-
-                            //
-                            //
-                            //My Profile
-                            AccountSetting(
-                              prefixIconStr: "\uf007",
-                              text: "my_profile".tr,
-                              suffixIconStr: "\uf054",
-                              press: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MyProfile(),
-                                  ),
-                                ).then((value) {
-                                  // fetchNotifierProvider();
-                                  if (value != "") {
-                                    print(
-                                        "navigator.pop imageSrc from MyProfile scree :" +
-                                            "${value}");
-                                    setState(() {
-                                      _imageSrc = value;
-                                    });
-                                  }
-                                });
-                              },
-                            ),
-
-                            //
-                            //
-                            //Job Alert
-                            AccountSetting(
-                              prefixIconStr: "\uf0f3",
-                              text: "job_alert".tr,
-                              suffixIconStr: "\uf054",
-                              press: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => JobAlert(),
-                                  ),
-                                );
-                              },
-                            ),
-
-                            SizedBox(
-                              height: 30,
-                            ),
-                            //
-                            //
-                            //
-                            //
-                            //
-
-                            // ElevatedButton(
-                            //   onPressed: () {
-                            //     setState(() {
-                            //       qrData = 'WF-104';
-                            //     });
-                            //   },
-                            //   child: Text('Generate QR Code'),
-                            // ),
-                            // const SizedBox(height: 20),
-                            // if (qrData != null)
-                            //   QrImageView(
-                            //     data: qrData!,
-                            //     version: QrVersions.auto,
-                            //     size: 200.0,
-                            //   ),
                           ],
                         ),
+
+                        SizedBox(height: 10),
+
+                        //List Account Setting
+                        Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundWhite,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: [
+                              //My Profile / ໂປຣໄຟສ
+                              AccountSetting(
+                                prefixIconStr: "\uf007",
+                                text: "my_profile".tr,
+                                suffixIconStr: "\uf054",
+                                press: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MyProfile(),
+                                    ),
+                                  );
+                                },
+                              ),
+
+                              //Login Information / ຂໍ້ມູນການເຂົ້າລະບົບ
+                              AccountSetting(
+                                prefixIconStr: "\uf023",
+                                text: "login_info".tr,
+                                suffixIconStr: "\uf054",
+                                press: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoginInformation(),
+                                    ),
+                                  );
+                                },
+                              ),
+
+                              //Job Alert / ແຈ້ງເຕືອນວຽກ
+                              AccountSetting(
+                                prefixIconStr: "\uf8fa",
+                                text: "job_alert".tr,
+                                suffixIconStr: "\uf054",
+                                press: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => JobAlert(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        //Box Account Setting
+                        // Row(
+                        //   children: [
+                        //     //
+                        //     //
+                        //     //My Profile / ໂປຣໄຟສ
+                        //     Expanded(
+                        //       flex: 1,
+                        //       child: BoxAccountSetting(
+                        //         boxColor: AppColors.backgroundWhite,
+                        //         iconString: "\uf007",
+                        //         text: "my_profile".tr,
+                        //         press: () {
+                        //           Navigator.push(
+                        //             context,
+                        //             MaterialPageRoute(
+                        //               builder: (context) => MyProfile(),
+                        //             ),
+                        //           ).then((value) {
+                        //             // fetchNotifierProvider();
+                        //             if (value != "") {
+                        //               print(
+                        //                   "navigator.pop imageSrc from MyProfile scree :" +
+                        //                       "${value}");
+                        //               setState(() {
+                        //                 _imageSrc = value;
+                        //               });
+                        //             }
+                        //           });
+                        //         },
+                        //       ),
+                        //     ),
+                        //     SizedBox(width: 10),
+                        //     //
+                        //     //
+                        //     //Login Information / ຂໍ້ມູນການເຂົ້າລະບົບ
+                        //     Expanded(
+                        //       flex: 1,
+                        //       child: BoxAccountSetting(
+                        //         boxColor: AppColors.backgroundWhite,
+                        //         iconString: "\uf023",
+                        //         text: "login_info".tr,
+                        //         press: () {
+                        //           Navigator.push(
+                        //             context,
+                        //             MaterialPageRoute(
+                        //               builder: (context) =>
+                        //                   LoginInformation(),
+                        //             ),
+                        //           );
+                        //         },
+                        //       ),
+                        //     ),
+                        //     SizedBox(width: 10),
+                        //     //
+                        //     //
+                        //     //Job Alert / ແຈ້ງເຕືອນວຽກ
+                        //     Expanded(
+                        //       flex: 1,
+                        //       child: BoxAccountSetting(
+                        //         boxColor: AppColors.backgroundWhite,
+                        //         iconString: "\uf8fa",
+                        //         text: "job_alert".tr,
+                        //         press: () {
+                        //           Navigator.push(
+                        //             context,
+                        //             MaterialPageRoute(
+                        //               builder: (context) => JobAlert(),
+                        //             ),
+                        //           );
+                        //         },
+                        //       ),
+                        //     )
+                        //   ],
+                        // ),
+                      ],
+                    ),
+
+                    SizedBox(height: 20),
+
+                    //
+                    //
+                    //Section Activity
+                    Column(
+                      children: [
+                        //Account Setting
+                        Row(
+                          children: [
+                            Container(
+                              width: 5,
+                              height: 16,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary600,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              "activity".tr,
+                              style: bodyTextMaxNormal("NotoSansLaoLoopedBold",
+                                  null, FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 10),
+                      ],
+                    ),
+
+                    //
+                    //
+                    //List Activity
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.backgroundWhite,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ],
-                  ),
+                      child: Column(
+                        children: [
+                          //Save job / ວຽກທີ່ບັນທຶກໄວ້
+                          AccountSetting(
+                              prefixIconStr: "\uf004",
+                              text: "saved_job".tr,
+                              amount: "${profileProvider.savedJobs}",
+                              suffixIconStr: "\uf054",
+                              press: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyJobs(
+                                      myJobStatus: "",
+                                      hasInternet: true,
+                                    ),
+                                  ),
+                                );
+                              }),
+
+                          //Applied job / ວຽກທີ່ສະໝັກ
+                          AccountSetting(
+                            prefixIconStr: "\uf1d8",
+                            text: "applied_job".tr,
+                            amount: "${profileProvider.appliedJobs}",
+                            suffixIconStr: "\uf054",
+                            press: () {},
+                          ),
+
+                          //Submitted CV / ຢື່ນສະໝັກວຽກ
+                          AccountSetting(
+                            prefixIconStr: "\uf316",
+                            text: "submitted_cv".tr,
+                            amount: "${profileProvider.submitedCV}",
+                            suffixIconStr: "\uf054",
+                            press: () {},
+                          ),
+
+                          //Company view profile / ບໍລິສັດເບິ່ງໂປຣໄຟສ
+                          AccountSetting(
+                            prefixIconStr: "\uf1ad",
+                            text: "company_view_profile".tr,
+                            amount: "${profileProvider.epmSavedSeeker}",
+                            suffixIconStr: "\uf054",
+                            press: () {},
+                          ),
+
+                          //Member Point / ຄະແນນສະສົມ
+                          AccountSetting(
+                            prefixIconStr: "\uf2e8",
+                            text: "member_point".tr,
+                            amount: "${profileProvider.totalPoint}",
+                            suffixIconStr: "\uf054",
+                            press: () {},
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-class StatisicBox extends StatefulWidget {
-  const StatisicBox({
+class BoxAccountSetting extends StatefulWidget {
+  const BoxAccountSetting({
     Key? key,
-    this.amount,
+    this.iconString,
     this.text,
     this.boxColor,
     this.press,
+    this.fontFamilyIcon,
+    this.iconColor,
   }) : super(key: key);
-  final String? amount, text;
-  final Color? boxColor;
+  final String? iconString, text, fontFamilyIcon;
+  final Color? boxColor, iconColor;
   final Function()? press;
 
   @override
-  State<StatisicBox> createState() => _StatisicBoxState();
+  State<BoxAccountSetting> createState() => _BoxAccountSettingState();
 }
 
-class _StatisicBoxState extends State<StatisicBox> {
+class _BoxAccountSettingState extends State<BoxAccountSetting> {
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 110,
       width: double.infinity,
-      decoration: boxDecoration(BorderRadius.circular(5),
-          widget.boxColor ?? AppColors.primary200, AppColors.borderWhite, null),
+      decoration: boxDecoration(BorderRadius.circular(10),
+          widget.boxColor ?? AppColors.primary200, AppColors.borderBG, null),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: widget.press,
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(10),
           // splashColor: AppColors.backgroundWhite,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.all(8),
             child: Column(
               // mainAxisAlignment: MainAxisAlignment.center,
               // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // SizedBox(
+                //   height: 3,
+                // ),
                 Expanded(
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: Text(
-                      "${widget.amount}",
-                      style: bodyTextMaxMedium(
-                          "NotoSansLaoLoopedBold", AppColors.primary600, null),
+                      "${widget.iconString}",
+                      style: fontAwesomeRegular(widget.fontFamilyIcon,
+                          IconSize.lIcon, widget.iconColor, null),
                     ),
+                    // child: Text(
+                    //   "${widget.amount}",
+                    //   style: bodyTextMaxMedium(
+                    //       "NotoSansLaoLoopedBold", AppColors.primary600, null),
+                    // ),
                   ),
+                ),
+                SizedBox(
+                  height: 5,
                 ),
                 Expanded(
                   child: Text(
                     "${widget.text}",
-                    style: bodyTextSmall(null, null, FontWeight.bold),
+                    style: bodyTextMaxSmall(null, null, FontWeight.bold),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                     textAlign: TextAlign.center,
@@ -1230,11 +1101,13 @@ class AccountSetting extends StatefulWidget {
       this.fontFamilySuffixIcon,
       this.suffixIconColor,
       this.fontFamilyPrefixIcon,
-      this.prefixIconColor})
+      this.prefixIconColor,
+      this.amount})
       : super(key: key);
   final String? prefixIconStr,
       fontFamilyPrefixIcon,
       text,
+      amount,
       suffixIconStr,
       fontFamilySuffixIcon;
 
@@ -1248,52 +1121,55 @@ class AccountSetting extends StatefulWidget {
 class _AccountSettingState extends State<AccountSetting> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: widget.press,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Text(
-                          "${widget.prefixIconStr}",
-                          style: fontAwesomeSolid(widget.fontFamilyPrefixIcon,
-                              IconSize.xsIcon, widget.prefixIconColor, null),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "${widget.text}",
-                          style: bodyTextNormal(
-                              "NotoSansLaoLoopedSemiBold", null, null),
-                        ),
-                      ],
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        splashColor: AppColors.white,
+        highlightColor: AppColors.primary100,
+        onTap: widget.press,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Text(
+                      "${widget.prefixIconStr}",
+                      style: fontAwesomeRegular(widget.fontFamilyPrefixIcon,
+                          IconSize.xsIcon, widget.prefixIconColor, null),
                     ),
-                  ),
-                  Text(
-                    "${widget.suffixIconStr}",
-                    style: fontAwesomeSolid(widget.fontFamilySuffixIcon,
-                        IconSize.xsIcon, widget.suffixIconColor, null),
-                  )
-                ],
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "${widget.text}",
+                      style: bodyTextNormal(
+                          "NotoSansLaoLoopedSemiBold", null, null),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              if (widget.amount != null)
+                Text(
+                  "${widget.amount}",
+                  style: bodyTextMaxNormal(
+                      "SatoshiBold", AppColors.iconPrimary, null),
+                ),
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                "${widget.suffixIconStr}",
+                style: fontAwesomeSolid(widget.fontFamilySuffixIcon,
+                    IconSize.xsIcon, widget.suffixIconColor, null),
+              )
+            ],
           ),
         ),
-        Divider(
-          thickness: 1,
-          height: 1,
-          color: AppColors.borderGrey.withOpacity(0.3),
-        ),
-      ],
+      ),
     );
   }
 }

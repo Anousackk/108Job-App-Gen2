@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, unused_field, avoid_print, unused_local_variable, prefer_typing_uninitialized_variables, prefer_final_fields, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_is_empty, unused_element, unnecessary_null_in_if_null_operators, prefer_if_null_operators, prefer_adjacent_string_concatenation, unnecessary_null_comparison, avoid_init_to_null, file_names, prefer_interpolation_to_compose_strings, deprecated_member_use
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace, unused_field, avoid_print, unused_local_variable, prefer_typing_uninitialized_variables, prefer_final_fields, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_is_empty, unused_element, unnecessary_null_in_if_null_operators, prefer_if_null_operators, prefer_adjacent_string_concatenation, unnecessary_null_comparison, avoid_init_to_null, file_names, prefer_interpolation_to_compose_strings, deprecated_member_use, use_build_context_synchronously, unrelated_type_equality_checks
 
 import 'dart:io';
 
@@ -10,6 +10,9 @@ import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/provider/avatarProvider.dart';
+import 'package:app/provider/eventAvailableProvider.dart';
+import 'package:app/provider/profileProvider.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Education/education.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Education/fetchEducation.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Language/fetchLanguage.dart';
@@ -18,12 +21,13 @@ import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Personal_Informat
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Skill/fetchSkill.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Skill/skill.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/UploadCV/uploadCV.dart';
-import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Widget/BoxPrefixSuffix.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Widget/avatarImage.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/WorkHistory/fetchWorkHistory.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/WorkHistory/workHistory.dart';
 import 'package:app/screen/ScreenAfterSignIn/account/MyProfile/ProfileSetting/profileSetting.dart';
 import 'package:app/screen/ScreenAfterSignIn/account/MyProfile/WorkPreference/workPreferences.dart';
+import 'package:app/screen/screenAfterSignIn/account/myProfile/Widget/boxContainChooseHaveCVFile.dart';
+import 'package:app/screen/screenAfterSignIn/account/myProfile/Widget/boxPrefixSuffix.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/boxDecDottedBorderProfileDetail.dart';
 import 'package:app/widget/button.dart';
@@ -31,9 +35,13 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
 class MyProfile extends StatefulWidget {
-  const MyProfile({Key? key}) : super(key: key);
+  const MyProfile({Key? key, this.status}) : super(key: key);
+
+  final String? status;
 
   @override
   State<MyProfile> createState() => _MyProfileState();
@@ -41,152 +49,27 @@ class MyProfile extends StatefulWidget {
 
 class _MyProfileState extends State<MyProfile>
     with SingleTickerProviderStateMixin {
-  final ScrollController _controller = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   //
   //Upload File
   dynamic _fileValue;
   String _strFilePath = "";
 
-  //
-  //Profile Seeker
-  String _firstName = "";
-  String _lastName = "";
-  String _imageSrc = "";
+  // List _avatars = [];
 
-  dynamic _seekerProfile;
-  dynamic _reviewStatus;
-  dynamic _workPreferences;
-  dynamic _cv;
-  dynamic _vipoCV;
-  dynamic _personalInformationStatus;
-  dynamic _workPreferenceStatus;
-  dynamic _resumeStatus;
-  dynamic _educationStatus;
-  dynamic _workHistoryStatus;
-  dynamic _languageStatus;
-  dynamic _skillStatus;
-  dynamic _avatarObj;
-  dynamic _noExperience;
-
-  List _education = [];
-  List _workHistory = [];
-  List _languageSkill = [];
-  List _skills = [];
-  List _avatars = [];
-
-  String _memberLevel = "";
-  String _status = "";
-  String _currentJobTitle = "";
   String _statusUploadImage = "";
-  String _selectedAvatarImage = "";
-  String _avatarScr = "";
 
   File? _image;
 
-  bool _isLoading = true;
-  bool _imageLoading = false;
-  bool _isSearchable = false;
-  bool _isReview = false;
+  int stepMyProfile = 1;
 
-  uploadOrUpdateProfileImageSeeker() async {
-    var res = await postData(
-        uploadOrUpdateProfileImageApiSeeker, {"file": _fileValue});
-    print(res);
+  // String haveCVFile = "";
 
-    if (res != null) {
-      getProfileSeeker();
-    }
-  }
+  pressApplyEvent() async {
+    final eventAvailableProvider = context.read<EventAvailableProvider>();
 
-  onGoBack(dynamic value) {
-    print("onGoBack is working");
-    getProfileSeeker();
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  getProfileSeeker() async {
-    var res = await fetchData(getProfileSeekerApi);
-    _seekerProfile = await res["profile"];
-    _reviewStatus = await res["reviewStatus"];
-    _firstName = _seekerProfile["firstName"];
-    _lastName = _seekerProfile["lastName"];
-    _memberLevel = _seekerProfile["memberLevel"];
-    _status = _seekerProfile["status"];
-    _isSearchable = _seekerProfile["isSearchable"] as bool;
-    _avatarObj = _seekerProfile["avatar"];
-    if (_avatarObj != null) {
-      _selectedAvatarImage = _avatarObj["_id"];
-      _avatarScr = _avatarObj["src"];
-    }
-    if (_seekerProfile["file"] != "") {
-      _imageSrc = !_seekerProfile["file"].containsKey("src") ||
-              _seekerProfile["file"]["src"] == null
-          ? ""
-          : _seekerProfile["file"]["src"];
-    }
-
-    _noExperience =
-        res["noExperience"] == null ? false : res["noExperience"] as bool;
-    _personalInformationStatus =
-        _reviewStatus["personalInformationStatus"] == null
-            ? null
-            : _reviewStatus["personalInformationStatus"] as bool;
-    _workPreferenceStatus = _reviewStatus["workPreferenceStatus"] == null
-        ? null
-        : _reviewStatus["workPreferenceStatus"] as bool;
-    _resumeStatus = _reviewStatus["resumeStatus"] == null
-        ? null
-        : _reviewStatus["resumeStatus"] as bool;
-    _educationStatus = _reviewStatus["educationStatus"] == null
-        ? null
-        : _reviewStatus["educationStatus"] as bool;
-    _workHistoryStatus = _reviewStatus["workHistoryStatus"] == null
-        ? null
-        : _reviewStatus["workHistoryStatus"] as bool;
-    _languageStatus = _reviewStatus["languageStatus"] == null
-        ? null
-        : _reviewStatus["languageStatus"] as bool;
-    _skillStatus = _reviewStatus["skillStatus"] == null
-        ? null
-        : _reviewStatus["skillStatus"] as bool;
-
-    _workPreferences = res["workPreferences"] ?? null;
-    _cv = res["cv"] ?? null;
-    _vipoCV = !res.containsKey("vipoCV") ? null : res["vipoCV"];
-    _education = res["education"] ?? [];
-    _workHistory = res["workHistory"] ?? [];
-    _languageSkill = res["languageSkill"] ?? [];
-    _skills = res["skills"] ?? [];
-    _isReview = res["isReview"] as bool;
-    if (_workPreferences != null) {
-      _currentJobTitle = _workPreferences["currentJobTitle"];
-    }
-    if (res != null) {
-      _isLoading = false;
-    }
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  fetchAvatar() async {
-    print("Fetch avatar is working");
-    var res = await fetchData(getAvatarSeekerApi);
-    _avatars = await res["info"];
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  updateAvatar(String avatarId) async {
-    //
-    //
-    //ສະແດງ AlertDialog Loading
+    // Display AlertDialog Loading First
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -195,21 +78,39 @@ class _MyProfileState extends State<MyProfile>
       },
     );
 
-    var res = await postData(updateAvatarSeekerApi, {
-      "avatarId": avatarId,
-    });
+    final res = await eventAvailableProvider.applyEvent();
 
-    print(res.toString());
+    final statusCode = res?["statusCode"];
 
-    if (res["message"] == "Update avatar succeed") {
-      await getProfileSeeker();
+    if (!context.mounted) return;
+
+    // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
+    Navigator.pop(context);
+
+    print("apply event: " + res.toString());
+    if (statusCode == 200 || statusCode == 201) {
+      await eventAvailableProvider.fetchEventAvailable();
+      await eventAvailableProvider.fetchStatisticEvent();
 
       Navigator.pop(context);
+    } else {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CustAlertDialogWarningWithoutBtn(
+            title: "warning".tr,
+            contentText: "${res?["body"]?["message"]}",
+            textButton: "ok".tr,
+          );
+        },
+      );
     }
+  }
 
-    if (mounted) {
-      setState(() {});
-    }
+  pressStepMyProfile(int val) {
+    setState(() {
+      stepMyProfile = val;
+    });
   }
 
   //error setState() called after dispose(). it can help!!!
@@ -220,19 +121,68 @@ class _MyProfileState extends State<MyProfile>
     }
   }
 
+  bool conditionShowApplyEventButton() {
+    final profileProvider = context.read<ProfileProvider>();
+    final eventAvailableProvider = context.read<EventAvailableProvider>();
+
+    // must not be applied & must be Event
+    if (profileProvider.statusFormProfile == "Event" &&
+        !eventAvailableProvider.isApplied) {
+      // Case 1: User already has CV
+      if (profileProvider.haveCVFile == "Yes") {
+        return profileProvider.personalInformationStatus &&
+            profileProvider.workPreferenceStatus &&
+            profileProvider.resumeStatus;
+      }
+
+      // Case 2: User does NOT have CV
+      if (profileProvider.haveCVFile == "No") {
+        return profileProvider.personalInformationStatus &&
+            profileProvider.workPreferenceStatus &&
+            profileProvider.resumeStatus &&
+            profileProvider.educationStatus &&
+            profileProvider.workHistoryStatus &&
+            profileProvider.languageStatus &&
+            profileProvider.skillStatus;
+      }
+    }
+
+    return false;
+  }
+
+  checkStatusFormProfile() {
+    final profileProvider = context.read<ProfileProvider>();
+
+    if (widget.status == "Event") {
+      profileProvider.statusFormProfile = "Event";
+      profileProvider.statusEventUpdateProfile = "wiifair";
+      profileProvider.haveCVFile = "";
+    } else {
+      profileProvider.statusFormProfile = "";
+      profileProvider.statusEventUpdateProfile = "";
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
-    getProfileSeeker();
-    fetchAvatar();
+    context.read<AvatarProvider>().fetchAvatar();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkStatusFormProfile();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final profileProvider = context.watch<ProfileProvider>();
+    final avatarProvider = context.watch<AvatarProvider>();
+    final eventAvailableProvider = context.watch<EventAvailableProvider>();
+
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
-      child: _isLoading
+      child: profileProvider.isLoadingProfile
           ? Scaffold(
               appBar: AppBar(
                 toolbarHeight: 0,
@@ -250,988 +200,1076 @@ class _MyProfileState extends State<MyProfile>
                 backgroundColor: AppColors.primary600,
               ),
               body: SafeArea(
-                child: Column(
-                  children: [
-                    //
-                    //
-                    //
-                    //
-                    //
-                    //Appbar custom
-                    AppBarThreeWidgt(
+                child: Container(
+                  color: AppColors.backgroundWhite,
+                  child: Column(
+                    children: [
+                      // Text("${profileProvider.statusEventUpdateProfile}"),
                       //
-                      //Widget Leading
-                      //Navigator.pop
-                      leading: GestureDetector(
-                        onTap: () {
-                          // Navigator.pop(context);
-                          Navigator.of(context).pop("${_imageSrc}");
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: Container(
-                            height: 45,
-                            width: 45,
-                            color: AppColors.iconLight.withOpacity(0.1),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                "\uf060",
-                                style: fontAwesomeRegular(
-                                    null, 20, AppColors.iconLight, null),
+                      //
+                      //Section Appbar Custom
+                      AppBarThreeWidgt(
+                        //Widget Leading
+                        //Navigator.pop
+                        leading: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: Container(
+                              height: 45,
+                              width: 45,
+                              color: AppColors.iconLight.withOpacity(0.1),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "\uf060",
+                                  style: fontAwesomeRegular(
+                                      null, 20, AppColors.iconLight, null),
+                                ),
                               ),
                             ),
                           ),
                         ),
+
+                        //Widget Title
+                        //Text title
+                        title: Text(
+                          "my_profile".tr,
+                          style: appbarTextMedium("NotoSansLaoLoopedBold",
+                              AppColors.fontWhite, null),
+                        ),
+
+                        //Widget Actions
+                        //Profile setting
+                        actions:
+                            // _status == "Approved" &&
+                            profileProvider.memberLevel != "Basic Member"
+                                ? GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ProfileSetting(
+                                            isSearchable:
+                                                profileProvider.isSearchable,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: Container(
+                                        height: 45,
+                                        width: 45,
+                                        color: AppColors.iconLight
+                                            .withOpacity(0.1),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            "\uf013",
+                                            style: fontAwesomeRegular(null, 20,
+                                                AppColors.iconLight, null),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    height: 45,
+                                    width: 45,
+                                  ),
                       ),
 
                       //
                       //
-                      //Widget Title
-                      //Text title
-                      title: Text(
-                        "my_profile".tr,
-                        style: appbarTextMedium(
-                            "NotoSansLaoLoopedBold", AppColors.fontWhite, null),
-                      ),
+                      //Section Body Content
+                      Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            await profileProvider.fetchProfileSeeker();
+                          },
+                          child: SingleChildScrollView(
+                            controller: _scrollController,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            child: Column(
+                              children: [
+                                //
+                                //
+                                //Box Container Avatar Image
+                                Container(
+                                  width: double.infinity,
+                                  color: AppColors.primary100,
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      splashColor: AppColors.white,
+                                      highlightColor: AppColors.primary100,
+                                      //Press alert dialog show avatar image
+                                      onTap: () async {
+                                        dynamic result = await showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (context) {
+                                              return BoxDecAvatarImage(
+                                                listItems:
+                                                    avatarProvider.listAvatar,
+                                                selectedListItem:
+                                                    profileProvider
+                                                        .selectedAvatarImage,
+                                                title: "avatar_image".tr,
+                                              );
+                                            });
 
-                      //
-                      //
-                      //Widget Actions
-                      //Profile setting
-                      actions: _status == "Approved" &&
-                              _memberLevel != "Basic Member"
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProfileSetting(
-                                      isSearchable: _isSearchable,
-                                    ),
-                                  ),
-                                ).then((value) => onGoBack(value));
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(100),
-                                child: Container(
-                                  height: 45,
-                                  width: 45,
-                                  color: AppColors.iconLight.withOpacity(0.1),
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "\uf013",
-                                      style: fontAwesomeRegular(
-                                          null, 20, AppColors.iconLight, null),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(
-                              height: 45,
-                              width: 45,
-                            ),
-                    ),
+                                        if (result != null) {
+                                          if (result[0] == "Confirm") {
+                                            // Display AlertDialog Loading First
+                                            showDialog(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              builder: (context) {
+                                                return CustomLoadingLogoCircle();
+                                              },
+                                            );
 
-                    //
-                    //
-                    //
-                    //
-                    //
-                    //Content expanded
-                    Expanded(
-                      child: SingleChildScrollView(
-                        physics: ClampingScrollPhysics(),
-                        child: Column(
-                          children: [
-                            //Section
-                            //Processing profile
-                            // if (_isReview)
-                            //   Container(
-                            //     width: double.infinity,
-                            //     padding: EdgeInsets.symmetric(
-                            //         horizontal: 20, vertical: 30),
-                            //     decoration: BoxDecoration(
-                            //       color: AppColors.warning.withOpacity(0.2),
-                            //     ),
-                            //     child: Column(
-                            //       children: [
-                            //         Text(
-                            //           "your profile is review".tr,
-                            //           style: bodyTextNormal(
-                            //               null,
-                            //               AppColors.fontWaring,
-                            //               FontWeight.bold),
-                            //         ),
-                            //         Text(
-                            //           "it takeup to process".tr,
-                            //           style: bodyTextSmall(
-                            //             null,
-                            //             AppColors.fontGreyOpacity,
-                            //             null,
-                            //           ),
-                            //         )
-                            //       ],
-                            //     ),
-                            //   ),
+                                            final res = await avatarProvider
+                                                .updateAvatar(
+                                                    result[1].toString());
 
-                            //
-                            //
-                            //
-                            //
-                            //Section
-                            //Avatar Image
-                            Container(
-                              width: double.infinity,
-                              color: AppColors.primary100,
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  //
-                                  //
-                                  //Press alert dialog show avatar image
-                                  onTap: () async {
-                                    dynamic result = await showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) {
-                                          return BoxDecAvatarImage(
-                                            listItems: _avatars,
-                                            selectedListItem:
-                                                _selectedAvatarImage,
-                                            title: "avatar_image".tr,
-                                          );
-                                        });
+                                            final statusCode =
+                                                res?["statusCode"];
 
-                                    if (result != null) {
-                                      if (result[0] == "Confirm") {
-                                        setState(() {
-                                          updateAvatar(result[1].toString());
-                                        });
-                                      }
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(20),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          child: Row(
-                                            children: [
-                                              //
-                                              //
-                                              //Avatar image
-                                              Stack(
-                                                clipBehavior: Clip.none,
-                                                alignment: Alignment.center,
-                                                children: <Widget>[
-                                                  //
-                                                  //
-                                                  //Avatar image loading
-                                                  _imageLoading
-                                                      ? Container(
-                                                          width: 90,
-                                                          height: 90,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: AppColors
-                                                                .backgroundWhite,
-                                                          ),
-                                                          child: Center(
-                                                            child: Text(
-                                                                "uploading".tr),
-                                                          ),
-                                                        )
-                                                      //
-                                                      //
-                                                      //ຫຼັງຈາກ Avatar image loading ແລ້ວ
-                                                      : Container(
-                                                          width: 90,
-                                                          height: 90,
-                                                          child: _image != null
-                                                              //
-                                                              //
-                                                              //ຖ້າວ່າມີຮູບ (_image != null)
-                                                              ? ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              100),
-                                                                  child: Image
-                                                                      .file(
-                                                                    _image!,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
-                                                                )
-                                                              //
-                                                              //
-                                                              //ຖ້າວ່າບໍ່ມີຮູບ (_image == null)
-                                                              : ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              100),
-                                                                  child: _avatarObj ==
-                                                                          null
-                                                                      ? Image
-                                                                          .asset(
-                                                                          'assets/image/defprofile.jpg',
-                                                                          fit: BoxFit
-                                                                              .contain,
-                                                                        )
-                                                                      : Image
-                                                                          .network(
-                                                                          "${_avatarScr}",
-                                                                          fit: BoxFit
-                                                                              .contain,
-                                                                          errorBuilder: (context,
-                                                                              error,
-                                                                              stackTrace) {
-                                                                            print(error);
-                                                                            return Image.asset(
-                                                                              'assets/image/defprofile.jpg',
-                                                                              fit: BoxFit.contain,
-                                                                            ); // Display an error message
-                                                                          },
-                                                                        ),
+                                            if (!context.mounted) return;
+
+                                            // Always close dialog first
+                                            Navigator.pop(context);
+
+                                            if (statusCode == 200 ||
+                                                statusCode == 201) {
+                                              await profileProvider
+                                                  .fetchProfileSeeker();
+                                            }
+                                          }
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(20),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              child: Row(
+                                                children: [
+                                                  //Avatar image
+                                                  Stack(
+                                                    clipBehavior: Clip.none,
+                                                    alignment: Alignment.center,
+                                                    children: <Widget>[
+                                                      Container(
+                                                        width: 90,
+                                                        height: 90,
+                                                        child: _image != null
+                                                            //ຖ້າວ່າມີຮູບ (_image != null)
+                                                            ? ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            100),
+                                                                child:
+                                                                    Image.file(
+                                                                  _image!,
+                                                                  fit: BoxFit
+                                                                      .cover,
                                                                 ),
-                                                        ),
+                                                              )
+                                                            //ຖ້າວ່າບໍ່ມີຮູບ (_image == null)
+                                                            : ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            100),
+                                                                child: profileProvider
+                                                                            .avatarObj ==
+                                                                        null
+                                                                    ? Image
+                                                                        .asset(
+                                                                        'assets/image/defprofile.jpg',
+                                                                        fit: BoxFit
+                                                                            .contain,
+                                                                      )
+                                                                    : Image
+                                                                        .network(
+                                                                        "${profileProvider.avatarScr}",
+                                                                        fit: BoxFit
+                                                                            .contain,
+                                                                        errorBuilder: (context,
+                                                                            error,
+                                                                            stackTrace) {
+                                                                          print(
+                                                                              error);
+                                                                          return Image
+                                                                              .asset(
+                                                                            'assets/image/defprofile.jpg',
+                                                                            fit:
+                                                                                BoxFit.contain,
+                                                                          ); // Display an error message
+                                                                        },
+                                                                      ),
+                                                              ),
+                                                      ),
 
-                                                  //
-                                                  //
-                                                  //Gallery image icon at the bottom right corner
-                                                  Positioned(
-                                                    bottom: 0,
-                                                    right: -5,
-                                                    child: GestureDetector(
-                                                      onTap: () {},
-                                                      child: Container(
-                                                        height: 25,
-                                                        width: 25,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: AppColors
-                                                              .backgroundWhite,
-                                                        ),
-                                                        child: Text(
-                                                          "\uf021",
-                                                          style:
-                                                              fontAwesomeRegular(
+                                                      //Gallery image icon at the bottom right corner
+                                                      Positioned(
+                                                        bottom: 0,
+                                                        right: -5,
+                                                        child: GestureDetector(
+                                                          onTap: () {},
+                                                          child: Container(
+                                                            height: 25,
+                                                            width: 25,
+                                                            alignment: Alignment
+                                                                .center,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              color: AppColors
+                                                                  .backgroundWhite,
+                                                            ),
+                                                            child: Text(
+                                                              "\uf021",
+                                                              style: fontAwesomeRegular(
                                                                   null,
                                                                   10,
                                                                   AppColors
                                                                       .dark500,
                                                                   null),
+                                                            ),
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
+                                                    ],
                                                   ),
+                                                  SizedBox(width: 10),
+
+                                                  //Column text right avatar image
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Text(
+                                                          "avatar_image".tr,
+                                                          style: bodyTextMaxNormal(
+                                                              "NotoSansLaoLoopedBold",
+                                                              null,
+                                                              FontWeight.bold),
+                                                        ),
+                                                        Text(
+                                                          "select_avatar_intro_text"
+                                                              .tr,
+                                                          style: bodyTextSmall(
+                                                              null, null, null),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  )
                                                 ],
                                               ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              //
-                                              //
-                                              //Column text right avatar image
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      "avatar_image".tr,
-                                                      style: bodyTextMaxNormal(
-                                                          "NotoSansLaoLoopedBold",
-                                                          null,
-                                                          FontWeight.bold),
-                                                    ),
-                                                    Text(
-                                                      "select_avatar_intro_text"
-                                                          .tr,
-                                                      style: bodyTextSmall(
-                                                          null, null, null),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
 
-                            //
-                            //
-                            //
-                            //
-                            //Section
-                            //Content profile
-                            Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
+                                //
+                                //
+                                // Choose have or haven't CV file
+                                if (profileProvider.statusFormProfile ==
+                                    "Event")
                                   Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 20),
+                                    child: Container(
+                                      width: double.infinity,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 20),
+                                          Text(
+                                            "do_u_have_cv_file".tr,
+                                            style: bodyTextMaxNormal(
+                                                null, null, FontWeight.bold),
+                                          ),
+                                          SizedBox(height: 10),
+                                          BoxContainChooseHaveCVFile(
+                                            press: () {
+                                              setState(() {
+                                                profileProvider.haveCVFile =
+                                                    "Yes";
+                                                pressStepMyProfile(0);
+                                              });
+                                            },
+                                            borderColor:
+                                                profileProvider.haveCVFile ==
+                                                        "Yes"
+                                                    ? AppColors.success200
+                                                    : AppColors.dark200,
+                                            boxColor:
+                                                profileProvider.haveCVFile ==
+                                                        "Yes"
+                                                    ? AppColors.success200
+                                                    : AppColors.backgroundWhite,
+                                            circleIconColor:
+                                                profileProvider.haveCVFile ==
+                                                        "Yes"
+                                                    ? AppColors.backgroundWhite
+                                                    : AppColors.dark100,
+                                            iconColor:
+                                                profileProvider.haveCVFile ==
+                                                        "Yes"
+                                                    ? AppColors.success
+                                                    : AppColors.dark400,
+                                            icon: "\uf316",
+                                            text: "yes_have_cv_file".tr,
+                                            textColor:
+                                                profileProvider.haveCVFile ==
+                                                        "Yes"
+                                                    ? AppColors.fontDark
+                                                    : AppColors.fontDark,
+                                          ),
+                                          SizedBox(height: 10),
+                                          BoxContainChooseHaveCVFile(
+                                            press: () {
+                                              setState(() {
+                                                profileProvider.haveCVFile =
+                                                    "No";
+                                                pressStepMyProfile(0);
+                                              });
+                                            },
+                                            borderColor:
+                                                profileProvider.haveCVFile ==
+                                                        "No"
+                                                    ? AppColors.primary200
+                                                    : AppColors.dark200,
+                                            boxColor:
+                                                profileProvider.haveCVFile ==
+                                                        "No"
+                                                    ? AppColors.primary200
+                                                    : AppColors.backgroundWhite,
+                                            circleIconColor:
+                                                profileProvider.haveCVFile ==
+                                                        "No"
+                                                    ? AppColors.backgroundWhite
+                                                    : AppColors.dark100,
+                                            iconColor:
+                                                profileProvider.haveCVFile ==
+                                                        "No"
+                                                    ? AppColors.primary
+                                                    : AppColors.dark400,
+                                            icon: "\uf317",
+                                            text: "no_have_cv_file".tr,
+                                            textColor:
+                                                profileProvider.haveCVFile ==
+                                                        "No"
+                                                    ? AppColors.fontDark
+                                                    : AppColors.fontDark,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                SizedBox(height: 30),
+
+                                //
+                                //
+                                //Form Profile
+                                if (profileProvider.statusFormProfile == "" ||
+                                    profileProvider.statusFormProfile ==
+                                            "Event" &&
+                                        profileProvider.haveCVFile != "")
+                                  Container(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        //
-                                        //
-                                        //
-                                        //
-                                        //
-                                        //Note text
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 5),
-                                              child: Text(
-                                                "\uf06a",
-                                                style: fontAwesomeSolid(
-                                                    null, 14, null, null),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 5,
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                "upgrade_member_level_intro".tr,
-                                                style: bodyTextMinNormal(
-                                                    null, null, null),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-
-                                        //
-                                        //
-                                        //
-                                        //
-                                        //
-                                        //Basic Member
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "Basic Member",
-                                              style: bodyTextMaxNormal(
-                                                  "NotoSansLaoLoopedBold",
-                                                  null,
-                                                  null),
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            //
-                                            //
-                                            //Current member status
-                                            if (_memberLevel == "Basic Member")
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 8, vertical: 3),
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                    color:
-                                                        AppColors.primary600),
-                                                child: Text(
-                                                  "curret_member_level".tr,
-                                                  style: bodyTextSmall(
-                                                      null,
-                                                      AppColors.fontWhite,
-                                                      null),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 0),
+                                          child: Column(
+                                            children: [
+                                              //Box Decoration Personal Information
+                                              if (stepMyProfile != 1)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      BoxDotBorderPrefixTextSuffixText(
+                                                    press: () {
+                                                      pressStepMyProfile(1);
+                                                    },
+                                                    prefixText: "1",
+                                                    text: "personal_info".tr,
+                                                    suffixBoxColor: profileProvider
+                                                            .personalInformationStatus
+                                                        ? AppColors.primary300
+                                                        : null,
+                                                    suffixText: profileProvider
+                                                            .personalInformationStatus
+                                                        ? "completed".tr
+                                                        : "blank".tr,
+                                                    suffixTextColor: profileProvider
+                                                            .personalInformationStatus
+                                                        ? AppColors.primary
+                                                        : null,
+                                                  ),
                                                 ),
-                                              )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
 
-                                        //
-                                        //
-                                        //
-                                        //Box Decoration Personal information
-                                        BoxDecorationInputPrefixTextSuffixWidget(
-                                          press: () {
-                                            _seekerProfile == null ||
-                                                    _seekerProfile == ""
-                                                ? Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          PersonalInformation(),
+                                              //Show Form Personal Information
+                                              if (stepMyProfile == 1)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      FormStepAddUpdateMyProfile(
+                                                    prefixText: "1",
+                                                    text: "personal_info".tr,
+                                                    suffixBoxColor: profileProvider
+                                                            .personalInformationStatus
+                                                        ? AppColors.primary300
+                                                        : null,
+                                                    suffixText: profileProvider
+                                                            .personalInformationStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor: profileProvider
+                                                            .personalInformationStatus
+                                                        ? AppColors.primary
+                                                        : null,
+                                                    formWidget: Container(
+                                                      child: profileProvider
+                                                                      .seekerProfile ==
+                                                                  null ||
+                                                              profileProvider
+                                                                      .seekerProfile ==
+                                                                  ""
+                                                          ? PersonalInformation(
+                                                              pressButtonLeft:
+                                                                  () {
+                                                              pressStepMyProfile(
+                                                                  2);
+                                                            })
+                                                          : PersonalInformation(
+                                                              id: profileProvider
+                                                                      .seekerProfile?[
+                                                                  '_id'],
+                                                              profile:
+                                                                  profileProvider
+                                                                      .seekerProfile,
+                                                              pressButtonLeft:
+                                                                  () {
+                                                                pressStepMyProfile(
+                                                                    2);
+                                                              },
+                                                              onSaveSuccess:
+                                                                  () async {
+                                                                pressStepMyProfile(
+                                                                    2);
+                                                              },
+                                                            ),
                                                     ),
-                                                  ).then((val) => onGoBack(val))
-                                                : Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          PersonalInformation(
-                                                        id: _seekerProfile[
-                                                            '_id'],
-                                                        profile: _seekerProfile,
+                                                  ),
+                                                ),
+
+                                              //Box Decoration Work Preferences
+                                              if (stepMyProfile != 2)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      BoxDotBorderPrefixTextSuffixText(
+                                                    press: () {
+                                                      pressStepMyProfile(2);
+                                                    },
+                                                    prefixText: "2",
+                                                    text: "work_preference".tr,
+                                                    suffixWidget: Text(
+                                                      "\uf054",
+                                                      style: fontAwesomeSolid(
+                                                          null, 14, null, null),
+                                                    ),
+                                                    suffixBoxColor: profileProvider
+                                                            .workPreferenceStatus
+                                                        ? AppColors.primary300
+                                                        : null,
+                                                    suffixText: profileProvider
+                                                            .workPreferenceStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor: profileProvider
+                                                            .workPreferenceStatus
+                                                        ? AppColors.primary
+                                                        : null,
+                                                  ),
+                                                ),
+
+                                              //Show Form Work Preferences
+                                              if (stepMyProfile == 2)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      FormStepAddUpdateMyProfile(
+                                                    prefixText: "2",
+                                                    text: "work_preference".tr,
+                                                    suffixBoxColor: profileProvider
+                                                            .workPreferenceStatus
+                                                        ? AppColors.primary300
+                                                        : null,
+                                                    suffixText: profileProvider
+                                                            .workPreferenceStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor: profileProvider
+                                                            .workPreferenceStatus
+                                                        ? AppColors.primary
+                                                        : null,
+                                                    formWidget: Container(
+                                                      child: profileProvider
+                                                                      .workPreferences ==
+                                                                  null ||
+                                                              profileProvider
+                                                                      .workPreferences ==
+                                                                  ""
+                                                          ? WorkPreferences(
+                                                              pressButtonLeft:
+                                                                  () {
+                                                              if (profileProvider
+                                                                          .statusFormProfile ==
+                                                                      "Event" &&
+                                                                  profileProvider
+                                                                          .haveCVFile ==
+                                                                      "Yes") {
+                                                                pressStepMyProfile(
+                                                                    7);
+                                                              } else {
+                                                                pressStepMyProfile(
+                                                                    3);
+                                                              }
+                                                            })
+                                                          : WorkPreferences(
+                                                              id: "workPreferenceId",
+                                                              workPreference:
+                                                                  profileProvider
+                                                                      .workPreferences,
+                                                              pressButtonLeft:
+                                                                  () {
+                                                                if (profileProvider
+                                                                            .statusFormProfile ==
+                                                                        "Event" &&
+                                                                    profileProvider
+                                                                            .haveCVFile ==
+                                                                        "Yes") {
+                                                                  pressStepMyProfile(
+                                                                      7);
+                                                                } else {
+                                                                  pressStepMyProfile(
+                                                                      3);
+                                                                }
+                                                              },
+                                                              onSaveSuccess:
+                                                                  () async {
+                                                                if (profileProvider
+                                                                            .statusFormProfile ==
+                                                                        "Event" &&
+                                                                    profileProvider
+                                                                            .haveCVFile ==
+                                                                        "Yes") {
+                                                                  pressStepMyProfile(
+                                                                      7);
+                                                                } else {
+                                                                  pressStepMyProfile(
+                                                                      3);
+                                                                }
+                                                              },
+                                                            ),
+                                                    ),
+                                                  ),
+                                                ),
+
+                                              //Box Decoration Education
+                                              if (stepMyProfile != 3 &&
+                                                  (profileProvider
+                                                              .statusFormProfile ==
+                                                          "" ||
+                                                      (profileProvider
+                                                                  .statusFormProfile ==
+                                                              "Event" &&
+                                                          profileProvider
+                                                                  .haveCVFile ==
+                                                              "No")))
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      BoxDotBorderPrefixTextSuffixText(
+                                                    press: () {
+                                                      pressStepMyProfile(3);
+                                                      // Navigator.push(
+                                                      //   context,
+                                                      //   MaterialPageRoute(
+                                                      //     builder: (context) =>
+                                                      //         FetchEducation(),
+                                                      //   ),
+                                                      // ).then((val) => onGoBack(val));
+                                                    },
+                                                    prefixText: "3",
+                                                    text: "education".tr,
+                                                    suffixBoxColor:
+                                                        profileProvider
+                                                                .educationStatus
+                                                            ? AppColors
+                                                                .primary300
+                                                            : null,
+                                                    suffixText: profileProvider
+                                                            .educationStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor:
+                                                        profileProvider
+                                                                .educationStatus
+                                                            ? AppColors.primary
+                                                            : null,
+                                                  ),
+                                                ),
+
+                                              //Show Form Education
+                                              if (stepMyProfile == 3)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      FormStepAddUpdateMyProfile(
+                                                    prefixText: "3",
+                                                    text: "education".tr,
+                                                    suffixBoxColor:
+                                                        profileProvider
+                                                                .educationStatus
+                                                            ? AppColors
+                                                                .primary300
+                                                            : null,
+                                                    suffixText: profileProvider
+                                                            .educationStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor:
+                                                        profileProvider
+                                                                .educationStatus
+                                                            ? AppColors.primary
+                                                            : null,
+                                                    formWidget: Container(
+                                                      child: FetchEducation(
+                                                        pressButtonLeft: () {
+                                                          pressStepMyProfile(4);
+                                                        },
                                                       ),
                                                     ),
-                                                  ).then(
-                                                    (val) => onGoBack(val),
-                                                  );
-                                          },
-                                          prefixIconText:
-                                              _personalInformationStatus == null
-                                                  ? "\uf058"
-                                                  : !_personalInformationStatus
-                                                      ? "\uf04c"
-                                                      : "\uf058",
-                                          prefixFontFamily:
-                                              _personalInformationStatus == null
-                                                  ? "FontAwesomeRegular"
-                                                  : "FontAwesomeSolid",
-                                          prefixColor:
-                                              _personalInformationStatus == null
-                                                  ? AppColors.dark500
-                                                  : !_personalInformationStatus
-                                                      ? AppColors.warning600
-                                                      : AppColors.primary600,
-                                          text: "personal_info".tr,
-                                          textColor:
-                                              _personalInformationStatus == null
-                                                  ? AppColors.dark500
-                                                  : !_personalInformationStatus
-                                                      ? null
-                                                      : null,
-                                          statusReview:
-                                              _personalInformationStatus == null
-                                                  ? ""
-                                                  : !_personalInformationStatus
-                                                      ? "profile_inreview".tr
-                                                      : "",
-                                          suffixWidget: Text(
-                                            "\uf054",
-                                            style: fontAwesomeSolid(
-                                                null, 14, null, null),
-                                          ),
-                                          validateText: Container(),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 15,
-                                  ),
-                                  Divider(
-                                    color: AppColors.dark200,
-                                    thickness: 1,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    child: Column(
-                                      children: [
-                                        //
-                                        //
-                                        //
-                                        //
-                                        //
-                                        //Basic Job Seeker
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Basic Job Seeker",
-                                              style: bodyTextMaxNormal(
-                                                  "NotoSansLaoLoopedBold",
-                                                  null,
-                                                  null),
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            //
-                                            //
-                                            //Current member status
-                                            if (_memberLevel ==
-                                                "Basic Job Seeker")
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 8, vertical: 3),
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                    color:
-                                                        AppColors.primary600),
-                                                child: Text(
-                                                  "curret_member_level".tr,
-                                                  style: bodyTextSmall(
-                                                      null,
-                                                      AppColors.fontWhite,
-                                                      null),
+                                                  ),
                                                 ),
-                                              )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
 
-                                        //
-                                        //
-                                        //Box Decoration Work Preferences
-                                        BoxDecorationInputPrefixTextSuffixWidget(
-                                          press: () {
-                                            _workPreferences == null ||
-                                                    _workPreferences == ""
-                                                ? Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          WorkPreferences(),
+                                              //Box Decoration Work History
+                                              if (stepMyProfile != 4 &&
+                                                  (profileProvider
+                                                              .statusFormProfile ==
+                                                          "" ||
+                                                      (profileProvider
+                                                                  .statusFormProfile ==
+                                                              "Event" &&
+                                                          profileProvider
+                                                                  .haveCVFile ==
+                                                              "No")))
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      BoxDotBorderPrefixTextSuffixText(
+                                                    press: () {
+                                                      pressStepMyProfile(4);
+                                                    },
+                                                    prefixText: "4",
+                                                    text: "work_history".tr,
+                                                    suffixBoxColor:
+                                                        profileProvider
+                                                                .workHistoryStatus
+                                                            ? AppColors
+                                                                .primary300
+                                                            : null,
+                                                    suffixText: profileProvider
+                                                            .workHistoryStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor:
+                                                        profileProvider
+                                                                .workHistoryStatus
+                                                            ? AppColors.primary
+                                                            : null,
+                                                  ),
+                                                ),
+
+                                              //Show Form Work History
+                                              if (stepMyProfile == 4)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      FormStepAddUpdateMyProfile(
+                                                    prefixText: "4",
+                                                    text: "work_history".tr,
+                                                    suffixBoxColor:
+                                                        profileProvider
+                                                                .workHistoryStatus
+                                                            ? AppColors
+                                                                .primary300
+                                                            : null,
+                                                    suffixText: profileProvider
+                                                            .workHistoryStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor:
+                                                        profileProvider
+                                                                .workHistoryStatus
+                                                            ? AppColors.primary
+                                                            : null,
+                                                    formWidget:
+                                                        FetchWorkHistory(
+                                                      noExperience:
+                                                          profileProvider
+                                                              .isNoExperience,
+                                                      pressButtonLeft: () {
+                                                        pressStepMyProfile(5);
+                                                      },
                                                     ),
-                                                  ).then((val) => onGoBack(val))
-                                                : Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          WorkPreferences(
-                                                        id: "workPreferenceId",
-                                                        workPreference:
-                                                            _workPreferences,
-                                                      ),
+                                                  ),
+                                                ),
+
+                                              //Box Decoration Language
+                                              if (stepMyProfile != 5 &&
+                                                  (profileProvider
+                                                              .statusFormProfile ==
+                                                          "" ||
+                                                      (profileProvider
+                                                                  .statusFormProfile ==
+                                                              "Event" &&
+                                                          profileProvider
+                                                                  .haveCVFile ==
+                                                              "No")))
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      BoxDotBorderPrefixTextSuffixText(
+                                                    press: () {
+                                                      pressStepMyProfile(5);
+                                                      // Navigator.push(
+                                                      //   context,
+                                                      //   MaterialPageRoute(
+                                                      //     builder: (context) =>
+                                                      //         FetchLanguage(),
+                                                      //   ),
+                                                      // ).then((val) => onGoBack(val));
+                                                    },
+                                                    prefixText: "5",
+                                                    text: "language_skill".tr,
+                                                    suffixWidget: Text(
+                                                      "\uf054",
+                                                      style: fontAwesomeSolid(
+                                                          null, 14, null, null),
                                                     ),
-                                                  ).then(
-                                                    (val) => onGoBack(val));
-                                          },
-                                          prefixIconText:
-                                              _workPreferenceStatus == null
-                                                  ? "\uf058"
-                                                  : !_workPreferenceStatus
-                                                      ? "\uf04c"
-                                                      : "\uf058",
-                                          prefixFontFamily:
-                                              _workPreferenceStatus == null
-                                                  ? "FontAwesomeRegular"
-                                                  : "FontAwesomeSolid",
-                                          prefixColor:
-                                              _workPreferenceStatus == null
-                                                  ? AppColors.dark500
-                                                  : !_workPreferenceStatus
-                                                      ? AppColors.warning600
-                                                      : AppColors.primary600,
-                                          text: "work_preference".tr,
-                                          textColor:
-                                              _workPreferenceStatus == null
-                                                  ? AppColors.dark500
-                                                  : !_workPreferenceStatus
-                                                      ? null
-                                                      : null,
-                                          statusReview:
-                                              _workPreferenceStatus == null
-                                                  ? ""
-                                                  : !_workPreferenceStatus
-                                                      ? "profile_inreview".tr
-                                                      : "",
-                                          suffixWidget: Text(
-                                            "\uf054",
-                                            style: fontAwesomeSolid(
-                                                null, 14, null, null),
+                                                    suffixBoxColor:
+                                                        profileProvider
+                                                                .languageStatus
+                                                            ? AppColors
+                                                                .primary300
+                                                            : null,
+                                                    suffixText: profileProvider
+                                                            .languageStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor:
+                                                        profileProvider
+                                                                .languageStatus
+                                                            ? AppColors.primary
+                                                            : null,
+                                                  ),
+                                                ),
+
+                                              //Show Form Language
+                                              if (stepMyProfile == 5)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      FormStepAddUpdateMyProfile(
+                                                    prefixText: "5",
+                                                    text: "language_skill".tr,
+                                                    suffixBoxColor:
+                                                        profileProvider
+                                                                .languageStatus
+                                                            ? AppColors
+                                                                .primary300
+                                                            : null,
+                                                    suffixText: profileProvider
+                                                            .languageStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor:
+                                                        profileProvider
+                                                                .languageStatus
+                                                            ? AppColors.primary
+                                                            : null,
+                                                    formWidget: FetchLanguage(
+                                                      pressButtonLeft: () {
+                                                        pressStepMyProfile(6);
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+
+                                              //Box Decoration Skill
+                                              if (stepMyProfile != 6 &&
+                                                  (profileProvider
+                                                              .statusFormProfile ==
+                                                          "" ||
+                                                      (profileProvider
+                                                                  .statusFormProfile ==
+                                                              "Event" &&
+                                                          profileProvider
+                                                                  .haveCVFile ==
+                                                              "No")))
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      BoxDotBorderPrefixTextSuffixText(
+                                                    press: () {
+                                                      pressStepMyProfile(6);
+                                                      // Navigator.push(
+                                                      //   context,
+                                                      //   MaterialPageRoute(
+                                                      //     builder: (context) =>
+                                                      //         FetchSkill(),
+                                                      //   ),
+                                                      // ).then((val) => onGoBack(val));
+                                                    },
+                                                    prefixText: "6",
+                                                    text: "skills".tr,
+                                                    suffixWidget: Text(
+                                                      "\uf054",
+                                                      style: fontAwesomeSolid(
+                                                          null, 14, null, null),
+                                                    ),
+                                                    suffixBoxColor:
+                                                        profileProvider
+                                                                .skillStatus
+                                                            ? AppColors
+                                                                .primary300
+                                                            : null,
+                                                    suffixText: profileProvider
+                                                            .skillStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor:
+                                                        profileProvider
+                                                                .skillStatus
+                                                            ? AppColors.primary
+                                                            : null,
+                                                  ),
+                                                ),
+
+                                              //Show Form Skill
+                                              if (stepMyProfile == 6)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      FormStepAddUpdateMyProfile(
+                                                    prefixText: "6",
+                                                    text: "skills".tr,
+                                                    suffixBoxColor:
+                                                        profileProvider
+                                                                .skillStatus
+                                                            ? AppColors
+                                                                .primary300
+                                                            : null,
+                                                    suffixText: profileProvider
+                                                            .skillStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor:
+                                                        profileProvider
+                                                                .skillStatus
+                                                            ? AppColors.primary
+                                                            : null,
+                                                    formWidget: FetchSkill(
+                                                      pressButtonLeft: () {
+                                                        pressStepMyProfile(7);
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+
+                                              //Box Decoration Resume File
+                                              if (stepMyProfile != 7)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      BoxDotBorderPrefixTextSuffixText(
+                                                    press: () {
+                                                      pressStepMyProfile(7);
+                                                    },
+                                                    prefixText: profileProvider
+                                                                    .statusFormProfile ==
+                                                                "Event" &&
+                                                            profileProvider
+                                                                    .haveCVFile ==
+                                                                "Yes"
+                                                        ? "3"
+                                                        : "7",
+                                                    text: "cv_file".tr,
+                                                    suffixBoxColor:
+                                                        profileProvider
+                                                                .resumeStatus
+                                                            ? AppColors
+                                                                .primary300
+                                                            : null,
+                                                    suffixText: profileProvider
+                                                            .resumeStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor:
+                                                        profileProvider
+                                                                .resumeStatus
+                                                            ? AppColors.primary
+                                                            : null,
+                                                  ),
+                                                ),
+
+                                              //Show Form Resume File
+                                              if (stepMyProfile == 7)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child:
+                                                      FormStepAddUpdateMyProfile(
+                                                    prefixText: profileProvider
+                                                                    .statusFormProfile ==
+                                                                "Event" &&
+                                                            profileProvider
+                                                                    .haveCVFile ==
+                                                                "Yes"
+                                                        ? "3"
+                                                        : "7",
+                                                    text: "cv_file".tr,
+                                                    suffixBoxColor:
+                                                        profileProvider
+                                                                .resumeStatus
+                                                            ? AppColors
+                                                                .primary300
+                                                            : null,
+                                                    suffixText: profileProvider
+                                                            .resumeStatus
+                                                        ? "Completed"
+                                                        : "Blank",
+                                                    suffixTextColor:
+                                                        profileProvider
+                                                                .resumeStatus
+                                                            ? AppColors.primary
+                                                            : null,
+                                                    formWidget: UploadCV(
+                                                      onSaveSuccess: () async {
+                                                        if (profileProvider
+                                                                .statusFormProfile ==
+                                                            "Event") {
+                                                          pressStepMyProfile(0);
+
+                                                          print(
+                                                              "UploadCV onSaveSuccess");
+
+                                                          // Auto ApplyEvent work when function condition is met:
+                                                          // profileProvider.statusFormProfile == Event
+                                                          // profileProvider.haveCVFile == Yes
+                                                          // profileProvider.personalInformationStatus == true
+                                                          // profileProvider.workPreferenceStatus == true
+                                                          // eventAvailableProvider.isApplied == false
+                                                          if (!eventAvailableProvider
+                                                                  .isApplied &&
+                                                              profileProvider
+                                                                  .personalInformationStatus &&
+                                                              profileProvider
+                                                                  .workPreferenceStatus) {
+                                                            print(
+                                                                "Auto ApplyEvent work");
+                                                            pressApplyEvent();
+                                                          }
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
                                           ),
-                                          validateText: Container(),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
                                         ),
 
-                                        //
-                                        //
-                                        //Box Decoration Resume File
-                                        BoxDecorationInputPrefixTextSuffixWidget(
-                                          press: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => UploadCV(
-                                                  cv: _cv,
-                                                  vipoCV: _vipoCV,
-                                                  personalInformationStatus:
-                                                      _personalInformationStatus,
-                                                  workPreferenceStatus:
-                                                      _workPreferenceStatus,
-                                                  educationStatus:
-                                                      _educationStatus,
-                                                  workHistoryStatus:
-                                                      _workHistoryStatus,
-                                                  languageStatus:
-                                                      _languageStatus,
-                                                  skillStatus: _skillStatus,
+                                        // Text(
+                                        //     "${eventAvailableProvider.isApplied}"),
+                                        // Text(
+                                        //     "${profileProvider.personalInformationStatus}"),
+                                        // Text(
+                                        //     "${profileProvider.workPreferenceStatus}"),
+
+                                        if (conditionShowApplyEventButton())
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 20),
+                                            child: Column(
+                                              children: [
+                                                SizedBox(height: 10),
+                                                Button(
+                                                  buttonColor:
+                                                      AppColors.warning600,
+                                                  text: "ລົງທະບຽນເຂົ້າຮ່ວມງານ",
+                                                  textColor: AppColors.fontDark,
+                                                  textFontWeight:
+                                                      FontWeight.bold,
+                                                  press: () {
+                                                    pressApplyEvent();
+                                                  },
                                                 ),
-                                              ),
-                                            ).then((val) => onGoBack(val));
-                                          },
-                                          prefixIconText: _resumeStatus == null
-                                              ? "\uf058"
-                                              : !_resumeStatus
-                                                  ? "\uf04c"
-                                                  : "\uf058",
-                                          prefixFontFamily:
-                                              _resumeStatus == null
-                                                  ? "FontAwesomeRegular"
-                                                  : "FontAwesomeSolid",
-                                          prefixColor: _resumeStatus == null
-                                              ? AppColors.dark500
-                                              : !_resumeStatus
-                                                  ? AppColors.warning600
-                                                  : AppColors.primary600,
-                                          text: "cv_file".tr,
-                                          textColor: _resumeStatus == null
-                                              ? AppColors.dark500
-                                              : !_resumeStatus
-                                                  ? null
-                                                  : null,
-                                          statusReview: _resumeStatus == null
-                                              ? ""
-                                              : !_resumeStatus
-                                                  ? "profile_inreview".tr
-                                                  : "",
-                                          suffixWidget: Text(
-                                            "\uf054",
-                                            style: fontAwesomeSolid(
-                                                null, 14, null, null),
+                                              ],
+                                            ),
                                           ),
-                                          validateText: Container(),
-                                        ),
+                                        SizedBox(height: 30),
                                       ],
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 15,
-                                  ),
-                                  Divider(
-                                    color: AppColors.dark200,
-                                    thickness: 1,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    child: Column(
-                                      children: [
-                                        //
-                                        //
-                                        //
-                                        //
-                                        //
-                                        //Expert Job Seeker
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Expert Job Seeker",
-                                              style: bodyTextMaxNormal(
-                                                  "NotoSansLaoLoopedBold",
-                                                  null,
-                                                  null),
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            //
-                                            //
-                                            //Current member status
-                                            if (_memberLevel ==
-                                                "Expert Job Seeker")
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 8, vertical: 3),
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                    color:
-                                                        AppColors.primary600),
-                                                child: Text(
-                                                  "curret_member_level".tr,
-                                                  style: bodyTextSmall(
-                                                      null,
-                                                      AppColors.fontWhite,
-                                                      null),
-                                                ),
-                                              )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-
-                                        //
-                                        //
-                                        //Box Decoration Work History
-                                        BoxDecorationInputPrefixTextSuffixWidget(
-                                          press: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    FetchWorkHistory(
-                                                  noExperience: _noExperience,
-                                                ),
-                                              ),
-                                            ).then((val) {
-                                              onGoBack(val);
-                                            });
-                                          },
-                                          prefixIconText:
-                                              _workHistoryStatus == null
-                                                  ? "\uf058"
-                                                  : !_workHistoryStatus
-                                                      ? "\uf04c"
-                                                      : "\uf058",
-                                          prefixFontFamily:
-                                              _workHistoryStatus == null
-                                                  ? "FontAwesomeRegular"
-                                                  : "FontAwesomeSolid",
-                                          prefixColor:
-                                              _workHistoryStatus == null
-                                                  ? AppColors.dark500
-                                                  : !_workHistoryStatus
-                                                      ? AppColors.warning600
-                                                      : AppColors.primary600,
-                                          text: "work_history".tr,
-                                          textColor: _workHistoryStatus == null
-                                              ? AppColors.dark500
-                                              : !_workHistoryStatus
-                                                  ? null
-                                                  : null,
-                                          statusReview:
-                                              _workHistoryStatus == null
-                                                  ? ""
-                                                  : !_workHistoryStatus
-                                                      ? "profile_inreview".tr
-                                                      : "",
-                                          suffixWidget: Text(
-                                            "\uf054",
-                                            style: fontAwesomeSolid(
-                                                null, 14, null, null),
-                                          ),
-                                          validateText: Container(),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-
-                                        //
-                                        //
-                                        //Box Decoration Education
-                                        BoxDecorationInputPrefixTextSuffixWidget(
-                                          press: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    FetchEducation(),
-                                              ),
-                                            ).then((val) => onGoBack(val));
-                                          },
-                                          prefixIconText:
-                                              _educationStatus == null
-                                                  ? "\uf058"
-                                                  : !_educationStatus
-                                                      ? "\uf04c"
-                                                      : "\uf058",
-                                          prefixFontFamily:
-                                              _educationStatus == null
-                                                  ? "FontAwesomeRegular"
-                                                  : "FontAwesomeSolid",
-                                          prefixColor: _educationStatus == null
-                                              ? AppColors.dark500
-                                              : !_educationStatus
-                                                  ? AppColors.warning600
-                                                  : AppColors.primary600,
-                                          text: "education".tr,
-                                          textColor: _educationStatus == null
-                                              ? AppColors.dark500
-                                              : !_educationStatus
-                                                  ? null
-                                                  : null,
-                                          statusReview: _educationStatus == null
-                                              ? ""
-                                              : !_educationStatus
-                                                  ? "profile_inreview".tr
-                                                  : "",
-                                          suffixWidget: Text(
-                                            "\uf054",
-                                            style: fontAwesomeSolid(
-                                                null, 14, null, null),
-                                          ),
-                                          validateText: Container(),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-
-                                        //
-                                        //
-                                        //Box Decoration Language
-                                        BoxDecorationInputPrefixTextSuffixWidget(
-                                          press: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    FetchLanguage(),
-                                              ),
-                                            ).then((val) => onGoBack(val));
-                                          },
-                                          prefixIconText:
-                                              _languageStatus == null
-                                                  ? "\uf058"
-                                                  : !_languageStatus
-                                                      ? "\uf04c"
-                                                      : "\uf058",
-                                          prefixFontFamily:
-                                              _languageStatus == null
-                                                  ? "FontAwesomeRegular"
-                                                  : "FontAwesomeSolid",
-                                          prefixColor: _languageStatus == null
-                                              ? AppColors.dark500
-                                              : !_languageStatus
-                                                  ? AppColors.warning600
-                                                  : AppColors.primary600,
-                                          text: "language_skill".tr,
-                                          textColor: _languageStatus == null
-                                              ? AppColors.dark500
-                                              : !_languageStatus
-                                                  ? null
-                                                  : null,
-                                          statusReview: _languageStatus == null
-                                              ? ""
-                                              : !_languageStatus
-                                                  ? "profile_inreview".tr
-                                                  : "",
-                                          suffixWidget: Text(
-                                            "\uf054",
-                                            style: fontAwesomeSolid(
-                                                null, 14, null, null),
-                                          ),
-                                          validateText: Container(),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-
-                                        //
-                                        //
-                                        //Box Decoration Skill
-                                        BoxDecorationInputPrefixTextSuffixWidget(
-                                          press: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    FetchSkill(),
-                                              ),
-                                            ).then((val) => onGoBack(val));
-                                          },
-                                          prefixIconText: _skillStatus == null
-                                              ? "\uf058"
-                                              : !_skillStatus
-                                                  ? "\uf04c"
-                                                  : "\uf058",
-                                          prefixFontFamily: _skillStatus == null
-                                              ? "FontAwesomeRegular"
-                                              : "FontAwesomeSolid",
-                                          prefixColor: _skillStatus == null
-                                              ? AppColors.dark500
-                                              : !_skillStatus
-                                                  ? AppColors.warning600
-                                                  : AppColors.primary600,
-                                          text: "skills".tr,
-                                          textColor: _skillStatus == null
-                                              ? AppColors.dark500
-                                              : !_skillStatus
-                                                  ? null
-                                                  : null,
-                                          statusReview: _skillStatus == null
-                                              ? ""
-                                              : !_skillStatus
-                                                  ? "profile_inreview".tr
-                                                  : "",
-                                          suffixWidget: Text(
-                                            "\uf054",
-                                            style: fontAwesomeSolid(
-                                                null, 14, null, null),
-                                          ),
-                                          validateText: Container(),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              ],
                             ),
-
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //ProfileDetail
-                            // Container(
-                            //   child: ProfileDetail(
-                            //     profile: _seekerProfile,
-                            //     workPreferences: _workPreferences,
-                            //     cv: _cv,
-                            //     educations: _education,
-                            //     workHistories: _workHistory,
-                            //     languageSkills: _languageSkill,
-                            //     skills: _skills,
-                            //     onGoBack: onGoBack,
-                            //   ),
-                            // )
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -1942,9 +1980,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 null,
                               ),
                             ),
-                            SizedBox(
-                              height: 15,
-                            ),
+                            SizedBox(height: 15),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),

@@ -5,52 +5,30 @@ import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/formatNumber.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/provider/eventAvailableProvider.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/Events/detailPosition.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class PositionCompany extends StatefulWidget {
-  const PositionCompany(
-      {Key? key,
-      required this.companyAvailableEventId,
-      required this.isApplied,
-      this.logo})
-      : super(key: key);
-  final String companyAvailableEventId;
-  final String? logo;
-  final bool isApplied;
+  const PositionCompany({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<PositionCompany> createState() => _PositionCompanyState();
 }
 
 class _PositionCompanyState extends State<PositionCompany> {
-  List _companayPosition = [];
-  String _companyName = "";
+  // List _companayPosition = [];
+  // String _companyName = "";
   String _title = "";
   String _description = "";
 
   String _salary = "";
   int _staffQTY = 0;
-
-  getCompanyIdJobAvailable() async {
-    var res = await postData(getCompanyIdAvailableEventSeekerApi, {
-      "page": "",
-      "perPage": "",
-      "companyId": "${widget.companyAvailableEventId}"
-    });
-
-    // var res = await postData(getCompanyIdAvailableEventSeekerApi,
-    //     {"page": "", "perPage": "", "companyId": "6167b3718c52d99b8c469570"});
-
-    setState(() {
-      _companayPosition = res["info"];
-      _companyName = res["companyName"];
-
-      print("${_companayPosition}");
-    });
-  }
 
   applyByJobId(String jobId) async {
     var res = await postData(applyJobIdSeekerApi, {"_id": jobId});
@@ -63,7 +41,7 @@ class _PositionCompanyState extends State<PositionCompany> {
         context: context,
         builder: (dialogContext) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "successful".tr,
+            title: "successfully".tr,
             contentText: "applied_success".tr,
             textButton: "ok".tr,
             press: () async {
@@ -101,16 +79,17 @@ class _PositionCompanyState extends State<PositionCompany> {
   void initState() {
     super.initState();
 
-    getCompanyIdJobAvailable();
+    context.read<EventAvailableProvider>().fetchCompanyByIdListPosition();
   }
 
   @override
   Widget build(BuildContext context) {
+    final eventAvailableProvider = context.watch<EventAvailableProvider>();
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBarDefault(
-          backgroundColor: AppColors.dark100,
+          backgroundColor: AppColors.backgroundWhite,
           textTitle: "",
           fontWeight: FontWeight.bold,
           textColor: AppColors.fontDark,
@@ -121,7 +100,7 @@ class _PositionCompanyState extends State<PositionCompany> {
         ),
         body: SafeArea(
           child: Container(
-            color: AppColors.dark100,
+            color: AppColors.backgroundWhite,
             height: double.infinity,
             width: double.infinity,
             child: SingleChildScrollView(
@@ -131,26 +110,24 @@ class _PositionCompanyState extends State<PositionCompany> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    //
-                    //
                     //Company name
                     Text(
-                      "${_companyName}",
+                      "${eventAvailableProvider.companyName}",
                       style: bodyTextMedium(null, null, FontWeight.bold),
                     ),
                     // Text("${_companayPosition}"),
 
                     SizedBox(height: 20),
 
-                    //
-                    //
                     //List Company Position
                     ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: _companayPosition.length,
+                        itemCount:
+                            eventAvailableProvider.companyListPosition.length,
                         itemBuilder: (context, index) {
-                          var i = _companayPosition[index];
+                          var i =
+                              eventAvailableProvider.companyListPosition[index];
                           _title = i["title"];
                           _description = i["description"];
                           _staffQTY = int.parse(i["staffQTY"].toString());
@@ -169,35 +146,29 @@ class _PositionCompanyState extends State<PositionCompany> {
                                   MaterialPageRoute(
                                     builder: (context) => DetailPositionComapny(
                                       id: i["_id"],
-                                      logo: widget.logo,
+                                      logo: eventAvailableProvider
+                                          .companyLogoEventAvailable,
                                       title: i["title"],
                                       salary: i["salary"] == null
                                           ? ""
                                           : i["salary"].toString(),
                                       description: i["description"],
                                       isNegotiable: i["isNegotiable"],
-                                      isApplied: widget.isApplied,
                                       isAppliedEvenJobCompany: i["isApplied"],
                                     ),
                                   ),
-                                ).then((val) {
-                                  print(val.toString());
-                                  if (val == "AppliedEventJobCompany") {
-                                    getCompanyIdJobAvailable();
-                                  }
-                                });
+                                );
                               },
                               child: Container(
                                 padding: EdgeInsets.all(20),
                                 decoration: BoxDecoration(
                                   color: AppColors.backgroundWhite,
+                                  border: Border.all(color: AppColors.dark200),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    //
-                                    //
                                     //Title
                                     Text(
                                       "${_title}",
@@ -211,20 +182,18 @@ class _PositionCompanyState extends State<PositionCompany> {
 
                                     SizedBox(height: 10),
 
-                                    //
-                                    //
                                     //Salary
                                     Row(
                                       children: [
                                         Text(
-                                          "ເງິນເດືອນເລີ່ມຕົ້ນ",
+                                          "starting_salary".tr,
                                           style: bodyTextMaxNormal(
                                               null, null, null),
                                         ),
                                         SizedBox(width: 5),
                                         Text(
                                           i["isNegotiable"]
-                                              ? "ສາມາດຕໍ່ລອງໄດ້"
+                                              ? "negotiable".tr
                                               : "${_salary}",
                                           style: bodyTextMaxNormal(
                                               i["isNegotiable"]
@@ -236,7 +205,7 @@ class _PositionCompanyState extends State<PositionCompany> {
                                         SizedBox(width: 5),
                                         if (!i["isNegotiable"])
                                           Text(
-                                            "ກີບ",
+                                            "lak".tr,
                                             style: bodyTextMaxNormal(
                                                 null, null, null),
                                           ),
@@ -245,13 +214,11 @@ class _PositionCompanyState extends State<PositionCompany> {
 
                                     SizedBox(height: 5),
 
-                                    //
-                                    //
                                     //ເປີດຮັບອັດຕາ
                                     Row(
                                       children: [
                                         Text(
-                                          "ເປີດຮັບ",
+                                          "curently_open".tr,
                                           style: bodyTextMaxNormal(
                                               null, null, null),
                                         ),
@@ -265,7 +232,7 @@ class _PositionCompanyState extends State<PositionCompany> {
                                         ),
                                         SizedBox(width: 5),
                                         Text(
-                                          "ອັດຕາ",
+                                          "position".tr,
                                           style: bodyTextMaxNormal(
                                               null, null, null),
                                         ),
@@ -274,13 +241,9 @@ class _PositionCompanyState extends State<PositionCompany> {
 
                                     SizedBox(height: 10),
 
-                                    //
-                                    //
-                                    //Button detail / register
+                                    //Button Detail / Applied
                                     Row(
                                       children: [
-                                        //
-                                        //
                                         //Button Detail Position
                                         GestureDetector(
                                           onTap: () {
@@ -290,7 +253,8 @@ class _PositionCompanyState extends State<PositionCompany> {
                                                 builder: (context) =>
                                                     DetailPositionComapny(
                                                   id: i["_id"],
-                                                  logo: widget.logo,
+                                                  logo: eventAvailableProvider
+                                                      .companyLogoEventAvailable,
                                                   title: i["title"],
                                                   salary: i["salary"] == null
                                                       ? ""
@@ -298,19 +262,11 @@ class _PositionCompanyState extends State<PositionCompany> {
                                                   description: i["description"],
                                                   isNegotiable:
                                                       i["isNegotiable"],
-                                                  isApplied: widget.isApplied,
                                                   isAppliedEvenJobCompany:
                                                       i["isApplied"],
                                                 ),
                                               ),
-                                            ).then((val) {
-                                              print("then status: " +
-                                                  val.toString());
-                                              if (val ==
-                                                  "AppliedEventJobCompany") {
-                                                getCompanyIdJobAvailable();
-                                              }
-                                            });
+                                            );
                                           },
                                           child: Container(
                                             padding: EdgeInsets.symmetric(
@@ -323,7 +279,7 @@ class _PositionCompanyState extends State<PositionCompany> {
                                                 border: Border.all(
                                                     color: AppColors.teal)),
                                             child: Text(
-                                              "ເບິ່ງລາຍລະອຽດ",
+                                              "view_details".tr,
                                               style: bodyTextNormal(
                                                   null, AppColors.teal, null),
                                             ),
@@ -332,10 +288,8 @@ class _PositionCompanyState extends State<PositionCompany> {
 
                                         SizedBox(width: 10),
 
-                                        //
-                                        //
-                                        //Button Register
-                                        if (widget.isApplied == true)
+                                        //Button Applied
+                                        if (eventAvailableProvider.isApplied)
                                           GestureDetector(
                                             onTap: () async {
                                               if (!i["isApplied"]) {
@@ -345,18 +299,17 @@ class _PositionCompanyState extends State<PositionCompany> {
                                                     context: context,
                                                     builder: (context) {
                                                       return NewVer3CustAlertDialogWarningPictrueBtnConfirmCancel(
-                                                        statusLogo: widget
-                                                                        .logo !=
-                                                                    "" &&
-                                                                widget.logo !=
-                                                                    null
-                                                            ? ""
-                                                            : "ImageAsset",
-                                                        logo: widget.logo !=
-                                                                    "" &&
-                                                                widget.logo !=
-                                                                    null
-                                                            ? widget.logo
+                                                        statusLogo:
+                                                            eventAvailableProvider
+                                                                        .companyLogoEventAvailable !=
+                                                                    ""
+                                                                ? ""
+                                                                : "ImageAsset",
+                                                        logo: eventAvailableProvider
+                                                                    .companyLogoEventAvailable !=
+                                                                ""
+                                                            ? eventAvailableProvider
+                                                                .companyLogoEventAvailable
                                                             : "no-image-available.png",
                                                         title:
                                                             "apply_job_modal_title"
@@ -396,7 +349,7 @@ class _PositionCompanyState extends State<PositionCompany> {
                                                               AppColors.teal),
                                                     ),
                                                     child: Text(
-                                                      "ສະໝັກ",
+                                                      "apply".tr,
                                                       style: bodyTextNormal(
                                                           null,
                                                           AppColors.fontWhite,
@@ -418,7 +371,7 @@ class _PositionCompanyState extends State<PositionCompany> {
                                                               .dark400),
                                                     ),
                                                     child: Text(
-                                                      "ສະໝັກແລ້ວ",
+                                                      "applied".tr,
                                                       style: bodyTextNormal(
                                                           null,
                                                           AppColors.fontWhite,
@@ -434,9 +387,7 @@ class _PositionCompanyState extends State<PositionCompany> {
                             ),
                           );
                         }),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                   ],
                 ),
               ),

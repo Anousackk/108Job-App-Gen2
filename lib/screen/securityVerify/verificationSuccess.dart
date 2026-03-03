@@ -63,7 +63,7 @@ class _VerificationSuccessState extends State<VerificationSuccess> {
                 height: 10,
               ),
               Text(
-                "verify".tr + " " + "successful".tr,
+                "verify".tr + " " + "successfully".tr,
                 style: bodyTextMedium(null, null, FontWeight.bold),
               ),
               SizedBox(

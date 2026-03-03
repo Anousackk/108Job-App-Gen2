@@ -339,6 +339,7 @@ class _SimpleTextFieldWithIconRightState
     return Container(
       // height: 50,
       child: TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         onTap: widget.press,
         onChanged: widget.changed,
         controller: widget.textController,

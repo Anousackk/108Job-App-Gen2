@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_in_if_null_operators, avoid_init_to_null, file_names, sized_box_for_whitespace, deprecated_member_use, prefer_adjacent_string_concatenation, avoid_unnecessary_containers
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields, unused_local_variable, prefer_if_null_operators, avoid_print, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, unnecessary_null_in_if_null_operators, avoid_init_to_null, file_names, sized_box_for_whitespace, deprecated_member_use, prefer_adjacent_string_concatenation, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
 import 'dart:convert';
 
@@ -9,6 +9,7 @@ import 'package:app/functions/cupertinoDatePicker.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/provider/profileProvider.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
@@ -20,6 +21,7 @@ import 'package:flutter_quill_delta_from_html/flutter_quill_delta_from_html.dart
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 // import 'package:quill_html_converter/quill_html_converter.dart';
@@ -29,9 +31,12 @@ class WorkHistory extends StatefulWidget {
     Key? key,
     this.id,
     this.workHistory,
+    this.onCancel,
+    this.onSaveSuccess,
   }) : super(key: key);
   final String? id;
   final dynamic workHistory;
+  final Function()? onCancel, onSaveSuccess;
 
   @override
   State<WorkHistory> createState() => _WorkHistoryState();
@@ -130,10 +135,10 @@ class _WorkHistoryState extends State<WorkHistory> {
     });
   }
 
-  addWorkHistorySeeker() async {
-    final converter = QuillDeltaToHtmlConverter(
-      _quillController.document.toDelta().toJson(),
-    );
+  pressAddWorkHistorySeeker() async {
+    final profileProvider = context.read<ProfileProvider>();
+    final converter =
+        QuillDeltaToHtmlConverter(_quillController.document.toDelta().toJson());
     String quillConvertDeltaToHTML = converter.convert();
     print(quillConvertDeltaToHTML.toString());
 
@@ -141,9 +146,7 @@ class _WorkHistoryState extends State<WorkHistory> {
     //     _quillController.document.toDelta().toHtml();
     // print(quillConvertDeltaToHTML.toString());
 
-    //
-    //
-    //ສະແດງ AlertDialog Loading
+    // Display AlertDialog Loading First
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -152,42 +155,44 @@ class _WorkHistoryState extends State<WorkHistory> {
       },
     );
 
-    var res = await postData(addWorkHistorySeekerApi, {
-      "_id": _id,
-      "company": _company,
-      "startYear":
-          _fromMonthYear != null ? _fromMonthYear.toString() : _fromMonthYear,
-      "endYear": _toMonthYear != null ? _toMonthYear.toString() : _toMonthYear,
-      "position": _jobTitle,
-      "responsibility":
-          // jsonEncode(_quillController.document.toDelta().toJson()),
-          quillConvertDeltaToHTML,
-      "isCurrentJob": _isCurrentJob
-    });
+    final res = await profileProvider.addWorkHistory(
+      _id,
+      _company,
 
-    var updateNoExperience =
-        await postData(noExperienceSeekerApi, {"noExperience": false});
+      _fromMonthYear != null ? _fromMonthYear.toString() : _fromMonthYear,
+      _toMonthYear != null ? _toMonthYear.toString() : _toMonthYear,
+      _jobTitle,
+
+      // jsonEncode(_quillController.document.toDelta().toJson()),
+      quillConvertDeltaToHTML,
+      _isCurrentJob,
+      profileProvider.statusEventUpdateProfile,
+    );
+
+    final updateNoExPerience = await profileProvider.updateNoExperience(false);
 
     print("workHistory: " + "${res['workHistory']}");
-    print("updateNoExperience: " + "${updateNoExperience}");
+    print("updateNoExperience: " + "${updateNoExPerience}");
 
-    if (res['workHistory'] != null) {
-      Navigator.pop(context);
-    }
+    final statusCode = res?["statusCode"];
 
-    if (res['workHistory'] != null) {
+    if (!context.mounted) return;
+
+    // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
+    Navigator.pop(context);
+
+    if (statusCode == 200 || statusCode == 201) {
+      // Call parent callback
+      if (widget.onSaveSuccess != null) {
+        widget.onSaveSuccess!();
+      }
+    } else {
       await showDialog(
         context: context,
         builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "save".tr + " " + "successful".tr,
-            contentText:
-                "save".tr + " " + "work_history".tr + " " + "successful".tr,
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-              Navigator.of(context).pop("Submitted");
-            },
+          return CustAlertDialogErrorWithoutBtn(
+            title: "incorrect".tr,
+            text: "incorrect".tr,
           );
         },
       );
@@ -218,15 +223,6 @@ class _WorkHistoryState extends State<WorkHistory> {
 
   @override
   Widget build(BuildContext context) {
-    // Color getColor(Set<MaterialState> states) {
-    //   const Set<MaterialState> interactiveStates = <MaterialState>{
-    //     MaterialState.pressed,
-    //     MaterialState.hovered,
-    //     MaterialState.focused,
-    //   };
-    //   return !_isCurrentJob ? AppColors.white : AppColors.primary;
-    // }
-
     return GestureDetector(
       onTap: () {
         _currentFocus = FocusScope.of(context);
@@ -234,782 +230,629 @@ class _WorkHistoryState extends State<WorkHistory> {
           _currentFocus.unfocus();
         }
       },
-      child: MediaQuery(
-        data:
-            MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
-        child: Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 0,
-            backgroundColor: AppColors.primary600,
-          ),
-          body: SafeArea(
-            child: Container(
-              height: double.infinity,
-              width: double.infinity,
-              color: AppColors.backgroundWhite,
-              child: Form(
-                key: formkey,
+      child: Container(
+        // height: double.infinity,
+        // width: double.infinity,
+        color: AppColors.backgroundWhite,
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        //
+        //
+        //Form Work History
+        child: Form(
+          key: formkey,
+          child: Column(
+            children: [
+              //
+              //
+              //Section
+              //Content Form Work History
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 20),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     //
                     //
+                    //Company
+                    Text(
+                      "work_employer".tr,
+                      style: bodyTextNormal(null, null, FontWeight.bold),
+                    ),
+                    SizedBox(height: 5),
+
                     //
                     //
-                    //Section
-                    //Appbar custom
-                    AppBarThreeWidgt(
-                      //
-                      //Widget Leading
-                      //Navigator.pop
-                      leading: GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
+                    //Company input
+                    SimpleTextFieldWithIconRight(
+                      textController: _companyController,
+                      changed: (value) {
+                        setState(() {
+                          _company = value;
+                        });
+                      },
+                      inputColor: AppColors.inputWhite,
+                      hintText: "enter".tr + " " + "work_employer".tr,
+                      hintTextFontWeight: FontWeight.bold,
+                      suffixIcon: Icon(
+                        Icons.business,
+                      ),
+                      suffixIconColor: AppColors.iconGrayOpacity,
+                    ),
+                    SizedBox(height: 20),
+
+                    //
+                    //
+                    //Job Title
+                    Text(
+                      "work_position".tr,
+                      style: bodyTextNormal(null, null, FontWeight.bold),
+                    ),
+                    SizedBox(height: 5),
+
+                    //
+                    //
+                    //Job title input
+                    SimpleTextFieldWithIconRight(
+                      textController: _jobTitleController,
+                      changed: (value) {
+                        setState(() {
+                          _jobTitle = value;
+                        });
+                      },
+                      inputColor: AppColors.inputWhite,
+                      hintText: "enter".tr + " " + "work_position".tr,
+                      hintTextFontWeight: FontWeight.bold,
+                      suffixIcon: Icon(
+                        Icons.work,
+                      ),
+                      suffixIconColor: AppColors.iconGrayOpacity,
+                    ),
+                    SizedBox(height: 20),
+
+                    //
+                    //
+                    //CheckBox current job
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            pressCurrentJobCheckBox();
+                          },
                           child: Container(
-                            height: 45,
-                            width: 45,
-                            color: AppColors.iconLight.withOpacity(0.1),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                "\uf060",
-                                style: fontAwesomeRegular(
-                                    null, 20, AppColors.iconLight, null),
-                              ),
+                            height: 20,
+                            width: 20,
+                            decoration: BoxDecoration(
+                              color: _isCurrentJob
+                                  ? AppColors.iconPrimary
+                                  : AppColors.iconLight,
+                              border: Border.all(
+                                  color: _isCurrentJob
+                                      ? AppColors.borderPrimary
+                                      : AppColors.borderDark),
+                              borderRadius: BorderRadius.circular(3),
                             ),
+                            child: _isCurrentJob
+                                ? Align(
+                                    alignment: Alignment.center,
+                                    child: FaIcon(
+                                      FontAwesomeIcons.check,
+                                      size: 15,
+                                      color: AppColors.iconLight,
+                                    ),
+                                  )
+                                : Container(),
                           ),
                         ),
-                      ),
-
-                      //
-                      //
-                      //Widget Title
-                      //Text title
-                      title: Text(
-                        "work_history".tr,
-                        style: appbarTextMedium(
-                            "NotoSansLaoLoopedBold", AppColors.fontWhite, null),
-                      ),
-
-                      //
-                      //
-                      //Widget Actions
-                      //Profile setting
-                      actions: Container(
-                        height: 45,
-                        width: 45,
-                      ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "work_current".tr,
+                          style: bodyTextNormal(null, null, FontWeight.bold),
+                        ),
+                      ],
                     ),
+                    SizedBox(height: 20),
 
                     //
                     //
+                    //From DateTime(Month/Year)
+                    Text(
+                      "work_start_date".tr,
+                      style: bodyTextNormal(null, null, FontWeight.bold),
+                    ),
+                    SizedBox(height: 5),
+
                     //
                     //
-                    //Section
-                    //Content form work history
-                    Expanded(
-                      flex: 15,
-                      child: SingleChildScrollView(
-                        physics: ClampingScrollPhysics(),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 30,
-                              ),
+                    //From DateTime(Month/Year) select date
+                    BoxDecorationInput(
+                      mainAxisAlignmentTextIcon: MainAxisAlignment.start,
+                      colorInput: AppColors.backgroundWhite,
+                      colorBorder:
+                          _isValidateValue == true && _fromMonthYear == null
+                              ? AppColors.borderDanger
+                              : AppColors.borderSecondary,
+                      paddingFaIcon: EdgeInsets.symmetric(horizontal: 1.7.w),
+                      fontWeight:
+                          _fromMonthYear == null ? FontWeight.bold : null,
+                      widgetIconActive: FaIcon(
+                        FontAwesomeIcons.calendar,
+                        color: AppColors.iconGrayOpacity,
+                        size: IconSize.sIcon,
+                      ),
+                      press: () {
+                        FocusScope.of(context).requestFocus(focusNode);
 
-                              //
-                              //
-                              //Company
-                              Text(
-                                "work_employer".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
+                        //
+                        //
+                        //format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
+                        var formatDateTimeNow = DateFormat("yyyy-MM-dd")
+                            .parse(_dateTimeNow.toString());
+                        setState(() {
+                          _fromMonthYear == null
+                              ? _fromMonthYear = formatDateTimeNow
+                              : _fromMonthYear;
+                        });
 
-                              //
-                              //
-                              //Company input
-                              SimpleTextFieldWithIconRight(
-                                textController: _companyController,
-                                changed: (value) {
-                                  setState(() {
-                                    _company = value;
-                                  });
-                                },
-                                inputColor: AppColors.inputWhite,
-                                hintText: "enter".tr + " " + "work_employer".tr,
-                                hintTextFontWeight: FontWeight.bold,
-                                suffixIcon: Icon(
-                                  Icons.business,
-                                ),
-                                suffixIconColor: AppColors.iconGrayOpacity,
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
+                        showDialogDateTime(
+                          context,
+                          Text(
+                            "work_start_date".tr,
+                            style: bodyTextMedium(null, null, FontWeight.bold),
+                          ),
+                          CupertinoDatePicker(
+                            initialDateTime: _fromMonthYear == null
+                                ? formatDateTimeNow
+                                : _fromMonthYear,
+                            mode: CupertinoDatePickerMode.monthYear,
+                            // dateOrder: DatePickerDateOrder.dmy,
+                            maximumDate: formatDateTimeNow,
+                            use24hFormat: true,
+                            onDateTimeChanged: (DateTime newDate) {
+                              setState(() {
+                                _fromMonthYear = newDate;
 
-                              //
-                              //
-                              //Job Title
-                              Text(
-                                "work_position".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-
-                              //
-                              //
-                              //Job title input
-                              SimpleTextFieldWithIconRight(
-                                textController: _jobTitleController,
-                                changed: (value) {
-                                  setState(() {
-                                    _jobTitle = value;
-                                  });
-                                },
-                                inputColor: AppColors.inputWhite,
-                                hintText: "enter".tr + " " + "work_position".tr,
-                                hintTextFontWeight: FontWeight.bold,
-                                suffixIcon: Icon(
-                                  Icons.work,
-                                ),
-                                suffixIconColor: AppColors.iconGrayOpacity,
-                              ),
-
-                              SizedBox(
-                                height: 20,
-                              ),
-
-                              //
-                              //
-                              //CheckBox current job
-                              Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      pressCurrentJobCheckBox();
-                                    },
-                                    child: Container(
-                                      height: 20,
-                                      width: 20,
-                                      decoration: BoxDecoration(
-                                        color: _isCurrentJob
-                                            ? AppColors.iconPrimary
-                                            : AppColors.iconLight,
-                                        border: Border.all(
-                                            color: _isCurrentJob
-                                                ? AppColors.borderPrimary
-                                                : AppColors.borderDark),
-                                        borderRadius: BorderRadius.circular(3),
-                                      ),
-                                      child: _isCurrentJob
-                                          ? Align(
-                                              alignment: Alignment.center,
-                                              child: FaIcon(
-                                                FontAwesomeIcons.check,
-                                                size: 15,
-                                                color: AppColors.iconLight,
-                                              ),
-                                            )
-                                          : Container(),
-                                    ),
+                                if (_toMonthYear != null &&
+                                    _toMonthYear.isBefore(_fromMonthYear)) {
+                                  // If toDate is before fromDate, set toDate to null
+                                  _toMonthYear = null;
+                                }
+                              });
+                            },
+                          ),
+                        );
+                      },
+                      text: _fromMonthYear == null
+                          ? "work_start_date".tr
+                          : "${_fromMonthYear?.month}-${_fromMonthYear?.year}",
+                      colorText: _fromMonthYear == null
+                          ? AppColors.fontGreyOpacity
+                          : AppColors.fontDark,
+                      validateText:
+                          _isValidateValue == true && _fromMonthYear == null
+                              ? Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.only(
+                                    left: 15,
+                                    top: 5,
                                   ),
-                                  SizedBox(
-                                    width: 10,
+                                  child: Text(
+                                    "required".tr,
+                                    style: bodyTextSmall(
+                                        null, AppColors.fontDanger, null),
                                   ),
-                                  Text("work_current".tr),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
+                                )
+                              : Container(),
+                    ),
+                    SizedBox(height: 20),
 
-                              //
-                              //
-                              //From DateTime(Month/Year)
-                              Text(
-                                "work_start_date".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
+                    //
+                    //
+                    //To DateTime(Month/Year)
+                    if (!_isCurrentJob)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "work_end_date".tr,
+                            style: bodyTextNormal(null, null, FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          //
+                          //ຖ້າມີຂໍ້ມູນ _fromMonthYear
+                          //To DateTime(Month/Year) select date
+                          _fromMonthYear != null
+                              ? BoxDecorationInput(
+                                  mainAxisAlignmentTextIcon:
+                                      MainAxisAlignment.start,
+                                  colorInput: AppColors.backgroundWhite,
+                                  colorBorder: _isValidateValue == true &&
+                                          _toMonthYear == null
+                                      ? AppColors.borderDanger
+                                      : AppColors.borderSecondary,
+                                  paddingFaIcon:
+                                      EdgeInsets.symmetric(horizontal: 1.7.w),
+                                  fontWeight: _toMonthYear == null
+                                      ? FontWeight.bold
+                                      : null,
+                                  widgetIconActive: FaIcon(
+                                    FontAwesomeIcons.calendar,
+                                    color: AppColors.iconGrayOpacity,
+                                    size: IconSize.sIcon,
+                                  ),
+                                  press: () {
+                                    FocusScope.of(context)
+                                        .requestFocus(focusNode);
 
-                              //
-                              //
-                              //From DateTime(Month/Year) select date
-                              BoxDecorationInput(
-                                mainAxisAlignmentTextIcon:
-                                    MainAxisAlignment.start,
-                                colorInput: AppColors.backgroundWhite,
-                                colorBorder: _isValidateValue == true &&
-                                        _fromMonthYear == null
-                                    ? AppColors.borderDanger
-                                    : AppColors.borderSecondary,
-                                paddingFaIcon:
-                                    EdgeInsets.symmetric(horizontal: 1.7.w),
-                                fontWeight: _fromMonthYear == null
-                                    ? FontWeight.bold
-                                    : null,
-                                widgetIconActive: FaIcon(
-                                  FontAwesomeIcons.calendar,
-                                  color: AppColors.iconGrayOpacity,
-                                  size: IconSize.sIcon,
-                                ),
-                                press: () {
-                                  FocusScope.of(context)
-                                      .requestFocus(focusNode);
+                                    setState(() {
+                                      _toMonthYear == null
+                                          ? _toMonthYear = _fromMonthYear
+                                          : _toMonthYear;
+                                    });
 
-                                  //
-                                  //
-                                  //format date.now() ຈາກ 2022-10-30 19:44:31.180 ເປັນ 2022-10-30 00:00:00.000
-                                  var formatDateTimeNow =
-                                      DateFormat("yyyy-MM-dd")
-                                          .parse(_dateTimeNow.toString());
-                                  setState(() {
-                                    _fromMonthYear == null
-                                        ? _fromMonthYear = formatDateTimeNow
-                                        : _fromMonthYear;
-                                  });
-
-                                  showDialogDateTime(
+                                    showDialogDateTime(
                                       context,
                                       Text(
-                                        "work_start_date".tr,
+                                        "work_end_date".tr,
                                         style: bodyTextMedium(
                                             null, null, FontWeight.bold),
                                       ),
                                       CupertinoDatePicker(
-                                        initialDateTime: _fromMonthYear == null
-                                            ? formatDateTimeNow
-                                            : _fromMonthYear,
+                                        initialDateTime: _toMonthYear == null
+                                            ? _fromMonthYear
+                                            : _toMonthYear,
                                         mode: CupertinoDatePickerMode.monthYear,
                                         // dateOrder: DatePickerDateOrder.dmy,
-                                        maximumDate: formatDateTimeNow,
+                                        minimumDate: _fromMonthYear,
                                         use24hFormat: true,
                                         onDateTimeChanged: (DateTime newDate) {
                                           setState(() {
-                                            _fromMonthYear = newDate;
-
-                                            if (_toMonthYear != null &&
-                                                _toMonthYear
-                                                    .isBefore(_fromMonthYear)) {
-                                              // If toDate is before fromDate, set toDate to null
-                                              _toMonthYear = null;
-                                            }
+                                            _toMonthYear = newDate;
                                           });
                                         },
-                                      )
-                                      // SimpleButton(
-                                      //   text: 'Cancel',
-                                      //   colorButton: AppColors.buttonSecondary,
-                                      //   colorText: AppColors.fontWhite,
-                                      //   press: () {
-                                      //     Navigator.of(context).pop();
-                                      //   },
-                                      // ),
-                                      // SimpleButton(
-                                      //   text: 'Confirm',
-                                      //   press: () {
-                                      //     Navigator.of(context).pop();
-                                      //   },
-                                      // ),
-                                      );
-                                },
-                                text: _fromMonthYear == null
-                                    ? "work_start_date".tr
-                                    : "${_fromMonthYear?.month}-${_fromMonthYear?.year}",
-                                colorText: _fromMonthYear == null
-                                    ? AppColors.fontGreyOpacity
-                                    : AppColors.fontDark,
-                                validateText: _isValidateValue == true &&
-                                        _fromMonthYear == null
-                                    ? Container(
-                                        width: double.infinity,
-                                        padding: EdgeInsets.only(
-                                          left: 15,
-                                          top: 5,
-                                        ),
-                                        child: Text(
-                                          "required".tr,
-                                          style: bodyTextSmall(
-                                              null, AppColors.fontDanger, null),
-                                        ),
-                                      )
-                                    : Container(),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-
-                              //
-                              //
-                              //To DateTime(Month/Year)
-                              if (!_isCurrentJob)
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "work_end_date".tr,
-                                      style: bodyTextNormal(
-                                          null, null, FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    //
-                                    //ຖ້າມີຂໍ້ມູນ _fromMonthYear
-                                    //To DateTime(Month/Year) select date
-                                    _fromMonthYear != null
-                                        ? BoxDecorationInput(
-                                            mainAxisAlignmentTextIcon:
-                                                MainAxisAlignment.start,
-                                            colorInput:
-                                                AppColors.backgroundWhite,
-                                            colorBorder:
-                                                _isValidateValue == true &&
-                                                        _toMonthYear == null
-                                                    ? AppColors.borderDanger
-                                                    : AppColors.borderSecondary,
-                                            paddingFaIcon: EdgeInsets.symmetric(
-                                                horizontal: 1.7.w),
-                                            fontWeight: _toMonthYear == null
-                                                ? FontWeight.bold
-                                                : null,
-                                            widgetIconActive: FaIcon(
-                                              FontAwesomeIcons.calendar,
-                                              color: AppColors.iconGrayOpacity,
-                                              size: IconSize.sIcon,
-                                            ),
-                                            press: () {
-                                              FocusScope.of(context)
-                                                  .requestFocus(focusNode);
-
-                                              setState(() {
-                                                _toMonthYear == null
-                                                    ? _toMonthYear =
-                                                        _fromMonthYear
-                                                    : _toMonthYear;
-                                              });
-
-                                              showDialogDateTime(
-                                                  context,
-                                                  Text(
-                                                    "work_end_date".tr,
-                                                    style: bodyTextMedium(null,
-                                                        null, FontWeight.bold),
-                                                  ),
-                                                  CupertinoDatePicker(
-                                                    initialDateTime:
-                                                        _toMonthYear == null
-                                                            ? _fromMonthYear
-                                                            : _toMonthYear,
-                                                    mode:
-                                                        CupertinoDatePickerMode
-                                                            .monthYear,
-                                                    // dateOrder: DatePickerDateOrder.dmy,
-                                                    minimumDate: _fromMonthYear,
-                                                    use24hFormat: true,
-                                                    onDateTimeChanged:
-                                                        (DateTime newDate) {
-                                                      setState(() {
-                                                        _toMonthYear = newDate;
-                                                      });
-                                                    },
-                                                  )
-                                                  // SimpleButton(
-                                                  //   text: 'Cancel',
-                                                  //   colorButton: AppColors.buttonSecondary,
-                                                  //   colorText: AppColors.fontWhite,
-                                                  //   press: () {
-                                                  //     Navigator.of(context).pop();
-                                                  //   },
-                                                  // ),
-                                                  // SimpleButton(
-                                                  //   text: 'Confirm',
-                                                  //   press: () {
-                                                  //     Navigator.of(context).pop();
-                                                  //   },
-                                                  // ),
-                                                  );
-                                            },
-                                            text: _toMonthYear == null
-                                                ? "work_end_date".tr
-                                                : "${_toMonthYear?.month}-${_toMonthYear?.year}",
-                                            colorText: _toMonthYear == null
-                                                ? AppColors.fontGreyOpacity
-                                                : AppColors.fontDark,
-                                            validateText: _isValidateValue ==
-                                                        true &&
-                                                    _toMonthYear == null
-                                                ? Container(
-                                                    width: double.infinity,
-                                                    padding: EdgeInsets.only(
-                                                      left: 10,
-                                                      top: 5,
-                                                    ),
-                                                    child: Text(
-                                                      "required".tr,
-                                                      style: bodyTextSmall(
-                                                          null,
-                                                          AppColors.fontDanger,
-                                                          null),
-                                                    ),
-                                                  )
-                                                : Container(),
-                                          )
-
-                                        //
-                                        //
-                                        // ຖ້າຍັງບໍ່ມີຂໍ້ມູນ _fromMonthYear
-                                        //To DateTime(Month/Year) select date
-                                        : BoxDecorationInput(
-                                            mainAxisAlignmentTextIcon:
-                                                MainAxisAlignment.start,
-                                            colorBorder:
-                                                _isValidateValue == true &&
-                                                        _toMonthYear == null
-                                                    ? AppColors.borderDanger
-                                                    : AppColors.borderSecondary,
-                                            paddingFaIcon: EdgeInsets.symmetric(
-                                                horizontal: 1.7.w),
-                                            fontWeight: FontWeight.bold,
-                                            colorText:
-                                                AppColors.fontGreyOpacity,
-                                            widgetIconActive: FaIcon(
-                                              FontAwesomeIcons.calendar,
-                                              color: AppColors.iconGrayOpacity,
-                                              size: IconSize.sIcon,
-                                            ),
-                                            text: "work_end_date".tr,
-                                            validateText: _isValidateValue ==
-                                                        true &&
-                                                    _toMonthYear == null
-                                                ? Container(
-                                                    width: double.infinity,
-                                                    padding: EdgeInsets.only(
-                                                      left: 10,
-                                                      top: 5,
-                                                    ),
-                                                    child: Text(
-                                                      "required".tr,
-                                                      style: bodyTextSmall(
-                                                          null,
-                                                          AppColors.fontDanger,
-                                                          null),
-                                                    ),
-                                                  )
-                                                : Container(),
+                                      ),
+                                    );
+                                  },
+                                  text: _toMonthYear == null
+                                      ? "work_end_date".tr
+                                      : "${_toMonthYear?.month}-${_toMonthYear?.year}",
+                                  colorText: _toMonthYear == null
+                                      ? AppColors.fontGreyOpacity
+                                      : AppColors.fontDark,
+                                  validateText: _isValidateValue == true &&
+                                          _toMonthYear == null
+                                      ? Container(
+                                          width: double.infinity,
+                                          padding: EdgeInsets.only(
+                                            left: 10,
+                                            top: 5,
                                           ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
+                                          child: Text(
+                                            "required".tr,
+                                            style: bodyTextSmall(null,
+                                                AppColors.fontDanger, null),
+                                          ),
+                                        )
+                                      : Container(),
+                                )
+
+                              //
+                              //
+                              // ຖ້າຍັງບໍ່ມີຂໍ້ມູນ _fromMonthYear
+                              //To DateTime(Month/Year) select date
+                              : BoxDecorationInput(
+                                  mainAxisAlignmentTextIcon:
+                                      MainAxisAlignment.start,
+                                  colorBorder: _isValidateValue == true &&
+                                          _toMonthYear == null
+                                      ? AppColors.borderDanger
+                                      : AppColors.borderSecondary,
+                                  paddingFaIcon:
+                                      EdgeInsets.symmetric(horizontal: 1.7.w),
+                                  fontWeight: FontWeight.bold,
+                                  colorText: AppColors.fontGreyOpacity,
+                                  widgetIconActive: FaIcon(
+                                    FontAwesomeIcons.calendar,
+                                    color: AppColors.iconGrayOpacity,
+                                    size: IconSize.sIcon,
+                                  ),
+                                  text: "work_end_date".tr,
+                                  validateText: _isValidateValue == true &&
+                                          _toMonthYear == null
+                                      ? Container(
+                                          width: double.infinity,
+                                          padding: EdgeInsets.only(
+                                            left: 10,
+                                            top: 5,
+                                          ),
+                                          child: Text(
+                                            "required".tr,
+                                            style: bodyTextSmall(null,
+                                                AppColors.fontDanger, null),
+                                          ),
+                                        )
+                                      : Container(),
                                 ),
+                          SizedBox(height: 20),
+                        ],
+                      ),
 
-                              //
-                              //
-                              // Responsibility
-                              Text(
-                                "work_responsibility".tr,
-                                style:
-                                    bodyTextNormal(null, null, FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
+                    //
+                    //
+                    // Responsibility
+                    Text(
+                      "work_responsibility".tr,
+                      style: bodyTextNormal(null, null, FontWeight.bold),
+                    ),
+                    SizedBox(height: 5),
 
-                              //
-                              //
-                              // Responsibility input
-                              BoxDecorationInput(
-                                mainAxisAlignmentTextIcon:
-                                    MainAxisAlignment.start,
-                                colorInput: AppColors.backgroundWhite,
-                                colorBorder: AppColors.borderSecondary,
-                                paddingFaIcon:
-                                    EdgeInsets.symmetric(horizontal: 1.7.w),
-                                press: () {
-                                  FocusScope.of(context)
-                                      .requestFocus(focusNode);
+                    //
+                    //
+                    // Responsibility input
+                    BoxDecorationInput(
+                      mainAxisAlignmentTextIcon: MainAxisAlignment.start,
+                      colorInput: AppColors.backgroundWhite,
+                      colorBorder: AppColors.borderSecondary,
+                      paddingFaIcon: EdgeInsets.symmetric(horizontal: 1.7.w),
+                      press: () {
+                        FocusScope.of(context).requestFocus(focusNode);
 
-                                  //
-                                  //
-                                  //show dialog QuillEditor
-                                  showDialog(
-                                      context: context,
-                                      barrierDismissible: false,
-                                      builder: (context) {
-                                        return Dialog(
-                                          insetPadding: EdgeInsets.zero,
-                                          child: Container(
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            child: Column(
-                                              children: [
-                                                //
-                                                //
-                                                //QuillToolbar
-                                                Container(
-                                                  // width: double.infinity,
-                                                  // color: AppColors.background,
-                                                  child: QuillSimpleToolbar(
-                                                    controller:
-                                                        _quillController,
-                                                    config:
-                                                        QuillSimpleToolbarConfig(
-                                                      toolbarIconAlignment:
-                                                          WrapAlignment.start,
-                                                      toolbarSectionSpacing: 0,
-                                                      showFontFamily: false,
-                                                      showFontSize: false,
-                                                      showHeaderStyle: false,
-                                                      showAlignmentButtons:
-                                                          false,
-                                                      showBackgroundColorButton:
-                                                          false,
-                                                      showClipboardCopy: false,
-                                                      showClipboardCut: false,
-                                                      showClipboardPaste: false,
-                                                      showColorButton: false,
-                                                      showCodeBlock: false,
-                                                      showDirection: false,
-                                                      showQuote: false,
-                                                      showUndo: false,
-                                                      showSuperscript: false,
-                                                      showLeftAlignment: false,
-                                                      showRedo: false,
-                                                      showRightAlignment: false,
-                                                      showSearchButton: false,
-                                                      showJustifyAlignment:
-                                                          false,
-                                                      showLineHeightButton:
-                                                          false,
-                                                      showSubscript: false,
-                                                      showCenterAlignment:
-                                                          false,
-                                                      showInlineCode: false,
-                                                      showSmallButton: false,
-                                                      // showClearFormat: false,
-                                                      showIndent: false,
-                                                      showListCheck: false,
-                                                      showDividers: false,
-                                                    ),
-                                                  ),
-                                                  // child: QuillToolbar.simple(
-                                                  //   configurations:
-                                                  //       QuillSimpleToolbarConfigurations(
-                                                  //     controller:
-                                                  //         _quillController,
-                                                  //     toolbarIconAlignment:
-                                                  //         WrapAlignment.start,
-                                                  //     toolbarSectionSpacing: 0,
-                                                  //     showFontFamily: false,
-                                                  //     showFontSize: false,
-                                                  //     showHeaderStyle: false,
-                                                  //     showAlignmentButtons:
-                                                  //         false,
-                                                  //     showBackgroundColorButton:
-                                                  //         false,
-                                                  //     showClipboardCopy: false,
-                                                  //     showClipboardCut: false,
-                                                  //     showClipboardPaste: false,
-                                                  //     showColorButton: false,
-                                                  //     showCodeBlock: false,
-                                                  //     showDirection: false,
-                                                  //     showQuote: false,
-                                                  //     showUndo: false,
-                                                  //     showSuperscript: false,
-                                                  //     showLeftAlignment: false,
-                                                  //     showRedo: false,
-                                                  //     showRightAlignment: false,
-                                                  //     showSearchButton: false,
-                                                  //     showJustifyAlignment:
-                                                  //         false,
-                                                  //     showLineHeightButton:
-                                                  //         false,
-                                                  //     showSubscript: false,
-                                                  //     showCenterAlignment:
-                                                  //         false,
-                                                  //     showInlineCode: false,
-                                                  //     showSmallButton: false,
-                                                  //     // showClearFormat: false,
-                                                  //     showIndent: false,
-                                                  //     showListCheck: false,
-                                                  //     showDividers: false,
-                                                  //   ),
-                                                  // ),
-                                                ),
+                        //
+                        //
+                        //show dialog QuillEditor
+                        showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) {
+                              return Dialog(
+                                insetPadding: EdgeInsets.zero,
+                                child: Container(
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  child: Column(
+                                    children: [
+                                      //
+                                      //
+                                      //QuillToolbar
+                                      Container(
+                                        // width: double.infinity,
+                                        // color: AppColors.background,
+                                        child: QuillSimpleToolbar(
+                                          controller: _quillController,
+                                          config: QuillSimpleToolbarConfig(
+                                            toolbarIconAlignment:
+                                                WrapAlignment.start,
+                                            toolbarSectionSpacing: 0,
+                                            showFontFamily: false,
+                                            showFontSize: false,
+                                            showHeaderStyle: false,
+                                            showAlignmentButtons: false,
+                                            showBackgroundColorButton: false,
+                                            showClipboardCopy: false,
+                                            showClipboardCut: false,
+                                            showClipboardPaste: false,
+                                            showColorButton: false,
+                                            showCodeBlock: false,
+                                            showDirection: false,
+                                            showQuote: false,
+                                            showUndo: false,
+                                            showSuperscript: false,
+                                            showLeftAlignment: false,
+                                            showRedo: false,
+                                            showRightAlignment: false,
+                                            showSearchButton: false,
+                                            showJustifyAlignment: false,
+                                            showLineHeightButton: false,
+                                            showSubscript: false,
+                                            showCenterAlignment: false,
+                                            showInlineCode: false,
+                                            showSmallButton: false,
+                                            // showClearFormat: false,
+                                            showIndent: false,
+                                            showListCheck: false,
+                                            showDividers: false,
+                                          ),
+                                        ),
+                                        // child: QuillToolbar.simple(
+                                        //   configurations:
+                                        //       QuillSimpleToolbarConfigurations(
+                                        //     controller:
+                                        //         _quillController,
+                                        //     toolbarIconAlignment:
+                                        //         WrapAlignment.start,
+                                        //     toolbarSectionSpacing: 0,
+                                        //     showFontFamily: false,
+                                        //     showFontSize: false,
+                                        //     showHeaderStyle: false,
+                                        //     showAlignmentButtons:
+                                        //         false,
+                                        //     showBackgroundColorButton:
+                                        //         false,
+                                        //     showClipboardCopy: false,
+                                        //     showClipboardCut: false,
+                                        //     showClipboardPaste: false,
+                                        //     showColorButton: false,
+                                        //     showCodeBlock: false,
+                                        //     showDirection: false,
+                                        //     showQuote: false,
+                                        //     showUndo: false,
+                                        //     showSuperscript: false,
+                                        //     showLeftAlignment: false,
+                                        //     showRedo: false,
+                                        //     showRightAlignment: false,
+                                        //     showSearchButton: false,
+                                        //     showJustifyAlignment:
+                                        //         false,
+                                        //     showLineHeightButton:
+                                        //         false,
+                                        //     showSubscript: false,
+                                        //     showCenterAlignment:
+                                        //         false,
+                                        //     showInlineCode: false,
+                                        //     showSmallButton: false,
+                                        //     // showClearFormat: false,
+                                        //     showIndent: false,
+                                        //     showListCheck: false,
+                                        //     showDividers: false,
+                                        //   ),
+                                        // ),
+                                      ),
 
-                                                //
-                                                //
-                                                //QuillEditor
-                                                Expanded(
-                                                  child: Container(
-                                                    width: double.infinity,
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          AppColors.background,
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        bottomLeft:
-                                                            Radius.circular(8),
-                                                        bottomRight:
-                                                            Radius.circular(8),
-                                                      ),
-                                                    ),
-                                                    child: QuillEditor(
-                                                      focusNode:
-                                                          editorFocusNode,
-                                                      scrollController:
-                                                          _editorScrollController,
-                                                      controller:
-                                                          _quillController,
-                                                      config: QuillEditorConfig(
-                                                        keyboardAppearance:
-                                                            Brightness.dark,
-                                                        scrollPhysics:
-                                                            ClampingScrollPhysics(),
-                                                        readOnlyMouseCursor:
-                                                            SystemMouseCursors
-                                                                .text,
-                                                        maxHeight: 400,
-                                                        minHeight: 400,
-                                                        placeholder:
-                                                            "work_responsibility_detail"
-                                                                .tr,
-                                                        padding:
-                                                            EdgeInsets.all(10),
-                                                        dialogTheme:
-                                                            QuillDialogTheme(
-                                                          labelTextStyle: TextStyle(
-                                                              color: AppColors
-                                                                  .fontPrimary),
-                                                          buttonStyle:
-                                                              ButtonStyle(
-                                                            backgroundColor:
-                                                                WidgetStateProperty
-                                                                    .all(
-                                                              AppColors.red,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    // child: QuillEditor.basic(
-                                                    //   focusNode:
-                                                    //       editorFocusNode,
-                                                    //   configurations:
-                                                    //       QuillEditorConfigurations(
-                                                    //     keyboardAppearance:
-                                                    //         Brightness.dark,
-                                                    //     // requestKeyboardFocusOnCheckListChanged: true,
-                                                    //     controller:
-                                                    //         _quillController,
-                                                    //     scrollPhysics:
-                                                    //         ClampingScrollPhysics(),
-                                                    //     readOnlyMouseCursor:
-                                                    //         SystemMouseCursors
-                                                    //             .text,
-                                                    //     maxHeight: 400,
-                                                    //     minHeight: 400,
-                                                    //     placeholder:
-                                                    //         "work_responsibility_detail"
-                                                    //             .tr,
-                                                    //     padding:
-                                                    //         EdgeInsets.all(10),
-                                                    //     dialogTheme:
-                                                    //         QuillDialogTheme(
-                                                    //       labelTextStyle: TextStyle(
-                                                    //           color: AppColors
-                                                    //               .fontPrimary),
-                                                    //       buttonStyle:
-                                                    //           ButtonStyle(
-                                                    //         backgroundColor:
-                                                    //             WidgetStateProperty
-                                                    //                 .all(
-                                                    //           AppColors.red,
-                                                    //         ),
-                                                    //       ),
-                                                    //     ),
-                                                    //   ),
-                                                    // ),
-                                                  ),
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                          left: 20,
-                                                          right: 20,
-                                                          top: 20,
-                                                        ),
-                                                        child: Button(
-                                                          text: "done".tr,
-                                                          press: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: 30,
-                                                ),
-                                              ],
+                                      //
+                                      //
+                                      //QuillEditor
+                                      Expanded(
+                                        child: Container(
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.background,
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(8),
+                                              bottomRight: Radius.circular(8),
                                             ),
                                           ),
-                                        );
-                                      });
-                                },
-                                fontWeight: _quillController.document.isEmpty()
-                                    ? FontWeight.bold
-                                    : null,
-                                text: _quillController.document.isEmpty()
-                                    ? "work_responsibility_detail".tr
-                                    : _quillController.document.toPlainText(),
-                                colorText: _quillController.document.isEmpty()
-                                    ? AppColors.fontGreyOpacity
-                                    : AppColors.fontDark,
-                                validateText: Container(),
-                              ),
-
-                              SizedBox(
-                                height: 30,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                                          child: QuillEditor(
+                                            focusNode: editorFocusNode,
+                                            scrollController:
+                                                _editorScrollController,
+                                            controller: _quillController,
+                                            config: QuillEditorConfig(
+                                              keyboardAppearance:
+                                                  Brightness.dark,
+                                              scrollPhysics:
+                                                  ClampingScrollPhysics(),
+                                              readOnlyMouseCursor:
+                                                  SystemMouseCursors.text,
+                                              maxHeight: 400,
+                                              minHeight: 400,
+                                              placeholder:
+                                                  "work_responsibility_detail"
+                                                      .tr,
+                                              padding: EdgeInsets.all(10),
+                                              dialogTheme: QuillDialogTheme(
+                                                labelTextStyle: TextStyle(
+                                                    color:
+                                                        AppColors.fontPrimary),
+                                                buttonStyle: ButtonStyle(
+                                                  backgroundColor:
+                                                      WidgetStateProperty.all(
+                                                    AppColors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          // child: QuillEditor.basic(
+                                          //   focusNode:
+                                          //       editorFocusNode,
+                                          //   configurations:
+                                          //       QuillEditorConfigurations(
+                                          //     keyboardAppearance:
+                                          //         Brightness.dark,
+                                          //     // requestKeyboardFocusOnCheckListChanged: true,
+                                          //     controller:
+                                          //         _quillController,
+                                          //     scrollPhysics:
+                                          //         ClampingScrollPhysics(),
+                                          //     readOnlyMouseCursor:
+                                          //         SystemMouseCursors
+                                          //             .text,
+                                          //     maxHeight: 400,
+                                          //     minHeight: 400,
+                                          //     placeholder:
+                                          //         "work_responsibility_detail"
+                                          //             .tr,
+                                          //     padding:
+                                          //         EdgeInsets.all(10),
+                                          //     dialogTheme:
+                                          //         QuillDialogTheme(
+                                          //       labelTextStyle: TextStyle(
+                                          //           color: AppColors
+                                          //               .fontPrimary),
+                                          //       buttonStyle:
+                                          //           ButtonStyle(
+                                          //         backgroundColor:
+                                          //             WidgetStateProperty
+                                          //                 .all(
+                                          //           AppColors.red,
+                                          //         ),
+                                          //       ),
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                        ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Expanded(
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                left: 20,
+                                                right: 20,
+                                                top: 20,
+                                              ),
+                                              child: Button(
+                                                text: "done".tr,
+                                                press: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                      fontWeight: _quillController.document.isEmpty()
+                          ? FontWeight.bold
+                          : null,
+                      text: _quillController.document.isEmpty()
+                          ? "work_responsibility_detail".tr
+                          : _quillController.document.toPlainText(),
+                      colorText: _quillController.document.isEmpty()
+                          ? AppColors.fontGreyOpacity
+                          : AppColors.fontDark,
+                      validateText: Container(),
                     ),
+                  ],
+                ),
+              ),
 
-                    //
-                    //
-                    //
-                    //
-                    //Section
-                    // Button save
-                    Container(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 10, bottom: 30),
+              Divider(color: AppColors.borderGreyOpacity, thickness: 1),
+
+              //
+              //
+              //Section Button Cancel And Save
+              Row(
+                children: [
+                  // Button Cancel
+                  Expanded(
+                    child: Button(
+                      text: "cancel".tr,
+                      textColor: AppColors.fontDark,
+                      buttonColor: AppColors.buttonBG,
+                      press: widget.onCancel,
+                    ),
+                  ),
+
+                  Expanded(child: Container()),
+
+                  // Button Save And Next
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 20),
                       child: Button(
                         text: "save".tr,
                         textFontFamily: "NotoSansLaoLoopedMedium",
@@ -1026,7 +869,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                               } else {
                                 setState(() {
                                   _isValidateValue = false;
-                                  addWorkHistorySeeker();
+                                  pressAddWorkHistorySeeker();
                                 });
                               }
                             }
@@ -1041,7 +884,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                               } else {
                                 setState(() {
                                   _isValidateValue = false;
-                                  addWorkHistorySeeker();
+                                  pressAddWorkHistorySeeker();
                                 });
                               }
                             }
@@ -1053,10 +896,10 @@ class _WorkHistoryState extends State<WorkHistory> {
                         },
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
+            ],
           ),
         ),
       ),

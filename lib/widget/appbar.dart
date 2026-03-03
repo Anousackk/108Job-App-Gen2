@@ -18,6 +18,7 @@ class AppBarDefault extends StatefulWidget implements PreferredSizeWidget {
     this.actionTitle,
     this.fontWeight,
     this.textTitleFontFamily,
+    this.elevation,
   }) : super(key: key);
   final String textTitle;
   final String? textTitleFontFamily;
@@ -25,6 +26,7 @@ class AppBarDefault extends StatefulWidget implements PreferredSizeWidget {
   final actionTitle;
   final Color? backgroundColor, textColor;
   final Icon leadingIcon;
+  final double? elevation;
 
   final Function()? leadingPress;
 
@@ -43,6 +45,7 @@ class _AppBarDefaultState extends State<AppBarDefault> {
           ? AppColors.backgroundAppBar
           : widget.backgroundColor,
       toolbarHeight: 15.w,
+      elevation: widget.elevation ?? 0,
       leading: IconButton(
         onPressed: widget.leadingPress,
         iconSize: IconSize.mIcon,
@@ -88,6 +91,7 @@ class AppBarAddAction extends StatefulWidget implements PreferredSizeWidget {
     this.fontWeight,
     this.toolbarHeightAppBar,
     this.systemOverlayStyleColor,
+    this.elevation,
   }) : super(key: key);
   final SystemUiOverlayStyle? systemOverlayStyleColor;
   final double? toolbarHeightAppBar;
@@ -99,6 +103,7 @@ class AppBarAddAction extends StatefulWidget implements PreferredSizeWidget {
   final Icon leadingIcon;
 
   final Function()? leadingPress;
+  final double? elevation;
   final List<Widget>? action;
 
   @override
@@ -121,6 +126,7 @@ class _AppBarAddActionState extends State<AppBarAddAction> {
       toolbarHeight: widget.toolbarHeightAppBar == null
           ? 15.w
           : widget.toolbarHeightAppBar,
+      elevation: widget.elevation ?? 0,
       leading: IconButton(
         onPressed: widget.leadingPress,
         iconSize: IconSize.mIcon,

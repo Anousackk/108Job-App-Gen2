@@ -260,7 +260,7 @@ class _ResetNewPasswordState extends State<ResetNewPassword> {
                       height: 20,
                     ),
                     Text(
-                      "set pass".tr + " " + "successful".tr,
+                      "set pass".tr + " " + "successfully".tr,
                       style: bodyTextMedium(null, null, FontWeight.bold),
                     ),
                     SizedBox(

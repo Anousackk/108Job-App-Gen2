@@ -109,6 +109,8 @@ const catchDuckSeekerApi = globalURL + "/catch-duck-seeker-app";
 //
 //My Job
 const getMyJobSeekerApi = globalURL + "/seeker-get-my-job-app";
+const getProfileDashboardStatus = globalURL + "/get-profile-dashboard-stats";
+const getRecommendJobByAIApi = globalURL + "/get-recommend-job-by-ai";
 
 //
 //Notifications
@@ -244,6 +246,7 @@ postData(url, bodyJsonDecode) async {
     },
     body: jsonEncode(bodyJsonDecode),
   );
+
   if (res.statusCode == 200) {
     return jsonDecode(res.body);
   } else if (res.statusCode == 201) {
@@ -257,21 +260,35 @@ postData(url, bodyJsonDecode) async {
   }
 }
 
-// postData(url, bodyJsonDecode) async {
-//   final prefs = await SharedPreferences.getInstance();
-//   var employeeToken = prefs.getString('accessToken');
-//   var managerToken = prefs.getString('managerToken');
+postDataStatusCode(url, bodyJsonDecode) async {
+  String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
 
-//   var res = await http.post(
-//     Uri.parse(url),
-//     headers: <String, String>{
-//       "content-type": "application/json",
-//       "authorization": "$employeeToken" == null ? "" : "$employeeToken",
-//     },
-//     body: jsonEncode(bodyJsonDecode),
-//   );
-//   return jsonDecode(res.body);
-// }
+  var res = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      "content-type": "application/json",
+      "authorization":
+          employeeToken == null || employeeToken == "" ? "" : employeeToken,
+    },
+    body: jsonEncode(bodyJsonDecode),
+  );
+
+  dynamic body;
+
+  try {
+    // decode ถ้าเป็น JSON
+    body = res.body.isNotEmpty ? jsonDecode(res.body) : null;
+  } catch (e) {
+    // ถ้าไม่ใช่ JSON ให้เก็บเป็น string
+    body = res.body;
+  }
+
+  // Always return statusCode + body
+  return {
+    "statusCode": res.statusCode,
+    "body": body,
+  };
+}
 
 putData(url, bodyJsonDecode) async {
   // final prefs = await SharedPreferences.getInstance();
@@ -318,6 +335,35 @@ deleteData(url) async {
   } else {
     return jsonDecode(res.body);
   }
+}
+
+deleteDataStatusCode(url) async {
+  String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
+
+  var res = await http.delete(
+    Uri.parse(url),
+    headers: <String, String>{
+      "content-type": "application/json",
+      "authorization":
+          employeeToken == null || employeeToken == "" ? "" : employeeToken,
+    },
+  );
+
+  dynamic body;
+
+  try {
+    // decode ถ้าเป็น JSON
+    body = res.body.isNotEmpty ? jsonDecode(res.body) : null;
+  } catch (e) {
+    // ถ้าไม่ใช่ JSON ให้เก็บเป็น string
+    body = res.body;
+  }
+
+  // Always return statusCode + body
+  return {
+    "statusCode": res.statusCode,
+    "body": body,
+  };
 }
 
 upLoadFile(String fileName, String url) async {

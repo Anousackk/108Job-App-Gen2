@@ -65,6 +65,15 @@ TextStyle bodyTitleNormal(Color? textColor, FontWeight? fontWeight) {
 //
 //
 //body
+TextStyle bodyTextCustom(double? fontSize, String? fontFamily, Color? textColor,
+    FontWeight? fontWeight) {
+  return TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: fontWeight == null ? FontWeight.normal : fontWeight,
+    color: textColor == null ? AppColors.fontDark : textColor,
+    fontSize: fontSize ?? 10,
+  );
+}
 
 TextStyle bodyTextMiniSmall(
     String? fontFamily, Color? textColor, FontWeight? fontWeight) {

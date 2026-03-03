@@ -36,7 +36,7 @@ class _QRScannerState extends State<QRScanner> {
         context: context,
         builder: (dialogContext) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "successful".tr,
+            title: "successfully".tr,
             contentText: "applied_success".tr,
             textButton: "ok".tr,
             press: () async {

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, unused_local_variable, prefer_final_fields, prefer_if_null_operators
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, unused_local_variable, prefer_final_fields, prefer_if_null_operators, use_build_context_synchronously, prefer_interpolation_to_compose_strings
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -9,6 +9,8 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/provider/eventAvailableProvider.dart';
+import 'package:app/provider/profileProvider.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:dotted_line/dotted_line.dart';
@@ -17,20 +19,13 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class EventTicket extends StatefulWidget {
-  const EventTicket(
-      {Key? key,
-      required this.imageSrc,
-      required this.firstName,
-      required this.lastName,
-      this.objEventAvailable})
-      : super(key: key);
-  final String imageSrc;
-  final String firstName;
-  final String lastName;
-  final objEventAvailable;
+  const EventTicket({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<EventTicket> createState() => _EventTicketState();
@@ -38,18 +33,6 @@ class EventTicket extends StatefulWidget {
 
 class _EventTicketState extends State<EventTicket> {
   final GlobalKey _globalKey = GlobalKey();
-
-  dynamic _myAppliedInfo;
-  dynamic _eventInfo;
-
-  String _qrString = "";
-  String _userId = "";
-  String _name = "";
-  String _address = "";
-  String _openingTime = "";
-
-  double _latitude = 0;
-  double _longtitude = 0;
 
   saveLocalImage() async {
     //
@@ -93,7 +76,7 @@ class _EventTicketState extends State<EventTicket> {
             context: context,
             builder: (context) {
               return CustAlertDialogSuccessWithoutBtn(
-                title: "successful".tr,
+                title: "successfully".tr,
                 contentText: "photo_saved".tr,
               );
             },
@@ -188,7 +171,7 @@ class _EventTicketState extends State<EventTicket> {
             context: context,
             builder: (context) {
               return CustAlertDialogSuccessWithoutBtn(
-                title: "successful".tr,
+                title: "successfully".tr,
                 contentText: "photo_saved".tr,
               );
             },
@@ -239,75 +222,36 @@ class _EventTicketState extends State<EventTicket> {
     }
   }
 
-  getEventAvailable() async {
-    var qrStringSharePrefs =
-        await SharedPrefsHelper.getString("qrString") ?? "";
-
-    setState(() {
-      var i = widget.objEventAvailable;
-      _myAppliedInfo = i["myAppliedInfo"];
-      _eventInfo = i["eventInfo"];
-
-      _latitude = double.parse(_eventInfo["map"]["coordinates"][1].toString());
-      _longtitude =
-          double.parse(_eventInfo["map"]["coordinates"][0].toString());
-
-      _name = _eventInfo["name"];
-      _address = _eventInfo["address"];
-      _qrString = qrStringSharePrefs;
-
-      if (_myAppliedInfo != null) {
-        _userId = _myAppliedInfo["id"];
-      }
-
-      if (_eventInfo.containsKey("openingTime")) {
-        print("have openingTime");
-        _openingTime =
-            _eventInfo["openingTime"] == null ? "" : _eventInfo["openingTime"];
-      }
-    });
-
-    print("_qrString: " + _qrString.toString());
-  }
-
-  genQrStringSetPreference(String valQrString) async {
-    setState(() {
-      _qrString = valQrString;
-    });
-
-    await SharedPrefsHelper.setString("qrString", _qrString.toString());
-  }
-
   @override
   void initState() {
     super.initState();
 
-    getEventAvailable();
+    // getEventAvailable();
   }
 
   @override
   Widget build(BuildContext context) {
+    final profileProvider = context.watch<ProfileProvider>();
+    final eventAvailableProvider = context.watch<EventAvailableProvider>();
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0,
-          backgroundColor: AppColors.primary600,
+          backgroundColor: AppColors.teal,
         ),
         body: Container(
           height: double.infinity,
-          color: AppColors.primary600,
+          color: AppColors.teal,
           child: SingleChildScrollView(
             physics: ClampingScrollPhysics(),
             child: Column(
               children: [
                 //
                 //
-                //
-                //
-                //
                 //Appbar custom
                 AppBarThreeWidgt(
+                  boxColor: AppColors.teal,
                   //
                   //
                   //Widget Leading
@@ -367,43 +311,35 @@ class _EventTicketState extends State<EventTicket> {
                   ),
                 ),
 
-                //
-                //
-                //
+                // Text("${eventAvailableProvider.qrString}"),
+
                 //
                 //
                 //Capture Widget Image
                 RepaintBoundary(
                   key: _globalKey,
                   child: Container(
-                    color: AppColors.primary600,
+                    color: AppColors.teal,
                     child: Column(
                       children: [
-                        //
-                        //
-                        //
-                        //
-                        //
                         //Profile image and name
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Column(
                             children: [
-                              //
-                              //
                               //Profile image
                               Container(
                                 width: 110,
                                 height: 110,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(100),
-                                  child: widget.imageSrc == ""
+                                  child: profileProvider.imageSrc == ""
                                       ? Image.asset(
                                           'assets/image/defprofile.jpg',
                                           fit: BoxFit.cover,
                                         )
                                       : Image.network(
-                                          widget.imageSrc,
+                                          profileProvider.imageSrc,
                                           fit: BoxFit.cover,
                                           errorBuilder:
                                               (context, error, stackTrace) {
@@ -420,11 +356,9 @@ class _EventTicketState extends State<EventTicket> {
                                 height: 5,
                               ),
 
-                              //
-                              //
                               //Profile firstName lastName
                               Text(
-                                "${widget.firstName} ${widget.lastName}",
+                                "${profileProvider.firstName} ${profileProvider.lastName}",
                                 style: bodyTextMaxNormal(
                                     null, AppColors.fontWhite, FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
@@ -437,11 +371,6 @@ class _EventTicketState extends State<EventTicket> {
                           ),
                         ),
 
-                        //
-                        //
-                        //
-                        //
-                        //
                         //Box card ticket
                         Container(
                           padding: EdgeInsets.symmetric(vertical: 20),
@@ -460,31 +389,19 @@ class _EventTicketState extends State<EventTicket> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              //
-                              //
                               //QR coed
                               Container(
                                 width: double.infinity,
                                 child: Column(
                                   children: [
-                                    _qrString == ""
-                                        ? ButtonDefault(
-                                            text: "create_qr_code".tr,
-                                            press: () async {
-                                              genQrStringSetPreference(
-                                                  _myAppliedInfo["qrString"]);
-                                            },
-                                          )
-                                        : QrImageView(
-                                            padding: EdgeInsets.zero,
-                                            data: _qrString.toString(),
-                                            size: 150,
-                                          ),
-                                    SizedBox(
-                                      height: 10,
+                                    QrImageView(
+                                      padding: EdgeInsets.zero,
+                                      data: eventAvailableProvider.qrString,
+                                      size: 150,
                                     ),
+                                    SizedBox(height: 10),
                                     Text(
-                                      "${_userId}",
+                                      "${eventAvailableProvider.candidateID}",
                                       style: bodyTextMaxNormal(
                                           "NotoSansLaoLoopedSemiBold",
                                           null,
@@ -494,8 +411,6 @@ class _EventTicketState extends State<EventTicket> {
                                 ),
                               ),
 
-                              //
-                              //
                               //Dotted line
                               Container(
                                 height: 30,
@@ -510,8 +425,6 @@ class _EventTicketState extends State<EventTicket> {
                                       dashColor: Colors.grey.shade400,
                                     ),
 
-                                    //
-                                    //
                                     //Left Half Circle
                                     Positioned(
                                       left: 0,
@@ -519,21 +432,19 @@ class _EventTicketState extends State<EventTicket> {
                                         width: 20,
                                         height: 30,
                                         decoration: BoxDecoration(
-                                          color: AppColors.primary600,
+                                          color: AppColors.teal,
                                           borderRadius: const BorderRadius.only(
                                             topRight: Radius.circular(20),
                                             bottomRight: Radius.circular(20),
                                           ),
                                           border: Border.all(
-                                            color: AppColors.primary600,
+                                            color: AppColors.teal,
                                             width: 0,
                                           ),
                                         ),
                                       ),
                                     ),
 
-                                    //
-                                    //
                                     //Right Half Circle
                                     Positioned(
                                       right: 0,
@@ -541,13 +452,13 @@ class _EventTicketState extends State<EventTicket> {
                                         width: 20,
                                         height: 30,
                                         decoration: BoxDecoration(
-                                          color: AppColors.primary600,
+                                          color: AppColors.teal,
                                           borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(20),
                                             bottomLeft: Radius.circular(20),
                                           ),
                                           border: Border.all(
-                                            color: AppColors.primary600,
+                                            color: AppColors.teal,
                                             width: 0,
                                           ),
                                         ),
@@ -557,12 +468,8 @@ class _EventTicketState extends State<EventTicket> {
                                 ),
                               ),
 
-                              SizedBox(
-                                height: 20,
-                              ),
+                              SizedBox(height: 20),
 
-                              //
-                              //
                               //Info ticket
                               Container(
                                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -571,39 +478,35 @@ class _EventTicketState extends State<EventTicket> {
                                   children: [
                                     EventTicketInfo(
                                       title: "event_name".tr + ":",
-                                      text: "${_name}",
+                                      text:
+                                          "${eventAvailableProvider.eventInfoName}",
                                     ),
-                                    SizedBox(
-                                      height: 15,
-                                    ),
+                                    SizedBox(height: 15),
                                     EventTicketInfo(
                                       title: "event_address".tr + ":",
-                                      text: "${_address}",
+                                      text:
+                                          "${eventAvailableProvider.eventInfoAddress}",
                                     ),
-                                    SizedBox(
-                                      height: 15,
-                                    ),
+                                    SizedBox(height: 15),
                                     EventTicketInfo(
                                       title: "event_map".tr + ":",
                                       text: "event_click_map".tr,
                                       statusMap: "GoogleMap",
                                       link:
                                           //17.976837621717973, 102.6365003105264
-                                          "https://www.google.com/maps?q=$_latitude,$_longtitude",
+                                          "https://www.google.com/maps?q=${eventAvailableProvider.latitude},${eventAvailableProvider.longtitude}",
                                     ),
-                                    SizedBox(
-                                      height: 15,
-                                    ),
+                                    SizedBox(height: 15),
                                     EventTicketInfo(
                                       title: "event_date_time".tr + ":",
-                                      text: "${_openingTime}",
+                                      text:
+                                          "${eventAvailableProvider.eventInfoOpeningTime}",
                                     ),
-                                    SizedBox(
-                                      height: 15,
-                                    ),
+                                    SizedBox(height: 15),
                                     EventTicketInfo(
                                       title: "event_attendee_code".tr + ":",
-                                      text: "${_userId}",
+                                      text:
+                                          "${eventAvailableProvider.candidateID}",
                                     ),
                                   ],
                                 ),
@@ -611,9 +514,7 @@ class _EventTicketState extends State<EventTicket> {
                             ],
                           ),
                         ),
-                        SizedBox(
-                          height: 20,
-                        )
+                        SizedBox(height: 20)
                       ],
                     ),
                   ),

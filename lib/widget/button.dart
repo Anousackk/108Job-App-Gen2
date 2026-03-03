@@ -85,7 +85,9 @@ class ButtonWithIconLeft extends StatefulWidget {
     this.borderRadius,
     this.buttonBorderColor,
     this.paddingButton,
+    this.boxHeight,
   }) : super(key: key);
+  final double? boxHeight;
   final String? text;
   final Color? colorButton, buttonBorderColor;
   final Color? colorText;
@@ -103,7 +105,7 @@ class _ButtonWithIconLeftState extends State<ButtonWithIconLeft> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 45,
+      height: widget.boxHeight ?? 45,
       child: TextButton(
         style: ButtonStyle(
           padding: widget.paddingButton ??

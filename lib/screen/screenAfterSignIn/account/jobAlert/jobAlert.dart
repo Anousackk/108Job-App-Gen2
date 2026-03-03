@@ -128,9 +128,9 @@ class _JobAlertState extends State<JobAlert> {
         context: context,
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "successful".tr,
+            title: "successfully".tr,
             contentText:
-                "save".tr + " " + "job_alert".tr + " " + "successful".tr,
+                "save".tr + " " + "job_alert".tr + " " + "successfully".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);

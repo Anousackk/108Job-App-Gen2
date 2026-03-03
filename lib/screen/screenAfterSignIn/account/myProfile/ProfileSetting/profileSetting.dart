@@ -1,6 +1,8 @@
 //
 //Profile Setting
-// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_final_fields, unused_field, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, sized_box_for_whitespace, await_only_futures, unused_local_variable, unnecessary_cast, avoid_print, prefer_is_empty, file_names
+// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, prefer_final_fields, unused_field, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, sized_box_for_whitespace, await_only_futures, unused_local_variable, unnecessary_cast, avoid_print, prefer_is_empty, file_names, use_build_context_synchronously, deprecated_member_use, prefer_interpolation_to_compose_strings
+
+import 'dart:async';
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -25,6 +27,8 @@ class ProfileSetting extends StatefulWidget {
 }
 
 class _ProfileSettingState extends State<ProfileSetting> {
+  TextEditingController _searchCompanyNameController = TextEditingController();
+
   List _listCompanies = [];
   List _listSeekerSearchableCompanies = [];
 
@@ -34,6 +38,9 @@ class _ProfileSettingState extends State<ProfileSetting> {
   bool _isSearchable = false;
   bool _isLoading = true;
   bool _statusShowLoading = false;
+
+  Timer? _timer;
+  String _searchCompanyName = "";
 
   //
   //Selected list item(ສະເພາະເຂົ້າ Database)
@@ -53,14 +60,16 @@ class _ProfileSettingState extends State<ProfileSetting> {
   }
 
   fetchCompanies() async {
-    var res = await postData(
-        getCompaniesProfileSetting, {"page": 1, "perPage": 1000, "search": ""});
-    _listCompanies = res['companyInfo'];
+    var res = await postData(getCompaniesProfileSetting,
+        {"page": 1, "perPage": 10000, "search": _searchCompanyName});
 
     _isLoading = false;
 
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _listCompanies = res['companyInfo'];
+        print("list company profile setting: " + _listCompanies.toString());
+      });
     }
   }
 
@@ -114,7 +123,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
         builder: (context) {
           return status == "add"
               ? CustAlertDialogSuccessWithoutBtn(
-                  title: "successful".tr,
+                  title: "successfully".tr,
                   contentText: "change_information_success".tr,
                 )
               : CustAlertDialogSuccessWithoutBtn(
@@ -160,7 +169,17 @@ class _ProfileSettingState extends State<ProfileSetting> {
     _isSearchable = widget.isSearchable;
     fetchCompanies();
     fetchSeekerSearchableCompanies();
+
+    _searchCompanyNameController.text = _searchCompanyName;
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchCompanyNameController.dispose();
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -409,16 +428,45 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                             barrierDismissible: false,
                                             context: context,
                                             builder: (context) {
-                                              return ListMultiSelectedAlertDialog(
-                                                title: "company".tr,
-                                                listItems: _listCompanies,
-                                                selectedListItem:
-                                                    _selectedCompaniesListItem,
-                                                status: "seekerHideCompany",
+                                              return StatefulBuilder(
+                                                builder:
+                                                    (context, dialogSetState) {
+                                                  return ListMultiSelectedAlertDialog(
+                                                    title: "company".tr,
+                                                    listItems: _listCompanies,
+                                                    selectedListItem:
+                                                        _selectedCompaniesListItem,
+                                                    status: "seekerHideCompany",
+                                                    // codeController:
+                                                    //     _searchCompanyNameController,
+                                                    changed: (value) async {
+                                                      setState(() {
+                                                        _searchCompanyName =
+                                                            value;
+                                                        print(
+                                                            _searchCompanyName);
+                                                      });
+
+                                                      //
+                                                      // Perform API call here
+                                                      print(
+                                                          'Calling API get Companies after typing search');
+                                                      await fetchCompanies();
+
+                                                      dialogSetState(
+                                                          () {}); // ← refresh dialog UI
+                                                    },
+                                                  );
+                                                },
                                               );
                                             }).then(
                                           (value) {
                                             print("01: ${value}");
+                                            _searchCompanyName = "";
+                                            _searchCompanyNameController.text =
+                                                "";
+                                            fetchCompanies();
+
                                             if (value != null) {
                                               setState(() {
                                                 //value = []

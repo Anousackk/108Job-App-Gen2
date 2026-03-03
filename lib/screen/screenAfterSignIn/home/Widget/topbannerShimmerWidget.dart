@@ -18,7 +18,7 @@ class TopBannerShirmmerWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AspectRatio(
-            aspectRatio: 16 / 9,
+            aspectRatio: 16 / 6,
             child: Container(
               decoration: BoxDecoration(
                 color: AppColors.backgroundWhite,
@@ -26,7 +26,7 @@ class TopBannerShirmmerWidget extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 30),
+          // SizedBox(height: 30),
         ],
       ),
     );

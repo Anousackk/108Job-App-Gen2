@@ -8,6 +8,7 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/provider/profileProvider.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/UploadCV/Widget/boxPrefixSuffix.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/boxDecDottedBorderProfileDetail.dart';
@@ -18,29 +19,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class UploadCV extends StatefulWidget {
-  const UploadCV(
-      {Key? key,
-      this.id,
-      this.cv,
-      this.vipoCV,
-      this.personalInformationStatus,
-      this.workPreferenceStatus,
-      this.educationStatus,
-      this.workHistoryStatus,
-      this.languageStatus,
-      this.skillStatus})
-      : super(key: key);
-  final String? id;
-  final cv;
-  final vipoCV;
-  final bool? personalInformationStatus;
-  final bool? workPreferenceStatus;
-  final bool? educationStatus;
-  final bool? workHistoryStatus;
-  final bool? languageStatus;
-  final bool? skillStatus;
+  const UploadCV({
+    Key? key,
+    this.onSaveSuccess,
+  }) : super(key: key);
+  final Function()? onSaveSuccess;
 
   @override
   State<UploadCV> createState() => _UploadCVState();
@@ -52,17 +38,13 @@ class _UploadCVState extends State<UploadCV> {
   String _strFileName = "";
   String _strFileType = "";
   String _cvSrc = "";
-  String _cvName = "";
-
-  dynamic _cvUploadDate;
+  String _cvSystemGenerateSrc = "";
 
   File? _image;
 
-  bool _isCVStatus = false;
+  bool _isSystemGenCVStatus = false;
 
   pickFile() async {
-    //
-    //
     // Display loading dialog
     showDialog(
       context: context,
@@ -76,8 +58,6 @@ class _UploadCVState extends State<UploadCV> {
     //
     //Pick file device IOS
     if (Platform.isIOS) {
-      //
-      //
       //Status storage IOS access to folders like Documents or Downloads. Implicitly granted.
       var statusStorageIOS = await Permission.storage.status;
       print("Platform IOS: " + "${statusStorageIOS}");
@@ -91,7 +71,6 @@ class _UploadCVState extends State<UploadCV> {
         );
         print("result: " + result.toString());
 
-        //
         //ຖ້າເລືອກຟາຍຮູບ ເຮັດເງືອນໄຂໄປ
         if (result != null && result.files.single.path != null) {
           PlatformFile file = result.files.first;
@@ -107,8 +86,6 @@ class _UploadCVState extends State<UploadCV> {
           print("_strFilePath: " + _strFilePath.toString());
 
           if (_strFilePath != null) {
-            //
-            //
             //Api upload file CV
             var value = await upLoadFile(_strFilePath, uploadFileCVApiSeeker);
             print("value: " + value.toString());
@@ -116,17 +93,18 @@ class _UploadCVState extends State<UploadCV> {
             _fileValue = await value['myFile'];
             print("_fileValue" + _fileValue.toString());
 
-            //
-            //
             //ປິດ AlertDialog Loading ຫຼັງຈາກ _fileValue ມີຄ່າ
             if (_fileValue != null) {
+              // Api upload or update CV
+              uploadOrUpdateCV(_fileValue, false);
+
               Navigator.pop(context);
             }
 
             setState(() {});
           }
         }
-        //
+
         //ບໍ່ເລືອກຟາຍຮູບແລ້ວປິດ loading dialog
         else if (result == null) {
           print("result == null");
@@ -176,8 +154,6 @@ class _UploadCVState extends State<UploadCV> {
 
       print("sdkInt: " + sdkInt.toString());
 
-      //
-      //
       // Android 13(API 33+)
       if (sdkInt >= 33) {
         var statusAudio = await Permission.audio.status;
@@ -191,7 +167,6 @@ class _UploadCVState extends State<UploadCV> {
           );
           print("result: " + result.toString());
 
-          //
           //ຖ້າເລືອກຟາຍຮູບ ເຮັດເງືອນໄຂໄປ
           if (result != null && result.files.single.path != null) {
             PlatformFile file = result.files.first;
@@ -216,6 +191,9 @@ class _UploadCVState extends State<UploadCV> {
 
               //ປິດ loading dialog ຫຼັງຈາກ _fileValue ມີຄ່າ
               if (_fileValue != null) {
+                // Api upload or update CV
+                uploadOrUpdateCV(_fileValue, false);
+
                 Navigator.pop(context);
               }
 
@@ -223,7 +201,6 @@ class _UploadCVState extends State<UploadCV> {
             }
           }
 
-          //
           //ບໍ່ເລືອກຟາຍຮູບແລ້ວປິດ loading dialog
           else if (result == null) {
             print("result == null");
@@ -271,8 +248,7 @@ class _UploadCVState extends State<UploadCV> {
           );
         }
       }
-      //
-      //
+
       // Below Android 13 (API 33)
       else {
         var statusStorageAndroid = await Permission.storage.status;
@@ -287,7 +263,6 @@ class _UploadCVState extends State<UploadCV> {
           );
           print("result: " + result.toString());
 
-          //
           //ຖ້າເລືອກຟາຍຮູບ ເຮັດເງືອນໄຂໄປ
           if (result != null && result.files.single.path != null) {
             PlatformFile file = result.files.first;
@@ -304,8 +279,6 @@ class _UploadCVState extends State<UploadCV> {
             print("_strFilePath: " + _strFilePath.toString());
 
             if (_strFilePath != null) {
-              //
-              //
               //Api upload file CV
               var value = await upLoadFile(_strFilePath, uploadFileCVApiSeeker);
               print("value: " + value.toString());
@@ -313,10 +286,11 @@ class _UploadCVState extends State<UploadCV> {
               _fileValue = await value['myFile'];
               print("_fileValue" + _fileValue.toString());
 
-              //
-              //
               //ປິດ AlertDialog Loading ຫຼັງຈາກ _fileValue ມີຄ່າ
               if (_fileValue != null) {
+                // Api upload or update CV
+                uploadOrUpdateCV(_fileValue, false);
+
                 Navigator.pop(context);
               }
 
@@ -324,7 +298,6 @@ class _UploadCVState extends State<UploadCV> {
             }
           }
 
-          //
           //ບໍ່ເລືອກຟາຍຮູບແລ້ວປິດ loading dialog
           else if (result == null) {
             print("result == null");
@@ -377,8 +350,6 @@ class _UploadCVState extends State<UploadCV> {
   }
 
   pickImageGallery(ImageSource source) async {
-    //
-    //
     // Display loading dialog
     showDialog(
       context: context,
@@ -407,10 +378,6 @@ class _UploadCVState extends State<UploadCV> {
           return;
         }
 
-        // setState(() {
-        //   _imageLoading = true;
-        // });
-
         //
         //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
         final allowedExtensions = ['png', 'jpg', 'jpeg'];
@@ -424,9 +391,7 @@ class _UploadCVState extends State<UploadCV> {
             Navigator.of(context, rootNavigator: true).pop();
           }
           print("valUploadFile is null");
-          // setState(() {
-          //   _imageLoading = false;
-          // });
+
           await showDialog(
             context: context,
             builder: (context) {
@@ -449,15 +414,12 @@ class _UploadCVState extends State<UploadCV> {
 
         print("strImage: " + strImage.toString());
 
-        //
         //ຖ້າມີຟາຍຮູບ _image
         if (_image != null) {
-          //
           //api upload profile seeker
           var valUploadFile =
               await upLoadFile(strImage, uploadProfileApiSeeker);
 
-          //
           //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
           //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
           if (valUploadFile != null) {
@@ -467,13 +429,13 @@ class _UploadCVState extends State<UploadCV> {
             print("fileValue: " + _fileValue.toString());
 
             if (_fileValue != null || _fileValue != "") {
-              //
-              //api upload or update profile image seeker
-              // uploadOrUpdateProfileImageSeeker();
+              // Api upload or update CV
+              uploadOrUpdateCV(_fileValue, false);
+
               Navigator.pop(context);
             }
           }
-          //
+
           //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
           else {
             // Close loading dialog first
@@ -481,9 +443,7 @@ class _UploadCVState extends State<UploadCV> {
               Navigator.of(context, rootNavigator: true).pop();
             }
             print("else valUploadFile: " + valUploadFile.toString());
-            // setState(() {
-            //   _imageLoading = false;
-            // });
+
             await showDialog(
               context: context,
               builder: (context) {
@@ -544,8 +504,6 @@ class _UploadCVState extends State<UploadCV> {
 
       print("sdkInt: " + sdkInt.toString());
 
-      //
-      //
       // Android 13(API 33+)
       if (sdkInt >= 33) {
         var statusPhotosAndroid = await Permission.photos.status;
@@ -557,7 +515,6 @@ class _UploadCVState extends State<UploadCV> {
           final ImagePicker _picker = ImagePicker();
           final XFile? image = await _picker.pickImage(source: source);
 
-          //
           //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
           if (image == null) {
             Navigator.pop(context);
@@ -568,12 +525,10 @@ class _UploadCVState extends State<UploadCV> {
           //   _imageLoading = true;
           // });
 
-          //
           //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
           final allowedExtensions = ['png', 'jpg', 'jpeg'];
           final fileExtension = image.path.split('.').last.toLowerCase();
 
-          //
           //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
           if (!allowedExtensions.contains(fileExtension)) {
             // Close loading dialog first
@@ -582,9 +537,7 @@ class _UploadCVState extends State<UploadCV> {
             }
 
             print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
-            // setState(() {
-            //   _imageLoading = false;
-            // });
+
             await showDialog(
               context: context,
               builder: (context) {
@@ -606,15 +559,12 @@ class _UploadCVState extends State<UploadCV> {
 
           print("strImage: " + strImage.toString());
 
-          //
           //ຖ້າມີຟາຍຮູບ _image
           if (_image != null) {
-            //
             //api upload profile seeker
             var valUploadFile =
                 await upLoadFile(strImage, uploadProfileApiSeeker);
 
-            //
             //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
             //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
             if (valUploadFile != null) {
@@ -624,15 +574,14 @@ class _UploadCVState extends State<UploadCV> {
               print("fileValue: " + _fileValue.toString());
 
               if (_fileValue != null || _fileValue != "") {
-                //
-                //api upload or update profile image seeker
-                // uploadOrUpdateProfileImageSeeker();
+                // Api upload or update CV
+                uploadOrUpdateCV(_fileValue, false);
 
                 // Close loading dialog first
                 Navigator.pop(context);
               }
             }
-            //
+
             //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
             else {
               // Close loading dialog first
@@ -641,9 +590,7 @@ class _UploadCVState extends State<UploadCV> {
               }
 
               print("else valUploadFile: " + valUploadFile.toString());
-              // setState(() {
-              //   _imageLoading = false;
-              // });
+
               await showDialog(
                 context: context,
                 builder: (context) {
@@ -694,8 +641,7 @@ class _UploadCVState extends State<UploadCV> {
           );
         }
       }
-      //
-      //
+
       // Below Android 13 (API 33)
       else {
         var statusStorageAndroid = await Permission.storage.status;
@@ -707,23 +653,16 @@ class _UploadCVState extends State<UploadCV> {
           final ImagePicker _picker = ImagePicker();
           final XFile? image = await _picker.pickImage(source: source);
 
-          //
           //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
           if (image == null) {
             Navigator.pop(context);
             return;
           }
 
-          // setState(() {
-          //   _imageLoading = true;
-          // });
-
-          //
           //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
           final allowedExtensions = ['png', 'jpg', 'jpeg'];
           final fileExtension = image.path.split('.').last.toLowerCase();
 
-          //
           //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
           if (!allowedExtensions.contains(fileExtension)) {
             // Close loading dialog first
@@ -732,9 +671,7 @@ class _UploadCVState extends State<UploadCV> {
             }
 
             print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
-            // setState(() {
-            //   _imageLoading = false;
-            // });
+
             await showDialog(
               context: context,
               builder: (context) {
@@ -757,15 +694,12 @@ class _UploadCVState extends State<UploadCV> {
 
           print("strImage: " + strImage.toString());
 
-          //
           //ຖ້າມີຟາຍຮູບ _image
           if (_image != null) {
-            //
             //api upload profile seeker
             var valUploadFile =
                 await upLoadFile(strImage, uploadProfileApiSeeker);
 
-            //
             //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
             //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
             if (valUploadFile != null) {
@@ -775,13 +709,13 @@ class _UploadCVState extends State<UploadCV> {
               print("fileValue: " + _fileValue.toString());
 
               if (_fileValue != null || _fileValue != "") {
-                //
-                //api upload or update profile image seeker
-                // uploadOrUpdateProfileImageSeeker();
+                // Api upload or update CV
+                uploadOrUpdateCV(_fileValue, false);
+
                 Navigator.pop(context);
               }
             }
-            //
+
             //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
             else {
               // Close loading dialog first
@@ -790,9 +724,7 @@ class _UploadCVState extends State<UploadCV> {
               }
 
               print("else valUploadFile: " + valUploadFile.toString());
-              // setState(() {
-              //   _imageLoading = false;
-              // });
+
               await showDialog(
                 context: context,
                 builder: (context) {
@@ -846,11 +778,10 @@ class _UploadCVState extends State<UploadCV> {
     }
   }
 
-  uploadOrUpdateCV(dynamic paramFileValue, bool paramVipoCVStatus) async {
-    //
-    //
-    //
-    //ສະແດງ AlertDialog Loading
+  uploadOrUpdateCV(dynamic paramFileValue, bool systemGenCVStatus) async {
+    final profileProvider = context.read<ProfileProvider>();
+
+    // Display AlertDialog Loading First
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -859,35 +790,42 @@ class _UploadCVState extends State<UploadCV> {
       },
     );
 
-    var res = await postData(
-      uploadOrUpdateCVApiSeeker,
-      {
-        "cv": paramFileValue,
-        "vipoCVStatus": paramVipoCVStatus,
-      },
+    final res = await profileProvider.uploadOrUpdateCV(
+      paramFileValue,
+      systemGenCVStatus,
+      profileProvider.statusEventUpdateProfile,
     );
 
-    print("res api uploadOrUpdateCV: " + "${res}");
+    final statusCode = res?["statusCode"];
 
-    //
-    //
-    //ປິດ AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
-    if (res != null) {
-      Navigator.pop(context);
-    }
+    if (!context.mounted) return;
 
-    if (res['message'] == 'CV uploaded') {
+    // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
+    Navigator.pop(context);
+
+    print("api uploadOrUpdateCV: " + "${res}");
+
+    if (statusCode == 200 || statusCode == 201) {
+      //After sucess work api fetchProfileSeeker
+      await profileProvider.fetchProfileSeeker();
+
+      // checkCvStatusDisplayForm();
+
       await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "successful".tr,
-            contentText: "upload cv".tr + " " + "successful".tr,
+            title: "successfully".tr,
+            contentText: "cv_uploaded".tr,
             textButton: "ok".tr,
             press: () {
               Navigator.pop(context);
-              Navigator.pop(context);
+
+              // Call parent callback
+              if (widget.onSaveSuccess != null) {
+                widget.onSaveSuccess!();
+              }
             },
           );
         },
@@ -904,10 +842,10 @@ class _UploadCVState extends State<UploadCV> {
     }
   }
 
-  deleteCV(bool paramVipoCVStatus) async {
-    //
-    //
-    //ສະແດງ AlertDialog Loading
+  pressDeleteCV(bool systemGenCVStatus) async {
+    final profileProvider = context.read<ProfileProvider>();
+
+    // Display AlertDialog Loading First
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -916,27 +854,27 @@ class _UploadCVState extends State<UploadCV> {
       },
     );
 
-    var res =
-        await postData(deleteCVApiSeeker, {"vipoCVStatus": paramVipoCVStatus});
+    final res = await profileProvider.deleteCV(systemGenCVStatus);
 
-    //
-    //
-    //ປິດ AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
-    if (res != null) {
-      Navigator.pop(context);
-    }
+    final statusCode = res?["statusCode"];
 
-    if (res['message'] == "CV deleted") {
+    if (!context.mounted) return;
+
+    // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
+    Navigator.pop(context);
+
+    if (statusCode == 200 || statusCode == 201) {
+      await profileProvider.fetchProfileSeeker();
+
       await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "successful".tr,
+            title: "successfully".tr,
             contentText: "delete_cv_success".tr,
             textButton: "ok".tr,
             press: () {
-              Navigator.pop(context);
               Navigator.pop(context);
             },
           );
@@ -945,62 +883,41 @@ class _UploadCVState extends State<UploadCV> {
     }
   }
 
-  cvInfomation() async {
-    setState(() {
-      if (widget.cv != null) {
-        _isCVStatus = false;
-        pressCvInfomation("CV");
-      } else if (widget.cv == null && widget.vipoCV == null) {
-        _isCVStatus = false;
-        pressCvInfomation("CV");
-      } else {
-        _isCVStatus = true;
-        pressCvInfomation("VIPO CV");
+  checkCvStatusDisplayForm() async {
+    final profileProvider = context.read<ProfileProvider>();
+
+    if (profileProvider.statusFormProfile == "Event") {
+      if (profileProvider.haveCVFile == "No") {
+        setState(() {
+          _isSystemGenCVStatus = true;
+        });
+      } else if (profileProvider.haveCVFile == "Yes") {
+        setState(() {
+          _isSystemGenCVStatus = false;
+        });
       }
-    });
-  }
-
-  pressCvInfomation(String status) {
-    if (widget.cv != null && status == "CV") {
-      setState(() {
-        print("cv: " + "${widget.cv}");
-
-        _cvName = widget.cv['link'].split('/')[1];
-        _cvSrc = widget.cv['src'];
-        _cvUploadDate = widget.cv['updatedAt'];
-        //pars ISO to Flutter DateTime
-        parsDateTime(value: '', currentFormat: '', desiredFormat: '');
-        DateTime cvUploadDate = parsDateTime(
-          value: _cvUploadDate,
-          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-          desiredFormat: "yyyy-MM-dd HH:mm:ss",
-        );
-        _cvUploadDate = formatDate(cvUploadDate);
-      });
-    }
-
-    if (widget.vipoCV != null && status == "VIPO CV") {
-      setState(() {
-        print("vipoCV: " + "${widget.vipoCV}");
-
-        _cvName = widget.vipoCV['link'].split('/')[1];
-        _cvSrc = widget.vipoCV['src'];
-        _cvUploadDate = widget.vipoCV['updatedAt'];
-        //pars ISO to Flutter DateTime
-        parsDateTime(value: '', currentFormat: '', desiredFormat: '');
-        DateTime cvUploadDate = parsDateTime(
-          value: _cvUploadDate,
-          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-          desiredFormat: "yyyy-MM-dd HH:mm:ss",
-        );
-        _cvUploadDate = formatDate(cvUploadDate);
-      });
+    } else {
+      if (profileProvider.cv == null && profileProvider.vipoCV == null) {
+        setState(() {
+          _isSystemGenCVStatus = false;
+        });
+      } else if (profileProvider.cv != null) {
+        setState(() {
+          _isSystemGenCVStatus = false;
+        });
+        // _cvSrc = profileProvider.cv?['src'] ?? "";
+      } else {
+        setState(() {
+          _isSystemGenCVStatus = true;
+        });
+        // _cvSystemGenerateSrc = profileProvider.vipoCV?['src'] ?? "";
+      }
     }
   }
 
   ModalBottomCameraGallery() {
     return Container(
-      padding: EdgeInsets.only(top: 20, bottom: 20),
+      padding: EdgeInsets.only(top: 20, bottom: 40),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1052,454 +969,331 @@ class _UploadCVState extends State<UploadCV> {
   @override
   void initState() {
     super.initState();
-    cvInfomation();
+    checkCvStatusDisplayForm();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
-      child: Scaffold(
-        appBar: AppBarDefault(
-          textTitle: "cv_file".tr,
-          // fontWeight: FontWeight.bold,
-          leadingIcon: Icon(Icons.arrow_back),
-          leadingPress: () {
-            Navigator.pop(context);
-          },
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Text("${_isCVStatus}"),
-              SizedBox(
-                height: 20,
-              ),
-
-              //
-              //
-              //
-              //
-              //
-              //Section1 Header button switch gen CV
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Button(
-                        text: "i_have_cv".tr,
-                        textColor: !_isCVStatus
-                            ? AppColors.fontPrimary
-                            : AppColors.dark,
-                        textFontWeight: !_isCVStatus ? FontWeight.bold : null,
-                        buttonColor: !_isCVStatus
-                            ? AppColors.primary300
-                            : AppColors.dark100,
-                        press: () {
-                          setState(() {
-                            _isCVStatus = false;
-                            pressCvInfomation("CV");
-                          });
-                        },
-                      ),
+    final profileProvider = context.watch<ProfileProvider>();
+    return Container(
+      color: AppColors.backgroundWhite,
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          //
+          //
+          //Section1 Header button switch CV and System Gen CV
+          if (profileProvider.statusFormProfile == "")
+            Container(
+              padding: EdgeInsets.only(top: 20),
+              child: Row(
+                children: [
+                  //Button Upload CV
+                  Expanded(
+                    child: Button(
+                      text: "i_have_cv".tr,
+                      textColor: !_isSystemGenCVStatus
+                          ? AppColors.fontWhite
+                          : AppColors.fontDark,
+                      textFontWeight:
+                          !_isSystemGenCVStatus ? FontWeight.bold : null,
+                      buttonColor: !_isSystemGenCVStatus
+                          ? AppColors.primary
+                          : AppColors.dark100,
+                      press: () {
+                        setState(() {
+                          _isSystemGenCVStatus = false;
+                        });
+                      },
                     ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Expanded(
-                      child: Button(
-                        text: "vipo_gen_cv".tr,
-                        textColor: _isCVStatus
-                            ? AppColors.fontPrimary
-                            : AppColors.dark,
-                        textFontWeight: _isCVStatus ? FontWeight.bold : null,
-                        buttonColor: _isCVStatus
-                            ? AppColors.primary300
-                            : AppColors.dark100,
-                        press: () {
-                          setState(() {
-                            _isCVStatus = true;
-                            pressCvInfomation("VIPO CV");
-                          });
-                        },
-                      ),
-                    )
-                  ],
-                ),
-              ),
+                  ),
+                  SizedBox(width: 5),
 
-              //
-              //
-              //
-              //
-              //
-              //Section2 Content have CV
-              Expanded(
-                child: Container(
-                  color: AppColors.backgroundWhite,
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child:
+                  //Button System Generate CV
+                  Expanded(
+                    child: Button(
+                      text: "system_gen_cv".tr,
+                      textColor: _isSystemGenCVStatus
+                          ? AppColors.fontWhite
+                          : AppColors.fontDark,
+                      textFontWeight:
+                          _isSystemGenCVStatus ? FontWeight.bold : null,
+                      buttonColor: _isSystemGenCVStatus
+                          ? AppColors.primary
+                          : AppColors.dark100,
+                      press: () {
+                        setState(() {
+                          _isSystemGenCVStatus = true;
+                        });
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ),
+
+          Container(
+            color: AppColors.backgroundWhite,
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: !_isSystemGenCVStatus
+                //
+                //CV
+                //ຖ້າວ່າ _isSystemGenCVStatus  = false
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //BoxDecoration Upload CV
+                          BoxDecDottedBorderUploadCV(
+                            boxDecColor: AppColors.primary100,
+                            boxDecBorderRadius: BorderRadius.circular(5),
+                            title: "select_cv_file".tr,
+                            titleColor: AppColors.primary600,
+                            titleFontWeight: FontWeight.bold,
+                            text: _strFileName == "" || _strFileName == null
+                                ? "cv_file_support".tr
+                                : "${_strFileName}",
+                            press: () {
+                              showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                )),
+                                context: context,
+                                builder: (builder) =>
+                                    ModalBottomCameraGallery(),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 20),
+                        ],
+                      ),
+
+                      // Button(
+                      //   text: "deletet cv",
+                      //   press: () {
+                      //     pressDeleteCV(false);
+                      //   },
+                      // ),
+
                       //
-                      //CV
-                      //ຖ້າວ່າ _isCVStatus  = false
-                      !_isCVStatus
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //
+                      //Button Download CV
+                      if (profileProvider.cv != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary100,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    //
-                                    //
-                                    //BoxDecoration Upload CV
-                                    BoxDecDottedBorderUploadCV(
-                                      boxDecColor: AppColors.primary100,
-                                      boxDecBorderRadius:
-                                          BorderRadius.circular(5),
-                                      title: "select_cv_file".tr,
-                                      titleColor: AppColors.primary600,
-                                      titleFontWeight: FontWeight.bold,
-                                      text: _strFileName == "" ||
-                                              _strFileName == null
-                                          ? "cv_file_support".tr
-                                          : "${_strFileName}",
-                                      press: () {
-                                        showModalBottomSheet(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(20),
-                                            topRight: Radius.circular(20),
-                                          )),
-                                          context: context,
-                                          builder: (builder) =>
-                                              ModalBottomCameraGallery(),
-                                        );
-                                      },
-                                    ),
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-
-                                    if (widget.cv != null)
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          //
-                                          //
-                                          //Uploaded file
-                                          Text(
-                                            "uploaded_file".tr,
-                                            style: bodyTextMaxNormal(
-                                                "NotoSansLaoLoopedBold",
-                                                null,
-                                                null),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-
-                                          //
-                                          //
-                                          //Box Decoration Resume File
-                                          BoxDecorationInputPrefixTextSuffixWidget(
-                                            boxColor: AppColors.primary200,
-                                            press: () {
-                                              launchInBrowser(
-                                                  Uri.parse(_cvSrc));
-                                            },
-                                            prefixIconText: "\uf15b",
-                                            prefixFontFamily:
-                                                "FontAwesomeSolid",
-                                            prefixColor: AppColors.primary600,
-                                            text: "${_cvName}",
-                                            textColor: AppColors.fontDark,
-                                            suffixWidget: Text(
-                                              "\uf00d",
-                                              style: fontAwesomeRegular(
-                                                  null,
-                                                  14,
-                                                  AppColors.warning600,
-                                                  null),
-                                            ),
-                                            pressSuffixWidget: () async {
-                                              var result = await showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return NewVer2CustAlertDialogWarningBtnConfirmCancel(
-                                                      title:
-                                                          "delete_this_info".tr,
-                                                      contentText:
-                                                          "are_u_delete_cv".tr,
-                                                      textButtonLeft:
-                                                          'cancel'.tr,
-                                                      textButtonRight:
-                                                          'confirm'.tr,
-                                                      textButtonRightColor:
-                                                          AppColors.fontWhite,
-                                                    );
-                                                  });
-                                              if (result == 'Ok') {
-                                                print("confirm delete");
-                                                deleteCV(false);
-                                              }
-                                            },
-                                            validateText: Container(),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text("ອັບເດດລ່າສຸດ: " +
-                                              "${_cvUploadDate}"),
-                                          SizedBox(
-                                            height: 30,
-                                          ),
-                                        ],
-                                      ),
-
-                                    //
-                                    //
-                                    //Trips
-                                    Text(
-                                      "tips".tr,
-                                      style: bodyTextMaxNormal(
-                                          "NotoSansLaoLoopedBold", null, null),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "cv_tip_1".tr,
-                                      style: bodyTextMinNormal(
-                                          "NotoSansLaoLoopedMedium",
-                                          null,
-                                          null),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "cv_tip_2".tr,
-                                      style: bodyTextMinNormal(
-                                          "NotoSansLaoLoopedMedium",
-                                          null,
-                                          null),
-                                    ),
-                                  ],
+                                Text(
+                                  "You have already uploaded CV file.",
+                                  style: bodyTextMaxNormal(
+                                      null, AppColors.primary, FontWeight.bold),
                                 ),
-
-                                //
-                                //
-                                //Button Save
-                                Button(
-                                  text: "save".tr,
+                                SizedBox(height: 15),
+                                ButtonDefault(
+                                  text: "download_cv_file".tr,
                                   press: () async {
-                                    if (_fileValue == null ||
-                                        _fileValue == "") {
-                                      await showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return CustAlertDialogWarningWithoutBtn(
-                                            title: "warning".tr,
-                                            contentText: "plz select".tr,
-                                          );
-                                        },
-                                      );
-                                    } else {
-                                      uploadOrUpdateCV(_fileValue, false);
-                                    }
+                                    launchInBrowser(
+                                        Uri.parse(profileProvider.cvSrc));
                                   },
-                                )
-                              ],
-                            )
-
-                          //
-                          //VIPO CV
-                          //ຖ້າວ່າ _isCVStatus  = true
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if (widget.vipoCV != null)
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            //
-                                            //
-                                            //Uploaded file
-                                            Text(
-                                              "download_file_cv".tr,
-                                              style: bodyTextMaxNormal(
-                                                  "NotoSansLaoLoopedBold",
-                                                  null,
-                                                  null),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-
-                                            //
-                                            //
-                                            //Box Decoration Resume File
-                                            BoxDecorationInputPrefixTextSuffixWidget(
-                                              boxColor: AppColors.primary200,
-                                              press: () {
-                                                launchInBrowser(
-                                                    Uri.parse(_cvSrc));
-                                              },
-                                              prefixIconText: "\uf15b",
-                                              prefixFontFamily:
-                                                  "FontAwesomeSolid",
-                                              prefixColor: AppColors.primary600,
-                                              text: "${_cvName}",
-                                              textColor: AppColors.fontDark,
-                                              suffixWidget: Text(
-                                                "\uf00d",
-                                                style: fontAwesomeRegular(
-                                                    null,
-                                                    14,
-                                                    AppColors.warning600,
-                                                    null),
-                                              ),
-                                              pressSuffixWidget: () async {
-                                                var result = await showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return NewVer2CustAlertDialogWarningBtnConfirmCancel(
-                                                        title:
-                                                            "delete_this_info"
-                                                                .tr,
-                                                        contentText:
-                                                            "are_u_delete_cv"
-                                                                .tr,
-                                                        textButtonLeft:
-                                                            'cancel'.tr,
-                                                        textButtonRight:
-                                                            'confirm'.tr,
-                                                        textButtonRightColor:
-                                                            AppColors.fontWhite,
-                                                      );
-                                                    });
-                                                if (result == 'Ok') {
-                                                  print("confirm delete");
-                                                  deleteCV(true);
-                                                }
-                                              },
-                                              validateText: Container(),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text("ອັບເດດລ່າສຸດ: " +
-                                                "${_cvUploadDate}"),
-                                            SizedBox(
-                                              height: 30,
-                                            ),
-                                          ],
-                                        ),
-
-                                      //
-                                      //
-                                      //Trips Generate CV
-                                      Text(
-                                        "tips".tr,
-                                        style: bodyTextMaxNormal(
-                                            "NotoSansLaoLoopedBold",
-                                            null,
-                                            null),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        "1. ຕື່ມຂໍ້ມູນໂປຣໄຟສທັງໝົດໃຫ້ຄົບຖ້ວນ."
-                                            .tr,
-                                        style: bodyTextMinNormal(
-                                            "NotoSansLaoLoopedMedium",
-                                            null,
-                                            null),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        "2. ກົດປຸ່ມ 'ບັນທຶກ' ເພື່ອສ້າງຊີວີ້."
-                                            .tr,
-                                        style: bodyTextMinNormal(
-                                            "NotoSansLaoLoopedMedium",
-                                            null,
-                                            null),
-                                      ),
-                                      //ການສ້າງຊີວີ້ອາດໃຊ້ເລລາ 1 - 5 ນາທີ.
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        "3. ລະບົບຂອງ vipo.cc ຈະສ້າງຊີວີ້ອັດຕະໂນມັດ."
-                                            .tr,
-                                        style: bodyTextMinNormal(
-                                            "NotoSansLaoLoopedMedium",
-                                            null,
-                                            null),
-                                      ),
-
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        "4. ການສ້າງຊີວີ້ອາດໃຊ້ເລລາ 1 - 5 ນາທີ."
-                                            .tr,
-                                        style: bodyTextMinNormal(
-                                            "NotoSansLaoLoopedMedium",
-                                            null,
-                                            null),
-                                      ),
-                                    ],
-                                  ),
                                 ),
-
-                                //
-                                //
-                                //Button VIPO Generate CV
-                                Button(
-                                  text: "save".tr,
-                                  press: () async {
-                                    if (widget.personalInformationStatus ==
-                                            true &&
-                                        widget.workPreferenceStatus == true &&
-                                        widget.educationStatus == true &&
-                                        widget.workHistoryStatus == true &&
-                                        widget.languageStatus == true &&
-                                        widget.skillStatus == true) {
-                                      uploadOrUpdateCV(null, true);
-                                    } else {
-                                      await showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return CustAlertDialogWarningWithoutBtn(
-                                            title: "warning".tr,
-                                            contentText:
-                                                "ຂໍ້ມູນໂປຣໄຟສຍັງບໍ່ຄົບ ຫຼື ຍັງບໍ່ໄດ້ຮັບອະນຸມັດຈາກແອັດມິ້ນ"
-                                                    .tr,
-                                          );
-                                        },
-                                      );
-                                    }
-                                  },
-                                )
                               ],
                             ),
-                ),
-              ),
-            ],
+                          ),
+                        )
+                    ],
+                  )
+
+                //
+                //System Generate CV
+                //ຖ້າວ່າ _isSystemGenCVStatus  = true
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (!profileProvider.personalInformationStatus)
+                              SystemBuildCVStatus(
+                                boxColor: AppColors.danger100,
+                                icon: "\uf057",
+                                text: "Please Update Personal Information",
+                                textColor: AppColors.fontDanger,
+                              ),
+                            if (!profileProvider.workPreferenceStatus)
+                              SystemBuildCVStatus(
+                                boxColor: AppColors.danger100,
+                                icon: "\uf057",
+                                text: "Please Update Work Preference",
+                                textColor: AppColors.fontDanger,
+                              ),
+                            if (!profileProvider.educationStatus)
+                              SystemBuildCVStatus(
+                                boxColor: AppColors.danger100,
+                                icon: "\uf057",
+                                text: "Please Add Education",
+                                textColor: AppColors.fontDanger,
+                              ),
+                            if (!profileProvider.workHistoryStatus)
+                              SystemBuildCVStatus(
+                                boxColor: AppColors.danger100,
+                                icon: "\uf057",
+                                text: "Please Add Work History",
+                                textColor: AppColors.fontDanger,
+                              ),
+                            if (!profileProvider.languageStatus)
+                              SystemBuildCVStatus(
+                                boxColor: AppColors.danger100,
+                                icon: "\uf057",
+                                text: "Please Add Language Skill",
+                                textColor: AppColors.fontDanger,
+                              ),
+                            if (!profileProvider.skillStatus)
+                              SystemBuildCVStatus(
+                                boxColor: AppColors.danger100,
+                                icon: "\uf057",
+                                text: "Please Add Skill",
+                                textColor: AppColors.fontDanger,
+                              ),
+                            if (profileProvider.educationStatus &&
+                                profileProvider.workHistoryStatus &&
+                                profileProvider.languageStatus &&
+                                profileProvider.skillStatus)
+                              SystemBuildCVStatus(
+                                boxColor: AppColors.success100,
+                                icon: "\uf058",
+                                text:
+                                    "Your profile is complete, you can create CV now.",
+                                textColor: AppColors.fontSuccess,
+                              ),
+                            SizedBox(height: 20),
+                          ],
+                        ),
+                      ),
+
+                      if (profileProvider.vipoCV != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary100,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "CV generated by the system.",
+                                  style: bodyTextMaxNormal(
+                                      null, AppColors.primary, FontWeight.bold),
+                                ),
+                                SizedBox(height: 15),
+                                ButtonDefault(
+                                  text: "download_cv_file".tr,
+                                  press: () async {
+                                    launchInBrowser(Uri.parse(
+                                        profileProvider.cvSystemGenerateSrc));
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      Divider(
+                        color: AppColors.borderBG,
+                        thickness: 2,
+                      ),
+
+                      SizedBox(height: 10),
+
+                      //
+                      //
+                      //Button System Generate CV
+                      if (profileProvider.personalInformationStatus &&
+                          profileProvider.workPreferenceStatus &&
+                          profileProvider.educationStatus &&
+                          profileProvider.workHistoryStatus &&
+                          profileProvider.languageStatus &&
+                          profileProvider.skillStatus)
+                        Button(
+                          text: "create_cv".tr,
+                          press: () async {
+                            uploadOrUpdateCV(null, true);
+                          },
+                        ),
+                    ],
+                  ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class SystemBuildCVStatus extends StatefulWidget {
+  const SystemBuildCVStatus({
+    Key? key,
+    this.boxColor,
+    this.textColor,
+    this.icon,
+    this.text,
+  }) : super(key: key);
+
+  final Color? boxColor, textColor;
+  final String? icon, text;
+
+  @override
+  State<SystemBuildCVStatus> createState() => _SystemBuildCVStatusState();
+}
+
+class _SystemBuildCVStatusState extends State<SystemBuildCVStatus> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: widget.boxColor ?? AppColors.dark100,
+          borderRadius: BorderRadius.all(
+            Radius.circular(8),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 3),
+              child: Text(
+                "${widget.icon}",
+                style: fontAwesomeSolid(
+                    null, null, widget.textColor ?? AppColors.dark, null),
+              ),
+            ),
+            SizedBox(width: 10),
+            Flexible(
+              child: Text(
+                "${widget.text}",
+                style: bodyTextNormal(
+                    null, widget.textColor ?? AppColors.dark, null),
+                overflow: TextOverflow.visible,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -20,6 +20,7 @@ class AppColors {
   static Color lightYellow = HexColor("#FFFAE5");
 
   static Color inputLight = Color(0xffF1F3F6);
+  static Color inputBackground = Color(0xf5f5f5f5);
   static Color inputColor = Color(0xffEAEAEA);
   static Color inputWhite = Color(0xffFFFFFF);
   static Color inputGrey = Color(0xffDDDDDD);
@@ -129,6 +130,18 @@ class AppColors {
   static Color primary300 = HexColor("#D3EAFF");
   static Color primary200 = HexColor("#E1F1FF");
   static Color primary100 = HexColor("#F0F8FF");
+  static LinearGradient primaryRingGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      HexColor("#0056A7"), // outer dark blue
+      HexColor("#007FD4"), // blue
+      HexColor("#00C7F2"), // cyan
+
+      HexColor("#00C7F2"), // cyan
+      HexColor("#00E4FF"), // aqua center
+    ],
+  );
 
   //dark 900-100
   static Color dark600 = HexColor("#000000");

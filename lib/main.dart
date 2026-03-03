@@ -1,15 +1,24 @@
-// ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace, body_might_complete_normally_nullable, prefer_final_fields, prefer_interpolation_to_compose_strings, unnecessary_import
+// ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace, body_might_complete_normally_nullable, prefer_final_fields, prefer_interpolation_to_compose_strings, unnecessary_import, use_build_context_synchronously
 import 'dart:io';
 import 'package:app/alertUpgraderMessages.dart';
 import 'package:app/firebase_options.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/i18n/i18n.dart';
+import 'package:app/provider/avatarProvider.dart';
+import 'package:app/provider/bannerProvider.dart';
+import 'package:app/provider/eventAvailableProvider.dart';
+import 'package:app/provider/localSharePrefsProvider.dart';
 import 'package:app/provider/notifierProvider.dart';
+import 'package:app/provider/popupBanner.dart';
+import 'package:app/provider/profileProvider.dart';
+import 'package:app/provider/recommendJobByAI.dart';
+import 'package:app/provider/reuseTypeProvider.dart';
 import 'package:app/routes.dart';
 import 'package:app/screen/ScreenAfterSignIn/Home/home.dart';
 import 'package:app/screen/login/login.dart';
 import 'package:app/screen/screenAfterSignIn/Notifications/notification.dart';
-import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
+import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail_old.dart';
 import 'package:app/screen/screenAfterSignIn/message/message.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -264,11 +273,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   checkLanguage() async {
     final prefs = await SharedPreferences.getInstance();
 
-    var employeeToken = prefs.getString('employeeToken');
-    getLanguageSharePref = prefs.getString('setLanguage');
+    // var employeeToken = prefs.getString('employeeToken');
+    // getLanguageSharePref = prefs.getString('setLanguage');
 
-    // String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
-    // getLanguageSharePref = await SharedPrefsHelper.getString("setLanguage");
+    String? employeeToken = await SharedPrefsHelper.getString("employeeToken");
+    getLanguageSharePref = await SharedPrefsHelper.getString("setLanguage");
 
     if (employeeToken != null) {
       setState(() {
@@ -283,9 +292,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
 
     if (getLanguageSharePref == 'lo') {
-      Get.updateLocale(Locale('lo', 'LA'));
+      var locale = Locale('lo', 'LA');
+      Get.updateLocale(locale);
     } else if (getLanguageSharePref == 'en') {
-      Get.updateLocale(Locale('en', 'US'));
+      var locale = Locale('en', 'US');
+      Get.updateLocale(locale);
     }
 
     print('getLanguageSharePref: ' + getLanguageSharePref.toString());
@@ -371,12 +382,22 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     //Get.deviceLocale
-    print("Main locale: " + '${Get.locale}');
+    print("Main locale: " + '${Get.locale}'); //en_US, lo_LA
+    print("Main locale: " + '${Get.locale?.languageCode}'); //en, lo
+
     FocusScopeNode currentFocus = FocusScopeNode();
 
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NotifierProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => BannerProvider()),
+        ChangeNotifierProvider(create: (_) => AvatarProvider()),
+        ChangeNotifierProvider(create: (_) => PopupBannerProvider()),
+        ChangeNotifierProvider(create: (_) => EventAvailableProvider()),
+        ChangeNotifierProvider(create: (_) => ReuseTypeProvider()),
+        ChangeNotifierProvider(create: (_) => LocalSharedPrefsProvider()),
+        ChangeNotifierProvider(create: (_) => RecommendJobAIProvider()),
       ],
       child: Sizer(
         builder: (context, orientation, deviceType) {
@@ -388,10 +409,12 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               }
             },
             child: GetMaterialApp(
-              // color: AppColors.backgroundWhite,
               translations: LocalString(),
-              locale: Locale('lo', 'LA'),
-              fallbackLocale: Locale('lo', 'LA'),
+              // locale: Locale('lo', 'LA'),
+              // fallbackLocale: Locale('lo', 'LA'),
+              locale: Get.locale?.languageCode == 'en'
+                  ? Locale('en', 'US')
+                  : Locale('lo', 'LA'),
               debugShowCheckedModeBanner: false,
               navigatorKey: navigatorKey,
               theme: ThemeData(
@@ -463,7 +486,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 // GlobalWidgetsLocalizations.delegate,
                 FlutterQuillLocalizations.delegate,
               ],
-
               routes: routes,
               onGenerateRoute: (settings) {
                 print("settings: ${settings}");

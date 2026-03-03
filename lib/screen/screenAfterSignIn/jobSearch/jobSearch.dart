@@ -11,7 +11,8 @@ import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
-import 'package:app/screen/ScreenAfterSignIn/JobSearch/jobSearchDetail_renew.dart';
+import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
+import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
 import 'package:app/widget/listJobFuncSelectedAlertDialog.dart';
@@ -379,11 +380,15 @@ class _JobSearchState extends State<JobSearch>
           }
         },
         child: Scaffold(
-          // appBar: AppBar(
-          //   toolbarHeight: 0,
-          //   systemOverlayStyle: SystemUiOverlayStyle.dark,
-          //   backgroundColor: AppColors.background,
-
+          appBar: AppBarDefault(
+            backgroundColor: AppColors.backgroundWhite,
+            textTitle: 'job search'.tr,
+            textColor: AppColors.fontDark,
+            leadingIcon: Icon(Icons.arrow_back, color: AppColors.fontDark),
+            leadingPress: () {
+              Navigator.pop(context);
+            },
+          ),
           body: SafeArea(
             child: _isLoadingForm
                 ? Container(
@@ -398,9 +403,7 @@ class _JobSearchState extends State<JobSearch>
                     width: double.infinity,
                     child: Column(
                       children: [
-                        SizedBox(
-                          height: 20,
-                        ),
+                        SizedBox(height: 20),
 
                         //
                         //
@@ -450,9 +453,7 @@ class _JobSearchState extends State<JobSearch>
                                 ),
                               ),
 
-                              SizedBox(
-                                width: 10,
-                              ),
+                              SizedBox(width: 10),
 
                               //
                               //
@@ -1784,7 +1785,7 @@ class _JobSearchState extends State<JobSearch>
                                                     context,
                                                     MaterialPageRoute(
                                                       builder: (context) =>
-                                                          JobSearchDetailRenew(
+                                                          JobSearchDetail(
                                                         jobId: indexJobsSearch[
                                                             'jobId'],
                                                         newJob: indexJobsSearch[
@@ -2124,9 +2125,8 @@ class _JobSearchState extends State<JobSearch>
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        height: 15,
-                                                      ),
+
+                                                      SizedBox(height: 15),
 
                                                       //
                                                       //
@@ -2171,9 +2171,7 @@ class _JobSearchState extends State<JobSearch>
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
+                                                      SizedBox(height: 5),
 
                                                       //
                                                       //
@@ -2221,9 +2219,7 @@ class _JobSearchState extends State<JobSearch>
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        height: 15,
-                                                      ),
+                                                      SizedBox(height: 15),
                                                     ],
                                                   ),
                                                 ),
@@ -2591,7 +2587,7 @@ class _JobSearchState extends State<JobSearch>
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
             strIcon: "\uf004",
-            title: "save job".tr + " " + "successful".tr,
+            title: "save job".tr + " " + "successfully".tr,
             contentText: "$jobTitle",
             textButton: "ok".tr,
             press: () {
@@ -2609,7 +2605,7 @@ class _JobSearchState extends State<JobSearch>
             strIcon: "\uf7a9",
             boxCircleColor: AppColors.warning200,
             iconColor: AppColors.warning600,
-            title: "unsave job".tr + " " + "successful".tr,
+            title: "unsave job".tr + " " + "successfully".tr,
             contentText: "$jobTitle ",
             textButton: "ok".tr,
             buttonColor: AppColors.warning200,
@@ -2652,7 +2648,7 @@ class _JobSearchState extends State<JobSearch>
         context: context,
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "hide job".tr + " " + "successful".tr,
+            title: "hide job".tr + " " + "successfully".tr,
             contentText: "$jobTitle ",
             textButton: "ok".tr,
             press: () {

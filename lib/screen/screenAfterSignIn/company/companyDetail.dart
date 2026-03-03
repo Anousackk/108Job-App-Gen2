@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_const_declarations, unused_local_variable, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_final_fields, unused_field, avoid_print, unnecessary_overrides, file_names, unused_element, prefer_is_empty, prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_const_declarations, unused_local_variable, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, prefer_final_fields, unused_field, avoid_print, unnecessary_overrides, file_names, unused_element, prefer_is_empty, prefer_interpolation_to_compose_strings, use_build_context_synchronously, deprecated_member_use, no_leading_underscores_for_local_identifiers, unused_element_parameter, use_key_in_widget_constructors
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
@@ -16,8 +16,8 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
-// import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
+import 'package:sizer/sizer.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 // _typeTapCompanyDetail == "jobOpening"
 class CompanyDetail extends StatefulWidget {
@@ -41,15 +41,17 @@ class _CompanyDetailState extends State<CompanyDetail>
   List _listBenefits = [];
   List _jobsOpening = [];
   List _galleryImage = [];
+  List _peoples = [];
 
   String _id = "";
   String _memberLevel = "";
   String _logo = "";
   String _cardCover = "";
   String _companyName = "";
+  String _industry = "";
+  String _address = "";
   String _followerTotals = "";
   String _aboutCompany = "";
-  String _address = "";
   String _website = "";
   String _facebook = "";
   String _youtube = "";
@@ -92,6 +94,7 @@ class _CompanyDetailState extends State<CompanyDetail>
     _logo = companyInfo['logo'];
     _cardCover = companyInfo['cardCover'];
     _companyName = companyInfo['companyName'];
+    _industry = companyInfo["industry"];
     _address = companyInfo['address'];
     _email = companyInfo['appliedEmails'];
     _phone = companyInfo['phone'];
@@ -100,13 +103,14 @@ class _CompanyDetailState extends State<CompanyDetail>
     _youtube = companyInfo['youtube'];
     _tiktok = companyInfo['titok'];
     _linkIn = companyInfo["linkIn"];
-    _videoLink = companyInfo["videoLink"];
+    _videoLink = companyInfo["videoLink"] ?? "";
     _followerTotals = companyInfo['followerTotals'].toString();
-    _aboutCompany = companyInfo['aboutCompany'];
+    _aboutCompany = companyInfo['aboutCompany'] ?? "";
     _listJobOnlines = companyInfo['jobOnlines'] ?? [];
     _listBenefits = companyInfo['Benefits'] ?? [];
     _jobsOpening = companyInfo['jobOnlines'] ?? [];
     _galleryImage = companyInfo["Gallerys"] ?? [];
+    _peoples = companyInfo["Peoples"] ?? [];
     _isFollow = companyInfo['follow'];
     _isSubmit = companyInfo['submitted'];
 
@@ -118,13 +122,22 @@ class _CompanyDetailState extends State<CompanyDetail>
       });
     }
 
-    _youtubeController = YoutubePlayerController.fromVideoId(
-      videoId: '${_videoLink}', // Your video ID
-      autoPlay: false,
-      params: YoutubePlayerParams(
+    // _youtubeController = YoutubePlayerController.fromVideoId(
+    //   // videoId: _videoLink, // Your video ID
+    //   videoId: "R6h_c9fztag",
+    //   autoPlay: false,
+    //   params: YoutubePlayerParams(
+    //     mute: false,
+    //     showControls: true,
+    //     showFullscreenButton: true,
+    //   ),
+    // );
+
+    _youtubeController = YoutubePlayerController(
+      initialVideoId: _videoLink,
+      flags: YoutubePlayerFlags(
+        autoPlay: false,
         mute: false,
-        showControls: true,
-        showFullscreenButton: true,
       ),
     );
 
@@ -167,7 +180,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
             strIcon: "\uf004",
-            title: "follow".tr + " " + "successful".tr,
+            title: "follow".tr + " " + "successfully".tr,
             contentText: "$companyName",
             textButton: "ok".tr,
             press: () {
@@ -189,7 +202,7 @@ class _CompanyDetailState extends State<CompanyDetail>
             strIcon: "\uf7a9",
             boxCircleColor: AppColors.warning200,
             iconColor: AppColors.warning600,
-            title: "unfollow".tr + " " + "successful".tr,
+            title: "unfollow".tr + " " + "successfully".tr,
             contentText: "$companyName",
             textButton: "ok".tr,
             buttonColor: AppColors.warning200,
@@ -232,7 +245,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         context: context,
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "submit cv".tr + " " + "successful".tr,
+            title: "submit cv".tr + " " + "successfully".tr,
             contentText: "$companyName",
             textButton: "ok".tr,
             press: () {
@@ -297,7 +310,7 @@ class _CompanyDetailState extends State<CompanyDetail>
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
             strIcon: "\uf004",
-            title: "save job".tr + " " + "successful".tr,
+            title: "save job".tr + " " + "successfully".tr,
             contentText: "$jobTitle",
             textButton: "ok".tr,
             press: () {
@@ -315,7 +328,7 @@ class _CompanyDetailState extends State<CompanyDetail>
             strIcon: "\uf7a9",
             boxCircleColor: AppColors.warning200,
             iconColor: AppColors.warning600,
-            title: "unsave job".tr + " " + "successful".tr,
+            title: "unsave job".tr + " " + "successfully".tr,
             contentText: "$jobTitle",
             textButton: "ok".tr,
             buttonColor: AppColors.warning200,
@@ -386,7 +399,7 @@ class _CompanyDetailState extends State<CompanyDetail>
           child: Container(
             height: double.infinity,
             width: double.infinity,
-            // color: AppColors.background,
+            color: AppColors.backgroundWhite,
             child: _isLoading
                 ? Center(
                     child: Container(
@@ -398,1232 +411,1082 @@ class _CompanyDetailState extends State<CompanyDetail>
                       Expanded(
                         child: Container(
                           color: AppColors.backgroundWhite,
-                          child: CustomScrollView(
+                          child: SingleChildScrollView(
                             controller: _scrollController,
-                            shrinkWrap: true,
                             physics: ClampingScrollPhysics(),
-                            slivers: [
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //Section 1 Company card cover
-                              SliverToBoxAdapter(
-                                child: Stack(
-                                  clipBehavior: Clip.none,
-                                  alignment: Alignment.center,
-                                  children: [
-                                    //
-                                    //
-                                    //Image size 5/2
-                                    Container(
-                                      width: double.infinity,
-                                      // padding: EdgeInsets.only(top: 20),
-                                      alignment: Alignment.topCenter,
-                                      color: AppColors.background,
-                                      child: AspectRatio(
-                                        aspectRatio: 5 / 2,
-                                        child: ClipRRect(
-                                          // borderRadius: BorderRadius.only(
-                                          //   topLeft: Radius.circular(8),
-                                          //   topRight: Radius.circular(8),
-                                          // ),
-                                          child: _cardCover == ""
-                                              ? Center(
-                                                  child: Container(
-                                                    padding: EdgeInsets.only(
-                                                        bottom: 30),
-                                                    child: FaIcon(
-                                                      FontAwesomeIcons.image,
-                                                      size: 70,
-                                                      color:
-                                                          AppColors.secondary,
-                                                    ),
-                                                  ),
-                                                )
-                                              : Image.network(
-                                                  "https://storage.googleapis.com/108-bucket/${_cardCover}",
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder: (context, error,
-                                                      stackTrace) {
-                                                    return Center(
-                                                      child: Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 30),
-                                                        child: FaIcon(
-                                                          FontAwesomeIcons
-                                                              .image,
-                                                          size: 70,
-                                                          color: AppColors
-                                                              .secondary,
-                                                        ),
+                            child: Column(
+                              children: [
+                                //
+                                //
+                                //
+                                //
+                                //
+                                //Section Company cover image / logo image
+                                Container(
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    alignment: Alignment.center,
+                                    children: [
+                                      //
+                                      //Cover imave
+                                      //Image size 5/2
+                                      Container(
+                                        width: double.infinity,
+                                        alignment: Alignment.topCenter,
+                                        color: AppColors.background,
+                                        child: AspectRatio(
+                                          aspectRatio: 5 / 2,
+                                          child: ClipRRect(
+                                            child: _cardCover == ""
+                                                ? Center(
+                                                    child: Container(
+                                                      padding: EdgeInsets.only(
+                                                          bottom: 30),
+                                                      child: FaIcon(
+                                                        FontAwesomeIcons.image,
+                                                        size: 70,
+                                                        color:
+                                                            AppColors.secondary,
                                                       ),
-                                                    ); // Display an error message
-                                                  },
-                                                ),
+                                                    ),
+                                                  )
+                                                : Image.network(
+                                                    "https://storage.googleapis.com/108-bucket/${_cardCover}",
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      return Center(
+                                                        child: Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 30),
+                                                          child: FaIcon(
+                                                            FontAwesomeIcons
+                                                                .image,
+                                                            size: 70,
+                                                            color: AppColors
+                                                                .secondary,
+                                                          ),
+                                                        ),
+                                                      ); // Display an error message
+                                                    },
+                                                  ),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Positioned(
-                                      top: 20,
-                                      left: 20,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.of(context).pop([
-                                            _checkStatusFollow,
-                                            _callBackCompanyId,
-                                            _callBackIsFollow
-                                          ]);
-                                        },
-                                        child: _cardCover == ""
-                                            ? Text(
-                                                "\uf060",
-                                                style: fontAwesomeRegular(
-                                                    null,
-                                                    20,
-                                                    AppColors.iconDark,
-                                                    null),
-                                              )
-                                            : Container(
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      AppColors.backgroundWhite,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                padding: EdgeInsets.all(8),
-                                                child: Text(
+
+                                      //
+                                      //
+                                      //Button back
+                                      Positioned(
+                                        top: 20,
+                                        left: 20,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).pop([
+                                              _checkStatusFollow,
+                                              _callBackCompanyId,
+                                              _callBackIsFollow
+                                            ]);
+                                          },
+                                          child: _cardCover == ""
+                                              ? Text(
                                                   "\uf060",
                                                   style: fontAwesomeRegular(
                                                       null,
                                                       20,
                                                       AppColors.iconDark,
                                                       null),
+                                                )
+                                              : Container(
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors
+                                                        .backgroundWhite,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  padding: EdgeInsets.all(10),
+                                                  child: Text(
+                                                    "\uf060",
+                                                    style: fontAwesomeRegular(
+                                                        null,
+                                                        20,
+                                                        AppColors.iconDark,
+                                                        null),
+                                                  ),
                                                 ),
-                                              ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      bottom: -50,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: neumorphismColor,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                              color: AppColors.borderSecondary),
-                                          boxShadow: [],
                                         ),
+                                      ),
+
+                                      //
+                                      //
+                                      //Company logo image
+                                      Positioned(
+                                        left: 20,
+                                        bottom: -25,
                                         child: Container(
-                                          height: 100,
-                                          width: 100,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              child: _logo == ""
-                                                  ? Image.asset(
-                                                      'assets/image/no-image-available.png',
-                                                      fit: BoxFit.contain,
-                                                    )
-                                                  : Image.network(
-                                                      "https://storage.googleapis.com/108-bucket/${_logo}",
-                                                      fit: BoxFit.contain,
-                                                      errorBuilder: (context,
-                                                          error, stackTrace) {
-                                                        return Image.asset(
-                                                          'assets/image/no-image-available.png',
-                                                          fit: BoxFit.contain,
-                                                        ); // Display an error message
-                                                      },
-                                                    ),
+                                          decoration: BoxDecoration(
+                                            color: neumorphismColor,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border: Border.all(
+                                                color:
+                                                    AppColors.borderSecondary),
+                                            boxShadow: [],
+                                          ),
+                                          child: Container(
+                                            height: 80,
+                                            width: 80,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(5),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: _logo == ""
+                                                    ? Image.asset(
+                                                        'assets/image/no-image-available.png',
+                                                        fit: BoxFit.contain,
+                                                      )
+                                                    : Image.network(
+                                                        "https://storage.googleapis.com/108-bucket/${_logo}",
+                                                        fit: BoxFit.contain,
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return Image.asset(
+                                                            'assets/image/no-image-available.png',
+                                                            fit: BoxFit.contain,
+                                                          ); // Display an error message
+                                                        },
+                                                      ),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    )
-                                  ],
-                                ),
-                              ),
 
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //Section 2 Company logo
-                              // SliverToBoxAdapter(
-                              //   child: SizedBox(
-                              //     height: 70,
-                              //     child: Stack(
-                              //       clipBehavior: Clip.none,
-                              //       alignment: Alignment.center,
-                              //       children: [
-                              //         SizedBox(
-                              //           height: double.infinity,
-                              //           width: double.infinity,
-                              //           child: Container(
-                              //             decoration: BoxDecoration(
-                              //               color: AppColors.backgroundWhite,
-                              //               borderRadius: BorderRadius.only(
-                              //                   // topLeft: Radius.circular(25),
-                              //                   // topRight: Radius.circular(25),
-                              //                   ),
-                              //               boxShadow: [
-                              //                 BoxShadow(
-                              //                   color: AppColors.grey
-                              //                       .withOpacity(0.2),
-                              //                   spreadRadius: 0,
-                              //                   blurRadius: 4,
-                              //                   offset: Offset(0, -3),
-                              //                 ),
-                              //               ],
-                              //             ),
-                              //           ),
-                              //         ),
-                              //         Positioned(
-                              //           top: -50,
-                              //           child: Listener(
-                              //             child: Container(
-                              //               decoration: BoxDecoration(
-                              //                 color: neumorphismColor,
-                              //                 borderRadius:
-                              //                     BorderRadius.circular(10),
-                              //                 border: Border.all(
-                              //                     color: AppColors
-                              //                         .borderSecondary),
-                              //                 boxShadow: [],
-                              //               ),
-                              //               child: Container(
-                              //                 height: 100,
-                              //                 width: 100,
-                              //                 child: Padding(
-                              //                   padding:
-                              //                       const EdgeInsets.all(5),
-                              //                   child: ClipRRect(
-                              //                     borderRadius:
-                              //                         BorderRadius.circular(8),
-                              //                     child: _logo == ""
-                              //                         ? Image.asset(
-                              //                             'assets/image/no-image-available.png',
-                              //                             fit: BoxFit.contain,
-                              //                           )
-                              //                         : Image.network(
-                              //                             "https://storage.googleapis.com/108-bucket/${_logo}",
-                              //                             fit: BoxFit.contain,
-                              //                             errorBuilder:
-                              //                                 (context, error,
-                              //                                     stackTrace) {
-                              //                               return Image.asset(
-                              //                                 'assets/image/no-image-available.png',
-                              //                                 fit: BoxFit
-                              //                                     .contain,
-                              //                               ); // Display an error message
-                              //                             },
-                              //                           ),
-                              //                   ),
-                              //                 ),
-                              //               ),
-                              //             ),
-                              //           ),
-                              //         )
-                              //       ],
-                              //     ),
-                              //   ),
-                              // ),
-
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //Section 3 Company Logo, Company Name
-                              SliverToBoxAdapter(
-                                child: Container(
-                                  color: AppColors.backgroundWhite,
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        height: 60,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20),
-                                        child: Text(
-                                          _companyName,
-                                          style: bodyTextMedium(
-                                              null, null, FontWeight.bold),
-                                          textAlign: TextAlign.center,
+                                      //
+                                      //
+                                      //Follower
+                                      Positioned(
+                                        right: 0,
+                                        bottom: 0,
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.backgroundWhite,
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            "${_followerTotals} " +
+                                                "follower".tr,
+                                            style: bodyTextMiniSmall(
+                                                null, null, null),
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                          "${_followerTotals} " + "follower".tr)
+                                      )
                                     ],
                                   ),
                                 ),
-                              ),
 
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //Section 4 Tap list horizontal
-                              SliverPersistentHeader(
-                                pinned: true,
-                                delegate: _SliverAppBarDelegate(
-                                  // maxHeight: 62,
-                                  // minHeight: 62,
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
+                                SizedBox(height: 35),
+
+                                //
+                                //
+                                //
+                                //
+                                //
+                                //Section  company name, industry, address
+                                Container(
+                                  color: AppColors.backgroundWhite,
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        _companyName,
+                                        style: bodyTextNormal(
+                                            null, null, FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        "${_industry} ".tr,
+                                        style: bodyTextSmall(null, null, null),
+                                      ),
+                                      Text(
+                                        "${_address} ".tr,
+                                        style: bodyTextSmall(null, null, null),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                SizedBox(height: 10),
+
+                                //
+                                //
+                                //Section about company
+                                if (_aboutCompany != "")
+                                  Padding(
+                                    padding: EdgeInsetsGeometry.symmetric(
+                                        horizontal: 20, vertical: 20),
+                                    child: Container(
                                       color: AppColors.backgroundWhite,
-                                      // color: AppColors.red,
-                                    ),
-                                    child: SingleChildScrollView(
-                                      physics: ClampingScrollPhysics(),
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
+                                      child: Column(
                                         children: [
                                           //
                                           //
-                                          //
-                                          //
-                                          //About Tap
-                                          GestureDetector(
-                                            onTap: () {
-                                              pressTapCompanyDetail('about');
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 8),
-                                              decoration: BoxDecoration(
-                                                color: _typeTapCompanyDetail ==
-                                                        "about"
-                                                    ? AppColors.lightPrimary
-                                                    : AppColors.buttonGreyWhite,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                    color:
-                                                        _typeTapCompanyDetail ==
-                                                                "about"
-                                                            ? AppColors
-                                                                .borderPrimary
-                                                            : AppColors
-                                                                .buttonGreyWhite),
-                                              ),
-                                              child: Text(
-                                                "about".tr,
-                                                style: bodyTextNormal(
-                                                    null,
-                                                    _typeTapCompanyDetail ==
-                                                            "about"
-                                                        ? AppColors.fontPrimary
-                                                        : AppColors.fontDark,
-                                                    null),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-
-                                          //
-                                          //
-                                          //
-                                          //
-                                          //JobOpening Tap
-                                          GestureDetector(
-                                            onTap: () {
-                                              pressTapCompanyDetail(
-                                                  'jobOpening');
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 8),
-                                              decoration: BoxDecoration(
-                                                color: _typeTapCompanyDetail ==
-                                                        "jobOpening"
-                                                    ? AppColors.lightPrimary
-                                                    : AppColors.buttonGreyWhite,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                    color:
-                                                        _typeTapCompanyDetail ==
-                                                                "jobOpening"
-                                                            ? AppColors
-                                                                .borderPrimary
-                                                            : AppColors
-                                                                .buttonGreyWhite),
-                                              ),
-                                              child: Text(
-                                                "job_opening".tr,
-                                                style: bodyTextNormal(
-                                                    null,
-                                                    _typeTapCompanyDetail ==
-                                                            "jobOpening"
-                                                        ? AppColors.fontPrimary
-                                                        : AppColors.fontDark,
-                                                    null),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-
-                                          //
-                                          //
-                                          //
-                                          //
-                                          //Video Tap
-                                          GestureDetector(
-                                            onTap: () {
-                                              pressTapCompanyDetail('video');
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 8),
-                                              decoration: BoxDecoration(
-                                                color: _typeTapCompanyDetail ==
-                                                        "video"
-                                                    ? AppColors.lightPrimary
-                                                    : AppColors.buttonGreyWhite,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                    color:
-                                                        _typeTapCompanyDetail ==
-                                                                "video"
-                                                            ? AppColors
-                                                                .borderPrimary
-                                                            : AppColors
-                                                                .buttonGreyWhite),
-                                              ),
-                                              child: Text(
-                                                "video".tr,
-                                                style: bodyTextNormal(
-                                                    null,
-                                                    _typeTapCompanyDetail ==
-                                                            "video"
-                                                        ? AppColors.fontPrimary
-                                                        : AppColors.fontDark,
-                                                    null),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-
-                                          //
-                                          //
-                                          //
-                                          //
-                                          //Photo Gallery Tap
-                                          GestureDetector(
-                                            onTap: () {
-                                              pressTapCompanyDetail('photo');
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 8),
-                                              decoration: BoxDecoration(
-                                                color: _typeTapCompanyDetail ==
-                                                        "photo"
-                                                    ? AppColors.lightPrimary
-                                                    : AppColors.buttonGreyWhite,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                    color:
-                                                        _typeTapCompanyDetail ==
-                                                                "photo"
-                                                            ? AppColors
-                                                                .borderPrimary
-                                                            : AppColors
-                                                                .buttonGreyWhite),
-                                              ),
-                                              child: Text(
-                                                "photo_gallery".tr,
-                                                style: bodyTextNormal(
-                                                    null,
-                                                    _typeTapCompanyDetail ==
-                                                            "photo"
-                                                        ? AppColors.fontPrimary
-                                                        : AppColors.fontDark,
-                                                    null),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-
-                                          //
-                                          //
-                                          //
-                                          //
-                                          //Benitfit Tap
-                                          GestureDetector(
-                                            onTap: () {
-                                              pressTapCompanyDetail('benefit');
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 8),
-                                              decoration: BoxDecoration(
-                                                color: _typeTapCompanyDetail ==
-                                                        "benefit"
-                                                    ? AppColors.lightPrimary
-                                                    : AppColors.buttonGreyWhite,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                    color:
-                                                        _typeTapCompanyDetail ==
-                                                                "benefit"
-                                                            ? AppColors
-                                                                .borderPrimary
-                                                            : AppColors
-                                                                .buttonGreyWhite),
-                                              ),
-                                              child: Text(
-                                                "benefit".tr,
-                                                style: bodyTextNormal(
-                                                    null,
-                                                    _typeTapCompanyDetail ==
-                                                            "benefit"
-                                                        ? AppColors.fontPrimary
-                                                        : AppColors.fontDark,
-                                                    null),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-
-                                          //
-                                          //
-                                          //
-                                          //
-                                          //Contact Tap
-                                          GestureDetector(
-                                            onTap: () {
-                                              pressTapCompanyDetail('contact');
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 17, vertical: 8),
-                                              decoration: BoxDecoration(
-                                                color: _typeTapCompanyDetail ==
-                                                        "contact"
-                                                    ? AppColors.lightPrimary
-                                                    : AppColors.buttonGreyWhite,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                    color:
-                                                        _typeTapCompanyDetail ==
-                                                                "contact"
-                                                            ? AppColors
-                                                                .borderPrimary
-                                                            : AppColors
-                                                                .buttonGreyWhite),
-                                              ),
-                                              child: Text(
-                                                "contact".tr,
-                                                style: bodyTextNormal(
-                                                    null,
-                                                    _typeTapCompanyDetail ==
-                                                            "contact"
-                                                        ? AppColors.fontPrimary
-                                                        : AppColors.fontDark,
-                                                    null),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //Section 4 View Detail On Tap
-                              //
-                              //
-                              //
-                              //
-                              //About(HtmlWidget)
-                              if (_typeTapCompanyDetail == "about")
-                                SliverToBoxAdapter(
-                                  child: SingleChildScrollView(
-                                    physics: ClampingScrollPhysics(),
-                                    child: Container(
-                                      padding: EdgeInsets.only(
-                                          left: 20, right: 20, bottom: 20),
-                                      child: HtmlWidget(
-                                        '$_aboutCompany',
-                                        onTapUrl: (url) {
-                                          launchInBrowser(Uri.parse(url));
-                                          return true;
-                                        },
-                                        textStyle: TextStyle(
-                                            fontSize: 12,
-                                            fontFamily: isLaoText(_aboutCompany)
-                                                ? 'NotoSansLaoRegular'
-                                                : 'SatoshiMedium'),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //TabBarView Jobs Opening
-                              if (_typeTapCompanyDetail == "jobOpening")
-                                SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (context, index) {
-                                      dynamic i = _jobsOpening[index];
-                                      _jobOpeningName = i['title'];
-                                      _jobOpeningWorkingLocation =
-                                          i['workingLocation'];
-                                      _jobOpeningOpeningDate = i['openingDate'];
-                                      _jobOpeningClosingDate = i['closingDate'];
-                                      _jobOpeningIsSave = i['isSaved'];
-
-                                      //
-                                      //Open Date
-                                      //pars ISO to Flutter DateTime
-                                      parsDateTime(
-                                          value: '',
-                                          currentFormat: '',
-                                          desiredFormat: '');
-                                      DateTime openDate = parsDateTime(
-                                          value: _jobOpeningOpeningDate,
-                                          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                          desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                      //
-                                      //
-                                      //Format to string 13 Feb 2024
-                                      _jobOpeningOpeningDate =
-                                          DateFormat('dd MMM yyyy')
-                                              .format(openDate);
-
-                                      //
-                                      //Close Date
-                                      //pars ISO to Flutter DateTime
-                                      parsDateTime(
-                                          value: '',
-                                          currentFormat: '',
-                                          desiredFormat: '');
-                                      DateTime closeDate = parsDateTime(
-                                          value: _jobOpeningClosingDate,
-                                          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                          desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                      //
-                                      //
-                                      //Format to string 13 Feb 2024
-                                      _jobOpeningClosingDate =
-                                          DateFormat("dd MMM yyyy")
-                                              .format(closeDate);
-                                      return Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 20),
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: AppColors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                    color: AppColors
-                                                        .borderSecondary),
-                                              ),
-                                              child: Material(
-                                                color: Colors.transparent,
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            JobSearchDetail(
-                                                                jobId:
-                                                                    i['jobId'],
-                                                                newJob: i[
-                                                                    'newJob']),
-                                                      ),
-                                                    ).then((value) {
-                                                      if (value[1] != "") {
-                                                        setState(() {
-                                                          dynamic job = _jobsOpening
-                                                              .firstWhere((e) =>
-                                                                  e['jobId'] ==
-                                                                  value[1]);
-
-                                                          job["isSaved"] =
-                                                              value[2];
-                                                        });
-                                                      }
-                                                    });
-                                                  },
+                                          //About title
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 5,
+                                                height: 16,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.primary600,
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  child: Padding(
-                                                    padding: EdgeInsets.all(15),
-                                                    child: Row(
-                                                      children: [
-                                                        Expanded(
-                                                          flex: 7,
-                                                          child: Row(
-                                                            children: [
-                                                              //
-                                                              //
-                                                              //Content Company
-                                                              Expanded(
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Text(
-                                                                        "${_jobOpeningName}",
-                                                                        style: bodyTextNormal(
-                                                                            null,
-                                                                            null,
-                                                                            FontWeight
-                                                                                .bold),
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis),
-                                                                    SizedBox(
-                                                                      height: 5,
-                                                                    ),
-                                                                    Row(
-                                                                      children: [
-                                                                        FaIcon(
-                                                                          FontAwesomeIcons
-                                                                              .locationDot,
-                                                                          size:
-                                                                              12,
-                                                                        ),
-                                                                        SizedBox(
-                                                                          width:
-                                                                              5,
-                                                                        ),
-                                                                        Flexible(
-                                                                          child: Text(
-                                                                              "${_jobOpeningWorkingLocation}",
-                                                                              style: bodyTextSmall(null, null, null),
-                                                                              overflow: TextOverflow.ellipsis),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                    Row(
-                                                                      children: [
-                                                                        FaIcon(
-                                                                          FontAwesomeIcons
-                                                                              .calendar,
-                                                                          size:
-                                                                              12,
-                                                                        ),
-                                                                        SizedBox(
-                                                                          width:
-                                                                              5,
-                                                                        ),
-                                                                        Text(
-                                                                          "${_jobOpeningOpeningDate} - ${_jobOpeningClosingDate}",
-                                                                          style: bodyTextSmall(
-                                                                              null,
-                                                                              null,
-                                                                              null),
-                                                                        )
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-
-                                                        //
-                                                        //
-                                                        //Button follow / following
-                                                        Container(
-                                                          // color: AppColors.red,
-                                                          child: Material(
-                                                            color: Colors
-                                                                .transparent,
-                                                            child: InkWell(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  i['isSaved'] =
-                                                                      !i['isSaved'];
-                                                                });
-                                                                saveAndUnSaveJob(
-                                                                    i['jobId'],
-                                                                    i['title']);
-                                                              },
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
-                                                              child: _jobOpeningIsSave
-                                                                  ? Container(
-                                                                      padding:
-                                                                          EdgeInsets.all(
-                                                                              8),
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8),
-                                                                      ),
-                                                                      child:
-                                                                          Row(
-                                                                        children: [
-                                                                          FaIcon(
-                                                                            FontAwesomeIcons.solidHeart,
-                                                                            size:
-                                                                                13,
-                                                                            color:
-                                                                                AppColors.iconPrimary,
-                                                                          ),
-                                                                          SizedBox(
-                                                                            width:
-                                                                                8,
-                                                                          ),
-                                                                          Text(
-                                                                            "saved".tr,
-                                                                            style:
-                                                                                bodyTextSmall(
-                                                                              null,
-                                                                              AppColors.fontPrimary,
-                                                                              null,
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    )
-                                                                  : Container(
-                                                                      padding:
-                                                                          EdgeInsets.all(
-                                                                              8),
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8),
-                                                                      ),
-                                                                      child:
-                                                                          Row(
-                                                                        children: [
-                                                                          FaIcon(
-                                                                            FontAwesomeIcons.heart,
-                                                                            size:
-                                                                                13,
-                                                                          ),
-                                                                          SizedBox(
-                                                                            width:
-                                                                                8,
-                                                                          ),
-                                                                          Text(
-                                                                            "save".tr,
-                                                                            style: bodyTextSmall(
-                                                                                null,
-                                                                                null,
-                                                                                null),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
+                                                      BorderRadius.circular(10),
                                                 ),
                                               ),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    childCount: _jobsOpening.length,
-                                  ),
-                                ),
-
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //TabBarView Video
-                              if (_typeTapCompanyDetail == "video")
-                                SliverToBoxAdapter(
-                                  child: SingleChildScrollView(
-                                    physics: ClampingScrollPhysics(),
-                                    child: Container(
-                                      padding: EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                      ),
-                                      child: SingleChildScrollView(
-                                        physics: ClampingScrollPhysics(),
-                                        child: Column(
-                                          children: [
-                                            if (_videoLink != "")
-                                              YoutubePlayer(
-                                                controller: _youtubeController,
-                                                aspectRatio: 16 / 9,
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "about_company".tr,
+                                                style: bodyTextMaxNormal(null,
+                                                    null, FontWeight.bold),
                                               ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                            ],
+                                          ),
 
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //TabBarView Photo Gallery
-                              if (_typeTapCompanyDetail == "photo")
-                                SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (context, index) {
-                                      return Column(
-                                        children: [
+                                          SizedBox(height: 20),
+
+                                          //
+                                          //
+                                          //About(HtmlWidget)
                                           Container(
                                             color: AppColors.backgroundWhite,
-                                            child: Image.network(
-                                              "https://storage.googleapis.com/108-bucket/${_galleryImage[index]}",
-                                              fit: BoxFit.contain,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Image.asset(
-                                                  'assets/image/no-image-available.png',
-                                                  fit: BoxFit.contain,
-                                                ); // Display an error message
+                                            child: HtmlWidget(
+                                              '$_aboutCompany',
+                                              onTapUrl: (url) {
+                                                launchInBrowser(Uri.parse(url));
+                                                return true;
                                               },
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          )
-                                        ],
-                                      );
-                                    },
-                                    childCount: _galleryImage.length,
-                                  ),
-                                ),
-
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //TabBarView Benefits
-                              if (_typeTapCompanyDetail == "benefit")
-                                SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (context, index) {
-                                      dynamic i = _listBenefits[index];
-                                      _benefitName = i['details'];
-                                      return Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 20),
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(vertical: 3),
-                                                    child: FaIcon(
-                                                      FontAwesomeIcons
-                                                          .solidCircleCheck,
-                                                      size: 15,
-                                                      color:
-                                                          AppColors.iconPrimary,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Flexible(
-                                                    child: Text(
-                                                      "${_benefitName}",
-                                                      style: bodyTextNormal(
-                                                          null, null, null),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    childCount: _listBenefits.length,
-                                  ),
-                                ),
-
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //
-                              //TabBarView Contact
-                              if (_typeTapCompanyDetail == "contact")
-                                SliverToBoxAdapter(
-                                  child: SingleChildScrollView(
-                                    physics: ClampingScrollPhysics(),
-                                    child: Container(
-                                      padding: EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                      ),
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "${_companyName}",
-                                              style: bodyTextNormal(
-                                                  null, null, FontWeight.bold),
-                                            ),
-                                            Text(
-                                              "${_address}",
-                                              style: bodyTextNormal(
+                                              textStyle: bodyTextNormal(
                                                   null, null, null),
                                             ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
 
-                                            //
-                                            //
-                                            //Email
-                                            // if (_email != "")
-                                            //   Padding(
-                                            //     padding: const EdgeInsets.only(
-                                            //         bottom: 10),
-                                            //     child: Row(
-                                            //       crossAxisAlignment:
-                                            //           CrossAxisAlignment.start,
-                                            //       children: [
-                                            //         Padding(
-                                            //           padding:
-                                            //               const EdgeInsets.all(
-                                            //                   3),
-                                            //           child: FaIcon(
-                                            //             FontAwesomeIcons.at,
-                                            //             color:
-                                            //                 AppColors.iconDark,
-                                            //             size: IconSize.xsIcon,
-                                            //           ),
-                                            //         ),
-                                            //         SizedBox(
-                                            //           width: 10,
-                                            //         ),
-                                            //         Flexible(
-                                            //           child: GestureDetector(
-                                            //             onTap: () {
-                                            //               launchInBrowser(
-                                            //                   Uri.parse(
-                                            //                       _email));
-                                            //             },
-                                            //             child: Text(
-                                            //               "${_email}",
-                                            //               style: bodyTextNormal(null,
-                                            //                   null, null),
-                                            //             ),
-                                            //           ),
-                                            //         )
-                                            //       ],
-                                            //     ),
-                                            //   ),
-
-                                            //
-                                            //
-                                            //Phone
-                                            // if (_phone != "")
-                                            //   Padding(
-                                            //     padding: const EdgeInsets.only(
-                                            //         bottom: 10),
-                                            //     child: Row(
-                                            //       crossAxisAlignment:
-                                            //           CrossAxisAlignment.start,
-                                            //       children: [
-                                            //         Padding(
-                                            //           padding:
-                                            //               const EdgeInsets.all(
-                                            //                   3),
-                                            //           child: FaIcon(
-                                            //             FontAwesomeIcons.phone,
-                                            //             color:
-                                            //                 AppColors.iconDark,
-                                            //             size: IconSize.xsIcon,
-                                            //           ),
-                                            //         ),
-                                            //         SizedBox(
-                                            //           width: 10,
-                                            //         ),
-                                            //         Flexible(
-                                            //           child: GestureDetector(
-                                            //             onTap: () {
-                                            //               launchPhoneCall(
-                                            //                   _phone);
-                                            //             },
-                                            //             child: Text(
-                                            //               "${_phone}",
-                                            //               style: bodyTextNormal(null,
-                                            //                   null, null),
-                                            //             ),
-                                            //           ),
-                                            //         )
-                                            //       ],
-                                            //     ),
-                                            //   ),
-
-                                            //
-                                            //
-                                            //Website
-                                            if (_website != "")
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 10),
-                                                child: Container(
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(3),
-                                                        child: FaIcon(
-                                                          FontAwesomeIcons
-                                                              .windowMaximize,
-                                                          color: AppColors
-                                                              .iconDark,
-                                                          size: IconSize.xsIcon,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      Flexible(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            launchInBrowser(
-                                                                Uri.parse(
-                                                                    _website));
-                                                          },
-                                                          child: Text(
-                                                            "${_website}",
-                                                            style:
-                                                                bodyTextNormal(
-                                                                    null,
-                                                                    null,
-                                                                    null),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
+                                //
+                                //
+                                //Section Job opening
+                                if (_jobsOpening.length > 0)
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 20),
+                                    child: Container(
+                                      color: AppColors.backgroundWhite,
+                                      child: Column(
+                                        children: [
+                                          //
+                                          //
+                                          //Job opening title
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 5,
+                                                height: 16,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.primary600,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
                                                 ),
                                               ),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "job_opening".tr,
+                                                style: bodyTextMaxNormal(null,
+                                                    null, FontWeight.bold),
+                                              ),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                "${_jobsOpening.length}",
+                                                style: bodyTextMaxNormal(
+                                                    "SatoshiBlack",
+                                                    AppColors.primary,
+                                                    FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
 
+                                          SizedBox(height: 20),
+
+                                          SizedBox(
+                                            height: 120,
+                                            width: double.infinity,
                                             //
                                             //
-                                            //Facebook
-                                            if (_facebook != "")
-                                              Padding(
+                                            //ListView horizontal box card job opening
+                                            child: ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    ClampingScrollPhysics(),
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemCount: _jobsOpening.length,
+                                                itemBuilder: (context, index) {
+                                                  double spacing = 10;
+                                                  final jobOpeningIndex =
+                                                      _jobsOpening[index];
+                                                  _jobOpeningIsSave =
+                                                      jobOpeningIndex[
+                                                          'isSaved'];
+
+                                                  //
+                                                  //Open Date
+                                                  //pars ISO to Flutter DateTime
+                                                  parsDateTime(
+                                                      value: '',
+                                                      currentFormat: '',
+                                                      desiredFormat: '');
+                                                  DateTime jobOpeningOpenDate =
+                                                      parsDateTime(
+                                                          value: jobOpeningIndex[
+                                                              "openingDate"],
+                                                          currentFormat:
+                                                              "yyyy-MM-ddTHH:mm:ssZ",
+                                                          desiredFormat:
+                                                              "yyyy-MM-dd HH:mm:ss");
+                                                  //
+                                                  //Format to string 13-03-2024
+                                                  dynamic _jobOpeningOpenDate =
+                                                      DateFormat('dd/MM/yyyy')
+                                                          .format(
+                                                              jobOpeningOpenDate);
+
+                                                  //
+                                                  //Close Date
+                                                  //pars ISO to Flutter DateTime
+                                                  parsDateTime(
+                                                      value: '',
+                                                      currentFormat: '',
+                                                      desiredFormat: '');
+                                                  DateTime jobOpeningCloseDate =
+                                                      parsDateTime(
+                                                          value: jobOpeningIndex[
+                                                              "closingDate"],
+                                                          currentFormat:
+                                                              "yyyy-MM-ddTHH:mm:ssZ",
+                                                          desiredFormat:
+                                                              "yyyy-MM-dd HH:mm:ss");
+                                                  //
+                                                  //Format to string 13-03-2024
+                                                  dynamic _jobOpeningCloseDate =
+                                                      DateFormat('dd/MM/yyyy')
+                                                          .format(
+                                                              jobOpeningCloseDate);
+                                                  return Padding(
+                                                    padding: EdgeInsets.only(
+                                                      left: index == 0
+                                                          ? 0
+                                                          : spacing,
+                                                      right: index == 9 ? 0 : 0,
+                                                    ),
+                                                    child: GestureDetector(
+                                                      //
+                                                      //
+                                                      //onTap box card job opening
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                JobSearchDetail(
+                                                              jobId:
+                                                                  jobOpeningIndex[
+                                                                      "jobId"],
+                                                              newJob:
+                                                                  jobOpeningIndex[
+                                                                      "newJob"],
+                                                            ),
+                                                          ),
+                                                        ).then((value) {
+                                                          print(
+                                                              value.toString());
+                                                          if (value[1] != "") {
+                                                            //value[1] = jobsearchId
+                                                            //value[2] = isSave
+                                                            print(value
+                                                                .toString());
+                                                            setState(() {
+                                                              dynamic job = _jobsOpening
+                                                                  .firstWhere((e) =>
+                                                                      e['jobId'] ==
+                                                                      value[1]);
+
+                                                              job["isSaved"] =
+                                                                  value[2];
+                                                            });
+                                                          }
+                                                        });
+                                                      },
+
+                                                      //
+                                                      //
+                                                      //Box card job opening
+                                                      child: Container(
+                                                        width: 75.w,
+                                                        padding:
+                                                            EdgeInsets.all(15),
+                                                        decoration: BoxDecoration(
+                                                            color: AppColors
+                                                                .backgroundWhite,
+                                                            border: Border.all(
+                                                                color: AppColors
+                                                                    .borderBG),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            //
+                                                            //
+                                                            //Title job opening
+                                                            Flexible(
+                                                              child: Text(
+                                                                  "${jobOpeningIndex["title"]}",
+                                                                  style: bodyTextNormal(
+                                                                      null,
+                                                                      null,
+                                                                      FontWeight
+                                                                          .bold),
+                                                                  maxLines: 1,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis),
+                                                            ),
+
+                                                            Row(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                Expanded(
+                                                                  child:
+                                                                      Container(
+                                                                    // color: AppColors
+                                                                    //     .primary,
+                                                                    child:
+                                                                        Column(
+                                                                      children: [
+                                                                        //
+                                                                        //
+                                                                        //Working location job opening
+                                                                        Row(
+                                                                          children: [
+                                                                            Text(
+                                                                              "\uf5a0",
+                                                                              style: fontAwesomeLight(null, 12, AppColors.iconPrimary, null),
+                                                                            ),
+                                                                            SizedBox(width: 5),
+                                                                            Expanded(
+                                                                              child: Text("${jobOpeningIndex["workingLocation"]}", style: bodyTextSmall(null, null, null), overflow: TextOverflow.ellipsis, maxLines: 1),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+
+                                                                        SizedBox(
+                                                                            height:
+                                                                                5),
+
+                                                                        //
+                                                                        //
+                                                                        //Start date - end date job opening
+                                                                        Row(
+                                                                          children: [
+                                                                            Text(
+                                                                              "\uf073",
+                                                                              style: fontAwesomeLight(null, 12, AppColors.iconPrimary, null),
+                                                                            ),
+                                                                            SizedBox(width: 5),
+                                                                            Text(
+                                                                              "${_jobOpeningOpenDate}" + " - " + "${_jobOpeningCloseDate} ",
+                                                                              style: bodyTextSmall(null, null, null),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+
+                                                                SizedBox(
+                                                                    width: 10),
+
+                                                                //
+                                                                //
+                                                                //Button follow / following
+                                                                Container(
+                                                                  child:
+                                                                      GestureDetector(
+                                                                    onTap: () {
+                                                                      setState(
+                                                                          () {
+                                                                        jobOpeningIndex['isSaved'] =
+                                                                            !jobOpeningIndex['isSaved'];
+                                                                      });
+                                                                      saveAndUnSaveJob(
+                                                                          jobOpeningIndex[
+                                                                              'jobId'],
+                                                                          jobOpeningIndex[
+                                                                              'title']);
+                                                                    },
+                                                                    child: _jobOpeningIsSave
+                                                                        ? Container(
+                                                                            padding:
+                                                                                EdgeInsets.only(top: 15, left: 15),
+                                                                            child:
+                                                                                Row(
+                                                                              children: [
+                                                                                FaIcon(
+                                                                                  FontAwesomeIcons.solidHeart,
+                                                                                  size: 13,
+                                                                                  color: AppColors.iconPrimary,
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 5,
+                                                                                ),
+                                                                                Text(
+                                                                                  "saved".tr,
+                                                                                  style: bodyTextSmall(
+                                                                                    null,
+                                                                                    AppColors.fontPrimary,
+                                                                                    null,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          )
+                                                                        : Container(
+                                                                            padding:
+                                                                                EdgeInsets.only(top: 15, left: 15),
+                                                                            child:
+                                                                                Row(
+                                                                              children: [
+                                                                                FaIcon(
+                                                                                  FontAwesomeIcons.heart,
+                                                                                  size: 13,
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 5,
+                                                                                ),
+                                                                                Text(
+                                                                                  "save".tr,
+                                                                                  style: bodyTextSmall(null, null, null),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }),
+                                          ),
+
+                                          SizedBox(height: 20),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                //
+                                //
+                                //Section benefits
+                                if (_listBenefits.length > 0)
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 20),
+                                    child: Container(
+                                      color: AppColors.backgroundWhite,
+                                      child: Column(
+                                        children: [
+                                          //
+                                          //
+                                          //Benefits title
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 5,
+                                                height: 16,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.primary600,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "benefit".tr,
+                                                style: bodyTextMaxNormal(null,
+                                                    null, FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+
+                                          SizedBox(height: 20),
+
+                                          //
+                                          //
+                                          //ListView benefits
+                                          ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            itemCount: _listBenefits.length,
+                                            itemBuilder: (context, index) {
+                                              final benefitIndex =
+                                                  _listBenefits[index];
+                                              _benefitName =
+                                                  benefitIndex['details'];
+
+                                              return Padding(
                                                 padding: const EdgeInsets.only(
-                                                    bottom: 10),
+                                                    bottom: 5),
                                                 child: Row(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              3),
-                                                      child: FaIcon(
-                                                        FontAwesomeIcons
-                                                            .facebook,
-                                                        color:
-                                                            AppColors.iconDark,
-                                                        size: IconSize.xsIcon,
+                                                    Text("-"),
+
+                                                    SizedBox(width: 10),
+
+                                                    //
+                                                    //
+                                                    //Benefits text
+                                                    Flexible(
+                                                      child: Text(
+                                                        "${_benefitName}",
+                                                        style: bodyTextNormal(
+                                                            null, null, null),
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                      width: 10,
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                //
+                                //
+                                //Section video link
+                                if (_videoLink != "")
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 20),
+                                    child: Container(
+                                      color: AppColors.backgroundWhite,
+                                      child: Column(
+                                        children: [
+                                          //
+                                          //
+                                          //Video link title
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 5,
+                                                height: 16,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.primary600,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "video".tr,
+                                                style: bodyTextMaxNormal(null,
+                                                    null, FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+
+                                          SizedBox(height: 20),
+
+                                          //
+                                          //
+                                          //Youtube player
+                                          YoutubePlayer(
+                                            controller: _youtubeController,
+                                            aspectRatio: 16 / 9,
+                                            showVideoProgressIndicator: true,
+                                            bottomActions: [
+                                              PlayPauseButton(),
+                                              CurrentPosition(),
+                                              ProgressBar(isExpanded: true),
+                                              RemainingDuration(),
+                                              PlaybackSpeedButton(),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                //
+                                //
+                                //Section gallery image
+                                if (_galleryImage.length > 0)
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 20),
+                                    child: Container(
+                                      color: AppColors.backgroundWhite,
+                                      child: Column(
+                                        children: [
+                                          //
+                                          //
+                                          //Photo gallery title
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 5,
+                                                    height: 16,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          AppColors.primary600,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 8),
+                                                  Text(
+                                                    "photo_gallery".tr,
+                                                    style: bodyTextMaxNormal(
+                                                        null,
+                                                        null,
+                                                        FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              GestureDetector(
+                                                //
+                                                //
+                                                //onTap see more gallery image display Dialog
+                                                onTap: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (
+                                                        context,
+                                                      ) {
+                                                        return DialogListGalleryImage(
+                                                            status: "gallery",
+                                                            title:
+                                                                "photo_gallery"
+                                                                    .tr,
+                                                            arrValue:
+                                                                _galleryImage);
+                                                      });
+                                                },
+                                                child: Text(
+                                                  "see_more".tr,
+                                                  style: bodyTextMaxSmall(
+                                                      null,
+                                                      AppColors.fontPrimary,
+                                                      null),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+
+                                          SizedBox(height: 20),
+
+                                          SizedBox(
+                                            height: 300,
+                                            child: ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    ClampingScrollPhysics(),
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemCount: _galleryImage.length,
+                                                itemBuilder: (context,
+                                                    galleryImageIndex) {
+                                                  double spacing = 10;
+                                                  return Padding(
+                                                    padding: EdgeInsets.only(
+                                                      left:
+                                                          galleryImageIndex == 0
+                                                              ? 0
+                                                              : spacing,
+                                                      right:
+                                                          galleryImageIndex == 9
+                                                              ? 0
+                                                              : 0,
+                                                    ),
+                                                    child: Container(
+                                                      color: AppColors
+                                                          .backgroundWhite,
+                                                      child: Image.network(
+                                                        "https://storage.googleapis.com/108-bucket/${_galleryImage[galleryImageIndex]}",
+                                                        fit: BoxFit.contain,
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return Image.asset(
+                                                            'assets/image/no-image-available.png',
+                                                            fit: BoxFit.contain,
+                                                          ); // Display an error message
+                                                        },
+                                                      ),
+                                                    ),
+                                                  );
+                                                }),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                //
+                                //
+                                //Section peoples
+                                if (_peoples.length > 0)
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 20),
+                                    child: Container(
+                                      color: AppColors.backgroundWhite,
+                                      child: Column(
+                                        children: [
+                                          //
+                                          //
+                                          // Peoples title
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 5,
+                                                    height: 16,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          AppColors.primary600,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 8),
+                                                  Text(
+                                                    "peoples".tr,
+                                                    style: bodyTextMaxNormal(
+                                                        null,
+                                                        null,
+                                                        FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              GestureDetector(
+                                                //
+                                                //
+                                                //onTap see more peoples display Dialog
+                                                onTap: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (
+                                                        context,
+                                                      ) {
+                                                        return DialogListGalleryImage(
+                                                            status: "peoples",
+                                                            title: "peoples".tr,
+                                                            arrValue: _peoples);
+                                                      });
+                                                },
+                                                child: Text(
+                                                  "see_more".tr,
+                                                  style: bodyTextMaxSmall(
+                                                      null,
+                                                      AppColors.fontPrimary,
+                                                      null),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+
+                                          SizedBox(height: 20),
+
+                                          Container(
+                                            height: 430,
+                                            decoration: BoxDecoration(
+                                              color: AppColors.backgroundWhite,
+                                            ),
+                                            child: ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    ClampingScrollPhysics(),
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemCount: _peoples.length,
+                                                itemBuilder:
+                                                    (context, indexPeople) {
+                                                  double spacing = 10;
+                                                  dynamic p =
+                                                      _peoples[indexPeople];
+                                                  String peopleName = p["name"];
+                                                  String peopleImage = p["img"];
+                                                  String peoplePosition =
+                                                      p["position"];
+                                                  String peopleDes = p["duty"];
+
+                                                  return Padding(
+                                                    padding: EdgeInsets.only(
+                                                      left: indexPeople == 0
+                                                          ? 0
+                                                          : spacing,
+                                                      right: indexPeople == 9
+                                                          ? 0
+                                                          : 0,
+                                                    ),
+                                                    child: Align(
+                                                      alignment: Alignment
+                                                          .bottomCenter,
+                                                      child: PeoplesProfileCard(
+                                                        imageUrl: peopleImage,
+                                                        name: peopleName,
+                                                        position:
+                                                            peoplePosition,
+                                                        description: peopleDes,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                //
+                                //
+                                //Section social media
+                                if (_website != "" &&
+                                    _facebook != "" &&
+                                    _tiktok != "")
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 20),
+                                    child: Container(
+                                      color: AppColors.backgroundWhite,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          //
+                                          //
+                                          //Contact title
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 5,
+                                                height: 16,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.primary600,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "contact".tr,
+                                                style: bodyTextMaxNormal(null,
+                                                    null, FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+
+                                          SizedBox(height: 20),
+
+                                          //
+                                          //
+                                          //Website
+                                          if (_website != "")
+                                            Column(
+                                              children: [
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Website: ",
+                                                      style: bodyTextMinNormal(
+                                                          null,
+                                                          null,
+                                                          FontWeight.bold),
+                                                    ),
+                                                    Flexible(
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          launchInBrowser(
+                                                              Uri.parse(
+                                                                  _website));
+                                                        },
+                                                        child: Text(
+                                                          "${_website}",
+                                                          style: bodyTextNormal(
+                                                              null, null, null),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(height: 10),
+                                              ],
+                                            ),
+
+                                          //
+                                          //
+                                          //Facebook
+                                          if (_facebook != "")
+                                            Column(
+                                              children: [
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Facebook: ",
+                                                      style: bodyTextMinNormal(
+                                                          null,
+                                                          null,
+                                                          FontWeight.bold),
                                                     ),
                                                     Flexible(
                                                       child: GestureDetector(
@@ -1636,81 +1499,33 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                           "${_facebook}",
                                                           style: bodyTextNormal(
                                                               null, null, null),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                         ),
                                                       ),
                                                     )
                                                   ],
                                                 ),
-                                              ),
+                                                SizedBox(height: 10),
+                                              ],
+                                            ),
 
-                                            //
-                                            //
-                                            //YouTube
-                                            if (_youtube != "")
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 10),
-                                                child: Row(
+                                          //
+                                          //
+                                          //Tiktok
+                                          if (_tiktok != "")
+                                            Column(
+                                              children: [
+                                                Row(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              3),
-                                                      child: FaIcon(
-                                                        FontAwesomeIcons
-                                                            .youtube,
-                                                        color:
-                                                            AppColors.iconDark,
-                                                        size: IconSize.xsIcon,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Flexible(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          launchInBrowser(
-                                                              Uri.parse(
-                                                                  _youtube));
-                                                        },
-                                                        child: Text(
-                                                          "${_youtube}",
-                                                          style: bodyTextNormal(
-                                                              null, null, null),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            //
-                                            //
-                                            //Tiktok
-                                            if (_tiktok != "")
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 10),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              3),
-                                                      child: FaIcon(
-                                                        FontAwesomeIcons
-                                                            .youtube,
-                                                        color:
-                                                            AppColors.iconDark,
-                                                        size: IconSize.xsIcon,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
+                                                    Text(
+                                                      "Youtube: ",
+                                                      style: bodyTextMinNormal(
+                                                          null,
+                                                          null,
+                                                          FontWeight.bold),
                                                     ),
                                                     Flexible(
                                                       child: GestureDetector(
@@ -1723,74 +1538,26 @@ class _CompanyDetailState extends State<CompanyDetail>
                                                           "${_tiktok}",
                                                           style: bodyTextNormal(
                                                               null, null, null),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                         ),
                                                       ),
                                                     )
                                                   ],
                                                 ),
-                                              ),
-
-                                            //
-                                            //
-                                            //LinkIn
-                                            if (_linkIn != "")
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 10),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              3),
-                                                      child: FaIcon(
-                                                        FontAwesomeIcons
-                                                            .linkedinIn,
-                                                        color:
-                                                            AppColors.iconDark,
-                                                        size: IconSize.xsIcon,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Flexible(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          launchInBrowser(
-                                                              Uri.parse(
-                                                                  _linkIn));
-                                                        },
-                                                        child: Text(
-                                                          "${_linkIn}",
-                                                          style: bodyTextNormal(
-                                                              null, null, null),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            SizedBox(
-                                              height: 20,
-                                            )
-                                          ],
-                                        ),
+                                                SizedBox(height: 10),
+                                              ],
+                                            ),
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                ),
-                            ],
+                                  )
+                              ],
+                            ),
                           ),
                         ),
                       ),
 
-                      //
-                      //
-                      //
-                      //
                       //
                       //
                       //Button follow and submit cv
@@ -1820,7 +1587,11 @@ class _CompanyDetailState extends State<CompanyDetail>
                             Expanded(
                               flex: 1,
                               child: !_isFollow
-                                  ? ButtonWithIconLeft(
+                                  ?
+                                  //
+                                  //
+                                  //Button follow company
+                                  ButtonWithIconLeft(
                                       paddingButton:
                                           WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
@@ -1844,7 +1615,12 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         });
                                       },
                                     )
-                                  : ButtonWithIconLeft(
+                                  :
+
+                                  //
+                                  //
+                                  //Button following company
+                                  ButtonWithIconLeft(
                                       paddingButton:
                                           WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
@@ -1875,7 +1651,11 @@ class _CompanyDetailState extends State<CompanyDetail>
                             Expanded(
                               flex: 2,
                               child: !_isSubmit
-                                  ? Button(
+                                  ?
+                                  //
+                                  //
+                                  //Button submit cv
+                                  Button(
                                       paddingButton:
                                           WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
@@ -1937,7 +1717,12 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         }
                                       },
                                     )
-                                  : Button(
+                                  :
+
+                                  //
+                                  //
+                                  //Button submitted cv
+                                  Button(
                                       paddingButton:
                                           WidgetStateProperty.all<EdgeInsets>(
                                         EdgeInsets.all(10),
@@ -1960,6 +1745,123 @@ class _CompanyDetailState extends State<CompanyDetail>
                   ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class DialogListGalleryImage extends StatefulWidget {
+  const DialogListGalleryImage({
+    Key? key,
+    required this.arrValue,
+    this.title,
+    this.status,
+  }) : super(key: key);
+
+  final List arrValue;
+  final String? title, status;
+
+  @override
+  State<DialogListGalleryImage> createState() => _DialogListGalleryImageState();
+}
+
+class _DialogListGalleryImageState extends State<DialogListGalleryImage> {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      insetPadding: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      "\uf060",
+                      style: fontAwesomeRegular(
+                          null, 20, AppColors.iconDark, null),
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                "${widget.title}",
+                style: bodyTextMedium(null, null, FontWeight.bold),
+              ),
+            ],
+          ),
+
+          //
+          //
+          // List image
+          if (widget.status == "gallery")
+            Expanded(
+              child: ListView.builder(
+                physics: ClampingScrollPhysics(),
+                itemCount: widget.arrValue.length,
+                itemBuilder: (context, i) {
+                  double spacing = 10;
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      top: i == 0 ? 0 : spacing,
+                      bottom: i == 9 ? 0 : 0,
+                    ),
+                    child: InteractiveViewer(
+                      child: Image.network(
+                        "https://storage.googleapis.com/108-bucket/${widget.arrValue[i]}",
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                              'assets/image/no-image-available.png');
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+          if (widget.status == "peoples")
+            Expanded(
+                child: SingleChildScrollView(
+              physics: ClampingScrollPhysics(),
+              child: Column(
+                children: [
+                  // SizedBox(
+                  //   height: 60,
+                  // ),
+                  ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: widget.arrValue.length,
+                      itemBuilder: (context, indexP) {
+                        dynamic p = widget.arrValue[indexP];
+                        String peopleName = p["name"];
+                        String peopleImage = p["img"];
+                        String peoplePosition = p["position"];
+                        String peopleDes = p["duty"];
+                        return Container(
+                          // color: AppColors.red,
+                          padding: EdgeInsets.only(
+                              top: 60, bottom: 20, left: 20, right: 20),
+                          child: PeoplesProfileCardFullDetail(
+                            imageUrl: peopleImage,
+                            name: peopleName,
+                            position: peoplePosition,
+                            description: peopleDes,
+                          ),
+                        );
+                      }),
+                ],
+              ),
+            ))
+        ],
       ),
     );
   }
@@ -1994,5 +1896,256 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
         minHeight != oldDelegate.minHeight ||
         child != oldDelegate.child;
     // return true;
+  }
+}
+
+class PeoplesProfileCard extends StatefulWidget {
+  const PeoplesProfileCard({
+    Key? key,
+    required this.imageUrl,
+    required this.name,
+    required this.position,
+    required this.description,
+  });
+
+  final String imageUrl;
+  final String name;
+  final String position;
+  final String description;
+
+  @override
+  State<PeoplesProfileCard> createState() => _PeoplesProfileCardState();
+}
+
+class _PeoplesProfileCardState extends State<PeoplesProfileCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.topCenter,
+      children: [
+        Container(
+          width: 330,
+          height: 380,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          decoration: BoxDecoration(
+            color: AppColors.dark100,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+
+              //
+              //
+              // Name
+              Text(
+                widget.name,
+                style: bodyTextNormal(null, null, null),
+                textAlign: TextAlign.center,
+              ),
+
+              //
+              //
+              // Job Position
+              SizedBox(height: 4),
+              Text(
+                widget.position,
+                style: bodyTextNormal(null, null, FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+
+              //
+              //
+              // Divider line (small centered)
+              SizedBox(height: 15),
+              Container(
+                width: 40,
+                height: 2,
+                color: AppColors.success,
+              ),
+
+              //
+              //
+              // Description
+              SizedBox(height: 15),
+              Expanded(
+                //   child: SingleChildScrollView(
+                //     physics: ClampingScrollPhysics(),
+                child: Text(
+                  widget.description,
+                  style: bodyTextNormal(null, null, null),
+                  maxLines: 9,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+                //   ),
+              ),
+            ],
+          ),
+        ),
+
+        //
+        //
+        // Logo image
+        Positioned(
+          top: -45,
+          child: Container(
+            height: 90,
+            width: 90,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.borderPrimary,
+              ),
+              borderRadius: BorderRadius.circular(100),
+              color: AppColors.backgroundWhite,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: widget.imageUrl == ""
+                    ? Image.asset(
+                        'assets/image/108job-logo-text.png',
+                        fit: BoxFit.contain,
+                      )
+                    : Image.network(
+                        "https://storage.googleapis.com/108-bucket/${widget.imageUrl}",
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/image/no-image-available.png',
+                            fit: BoxFit.contain,
+                          ); // Display an error message
+                        },
+                      ),
+              ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class PeoplesProfileCardFullDetail extends StatefulWidget {
+  const PeoplesProfileCardFullDetail({
+    Key? key,
+    required this.imageUrl,
+    required this.name,
+    required this.position,
+    required this.description,
+  });
+
+  final String imageUrl;
+  final String name;
+  final String position;
+  final String description;
+
+  @override
+  State<PeoplesProfileCardFullDetail> createState() =>
+      _PeoplesProfileCardFullDetailState();
+}
+
+class _PeoplesProfileCardFullDetailState
+    extends State<PeoplesProfileCardFullDetail> {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.topCenter,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          decoration: BoxDecoration(
+            color: AppColors.dark100,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+
+              //
+              //
+              // Name
+              Text(
+                widget.name,
+                style: bodyTextNormal(null, null, null),
+                textAlign: TextAlign.center,
+              ),
+
+              //
+              //
+              // Job Position
+              SizedBox(height: 4),
+              Text(
+                widget.position,
+                style: bodyTextNormal(null, null, FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+
+              //
+              //
+              // Divider line (small centered)
+              SizedBox(height: 15),
+              Container(
+                width: 40,
+                height: 2,
+                color: AppColors.success,
+              ),
+
+              //
+              //
+              // Description
+              SizedBox(height: 15),
+              Text(
+                widget.description,
+                style: bodyTextNormal(null, null, null),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+
+        //
+        //
+        // Logo image
+        Positioned(
+          top: -45,
+          child: Container(
+            height: 90,
+            width: 90,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.borderPrimary,
+              ),
+              borderRadius: BorderRadius.circular(100),
+              color: AppColors.backgroundWhite,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: widget.imageUrl == ""
+                    ? Image.asset(
+                        'assets/image/108job-logo-text.png',
+                        fit: BoxFit.contain,
+                      )
+                    : Image.network(
+                        "https://storage.googleapis.com/108-bucket/${widget.imageUrl}",
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/image/no-image-available.png',
+                            fit: BoxFit.contain,
+                          ); // Display an error message
+                        },
+                      ),
+              ),
+            ),
+          ),
+        )
+      ],
+    );
   }
 }

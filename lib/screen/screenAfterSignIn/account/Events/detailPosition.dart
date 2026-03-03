@@ -4,16 +4,20 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/formatNumber.dart';
+import 'package:app/functions/htmlWidget.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/provider/eventAvailableProvider.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
+import 'package:app/widget/dialogDisplayImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill_delta_from_html/parser/html_to_delta.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 // import 'package:flutter_quill_extensions/flutter_quill_embeds.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class DetailPositionComapny extends StatefulWidget {
   const DetailPositionComapny({
@@ -22,14 +26,13 @@ class DetailPositionComapny extends StatefulWidget {
     required this.salary,
     required this.description,
     required this.id,
-    required this.isApplied,
     this.logo,
     required this.isAppliedEvenJobCompany,
     required this.isNegotiable,
   }) : super(key: key);
   final String id, title, salary, description;
   final String? logo;
-  final bool isApplied, isAppliedEvenJobCompany, isNegotiable;
+  final bool isAppliedEvenJobCompany, isNegotiable;
 
   @override
   State<DetailPositionComapny> createState() => _DetailPositionComapnyState();
@@ -82,7 +85,7 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
         context: context,
         builder: (dialogContext) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "successful".tr,
+            title: "successfully".tr,
             contentText: "applied_success".tr,
             textButton: "ok".tr,
             press: () async {
@@ -139,11 +142,12 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
 
   @override
   Widget build(BuildContext context) {
+    final eventAvailableProvider = context.watch<EventAvailableProvider>();
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBarDefault(
-          backgroundColor: AppColors.dark100,
+          backgroundColor: AppColors.backgroundWhite,
           textTitle: "",
           fontWeight: FontWeight.bold,
           textColor: AppColors.fontDark,
@@ -156,7 +160,7 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
           alignment: AlignmentDirectional.bottomCenter,
           children: [
             Container(
-              color: AppColors.dark100,
+              color: AppColors.backgroundWhite,
               width: double.infinity,
               height: double.infinity,
               child: SingleChildScrollView(
@@ -167,122 +171,129 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
                     children: [
                       //
                       //
-                      //
-                      //
-                      //
                       //Section BoxDecoration Position / Salary
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: AppColors.backgroundWhite,
-                          // borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            //
-                            //
-                            //Position title
-                            Text(
-                              "${widget.title}",
-                              style:
-                                  bodyTextMedium(null, null, FontWeight.bold),
-                            ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundWhite,
+                            border: Border.all(color: AppColors.teal),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //
+                              //
+                              //Position title
+                              Text(
+                                "${widget.title}",
+                                style:
+                                    bodyTextMedium(null, null, FontWeight.bold),
+                              ),
 
-                            SizedBox(height: 20),
+                              SizedBox(height: 20),
 
-                            //
-                            //
-                            //Salary
-                            Row(
-                              children: [
-                                Text(
-                                  "ເງິນເດືອນເລີ່ມຕົ້ນ",
-                                  style: bodyTextMaxNormal(null, null, null),
-                                ),
-                                SizedBox(width: 5),
-                                Text(
-                                  widget.isNegotiable
-                                      ? "ສາມາດຕໍ່ລອງໄດ້"
-                                      : _salary,
-                                  style: bodyTextMaxNormal(
-                                      widget.isNegotiable
-                                          ? null
-                                          : "SatoshiBlack",
-                                      null,
-                                      FontWeight.bold),
-                                ),
-                                SizedBox(width: 5),
-                                if (!widget.isNegotiable)
+                              //
+                              //
+                              //Salary
+                              Row(
+                                children: [
                                   Text(
-                                    "ກີບ",
+                                    "starting_salary".tr,
                                     style: bodyTextMaxNormal(null, null, null),
                                   ),
-                              ],
-                            ),
-                          ],
+                                  SizedBox(width: 5),
+                                  Text(
+                                    widget.isNegotiable
+                                        ? "negotiable".tr
+                                        : _salary,
+                                    style: bodyTextMaxNormal(
+                                        widget.isNegotiable
+                                            ? null
+                                            : "SatoshiBlack",
+                                        AppColors.teal,
+                                        FontWeight.bold),
+                                  ),
+                                  SizedBox(width: 5),
+                                  if (!widget.isNegotiable)
+                                    Text(
+                                      "lak".tr,
+                                      style:
+                                          bodyTextMaxNormal(null, null, null),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
 
-                      SizedBox(height: 20),
+                      // SizedBox(height: 20),
 
                       // Text("${widget.description}"),
 
                       //
                       //
-                      //
-                      //
-                      //
                       //Section BoxDecoration Editor Description
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.all(20),
+                        padding: EdgeInsets.symmetric(vertical: 20),
                         decoration: BoxDecoration(
                           color: AppColors.backgroundWhite,
-                          // borderRadius: BorderRadius.circular(5),
                         ),
-                        // child: DefaultTextStyle(
-                        //   style: bodyTextNormal(null, null, null),
-                        //   child: QuillEditor(
-                        //     focusNode: editorFocusNode,
-                        //     scrollController: _editorScrollController,
-                        //     controller: _quillController,
-                        //     config: QuillEditorConfig(
-                        //       embedBuilders:
-                        //           FlutterQuillEmbeds.editorBuilders(),
-                        //       keyboardAppearance: Brightness.dark,
-                        //       requestKeyboardFocusOnCheckListChanged: false,
-                        //       scrollPhysics: NeverScrollableScrollPhysics(),
-                        //       readOnlyMouseCursor: SystemMouseCursors.text,
-                        //       // maxHeight: 400,
-                        //       // minHeight: 400,
-                        //       placeholder: "",
-                        //       padding: EdgeInsets.all(10),
-                        //     ),
-                        //   ),
+                        // child: HtmlWidget(
+                        //   _splitFigureDes,
+                        //   onTapUrl: (url) {
+                        //     launchInBrowser(Uri.parse(url));
+                        //     return true;
+                        //   },
+                        //   onTapImage: (imageMetadata) {
+                        //     // Pick the first source available
+                        //     final src = imageMetadata.sources.isNotEmpty
+                        //         ? imageMetadata.sources.first.url
+                        //         : null;
+                        //     if (src != null) {
+                        //       // For example, open in browser or show full-screen preview
+                        //       launchInBrowser(Uri.parse(src));
+                        //     } else {
+                        //       print('print: No image URL found.');
+                        //     }
+                        //   },
+                        //   textStyle: bodyTextNormal(null, null, null),
                         // ),
 
-                        child: HtmlWidget(
+                        child: buildScrollableHtmlWidget(
                           _splitFigureDes,
-                          onTapUrl: (url) {
-                            launchInBrowser(Uri.parse(url));
-                            return true;
-                          },
-                          onTapImage: (imageMetadata) {
+                          (imageMetadata) {
                             // Pick the first source available
                             final src = imageMetadata.sources.isNotEmpty
                                 ? imageMetadata.sources.first.url
                                 : null;
 
                             if (src != null) {
+                              print("onTapImage src show dialog: " +
+                                  src.toString());
+
+                              // Display dialog image
+                              showDialog(
+                                  context: context,
+                                  builder: (
+                                    context,
+                                  ) {
+                                    return DialogSingleImage(
+                                      imagePath: src.toString(),
+                                    );
+                                  });
+
                               // For example, open in browser or show full-screen preview
-                              launchInBrowser(Uri.parse(src));
+                              // launchInBrowser(Uri.parse(src));
                             } else {
                               print('print: No image URL found.');
                             }
                           },
-                          textStyle: bodyTextNormal(null, null, null),
                         ),
                       ),
 
@@ -292,7 +303,7 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
                 ),
               ),
             ),
-            if (widget.isApplied)
+            if (eventAvailableProvider.isApplied)
               Positioned(
                 // top: 0,
                 bottom: 40,
@@ -300,6 +311,9 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
                 right: 0,
                 child: Row(
                   children: [
+                    //
+                    //
+                    // Button Applied
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -308,8 +322,8 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
                               ? AppColors.dark400
                               : AppColors.teal,
                           text: _isAppliedEvenJobCompany
-                              ? "ສະໝັກແລ້ວ"
-                              : "ສະໝັກວຽກນີ້",
+                              ? "applied".tr
+                              : "apply".tr,
                           press: () async {
                             if (!_isAppliedEvenJobCompany) {
                               var result = await showDialog(

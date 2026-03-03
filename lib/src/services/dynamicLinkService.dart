@@ -63,4 +63,4 @@ class DynamicLinkService {
   }
 }
 
-//Error generating short link: [firebase_dynamic_links/unknown] com.google.android.gms.common.api.ApiException: 400: 
+//Error generating short link: [firebase_dynamic_links/unknown] com.google.android.gms.common.api.ApiException: 400:

@@ -1,8 +1,10 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_local_variable, file_names, avoid_print, deprecated_member_use
+// ignore_for_file: prefer_const_constructors, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, avoid_unnecessary_containers, sized_box_for_whitespace, prefer_typing_uninitialized_variables, unused_local_variable, file_names, avoid_print, deprecated_member_use, prefer_final_fields, prefer_interpolation_to_compose_strings
 
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/widget/button.dart';
+import 'package:app/widget/input.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,12 +15,16 @@ class ListMultiSelectedAlertDialog extends StatefulWidget {
     required this.selectedListItem,
     required this.title,
     this.status,
+    this.codeController,
+    this.changed,
   }) : super(key: key);
 
   final String title;
   final List listItems;
   final List selectedListItem;
   final status;
+  final TextEditingController? codeController;
+  final Function(String)? changed;
 
   @override
   State<ListMultiSelectedAlertDialog> createState() =>
@@ -28,15 +34,26 @@ class ListMultiSelectedAlertDialog extends StatefulWidget {
 class _ListMultiSelectedAlertDialogState
     extends State<ListMultiSelectedAlertDialog> {
   List _selectedArray = [];
+  List _listItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedArray = [...widget.selectedListItem];
+    _listItems = [...widget.listItems];
+  }
+
+  @override
+  void didUpdateWidget(covariant ListMultiSelectedAlertDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    setState(() {
+      _listItems = [...widget.listItems];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      _selectedArray = widget.selectedListItem;
-
-      print(_selectedArray);
-    });
-
     return StatefulBuilder(
       builder: (context, setState) {
         return AlertDialog(
@@ -94,6 +111,23 @@ class _ListMultiSelectedAlertDialogState
             color: AppColors.backgroundWhite,
             child: Column(
               children: [
+                if (widget.status == "seekerHideCompany")
+                  //
+                  //
+                  //Search company name
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                    child: SimpleTextFieldSingleValidate(
+                      codeController: widget.codeController,
+                      contenPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      enabledBorder: enableOutlineBorder(AppColors.borderBG),
+                      changed: widget.changed,
+                      hintText: "search".tr + " " + "company name".tr,
+                      inputColor: AppColors.inputWhite,
+                    ),
+                  ),
                 Expanded(
                   child: Container(
                     height: MediaQuery.of(context).size.height,
@@ -101,10 +135,11 @@ class _ListMultiSelectedAlertDialogState
                     child: ListView.builder(
                         physics: ClampingScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: widget.listItems.length,
+                        itemCount: _listItems.length,
                         itemBuilder: (context, index) {
-                          dynamic i = widget.listItems[index];
+                          dynamic i = _listItems[index];
                           String name;
+
                           if (widget.status == "seekerHideCompany") {
                             name = i['companyName'];
                           } else {
@@ -113,20 +148,38 @@ class _ListMultiSelectedAlertDialogState
                           return GestureDetector(
                             onTap: () {
                               setState(() {
-                                //
-                                //ຖ້າໂຕທີ່ເລືອກ _id ກົງກັບ _selectedArray(_id) ແມ່ນລົບອອກ
-                                if (_selectedArray.contains(i['_id'])) {
-                                  _selectedArray
-                                      .removeWhere((e) => e == i['_id']);
-                                  print(_selectedArray);
+                                final id = i['_id']?.toString() ?? "";
 
-                                  return;
+                                // ignore empty IDs
+                                if (id.isEmpty) return;
+
+                                if (_selectedArray.contains(id)) {
+                                  _selectedArray.removeWhere((e) => e == id);
+                                } else {
+                                  _selectedArray.add(id);
                                 }
-                                //
-                                //ເອົາຂໍ້ມູນທີ່ເລືອກ Add ເຂົ້າໃນ Array _selectedArray
-                                _selectedArray.add(i['_id']);
+
+                                // remove empty values for safety
+                                _selectedArray
+                                    .removeWhere((e) => e.toString().isEmpty);
+
                                 print(_selectedArray);
                               });
+                              // setState(() {
+                              //   //
+                              //   //ຖ້າໂຕທີ່ເລືອກ _id ກົງກັບ _selectedArray(_id) ແມ່ນລົບອອກ
+                              //   if (_selectedArray.contains(i['_id'])) {
+                              //     _selectedArray
+                              //         .removeWhere((e) => e == i['_id']);
+                              //     print(_selectedArray);
+
+                              //     return;
+                              //   }
+                              //   //
+                              //   //ເອົາຂໍ້ມູນທີ່ເລືອກ Add ເຂົ້າໃນ Array _selectedArray
+                              //   _selectedArray.add(i['_id']);
+                              //   print(_selectedArray);
+                              // });
                             },
                             child: Container(
                               color: AppColors.backgroundWhite,

@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, unused_field, prefer_final_fields, avoid_print, unused_local_variable, file_names
+// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, unused_field, prefer_final_fields, avoid_print, unused_local_variable, file_names, prefer_interpolation_to_compose_strings
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,6 +14,7 @@ class ChangeLanguage extends StatefulWidget {
 
 class _ChangeLanguageState extends State<ChangeLanguage> {
   String _isLocaleLanguage = "";
+
   // String _isLanguageApi = "";
   checkLanguage() async {
     // final prefs = await SharedPreferences.getInstance();
