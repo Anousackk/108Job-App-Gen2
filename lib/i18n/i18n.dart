@@ -1648,6 +1648,8 @@ class LocalString extends Translations {
       "la": "ໄປໜ້າໂປຣໄຟສແລ້ວຕື່ມຂໍ້ມູນໃຫ້ຄົບ. ຈຶ່ງສາມາດລົງທະບຽນເຂົ້າຮ່ວມງານໄດ້."
     },
     {"key": "btn_event_detail", "en": "Event detail", "la": "ລາຍລະອຽດງານ"},
+
+    {"key": "verified", "en": "Verified", "la": "ຢືນຢັນແລ້ວ"},
     {"key": "candidates", "en": "Candidates", "la": "ຜູ້ສະໝັກ"},
     {"key": "companies", "en": "Companies", "la": "ບໍລິສັດ"},
     {"key": "positions", "en": "Positions", "la": "ຕຳແໜ່ງງານ"},
