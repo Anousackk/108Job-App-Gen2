@@ -1688,6 +1688,7 @@ class LocalString extends Translations {
       "la": "ຍັງບໍ່ມີຟາຍຊີວີ້ເທື່ອ"
     },
     {"key": "blank", "en": "Blank", "la": "ບໍ່ສຳເລັດ"},
+    {"key": "new", "en": "New", "la": "ໃໝ່"},
   ];
 
   @override

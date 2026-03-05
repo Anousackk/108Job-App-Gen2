@@ -645,6 +645,226 @@ class _HomeState extends State<Home> {
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         children: [
+                          // //Box Card Job Search - Banner
+                          // Container(
+                          //   width: double.infinity,
+                          //   margin: EdgeInsets.only(top: 20),
+                          //   padding: EdgeInsets.all(20),
+                          //   decoration: BoxDecoration(
+                          //     gradient: LinearGradient(
+                          //       begin: Alignment.topLeft,
+                          //       end: Alignment.bottomRight,
+                          //       colors: [
+                          //         Color(0xFF2563EB),
+                          //         Color(0xFF3B82F6),
+                          //       ],
+                          //     ),
+                          //     borderRadius: BorderRadius.circular(15),
+                          //   ),
+                          //   child: Column(
+                          //     crossAxisAlignment: CrossAxisAlignment.start,
+                          //     children: [
+                          //       Container(
+                          //         child: Stack(
+                          //           children: [
+                          //             //CarouselSlider top banner image
+                          //             CarouselSlider(
+                          //               carouselController:
+                          //                   _controllerTopBanner,
+                          //               options: CarouselOptions(
+                          //                 // aspectRatio: 16 / 9,
+                          //                 aspectRatio: 16 / 6,
+                          //                 viewportFraction:
+                          //                     1.0, // Show one item at a time
+                          //                 enlargeCenterPage: true,
+                          //                 enableInfiniteScroll:
+                          //                     topBannerProvider.listTopBanners
+                          //                                 .length >
+                          //                             1
+                          //                         ? true
+                          //                         : false,
+                          //                 autoPlay: topBannerProvider
+                          //                             .listTopBanners.length >
+                          //                         1
+                          //                     ? true
+                          //                     : false,
+                          //                 autoPlayInterval:
+                          //                     Duration(seconds: 10),
+                          //                 onPageChanged: (index, _) {
+                          //                   setState(() {
+                          //                     _currentTopBannerIndex = index;
+                          //                   });
+                          //                 },
+                          //               ),
+                          //               items: topBannerProvider.listTopBanners
+                          //                   .map((objTopBanner) {
+                          //                 return Builder(builder: (context) {
+                          //                   return Container(
+                          //                     width: double.infinity,
+                          //                     decoration: BoxDecoration(
+                          //                       borderRadius:
+                          //                           BorderRadius.circular(15),
+                          //                     ),
+                          //                     //press top banner url
+                          //                     child: GestureDetector(
+                          //                       onTap: () {
+                          //                         print("url top banner" +
+                          //                             "${objTopBanner["url"]}");
+
+                          //                         final urlString =
+                          //                             objTopBanner["url"]
+                          //                                 .toString()
+                          //                                 .trim();
+                          //                         launchInBrowser(
+                          //                           Uri.parse(urlString),
+                          //                         );
+                          //                       },
+                          //                       child: ClipRRect(
+                          //                         borderRadius:
+                          //                             BorderRadius.circular(15),
+                          //                         child: objTopBanner[
+                          //                                         'image'] ==
+                          //                                     "" ||
+                          //                                 objTopBanner[
+                          //                                         'image'] ==
+                          //                                     null
+                          //                             ? Image.asset(
+                          //                                 'assets/image/no-image-available.png',
+                          //                                 // 'assets/image/top01.png',
+
+                          //                                 fit: BoxFit.contain,
+                          //                               )
+                          //                             : Image.network(
+                          //                                 "https://storage.googleapis.com/108-bucket/${objTopBanner['image']}",
+                          //                                 fit: BoxFit.contain,
+                          //                                 errorBuilder:
+                          //                                     (context, error,
+                          //                                         stackTrace) {
+                          //                                   return Image.asset(
+                          //                                     'assets/image/no-image-available.png',
+                          //                                     fit: BoxFit
+                          //                                         .contain,
+                          //                                   ); // Display an error message
+                          //                                 },
+                          //                               ),
+                          //                       ),
+                          //                     ),
+                          //                   );
+                          //                 });
+                          //               }).toList(),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       ),
+                          //       SizedBox(height: 15),
+
+                          //       // Header with arrow button
+                          //       // Row(
+                          //       //   mainAxisAlignment:
+                          //       //       MainAxisAlignment.spaceBetween,
+                          //       //   children: [
+                          //       //     Text(
+                          //       //       "FIND YOUR NEXT ROLE",
+                          //       //       style: TextStyle(
+                          //       //         color: Colors.white.withOpacity(0.8),
+                          //       //         fontSize: 12,
+                          //       //         fontWeight: FontWeight.w500,
+                          //       //         letterSpacing: 1.5,
+                          //       //       ),
+                          //       //     ),
+                          //       //     Container(
+                          //       //       width: 36,
+                          //       //       height: 36,
+                          //       //       decoration: BoxDecoration(
+                          //       //         color: Colors.white.withOpacity(0.2),
+                          //       //         shape: BoxShape.circle,
+                          //       //       ),
+                          //       //       child: Icon(
+                          //       //         Icons.arrow_forward_ios,
+                          //       //         color: Colors.white,
+                          //       //         size: 16,
+                          //       //       ),
+                          //       //     ),
+                          //       //   ],
+                          //       // ),
+                          //       // SizedBox(height: 10),
+
+                          //       // Title
+                          //       Text(
+                          //         "Job Search",
+                          //         style: TextStyle(
+                          //           color: Colors.white,
+                          //           fontSize: 28,
+                          //           fontWeight: FontWeight.bold,
+                          //         ),
+                          //       ),
+                          //       SizedBox(height: 5),
+
+                          //       // Subtitle
+                          //       Text(
+                          //         "150+ " + "job_opening".tr,
+                          //         style: TextStyle(
+                          //           color: Colors.white.withOpacity(0.8),
+                          //           fontSize: 14,
+                          //         ),
+                          //       ),
+                          //       SizedBox(height: 20),
+
+                          //       // Search Bar
+                          //       Container(
+                          //         padding: EdgeInsets.symmetric(
+                          //             horizontal: 15, vertical: 5),
+                          //         decoration: BoxDecoration(
+                          //           color: Colors.white,
+                          //           borderRadius: BorderRadius.circular(15),
+                          //         ),
+                          //         child: Row(
+                          //           children: [
+                          //             Icon(
+                          //               Icons.search,
+                          //               color: Colors.grey,
+                          //               size: 22,
+                          //             ),
+                          //             SizedBox(width: 10),
+                          //             Expanded(
+                          //               child: TextField(
+                          //                 decoration: InputDecoration(
+                          //                   hintText: "Job title or company...",
+                          //                   hintStyle: TextStyle(
+                          //                     color: Colors.grey,
+                          //                     fontSize: 14,
+                          //                   ),
+                          //                   border: InputBorder.none,
+                          //                   contentPadding: EdgeInsets.zero,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //             Container(
+                          //               padding: EdgeInsets.symmetric(
+                          //                   horizontal: 20, vertical: 10),
+                          //               decoration: BoxDecoration(
+                          //                 color: Color(0xFF2563EB),
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(10),
+                          //               ),
+                          //               child: Text(
+                          //                 "Search",
+                          //                 style: TextStyle(
+                          //                   color: Colors.white,
+                          //                   fontSize: 14,
+                          //                   fontWeight: FontWeight.w500,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+
+                          // SizedBox(height: 20),
+
                           //
                           //
                           //Top banner image
@@ -771,281 +991,48 @@ class _HomeState extends State<Home> {
                             padding: const EdgeInsets.only(top: 30),
                             child: Column(
                               children: [
-                                Row(
-                                  children: [
-                                    //Job search
-                                    Expanded(
-                                      child: BoxContainCategory(
-                                        icon: "\uf002",
-                                        text: "job search".tr,
-                                        numTotal: "150",
-                                        press: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => JobSearch(
-                                                topWorkLocation: null,
-                                                topIndustry: null,
-                                                type: "",
-                                                selectedListItem: null,
-                                                hasInternet: true,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    SizedBox(width: 15),
-                                    //Company
-                                    Expanded(
-                                      child: BoxContainCategory(
-                                        icon: "\uf1ad",
-                                        text: "company".tr,
-                                        numTotal: "350",
-                                        press: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => Company(
-                                                companyType: "",
-                                                hasInternet: true,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                SizedBox(height: 15),
-
-                                Row(
-                                  children: [
-                                    //My job
-                                    Expanded(
-                                      child: BoxContainCategory(
-                                        icon: "\uf0b1",
-                                        text: "my job".tr,
-                                        numTotal: "",
-                                        press: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => MyJobs(
-                                                myJobStatus: "",
-                                                hasInternet: true,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    SizedBox(width: 15),
-                                    //Notification
-                                    Expanded(
-                                      child: BoxContainCategory(
-                                        icon: "\uf0f3",
-                                        text: "notification".tr,
-                                        numTotal: "${_totalNotiUnRead}",
-                                        press: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Notifications(
-                                                callbackTotalNoti: (value) {
-                                                  print("${value}");
-                                                  setState(() {
-                                                    _totalNotiUnRead = value;
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                )
-
-                                // Job Search Card - Full Width
-                                // Container(
-                                //   width: double.infinity,
-                                //   padding: EdgeInsets.symmetric(
-                                //       horizontal: 20, vertical: 20),
-                                //   decoration: BoxDecoration(
-                                //     color: AppColors.primary600,
-                                //     borderRadius: BorderRadius.circular(15),
-                                //   ),
-                                //   child: Row(
-                                //     children: [
-                                //       Container(
-                                //         padding: EdgeInsets.all(12),
-                                //         decoration: BoxDecoration(
-                                //           color: AppColors.primary300
-                                //               .withOpacity(0.2),
-                                //           borderRadius:
-                                //               BorderRadius.circular(15),
-                                //         ),
-                                //         child: Text(
-                                //           "\uf002",
-                                //           style: fontAwesomeRegular(null, 24,
-                                //               AppColors.iconLight, null),
-                                //         ),
-                                //       ),
-                                //       SizedBox(width: 15),
-                                //       Expanded(
-                                //         child: Column(
-                                //           crossAxisAlignment:
-                                //               CrossAxisAlignment.start,
-                                //           children: [
-                                //             Text(
-                                //               "job search".tr,
-                                //               style: bodyTextMedium(
-                                //                   null,
-                                //                   AppColors.fontWhite,
-                                //                   FontWeight.bold),
-                                //             ),
-                                //             SizedBox(height: 2),
-                                //             Text(
-                                //               "150+ " + "job_opening".tr,
-                                //               style: bodyTextNormal(
-                                //                 null,
-                                //                 AppColors.fontWhite,
-                                //                 null,
-                                //               ),
-                                //             ),
-                                //           ],
-                                //         ),
-                                //       ),
-                                //       Text(
-                                //         "\uf054",
-                                //         style: fontAwesomeRegular(null, 20,
-                                //             AppColors.iconLight, null),
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
-
-                                // SizedBox(height: 15),
-
-                                // Two Cards Row - Company and My Jobs
                                 // Row(
                                 //   children: [
-                                //     // Company Card
+                                //     //Job search
                                 //     Expanded(
-                                //       child: Container(
-                                //         padding: EdgeInsets.all(20),
-                                //         decoration: BoxDecoration(
-                                //           color: AppColors.backgroundWhite,
-                                //           borderRadius:
-                                //               BorderRadius.circular(15),
-                                //           border: Border.all(
-                                //               color: AppColors.dark
-                                //                   .withOpacity(0.05)),
-                                //           boxShadow: [
-                                //             BoxShadow(
-                                //               color: AppColors.dark
-                                //                   .withOpacity(0.05),
-                                //               blurRadius: 5,
-                                //               spreadRadius: 0,
-                                //               offset: Offset(2, 3),
-                                //             ),
-                                //           ],
-                                //         ),
-                                //         child: Column(
-                                //           crossAxisAlignment:
-                                //               CrossAxisAlignment.start,
-                                //           children: [
-                                //             Container(
-                                //               padding: EdgeInsets.all(12),
-                                //               decoration: BoxDecoration(
-                                //                 color: AppColors.orange
-                                //                     .withOpacity(0.1),
-                                //                 borderRadius:
-                                //                     BorderRadius.circular(10),
-                                //               ),
-                                //               child: Text(
-                                //                 "\uf1ad",
-                                //                 style: fontAwesomeRegular(null,
-                                //                     20, AppColors.orange, null),
+                                //       child: BoxContainCategory(
+                                //         icon: "\uf002",
+                                //         text: "job search".tr,
+                                //         numTotal: "150",
+                                //         press: () {
+                                //           Navigator.push(
+                                //             context,
+                                //             MaterialPageRoute(
+                                //               builder: (context) => JobSearch(
+                                //                 topWorkLocation: null,
+                                //                 topIndustry: null,
+                                //                 type: "",
+                                //                 selectedListItem: null,
+                                //                 hasInternet: true,
                                 //               ),
                                 //             ),
-                                //             SizedBox(height: 10),
-                                //             Text(
-                                //               "company".tr,
-                                //               style: bodyTextNormal(
-                                //                   null, null, FontWeight.bold),
-                                //             ),
-                                //             SizedBox(height: 5),
-                                //             Text(
-                                //               "350+",
-                                //               style: bodyTextMaxSmall(
-                                //                   null,
-                                //                   AppColors.fontPrimary,
-                                //                   FontWeight.bold),
-                                //             ),
-                                //           ],
-                                //         ),
+                                //           );
+                                //         },
                                 //       ),
                                 //     ),
                                 //     SizedBox(width: 15),
-                                //     // My Jobs Card
+                                //     //Company
                                 //     Expanded(
-                                //       child: Container(
-                                //         padding: EdgeInsets.all(20),
-                                //         decoration: BoxDecoration(
-                                //           color: AppColors.backgroundWhite,
-                                //           borderRadius:
-                                //               BorderRadius.circular(15),
-                                //           border: Border.all(
-                                //               color: AppColors.dark
-                                //                   .withOpacity(0.05)),
-                                //           boxShadow: [
-                                //             BoxShadow(
-                                //               color: AppColors.dark
-                                //                   .withOpacity(0.05),
-                                //               blurRadius: 5,
-                                //               spreadRadius: 0,
-                                //               offset: Offset(2, 3),
-                                //             ),
-                                //           ],
-                                //         ),
-                                //         child: Column(
-                                //           crossAxisAlignment:
-                                //               CrossAxisAlignment.start,
-                                //           children: [
-                                //             Container(
-                                //               padding: EdgeInsets.all(12),
-                                //               decoration: BoxDecoration(
-                                //                 color: AppColors.primary100,
-                                //                 borderRadius:
-                                //                     BorderRadius.circular(10),
-                                //               ),
-                                //               child: Text(
-                                //                 "\uf0b1",
-                                //                 style: fontAwesomeRegular(
-                                //                     null,
-                                //                     20,
-                                //                     AppColors.primary600,
-                                //                     null),
+                                //       child: BoxContainCategory(
+                                //         icon: "\uf1ad",
+                                //         text: "company".tr,
+                                //         numTotal: "350",
+                                //         press: () {
+                                //           Navigator.push(
+                                //             context,
+                                //             MaterialPageRoute(
+                                //               builder: (context) => Company(
+                                //                 companyType: "",
+                                //                 hasInternet: true,
                                 //               ),
                                 //             ),
-                                //             SizedBox(height: 10),
-                                //             Text(
-                                //               "my job".tr,
-                                //               style: bodyTextNormal(
-                                //                   null, null, FontWeight.bold),
-                                //             ),
-                                //             SizedBox(height: 5),
-                                //             Text(
-                                //               "3 Active",
-                                //               style: bodyTextMaxSmall(null,
-                                //                   AppColors.fontGrey, null),
-                                //             ),
-                                //           ],
-                                //         ),
+                                //           );
+                                //         },
                                 //       ),
                                 //     ),
                                 //   ],
@@ -1053,69 +1040,260 @@ class _HomeState extends State<Home> {
 
                                 // SizedBox(height: 15),
 
+                                // Row(
+                                //   children: [
+                                //     //My job
+                                //     Expanded(
+                                //       child: BoxContainCategory(
+                                //         icon: "\uf0b1",
+                                //         text: "my job".tr,
+                                //         numTotal: "",
+                                //         press: () {
+                                //           Navigator.push(
+                                //             context,
+                                //             MaterialPageRoute(
+                                //               builder: (context) => MyJobs(
+                                //                 myJobStatus: "",
+                                //                 hasInternet: true,
+                                //               ),
+                                //             ),
+                                //           );
+                                //         },
+                                //       ),
+                                //     ),
+                                //     SizedBox(width: 15),
+                                //     //Notification
+                                //     Expanded(
+                                //       child: BoxContainCategory(
+                                //         icon: "\uf0f3",
+                                //         text: "notification".tr,
+                                //         numTotal: "${_totalNotiUnRead}",
+                                //         press: () {
+                                //           Navigator.push(
+                                //             context,
+                                //             MaterialPageRoute(
+                                //               builder: (context) =>
+                                //                   Notifications(
+                                //                 callbackTotalNoti: (value) {
+                                //                   print("${value}");
+                                //                   setState(() {
+                                //                     _totalNotiUnRead = value;
+                                //                   });
+                                //                 },
+                                //               ),
+                                //             ),
+                                //           );
+                                //         },
+                                //       ),
+                                //     ),
+                                //   ],
+                                // )
+
+                                // Job Search Card - Full Width
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 20),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.backgroundWhite,
+                                    borderRadius: BorderRadius.circular(15),
+                                    // border: Border.all(
+                                    //     color: AppColors.borderPrimary),
+                                    border: Border.all(
+                                        color:
+                                            AppColors.dark.withOpacity(0.05)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.dark.withOpacity(0.09),
+                                        blurRadius: 5,
+                                        spreadRadius: 0,
+                                        offset: Offset(2, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary600,
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ),
+                                        child: Text(
+                                          "\uf002",
+                                          style: fontAwesomeRegular(null, 24,
+                                              AppColors.iconLight, null),
+                                        ),
+                                      ),
+                                      SizedBox(width: 15),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "job search".tr,
+                                              style: bodyTextMedium(
+                                                  null,
+                                                  AppColors.fontDark,
+                                                  FontWeight.bold),
+                                            ),
+                                            SizedBox(height: 2),
+                                            Text(
+                                              "150+ " + "job_opening".tr,
+                                              style: bodyTextNormal(
+                                                null,
+                                                AppColors.fontPrimary,
+                                                null,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Text(
+                                        "\uf054",
+                                        style: fontAwesomeRegular(null, 20,
+                                            AppColors.iconPrimary, null),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                SizedBox(height: 15),
+
+                                // Two Cards Row - Company and Saved Job
+                                Row(
+                                  children: [
+                                    // Company Card
+                                    Expanded(
+                                      child: BoxCardCategoryV1(
+                                        backgroundIconColor:
+                                            AppColors.orange.withOpacity(0.1),
+                                        iconText: "\uf1ad",
+                                        iconColor: AppColors.orange,
+                                        title: "company".tr,
+                                        total: "350+",
+                                        totalColor: AppColors.orange,
+                                      ),
+                                    ),
+
+                                    SizedBox(width: 15),
+
+                                    // Saved Job
+                                    Expanded(
+                                      child: BoxCardCategoryV1(
+                                        backgroundIconColor:
+                                            AppColors.primary100,
+                                        iconText: "\uf02e",
+                                        iconColor: AppColors.primary600,
+                                        title: "save job".tr,
+                                        total: "10 " + "saved".tr,
+                                        totalColor: AppColors.primary600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                SizedBox(height: 15),
+
+                                // Two Cards Row - Hide Job and Applied Job
+                                Row(
+                                  children: [
+                                    // Hide Job Card
+                                    Expanded(
+                                      child: BoxCardCategoryV1(
+                                        backgroundIconColor:
+                                            AppColors.warning100,
+                                        iconText: "\uf05e",
+                                        iconColor: AppColors.warning600,
+                                        title: "hide job".tr,
+                                        total: "5 " + "hidden".tr,
+                                        totalColor: AppColors.warning600,
+                                      ),
+                                    ),
+
+                                    SizedBox(width: 15),
+
+                                    // Applied Job
+                                    Expanded(
+                                      child: BoxCardCategoryV1(
+                                        backgroundIconColor:
+                                            AppColors.success100,
+                                        iconText: "\uf1d8",
+                                        iconColor: AppColors.teal,
+                                        title: "applied job".tr,
+                                        total: "3 " + "applied".tr,
+                                        totalColor: AppColors.teal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                SizedBox(height: 15),
+
                                 // Notifications Card - Full Width
-                                // Container(
-                                //   width: double.infinity,
-                                //   padding: EdgeInsets.symmetric(
-                                //       horizontal: 20, vertical: 15),
-                                //   decoration: BoxDecoration(
-                                //     color: AppColors.backgroundWhite,
-                                //     borderRadius: BorderRadius.circular(15),
-                                //     border: Border.all(
-                                //         color:
-                                //             AppColors.dark.withOpacity(0.05)),
-                                //     boxShadow: [
-                                //       BoxShadow(
-                                //         color: AppColors.dark.withOpacity(0.05),
-                                //         blurRadius: 5,
-                                //         spreadRadius: 0,
-                                //         offset: Offset(2, 3),
-                                //       ),
-                                //     ],
-                                //   ),
-                                //   child: Row(
-                                //     children: [
-                                //       Container(
-                                //         padding: EdgeInsets.all(12),
-                                //         decoration: BoxDecoration(
-                                //           color: AppColors.danger100,
-                                //           borderRadius:
-                                //               BorderRadius.circular(12),
-                                //         ),
-                                //         child: Text(
-                                //           "\uf0f3",
-                                //           style: fontAwesomeRegular(
-                                //               null, 20, AppColors.danger, null),
-                                //         ),
-                                //       ),
-                                //       SizedBox(width: 15),
-                                //       Expanded(
-                                //         child: Text(
-                                //           "notification".tr,
-                                //           style: bodyTextNormal(null,
-                                //               AppColors.dark, FontWeight.bold),
-                                //         ),
-                                //       ),
-                                //       Container(
-                                //         padding: EdgeInsets.symmetric(
-                                //             horizontal: 12, vertical: 6),
-                                //         decoration: BoxDecoration(
-                                //           color: AppColors.danger,
-                                //           borderRadius:
-                                //               BorderRadius.circular(20),
-                                //         ),
-                                //         child: Text(
-                                //           "12 New",
-                                //           style: TextStyle(
-                                //             fontSize: 12,
-                                //             fontWeight: FontWeight.bold,
-                                //             color: AppColors.backgroundWhite,
-                                //           ),
-                                //         ),
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 15),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.backgroundWhite,
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                        color:
+                                            AppColors.dark.withOpacity(0.05)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.dark.withOpacity(0.05),
+                                        blurRadius: 5,
+                                        spreadRadius: 0,
+                                        offset: Offset(2, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.danger100,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: Text(
+                                          "\uf0f3",
+                                          style: fontAwesomeRegular(
+                                              null, 20, AppColors.danger, null),
+                                        ),
+                                      ),
+                                      SizedBox(width: 15),
+                                      Expanded(
+                                        child: Text(
+                                          "notification".tr,
+                                          style: bodyTextNormal(null,
+                                              AppColors.dark, FontWeight.bold),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.danger,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Text(
+                                          "12" + " " + "new".tr,
+                                          style: bodyTextSmall(
+                                              null,
+                                              AppColors.fontWhite,
+                                              FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -1826,6 +2004,77 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class BoxCardCategoryV1 extends StatefulWidget {
+  const BoxCardCategoryV1({
+    Key? key,
+    required this.iconText,
+    required this.title,
+    required this.total,
+    required this.backgroundIconColor,
+    required this.iconColor,
+    required this.totalColor,
+  }) : super(key: key);
+
+  final String iconText, title, total;
+  final Color backgroundIconColor, iconColor, totalColor;
+
+  @override
+  State<BoxCardCategoryV1> createState() => _BoxCardCategoryV1State();
+}
+
+class _BoxCardCategoryV1State extends State<BoxCardCategoryV1> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.backgroundWhite,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: AppColors.dark.withOpacity(0.05)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.dark.withOpacity(0.05),
+            blurRadius: 5,
+            spreadRadius: 0,
+            offset: Offset(2, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Icon + Background
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: widget.backgroundIconColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              "${widget.iconText}",
+              style: fontAwesomeRegular(null, 20, widget.iconColor, null),
+            ),
+          ),
+          SizedBox(height: 10),
+
+          // Title
+          Text(
+            "${widget.title}",
+            style: bodyTextNormal(null, null, FontWeight.bold),
+          ),
+          SizedBox(height: 5),
+
+          // Number
+          Text(
+            "${widget.total}",
+            style: bodyTextMaxSmall(null, widget.totalColor, FontWeight.bold),
+          ),
+        ],
       ),
     );
   }
