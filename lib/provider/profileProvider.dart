@@ -242,6 +242,9 @@ class ProfileProvider extends ChangeNotifier {
       _submitedCV = int.parse(res['submittedTotals'].toString());
       _epmSavedSeeker = int.parse(res['empViewTotals'].toString());
       _totalPoint = int.parse(res['totalPoint'].toString());
+
+      print("Fetch Total JobSeeker is working");
+
       notifyListeners();
     } catch (e) {
       print("Fetch Total JobSeeker error: $e");

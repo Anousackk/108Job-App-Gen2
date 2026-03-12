@@ -1257,6 +1257,11 @@ class LocalString extends Translations {
       "en": "Contact us via WhatsApp",
       "la": "ຕິດຕໍ່ພະນັກງານເພື່ອສອບຖາມ ຫຼື ແກ້ໄຂບັນຫາ"
     },
+    {
+      "key": "new",
+      "en": "New",
+      "la": "ໃໝ່",
+    },
 
     //
     //
@@ -1275,7 +1280,6 @@ class LocalString extends Translations {
     //
     //
     //Seeker My jobs
-    {"key": "recommend_job", "en": "Recommend", "la": "ວຽກແນະນຳ"},
 
     //
     //
@@ -1688,6 +1692,9 @@ class LocalString extends Translations {
       "la": "ຍັງບໍ່ມີຟາຍຊີວີ້ເທື່ອ"
     },
     {"key": "blank", "en": "Blank", "la": "ບໍ່ສຳເລັດ"},
+    {"key": "recommend_job", "en": "Recommend job", "la": "ວຽກແນະນຳ"},
+    {"key": "redeem_reward", "en": "Redeem Reward", "la": "ແລກລາງວັນ"},
+    {"key": "submit", "en": "Submit", "la": "ກົດສົ່ງ"},
   ];
 
   @override

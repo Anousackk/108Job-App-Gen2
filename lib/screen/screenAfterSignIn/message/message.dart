@@ -4,8 +4,10 @@ import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/provider/profileDashboardStatus.dart';
 import 'package:app/screen/ScreenAfterSignIn/Message/Widget/messageShimmerWidget.dart';
 import 'package:app/screen/screenAfterSignIn/message/messageDetail.dart';
+import 'package:app/widget/appbar.dart';
 import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,6 +15,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as dom;
+import 'package:provider/provider.dart';
 
 class Messages extends StatefulWidget {
   const Messages({
@@ -30,10 +33,8 @@ class _MessagesState extends State<Messages> {
   ScrollController _scrollController = ScrollController();
 
   List _listMessages = [];
-  String _title = "";
-  String _message = "";
+
   dynamic _createdAt;
-  dynamic _status;
   bool _isLoading = false;
   bool _isLoadingMoreData = false;
   bool _hasMoreData = true;
@@ -41,7 +42,6 @@ class _MessagesState extends State<Messages> {
   dynamic page = 1;
   dynamic perPage = 10;
   dynamic totals;
-  dynamic totalMessageUnRead;
 
   fetchMessages() async {
     if (!_hasMoreData) {
@@ -53,13 +53,11 @@ class _MessagesState extends State<Messages> {
         {"page": page, "perPage": perPage, "type": "Messages_Page"});
 
     List fetchNotification = res['notifyList'];
-    // _listMessages = res['notifyList'];
     totals = res['totals'];
-    totalMessageUnRead = res['unreadTotals'].toString();
 
     page++;
     _listMessages.addAll(List<Map<String, dynamic>>.from(fetchNotification));
-    if (_listMessages.length >= totals || fetchNotification.length < perPage) {
+    if (_listMessages.length >= totals || fetchNotification.length == 0) {
       _hasMoreData = false;
     }
     _isLoadingMoreData = false;
@@ -67,17 +65,6 @@ class _MessagesState extends State<Messages> {
 
     if (mounted) {
       setState(() {});
-    }
-  }
-
-  fetchApiCheckTotalMessageUnRead() async {
-    var e = await postData(getNotificationsSeeker,
-        {"page": page, "perPage": perPage, "type": "Messages_Page"});
-
-    if (mounted) {
-      setState(() {
-        totalMessageUnRead = e['unreadTotals'].toString();
-      });
     }
   }
 
@@ -108,9 +95,21 @@ class _MessagesState extends State<Messages> {
 
   @override
   Widget build(BuildContext context) {
+    final profileDashboardStatusProvider =
+        context.watch<ProfileDashboardStatusProvider>();
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
+        appBar: AppBarDefault(
+          backgroundColor: AppColors.backgroundWhite,
+          elevation: 1.0,
+          textTitle: "message".tr,
+          textColor: AppColors.fontDark,
+          leadingPress: () {
+            Navigator.pop(context);
+          },
+          leadingIcon: Icon(Icons.arrow_back),
+        ),
         body: SafeArea(
           child: Container(
               color: AppColors.backgroundWhite,
@@ -118,45 +117,6 @@ class _MessagesState extends State<Messages> {
               width: double.infinity,
               child: Column(
                 children: [
-                  //
-                  //
-                  //
-                  //
-                  //
-                  //AppBar Custom
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    color: AppColors.backgroundWhite,
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pop(totalMessageUnRead);
-                          },
-                          child: FaIcon(
-                            FontAwesomeIcons.arrowLeft,
-                            size: 20,
-                          ),
-                        ),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "message".tr,
-                              style:
-                                  bodyTextMedium(null, null, FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  //
-                  //
-                  //
                   //
                   //
                   //isLoading Shimmer
@@ -219,12 +179,10 @@ class _MessagesState extends State<Messages> {
                                               );
                                       }
                                       dynamic i = _listMessages[index];
-                                      _title = !i.containsKey("title")
-                                          ? ""
-                                          : i["title"];
-                                      _message = parseHtmlString(i['message']);
+                                      final msg = parseHtmlString(
+                                          i["message"].toString());
+
                                       _createdAt = i['createdAt'] ?? null;
-                                      _status = i['status'];
 
                                       if (_createdAt != null) {
                                         //
@@ -250,49 +208,41 @@ class _MessagesState extends State<Messages> {
                                         children: [
                                           GestureDetector(
                                             onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MessageDetail(
-                                                    messageId: i['msgId'],
-                                                    status: i['status'],
+                                              if (i['msgId'] != "") {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MessageDetail(
+                                                      messageId: i['msgId'],
+                                                      status: i['status'],
+                                                    ),
                                                   ),
-                                                ),
-                                              ).then((value) async {
-                                                if (value != "") {
+                                                ).then((value) async {
                                                   print("call back mess id : " +
                                                       value);
-
-                                                  setState(() {
-                                                    dynamic mes = _listMessages
-                                                        .firstWhere((m) =>
-                                                            m['msgId'] ==
-                                                            value);
-                                                    print(mes.toString());
-                                                    mes["status"] = false;
-                                                  });
-
-                                                  await fetchApiCheckTotalMessageUnRead();
-
-                                                  Future.delayed(
-                                                      Duration(
-                                                          milliseconds: 100),
-                                                      () {
-                                                    widget.callbackTotalNoti!(
-                                                      totalMessageUnRead
-                                                          .toString(),
-                                                    );
-                                                  });
-                                                }
-                                              });
+                                                  if (value != "") {
+                                                    setState(() {
+                                                      dynamic mes =
+                                                          _listMessages
+                                                              .firstWhere((m) =>
+                                                                  m['msgId'] ==
+                                                                  value);
+                                                      print(mes.toString());
+                                                      mes["status"] = false;
+                                                    });
+                                                    profileDashboardStatusProvider
+                                                        .fetchProfileDashboardStatus();
+                                                  }
+                                                });
+                                              }
                                             },
                                             child: Container(
                                               width: double.infinity,
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 20, vertical: 15),
                                               decoration: BoxDecoration(
-                                                color: _status
+                                                color: i['status']
                                                     ? AppColors.lightPrimary
                                                     : AppColors.backgroundWhite,
                                               ),
@@ -308,9 +258,9 @@ class _MessagesState extends State<Messages> {
                                                           children: [
                                                             Expanded(
                                                               child: Text(
-                                                                _title != ""
-                                                                    ? "${_title}"
-                                                                    : "${_message}",
+                                                                i["title"] != ""
+                                                                    ? i["title"]
+                                                                    : msg,
                                                                 style: bodyTextMaxNormal(
                                                                     null,
                                                                     null,
@@ -324,7 +274,7 @@ class _MessagesState extends State<Messages> {
                                                             SizedBox(
                                                               width: 10,
                                                             ),
-                                                            if (_status)
+                                                            if (i['status'])
                                                               Container(
                                                                 height: 8,
                                                                 width: 8,

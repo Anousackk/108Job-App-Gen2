@@ -273,19 +273,19 @@ class _HomeState extends State<Home> {
       // ),
 
       Account(
-        callBackToMyJobsSavedJob: () {
-          setState(() {
-            _currentIndex = 3;
-            _onTapBottomNav(3);
-          });
-        },
-        callBackToMyJobsAppliedJob: (val) {
-          setState(() {
-            _myJobStatus = val;
-            _currentIndex = 3;
-            _onTapBottomNav(3);
-          });
-        },
+        // callBackToMyJobsSavedJob: () {
+        //   setState(() {
+        //     _currentIndex = 3;
+        //     _onTapBottomNav(3);
+        //   });
+        // },
+        // callBackToMyJobsAppliedJob: (val) {
+        //   setState(() {
+        //     _myJobStatus = val;
+        //     _currentIndex = 3;
+        //     _onTapBottomNav(3);
+        //   });
+        // },
         hasInternet: _hasInternet,
       )
     ];

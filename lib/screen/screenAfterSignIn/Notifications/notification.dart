@@ -4,6 +4,7 @@ import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/provider/profileDashboardStatus.dart';
 import 'package:app/screen/ScreenAfterSignIn/Notifications/Widget/notiShimmerWidget.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:app/widget/appbar.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class Notifications extends StatefulWidget {
   const Notifications({Key? key, this.callbackTotalNoti, this.statusFromScreen})
@@ -28,10 +30,8 @@ class _NotificationsState extends State<Notifications> {
   ScrollController _scrollController = ScrollController();
 
   List _listNotifications = [];
-  String _title = "";
   dynamic _openingDate;
   dynamic _closingDate;
-  dynamic _status;
   bool _isLoading = false;
   bool _isLoadingMoreData = false;
   bool _hasMoreData = true;
@@ -39,7 +39,6 @@ class _NotificationsState extends State<Notifications> {
   dynamic page = 1;
   dynamic perPage = 10;
   dynamic totals;
-  dynamic totalNotiUnRead;
 
   fetchNotifications() async {
     if (!_hasMoreData) {
@@ -51,15 +50,15 @@ class _NotificationsState extends State<Notifications> {
         {"page": page, "perPage": perPage, "type": "Notification_Page"});
 
     List fetchNotification = res['notifyList'];
-    // _listNotifications = res['notifyList'];
-    totals = res['totals'];
-    totalNotiUnRead = res['unreadTotals'].toString();
+
+    totals = int.parse(res['totals'].toString());
 
     page++;
     _listNotifications
         .addAll(List<Map<String, dynamic>>.from(fetchNotification));
-    if (_listNotifications.length >= totals ||
-        fetchNotification.length < perPage) {
+
+    // Stop loading only when we've reached the actual total or API returns empty data
+    if (_listNotifications.length >= totals || fetchNotification.length == 0) {
       _hasMoreData = false;
     }
     _isLoadingMoreData = false;
@@ -67,17 +66,6 @@ class _NotificationsState extends State<Notifications> {
 
     if (mounted) {
       setState(() {});
-    }
-  }
-
-  fetchApiCheckTotalNotiUnRead() async {
-    var e = await postData(getNotificationsSeeker,
-        {"page": page, "perPage": perPage, "type": "Notification_Page"});
-
-    if (mounted) {
-      setState(() {
-        totalNotiUnRead = e['unreadTotals'].toString();
-      });
     }
   }
 
@@ -91,11 +79,9 @@ class _NotificationsState extends State<Notifications> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        if (mounted) {
-          setState(() {
-            _isLoadingMoreData = true;
-          });
-        }
+        setState(() {
+          _isLoadingMoreData = true;
+        });
 
         fetchNotifications();
       }
@@ -104,6 +90,8 @@ class _NotificationsState extends State<Notifications> {
 
   @override
   Widget build(BuildContext context) {
+    final profileDashboardStatusProvider =
+        context.watch<ProfileDashboardStatusProvider>();
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
@@ -113,7 +101,7 @@ class _NotificationsState extends State<Notifications> {
           textTitle: "notification".tr,
           textColor: AppColors.fontDark,
           leadingPress: () {
-            Navigator.of(context).pop(totalNotiUnRead);
+            Navigator.pop(context);
           },
           leadingIcon: Icon(Icons.arrow_back),
         ),
@@ -124,39 +112,6 @@ class _NotificationsState extends State<Notifications> {
             width: double.infinity,
             child: Column(
               children: [
-                //
-                //
-                //AppBar Custom
-                // Container(
-                //   padding: EdgeInsets.all(20),
-                //   color: AppColors.backgroundWhite,
-                //   width: double.infinity,
-                //   alignment: Alignment.center,
-                //   child: Row(
-                //     children: [
-                //       // if (widget.statusFromScreen == "HomeScreen")
-                //       GestureDetector(
-                //         onTap: () {
-                //           Navigator.of(context).pop(totalNotiUnRead);
-                //         },
-                //         child: FaIcon(
-                //           FontAwesomeIcons.arrowLeft,
-                //           size: 20,
-                //         ),
-                //       ),
-                //       Expanded(
-                //         child: Align(
-                //           alignment: Alignment.center,
-                //           child: Text(
-                //             "notification".tr,
-                //             style: bodyTextMedium(null, null, FontWeight.bold),
-                //           ),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-
                 //
                 //
                 //isLoading Shimmer
@@ -222,11 +177,9 @@ class _NotificationsState extends State<Notifications> {
                                             );
                                     }
                                     dynamic i = _listNotifications[index];
-                                    _title = i['title'];
+
                                     _openingDate = i['openingDate'];
                                     _closingDate = i['closingDate'];
-                                    _status = i['status'];
-                                    // _status = true;
 
                                     if (_openingDate != null ||
                                         _openingDate == "") {
@@ -269,7 +222,7 @@ class _NotificationsState extends State<Notifications> {
                                       children: [
                                         GestureDetector(
                                           onTap: () {
-                                            if (_title != "") {
+                                            if (i['jobId'] != "") {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
@@ -280,11 +233,10 @@ class _NotificationsState extends State<Notifications> {
                                                   ),
                                                 ),
                                               ).then((value) async {
-                                                print(value[1].toString());
+                                                print("call back noti id : " +
+                                                    value[1].toString());
 
-                                                if ("call back noti id : " +
-                                                        value[1] !=
-                                                    "") {
+                                                if (value[1] != "") {
                                                   setState(() {
                                                     dynamic job =
                                                         _listNotifications
@@ -293,16 +245,8 @@ class _NotificationsState extends State<Notifications> {
                                                                 value[1]);
                                                     job["status"] = false;
                                                   });
-                                                  await fetchApiCheckTotalNotiUnRead();
-                                                  Future.delayed(
-                                                      Duration(
-                                                          milliseconds: 100),
-                                                      () {
-                                                    widget.callbackTotalNoti!(
-                                                      totalNotiUnRead
-                                                          .toString(),
-                                                    );
-                                                  });
+                                                  profileDashboardStatusProvider
+                                                      .fetchProfileDashboardStatus();
                                                 }
                                               });
                                             }
@@ -312,7 +256,7 @@ class _NotificationsState extends State<Notifications> {
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 20, vertical: 15),
                                             decoration: BoxDecoration(
-                                              color: _status
+                                              color: i['status']
                                                   ? AppColors.lightPrimary
                                                   : AppColors.backgroundWhite,
                                             ),
@@ -328,9 +272,12 @@ class _NotificationsState extends State<Notifications> {
                                                         children: [
                                                           Expanded(
                                                             child: Text(
-                                                              _title == ""
+                                                              !i.containsKey(
+                                                                          "title") ||
+                                                                      i["title"] ==
+                                                                          ""
                                                                   ? "--"
-                                                                  : "${_title}",
+                                                                  : i["title"],
                                                               style:
                                                                   bodyTextMaxNormal(
                                                                       null,
@@ -345,7 +292,7 @@ class _NotificationsState extends State<Notifications> {
                                                           SizedBox(
                                                             width: 10,
                                                           ),
-                                                          if (_status)
+                                                          if (i['status'])
                                                             Container(
                                                               height: 8,
                                                               width: 8,

@@ -11,6 +11,7 @@ import 'package:app/provider/eventAvailableProvider.dart';
 import 'package:app/provider/localSharePrefsProvider.dart';
 import 'package:app/provider/notifierProvider.dart';
 import 'package:app/provider/popupBanner.dart';
+import 'package:app/provider/profileDashboardStatus.dart';
 import 'package:app/provider/profileProvider.dart';
 import 'package:app/provider/recommendJobByAI.dart';
 import 'package:app/provider/reuseTypeProvider.dart';
@@ -62,45 +63,74 @@ Future<void> main() async {
   //2. Initialize firebase messaging
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // if (!kIsWeb) {
-  //   channel = AndroidNotificationChannel(
-  //     'high_importance_channel', // id
-  //     'High Importance Notifications', // title
-  //     description: 'This channel is used for important .', // description
-  //     importance: Importance.high,
-  //   );
-  //   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  if (!kIsWeb) {
+    channel = AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      description:
+          'This channel is used for important notifications.', // description
+      importance: Importance.high,
+    );
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  //   await flutterLocalNotificationsPlugin
-  //       .resolvePlatformSpecificImplementation<
-  //           AndroidFlutterLocalNotificationsPlugin>()
-  //       ?.createNotificationChannel(channel);
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
 
-  //   /// Update the iOS foreground notification presentation options to allow
-  //   /// heads up notifications.
-  //   await FirebaseMessaging.instance
-  //       .setForegroundNotificationPresentationOptions(
-  //     alert: true,
-  //     badge: true,
-  //     sound: true,
-  //   );
+    /// Update the iOS foreground notification presentation options to allow
+    /// heads up notifications.
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
 
-  // await flutterLocalNotificationsPlugin
-  //     .resolvePlatformSpecificImplementation<
-  //         IOSFlutterLocalNotificationsPlugin>()
-  //     ?.requestPermissions(
-  //       alert: true,
-  //       badge: true,
-  //       sound: true,
-  //     );
-  // }
+    // ✅ ขอ permission จาก FirebaseMessaging โดยตรง (ครั้งเดียว)
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+      provisional: false, // ← false สำคัญมาก
+    );
+    print('iOS Permission: ${settings.authorizationStatus}');
+
+    // ✅ ขอ permission จาก flutter_local_notifications และตั้งค่า badge
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+          provisional: false,
+        );
+
+    // await flutterLocalNotificationsPlugin
+    //     .resolvePlatformSpecificImplementation<
+    //         IOSFlutterLocalNotificationsPlugin>()
+    //     ?.requestPermissions(
+    //       alert: true,
+    //       badge: true,
+    //       sound: true,
+    //       provisional: true,
+    //     );
+  }
 
   //Application in foreground(flutter_local_notifications)
   var initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
 
   final DarwinInitializationSettings initializationSettingsDarwin =
-      DarwinInitializationSettings();
+      DarwinInitializationSettings(
+    requestAlertPermission: true,
+    requestBadgePermission: true, // ← เพิ่ม
+    requestSoundPermission: true,
+  );
+  // final DarwinInitializationSettings initializationSettingsDarwin =
+  //     DarwinInitializationSettings();
 
   var initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
@@ -162,6 +192,7 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   String? getLanguageSharePref;
   String? _sharePreEmpToken;
+  int _badgeCount = 0; // ✅ เพิ่มตัวแปรนับ badge
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   bool _isDynamicLinkHandled = false;
@@ -201,9 +232,16 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             notification.title,
             notification.body,
             NotificationDetails(
-              iOS: DarwinNotificationDetails(),
+              iOS: DarwinNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+              ),
             ),
           );
+
+          // ✅ อัปเดต badge number สำหรับ iOS
+          _updateBadgeNumber();
         }
       }
     });
@@ -212,13 +250,74 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       if (message != null) {
         // Handle notification when the app is completely closed and opened by the user
         await handleMessage(message);
+        // ✅ ล้าง badge เมื่อเปิด app จาก notification
+        _clearBadgeNumber();
       }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       // Handle notification when the app is in the background and opened by the user
       await handleMessage(message);
+      // ✅ ล้าง badge เมื่อเปิด app จาก notification
+      _clearBadgeNumber();
     });
+  }
+
+  // ✅ ฟังก์ชันสำหรับจัดการ badge number
+  Future<void> _updateBadgeNumber() async {
+    if (Platform.isIOS) {
+      try {
+        setState(() {
+          _badgeCount++; // ✅ เพิ่มจำนวน badge
+        });
+
+        // ส่ง notification พร้อมตั้งค่า badge number
+        await flutterLocalNotificationsPlugin.show(
+          DateTime.now().millisecondsSinceEpoch.remainder(100000),
+          '',
+          '',
+          NotificationDetails(
+            iOS: DarwinNotificationDetails(
+              presentAlert: false,
+              presentBadge: true,
+              presentSound: false,
+              badgeNumber: _badgeCount, // ✅ ใช้จำนวนจริง
+            ),
+          ),
+        );
+        print('Badge updated with number: $_badgeCount');
+      } catch (e) {
+        print('Error updating badge: $e');
+      }
+    }
+  }
+
+  Future<void> _clearBadgeNumber() async {
+    if (Platform.isIOS) {
+      try {
+        setState(() {
+          _badgeCount = 0; // ✅ รีเซ็ตจำนวน badge
+        });
+
+        // ล้าง badge โดยตั้งค่าเป็น 0
+        await flutterLocalNotificationsPlugin.show(
+          DateTime.now().millisecondsSinceEpoch.remainder(100000),
+          '',
+          '',
+          NotificationDetails(
+            iOS: DarwinNotificationDetails(
+              presentAlert: false,
+              presentBadge: true,
+              presentSound: false,
+              badgeNumber: 0, // ✅ ใช้จำนวนจริง
+            ),
+          ),
+        );
+        print('Badge cleared (set to 0)');
+      } catch (e) {
+        print('Error clearing badge: $e');
+      }
+    }
   }
 
   // Future<void> firebaseAnalytics() async {
@@ -376,6 +475,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       print("Main App Resumed");
       _isDynamicLinkHandled = false;
       handleDynamicLinks();
+      // ✅ ล้าง badge เมื่อกลับมาใช้แอป
+      _clearBadgeNumber();
     }
   }
 
@@ -398,6 +499,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider(create: (_) => ReuseTypeProvider()),
         ChangeNotifierProvider(create: (_) => LocalSharedPrefsProvider()),
         ChangeNotifierProvider(create: (_) => RecommendJobAIProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileDashboardStatusProvider()),
       ],
       child: Sizer(
         builder: (context, orientation, deviceType) {

@@ -35,7 +35,7 @@ class _PositionCompanyState extends State<PositionCompany> {
     print("res applyByJobId: " + res.toString());
 
     if (res["message"] == "Your applied is complete.") {
-      // ສະແດງ success dialog
+      // Display success dialog
       showDialog(
         barrierDismissible: false,
         context: context,
@@ -54,7 +54,7 @@ class _PositionCompanyState extends State<PositionCompany> {
 
       return true;
     } else {
-      // ສະແດງ warning dialog
+      // Display warning dialog
       showDialog(
         barrierDismissible: false,
         context: context,
@@ -327,9 +327,13 @@ class _PositionCompanyState extends State<PositionCompany> {
                                                     i["isApplied"] = true;
                                                   });
 
-                                                  applyByJobId(
-                                                    i["_id"].toString(),
-                                                  );
+                                                  // applyByJobId(
+                                                  //     i["_id"].toString());
+
+                                                  eventAvailableProvider
+                                                      .applyJobCompanyBySeeker(
+                                                          context,
+                                                          i["_id"].toString());
                                                 }
                                               }
                                             },

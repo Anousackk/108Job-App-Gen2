@@ -87,7 +87,7 @@ class _CompanyState extends State<Company> {
 
     page++;
     _companies.addAll(List<Map<String, dynamic>>.from(fetchedCompanies));
-    if (_companies.length >= totals || fetchedCompanies.length < perPage) {
+    if (_companies.length >= totals || fetchedCompanies.length == 0) {
       _hasMoreData = false;
     }
     _isLoadingMoreData = false;
@@ -129,7 +129,7 @@ class _CompanyState extends State<Company> {
     page++;
     _companies.clear();
     _companies.addAll(List<Map<String, dynamic>>.from(fetchedCompanies));
-    if (_companies.length >= totals || fetchedCompanies.length < perPage) {
+    if (_companies.length >= totals || fetchedCompanies.length == 0) {
       _hasMoreData = false;
     }
     _isLoadingMoreData = false;
@@ -256,30 +256,30 @@ class _CompanyState extends State<Company> {
     super.initState();
     print("widget hasInternet company: " + "${widget.hasInternet}");
 
-    if (widget.hasInternet == false) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        showInternetDisconnected(context);
-      });
+    // if (widget.hasInternet == false) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     showInternetDisconnected(context);
+    //   });
+    // } else {
+    if (widget.companyType == "Hiring") {
+      checkTypeMyJobFromHomePage();
     } else {
-      if (widget.companyType == "Hiring") {
-        checkTypeMyJobFromHomePage();
-      } else {
-        fetchCompanies("AllCompanies");
-        // fetchCompanyFeature();
-      }
-
-      _scrollController.addListener(() {
-        if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent) {
-          setState(() {
-            _isLoadingMoreData = true;
-          });
-          fetchCompanies(_searchType);
-        }
-      });
-
-      _searchCompanyNameController.text = _searchCompanyName;
+      fetchCompanies("AllCompanies");
+      // fetchCompanyFeature();
     }
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          _isLoadingMoreData = true;
+        });
+        fetchCompanies(_searchType);
+      }
+    });
+
+    _searchCompanyNameController.text = _searchCompanyName;
+    // }
   }
 
   @override

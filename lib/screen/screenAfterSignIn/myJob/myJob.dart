@@ -43,7 +43,7 @@ class _MyJobsState extends State<MyJobs> {
   String _typeMyJob = "SeekerSaveJob";
   String _textTotal = "job".tr + " " + "have saved".tr;
   String _textAlert = "unsave job".tr + " " + "successfully".tr;
-  String _textTab = "saved_job".tr;
+  String _titleAppBar = "saved_job".tr;
   String _logo = "";
   String _jobTitle = "";
   String _companyName = "";
@@ -69,10 +69,8 @@ class _MyJobsState extends State<MyJobs> {
 
   int _totalSavedJobs = 0;
   int _totalAppliedJobs = 0;
-  int _totalPurchasedCV = 0;
   int _totalHiddenJobs = 0;
   int _totalJobAlerts = 0;
-  int _countJobTotals = 0;
   int _totalRecommendJobs = 0;
 
   // dynamic _disablePeople;
@@ -119,7 +117,7 @@ class _MyJobsState extends State<MyJobs> {
 
     page++;
     _listMyJobs.addAll(List<Map<String, dynamic>>.from(fetchMyJobs));
-    if (_listMyJobs.length >= totals || fetchMyJobs.length < perPage) {
+    if (_listMyJobs.length >= totals || fetchMyJobs.length == 0) {
       _hasMoreData = false;
     }
     _isLoadingMoreData = false;
@@ -134,38 +132,6 @@ class _MyJobsState extends State<MyJobs> {
       setState(() {});
     }
   }
-
-  fetchProfileDashboardStatus() async {
-    var res = await fetchData(getProfileDashboardStatus);
-
-    _totalSavedJobs = res["totalSavedJobs"] == null
-        ? 0
-        : int.parse("${res["totalSavedJobs"]}");
-    _totalAppliedJobs = res["totalAppliedJobs"] == null
-        ? 0
-        : int.parse("${res["totalAppliedJobs"]}");
-    _totalHiddenJobs = res["totalHiddenJobs"] == null
-        ? 0
-        : int.parse("${res["totalHiddenJobs"]}");
-    _totalJobAlerts = res["totalJobAlerts"] == null
-        ? 0
-        : int.parse("${res["totalJobAlerts"]}");
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  // fetchRecommendJobAI() async {
-  //   var res = await postData(getRecommendJobByAIApi, {});
-
-  //   if (mounted) {
-  //     setState(() {
-  //       _listRecommendJobs = res["jobs"];
-  //       _totalRecommendJobs = _listRecommendJobs.length;
-  //     });
-  //   }
-  // }
 
   fetchMyJobTypingSearch(String type) async {
     setState(() {
@@ -190,7 +156,7 @@ class _MyJobsState extends State<MyJobs> {
     page++;
     _listMyJobs.clear();
     _listMyJobs.addAll(List<Map<String, dynamic>>.from(fetchMyJobs));
-    if (_listMyJobs.length >= totals || fetchMyJobs.length < perPage) {
+    if (_listMyJobs.length >= totals || fetchMyJobs.length == 0) {
       _hasMoreData = false;
     }
     _isLoadingMoreData = false;
@@ -203,43 +169,6 @@ class _MyJobsState extends State<MyJobs> {
   onGoBack(dynamic value) async {
     print("onGoBack");
     await fetchMyJob(_typeMyJob);
-  }
-
-  pressTapMyJobType(String val) async {
-    FocusScope.of(context).requestFocus(focusNode);
-    setState(() {
-      _typeMyJob = val;
-
-      if (_typeMyJob == "SeekerSaveJob") {
-        _isLoading = true;
-        _textTab = "saved_job".tr;
-        _textTotal = "job".tr + " " + "have saved".tr;
-        _textAlert = "unsave job".tr + " " + "successfully".tr;
-      } else if (_typeMyJob == "AppliedJob") {
-        _isLoading = true;
-        _textTab = "applied_job".tr;
-        _textTotal = "job".tr + " " + "have applied".tr;
-      } else if (_typeMyJob == "JobAlert") {
-        _isLoading = true;
-        _textTab = "my job alert".tr;
-        _textTotal = "job".tr + " " + "have alert".tr;
-      } else if (_typeMyJob == "SeekerHideJob") {
-        _isLoading = true;
-        _textTab = "hidded".tr;
-        _textTotal = "job".tr + " " + "you have hidded".tr;
-        _textAlert = "unhide job".tr + " " + "successfully".tr;
-      } else if (_typeMyJob == "SeekerRecommendJob") {
-        _isLoading = true;
-        _textTab = "recommend_job".tr;
-
-        // fetchRecommendJobAI();
-      }
-
-      _listMyJobs.clear();
-      _hasMoreData = true;
-      page = 1;
-    });
-    fetchMyJob(_typeMyJob);
   }
 
   unSaveUnHideMyJob(String id, String type, String title) async {
@@ -287,14 +216,35 @@ class _MyJobsState extends State<MyJobs> {
     }
   }
 
-  checkTypeMyJobFromHomePage() {
-    if (widget.myJobStatus == "AppliedJob") {
-      setState(() {
-        _textTotal = "job".tr + " " + "have applied".tr;
+  initStateCheckTypeMyJobStatus() {
+    setState(() {
+      _typeMyJob = widget.myJobStatus;
 
-        fetchMyJob("AppliedJob");
-      });
-    }
+      if (_typeMyJob == "SeekerSaveJob") {
+        _isLoading = true;
+        _titleAppBar = "saved_job".tr;
+        _textTotal = "saved".tr;
+        _textAlert = "unsave job".tr + " " + "successfully".tr;
+      } else if (_typeMyJob == "AppliedJob") {
+        _isLoading = true;
+        _titleAppBar = "applied_job".tr;
+        _textTotal = "applied".tr;
+      } else if (_typeMyJob == "JobAlert") {
+        _isLoading = true;
+        _titleAppBar = "my job alert".tr;
+        _textTotal = "job".tr + " " + "have alert".tr;
+      } else if (_typeMyJob == "SeekerHideJob") {
+        _isLoading = true;
+        _titleAppBar = "hide job".tr;
+        _textTotal = "hidded".tr;
+        _textAlert = "unhide job".tr + " " + "successfully".tr;
+      }
+
+      _listMyJobs.clear();
+      _hasMoreData = true;
+      page = 1;
+    });
+    fetchMyJob(_typeMyJob);
   }
 
   _removeJobsSearchSeekerLocal(String jobId) {
@@ -328,35 +278,21 @@ class _MyJobsState extends State<MyJobs> {
   void initState() {
     super.initState();
 
-    print("widget hasInternet myjob: " + "${widget.hasInternet}");
+    initStateCheckTypeMyJobStatus();
 
-    fetchProfileDashboardStatus();
-    // fetchRecommendJobAI();
-
-    if (widget.hasInternet == false) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        showInternetDisconnected(context);
-      });
-    } else {
-      if (widget.myJobStatus == "AppliedJob") {
-        checkTypeMyJobFromHomePage();
-      } else {
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          _isLoadingMoreData = true;
+        });
         fetchMyJob(_typeMyJob);
       }
+    });
 
-      _scrollController.addListener(() {
-        if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent) {
-          setState(() {
-            _isLoadingMoreData = true;
-          });
-          fetchMyJob(_typeMyJob);
-        }
-      });
-
-      _searchTitleController.text = _searchTitle;
-    }
+    _searchTitleController.text = _searchTitle;
   }
+  // }
 
   @override
   void dispose() {
@@ -386,7 +322,7 @@ class _MyJobsState extends State<MyJobs> {
           // ),
           appBar: AppBarDefault(
             backgroundColor: AppColors.backgroundWhite,
-            textTitle: 'my job'.tr,
+            textTitle: "${_titleAppBar}",
             textColor: AppColors.fontDark,
             leadingIcon: Icon(Icons.arrow_back, color: AppColors.fontDark),
             leadingPress: () {
@@ -414,7 +350,7 @@ class _MyJobsState extends State<MyJobs> {
                           width: double.infinity,
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           decoration: BoxDecoration(
-                            color: AppColors.backgroundWhite,
+                            color: AppColors.background,
                           ),
                           child: Column(
                             children: [
@@ -454,12 +390,36 @@ class _MyJobsState extends State<MyJobs> {
                                         });
                                       },
                                       hintText: "search".tr,
-                                      inputColor: AppColors.inputBackground,
+                                      inputColor: AppColors.inputWhite,
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 20),
+                              // SizedBox(height: 20),
+
+                              //
+                              //
+                              //Count Jobs available
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 15,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "${totals} ",
+                                      style: bodyTextNormal(
+                                          null,
+                                          AppColors.fontPrimary,
+                                          FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "${_textTotal}",
+                                      style: bodyTextNormal(null, null, null),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -468,986 +428,546 @@ class _MyJobsState extends State<MyJobs> {
                         //
                         //Section list tab and card job
                         Expanded(
-                          child: CustomScrollView(
-                            controller: _scrollController,
-                            physics: ClampingScrollPhysics(),
-                            slivers: [
-                              // SliverToBoxAdapter(
-                              //   child: Container(
-                              //     padding: EdgeInsets.symmetric(horizontal: 20),
-                              //     decoration: BoxDecoration(
-                              //       color: AppColors.backgroundWhite,
-                              //       border: Border(
-                              //         bottom: BorderSide(color: AppColors.borderBG),
-                              //       ),
-                              //     ),
-                              //     child: Column(
-                              //       children: [
-                              //         Row(
-                              //           children: [
-                              //             Expanded(
-                              //               child: TabMenu(
-                              //                 text: "saved_job".tr,
-                              //                 borderColor:
-                              //                     _typeMyJob == "SeekerSaveJob"
-                              //                         ? AppColors.borderPrimary
-                              //                         : null,
-                              //                 count: totals == null
-                              //                     ? 0
-                              //                     : int.parse("${totals}"),
-                              //                 boxColor: _typeMyJob == "SeekerSaveJob"
-                              //                     ? AppColors.primary600
-                              //                     : null,
-                              //                 textColor: _typeMyJob == "SeekerSaveJob"
-                              //                     ? AppColors.fontWhite
-                              //                     : null,
-                              //                 countColor:
-                              //                     _typeMyJob == "SeekerSaveJob"
-                              //                         ? AppColors.fontWhite
-                              //                         : null,
-                              //                 press: () {
-                              //                   pressTapMyJobType('SeekerSaveJob');
-                              //                 },
-                              //               ),
-                              //             ),
-                              //             SizedBox(width: 5),
-                              //             Expanded(
-                              //               child: TabMenu(
-                              //                 text: "applied_job".tr,
-                              //                 borderColor: _typeMyJob == "AppliedJob"
-                              //                     ? AppColors.borderPrimary
-                              //                     : null,
-                              //                 count: totals == null
-                              //                     ? 0
-                              //                     : int.parse("${totals}"),
-                              //                 boxColor: _typeMyJob == "AppliedJob"
-                              //                     ? AppColors.primary600
-                              //                     : null,
-                              //                 textColor: _typeMyJob == "AppliedJob"
-                              //                     ? AppColors.fontWhite
-                              //                     : null,
-                              //                 countColor: _typeMyJob == "AppliedJob"
-                              //                     ? AppColors.fontWhite
-                              //                     : null,
-                              //                 press: () {
-                              //                   pressTapMyJobType('AppliedJob');
-                              //                 },
-                              //               ),
-                              //             ),
-                              //             SizedBox(width: 5),
-                              //             Expanded(
-                              //               child: TabMenu(
-                              //                 text: "my job alert".tr,
-                              //                 borderColor: _typeMyJob == "JobAlert"
-                              //                     ? AppColors.borderPrimary
-                              //                     : null,
-                              //                 count: totals == null
-                              //                     ? 0
-                              //                     : int.parse("${totals}"),
-                              //                 boxColor: _typeMyJob == "JobAlert"
-                              //                     ? AppColors.primary600
-                              //                     : null,
-                              //                 textColor: _typeMyJob == "JobAlert"
-                              //                     ? AppColors.fontWhite
-                              //                     : null,
-                              //                 countColor: _typeMyJob == "JobAlert"
-                              //                     ? AppColors.fontWhite
-                              //                     : null,
-                              //                 press: () {
-                              //                   pressTapMyJobType('JobAlert');
-                              //                 },
-                              //               ),
-                              //             )
-                              //           ],
-                              //         ),
-                              //         SizedBox(
-                              //           height: 5,
-                              //         ),
-                              //         Row(
-                              //           children: [
-                              //             Expanded(
-                              //               child: TabMenu(
-                              //                 text: "hidded".tr,
-                              //                 borderColor:
-                              //                     _typeMyJob == "SeekerHideJob"
-                              //                         ? AppColors.borderPrimary
-                              //                         : null,
-                              //                 count: totals == null
-                              //                     ? 0
-                              //                     : int.parse("${totals}"),
-                              //                 boxColor: _typeMyJob == "SeekerHideJob"
-                              //                     ? AppColors.primary600
-                              //                     : null,
-                              //                 textColor: _typeMyJob == "SeekerHideJob"
-                              //                     ? AppColors.fontWhite
-                              //                     : null,
-                              //                 countColor:
-                              //                     _typeMyJob == "SeekerHideJob"
-                              //                         ? AppColors.fontWhite
-                              //                         : null,
-                              //                 press: () {
-                              //                   pressTapMyJobType('SeekerHideJob');
-                              //                 },
-                              //               ),
-                              //             ),
-                              //             SizedBox(width: 5),
-                              //             Expanded(
-                              //               child: TabMenu(
-                              //                 text: "applied_job".tr,
-                              //                 count: totals == null
-                              //                     ? 0
-                              //                     : int.parse("${totals}"),
-                              //               ),
-                              //             ),
-                              //             SizedBox(width: 5),
-                              //             Expanded(
-                              //               child: TabMenu(
-                              //                 text: "my job alert".tr,
-                              //                 count: totals == null
-                              //                     ? 0
-                              //                     : int.parse("${totals}"),
-                              //               ),
-                              //             )
-                              //           ],
-                              //         ),
-                              //         SizedBox(height: 20),
-                              //       ],
-                              //     ),
-                              //   ),
-                              // ),
-
-                              //
-                              //
-                              // List tab menu
-                              SliverPersistentHeader(
-                                pinned: true,
-                                delegate: _SliverAppBarDelegate(
-                                  minHeight: 60,
-                                  maxHeight: 120,
-
-                                  //
-                                  //
-                                  // Original tab menu
-                                  expandedChild: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.backgroundWhite,
-                                      border: Border(
-                                        bottom: BorderSide(
-                                            color: AppColors.borderBG),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: TabMenu(
-                                                text: "saved_job".tr,
-                                                borderColor: _typeMyJob ==
-                                                        "SeekerSaveJob"
-                                                    ? AppColors.borderPrimary
-                                                    : null,
-                                                count: _totalSavedJobs,
-                                                boxColor: _typeMyJob ==
-                                                        "SeekerSaveJob"
-                                                    ? AppColors.primary600
-                                                    : null,
-                                                textColor: _typeMyJob ==
-                                                        "SeekerSaveJob"
-                                                    ? AppColors.fontWhite
-                                                    : null,
-                                                countColor: _typeMyJob ==
-                                                        "SeekerSaveJob"
-                                                    ? AppColors.fontWhite
-                                                    : null,
-                                                press: () {
-                                                  pressTapMyJobType(
-                                                      'SeekerSaveJob');
-                                                },
-                                              ),
-                                            ),
-                                            SizedBox(width: 5),
-                                            Expanded(
-                                              child: TabMenu(
-                                                text: "applied_job".tr,
-                                                borderColor: _typeMyJob ==
-                                                        "AppliedJob"
-                                                    ? AppColors.borderPrimary
-                                                    : null,
-                                                count: _totalAppliedJobs,
-                                                boxColor:
-                                                    _typeMyJob == "AppliedJob"
-                                                        ? AppColors.primary600
-                                                        : null,
-                                                textColor:
-                                                    _typeMyJob == "AppliedJob"
-                                                        ? AppColors.fontWhite
-                                                        : null,
-                                                countColor:
-                                                    _typeMyJob == "AppliedJob"
-                                                        ? AppColors.fontWhite
-                                                        : null,
-                                                press: () {
-                                                  pressTapMyJobType(
-                                                      'AppliedJob');
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: TabMenu(
-                                                text: "hidded".tr,
-                                                borderColor: _typeMyJob ==
-                                                        "SeekerHideJob"
-                                                    ? AppColors.borderPrimary
-                                                    : null,
-                                                count: _totalHiddenJobs,
-                                                boxColor: _typeMyJob ==
-                                                        "SeekerHideJob"
-                                                    ? AppColors.primary600
-                                                    : null,
-                                                textColor: _typeMyJob ==
-                                                        "SeekerHideJob"
-                                                    ? AppColors.fontWhite
-                                                    : null,
-                                                countColor: _typeMyJob ==
-                                                        "SeekerHideJob"
-                                                    ? AppColors.fontWhite
-                                                    : null,
-                                                press: () {
-                                                  pressTapMyJobType(
-                                                      'SeekerHideJob');
-                                                },
-                                              ),
-                                            ),
-                                            SizedBox(width: 5),
-                                            Expanded(
-                                              child: TabMenu(
-                                                text: "my job alert".tr,
-                                                borderColor: _typeMyJob ==
-                                                        "JobAlert"
-                                                    ? AppColors.borderPrimary
-                                                    : null,
-                                                count: _totalJobAlerts,
-                                                boxColor:
-                                                    _typeMyJob == "JobAlert"
-                                                        ? AppColors.primary600
-                                                        : null,
-                                                textColor:
-                                                    _typeMyJob == "JobAlert"
-                                                        ? AppColors.fontWhite
-                                                        : null,
-                                                countColor:
-                                                    _typeMyJob == "JobAlert"
-                                                        ? AppColors.fontWhite
-                                                        : null,
-                                                press: () {
-                                                  pressTapMyJobType('JobAlert');
-                                                },
-                                              ),
+                          child: _listMyJobs.length > 0
+                              ? ListView.builder(
+                                  physics: ClampingScrollPhysics(),
+                                  itemCount: _listMyJobs.length + 1,
+                                  controller: _scrollController,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    if (index == _listMyJobs.length) {
+                                      return _hasMoreData
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 0,
+                                                      vertical: 10),
+                                              child: Container(),
                                             )
-                                            // SizedBox(width: 5),
-                                            // Expanded(
-                                            //   child: TabMenu(
-                                            //     text: "recommend_job".tr,
-                                            //     borderColor: _typeMyJob ==
-                                            //             "SeekerRecommendJob"
-                                            //         ? AppColors.borderPrimary
-                                            //         : null,
-                                            //     count: _totalRecommendJobs,
-                                            //     boxColor: _typeMyJob ==
-                                            //             "SeekerRecommendJob"
-                                            //         ? AppColors.primary600
-                                            //         : null,
-                                            //     textColor: _typeMyJob ==
-                                            //             "SeekerRecommendJob"
-                                            //         ? AppColors.fontWhite
-                                            //         : null,
-                                            //     countColor: _typeMyJob ==
-                                            //             "SeekerRecommendJob"
-                                            //         ? AppColors.fontWhite
-                                            //         : null,
-                                            //     press: () {
-                                            //       pressTapMyJobType(
-                                            //           'SeekerRecommendJob');
-                                            //     },
-                                            //   ),
-                                            // ),
+                                          : Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Center(
+                                                  child:
+                                                      Text('no have data'.tr)),
+                                            );
+                                    }
+                                    dynamic i = _listMyJobs[index];
 
-                                            // SizedBox(width: 5),
-                                            // Expanded(
-                                            //   child: Container(),
-                                            // ),
-                                            // SizedBox(width: 5),
-                                            // Expanded(
-                                            //   child: Container(),
-                                            // )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                    _logo = i['logo'];
+                                    _jobTitle = i['jobTitle'];
+                                    _companyName = i['companyName'];
+                                    _workLocation = i['workingLocation'];
+                                    _openDate = i['openingDate'];
+                                    _closeDate = i['closingDate'];
+                                    _isClick = i['isClick'].toString();
+                                    _tag = i['tag'];
+                                    // _disablePeople = i['disabledPeople'];
+                                    // _isSaved = i['isSaved'];
+                                    // _views = i['isClick'].toString();
 
-                                  //
-                                  //
-                                  // Single tab for selected
-                                  collapsedChild: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.backgroundWhite,
-                                      border: Border(
-                                        bottom: BorderSide(
-                                            color: AppColors.borderBG),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Row(
+                                    //
+                                    //Open Date
+                                    //pars ISO to Flutter DateTime
+                                    parsDateTime(
+                                        value: '',
+                                        currentFormat: '',
+                                        desiredFormat: '');
+                                    DateTime openDate = parsDateTime(
+                                        value: _openDate,
+                                        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+                                        desiredFormat: "yyyy-MM-dd HH:mm:ss");
+                                    //
+                                    //Format to string 13 Feb 2024
+                                    _openDate = DateFormat('dd MMM yyyy')
+                                        .format(openDate);
+
+                                    //
+                                    //Close Date
+                                    //pars ISO to Flutter DateTime
+                                    parsDateTime(
+                                        value: '',
+                                        currentFormat: '',
+                                        desiredFormat: '');
+                                    DateTime closeDate = parsDateTime(
+                                        value: _closeDate,
+                                        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+                                        desiredFormat: "yyyy-MM-dd HH:mm:ss");
+                                    //
+                                    //Format to string 13 Feb 2024
+                                    _closeDate = DateFormat("dd MMM yyyy")
+                                        .format(closeDate);
+                                    return Container(
+                                      margin: EdgeInsets.only(bottom: 15),
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Slidable(
+                                        //
+                                        //Specify a key if the Slidable  is dismissible.
+                                        key: UniqueKey(),
+                                        //
+                                        //The end action pane is the one at the right or the bottom side.
+                                        endActionPane: ActionPane(
+                                          motion: ScrollMotion(),
+                                          //
+                                          //A pane can dismiss the Slidable.
+                                          dismissible: DismissiblePane(
+                                            onDismissed: () {
+                                              FocusScope.of(context)
+                                                  .requestFocus(focusNode);
+                                              Future.delayed(
+                                                  Duration(milliseconds: 300),
+                                                  () {
+                                                _removeJobsSearchSeekerLocal(
+                                                    i['_id']);
+                                                if (_typeMyJob ==
+                                                    "SeekerSaveJob") {
+                                                  print("Slidable to unSave");
+                                                  unSaveUnHideMyJob(
+                                                      i['_id'],
+                                                      _typeMyJob,
+                                                      i['jobTitle']);
+                                                } else if (_typeMyJob ==
+                                                    'SeekerHideJob') {
+                                                  print("Slidable to unHide");
+                                                  unSaveUnHideMyJob(
+                                                      i['_id'],
+                                                      _typeMyJob,
+                                                      i['jobTitle']);
+                                                }
+                                              });
+                                            },
+                                          ),
                                           children: [
-                                            Expanded(
-                                              child: TabMenu(
-                                                text: "${_textTab}",
-                                                borderColor:
-                                                    AppColors.borderPrimary,
-                                                count: _typeMyJob ==
-                                                        "SeekerRecommendJob"
-                                                    ? int.parse(
-                                                        "${_totalRecommendJobs}")
-                                                    : totals == null
-                                                        ? 0
-                                                        : int.parse(
-                                                            "${totals}"),
-                                                boxColor: AppColors.primary600,
-                                                textColor: AppColors.fontWhite,
-                                                countColor: AppColors.fontWhite,
+                                            if (_typeMyJob == "SeekerSaveJob")
+                                              SlidableAction(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(20),
+                                                ),
+                                                backgroundColor:
+                                                    AppColors.lightPrimary,
+                                                foregroundColor:
+                                                    AppColors.primary,
+                                                icon:
+                                                    FontAwesomeIcons.solidHeart,
+                                                label: 'unsave'.tr,
+                                                onPressed: (context) {
+                                                  FocusScope.of(context)
+                                                      .requestFocus(focusNode);
+                                                  print("press unsave");
+                                                  _removeJobsSearchSeekerLocal(
+                                                      i['_id']);
+                                                  unSaveUnHideMyJob(
+                                                      i['_id'],
+                                                      _typeMyJob,
+                                                      i['jobTitle']);
+                                                },
                                               ),
-                                            ),
+                                            if (_typeMyJob == "SeekerHideJob")
+                                              SlidableAction(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(20),
+                                                ),
+                                                backgroundColor:
+                                                    AppColors.buttonWarning,
+                                                foregroundColor:
+                                                    AppColors.fontWhite,
+                                                icon:
+                                                    FontAwesomeIcons.rotateLeft,
+                                                label: 'unhide'.tr,
+                                                onPressed: (constext) async {
+                                                  FocusScope.of(context)
+                                                      .requestFocus(focusNode);
+                                                  print("press hidded");
+                                                  var result = await showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel(
+                                                          title:
+                                                              "unhide job".tr,
+                                                          smallText:
+                                                              "unhide_job_explain"
+                                                                  .tr,
+                                                          contentText:
+                                                              "${i['jobTitle']}",
+                                                          textButtonLeft:
+                                                              'cancel'.tr,
+                                                          textButtonRight:
+                                                              'confirm'.tr,
+                                                        );
+                                                      });
+                                                  if (result == 'Ok') {
+                                                    print("press ok");
+                                                    _removeJobsSearchSeekerLocal(
+                                                        i['_id']);
+                                                    unSaveUnHideMyJob(
+                                                      i['_id'],
+                                                      _typeMyJob,
+                                                      i['jobTitle'],
+                                                    );
+                                                  }
+                                                },
+                                              ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
 
-                              SliverToBoxAdapter(
-                                child: SizedBox(
-                                  height: 20,
-                                ),
-                              ),
-
-                              //
-                              //
-                              //Section list my job
-                              if (_typeMyJob != "SeekerRecommendJob")
-                                SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (BuildContext context, int index) {
-                                      if (index == _listMyJobs.length) {
-                                        return _hasMoreData
-                                            ? Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 0,
-                                                        vertical: 10),
-                                                child: Container(),
-                                              )
-                                            : Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Center(
-                                                    child: Text(
-                                                        'no have data'.tr)),
-                                              );
-                                      }
-                                      dynamic i = _listMyJobs[index];
-
-                                      _logo = i['logo'];
-                                      _jobTitle = i['jobTitle'];
-                                      _companyName = i['companyName'];
-                                      _workLocation = i['workingLocation'];
-                                      _openDate = i['openingDate'];
-                                      _closeDate = i['closingDate'];
-                                      _isClick = i['isClick'].toString();
-                                      _tag = i['tag'];
-                                      // _disablePeople = i['disabledPeople'];
-                                      // _isSaved = i['isSaved'];
-                                      // _views = i['isClick'].toString();
-
-                                      //
-                                      //Open Date
-                                      //pars ISO to Flutter DateTime
-                                      parsDateTime(
-                                          value: '',
-                                          currentFormat: '',
-                                          desiredFormat: '');
-                                      DateTime openDate = parsDateTime(
-                                          value: _openDate,
-                                          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                          desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                      //
-                                      //Format to string 13 Feb 2024
-                                      _openDate = DateFormat('dd MMM yyyy')
-                                          .format(openDate);
-
-                                      //
-                                      //Close Date
-                                      //pars ISO to Flutter DateTime
-                                      parsDateTime(
-                                          value: '',
-                                          currentFormat: '',
-                                          desiredFormat: '');
-                                      DateTime closeDate = parsDateTime(
-                                          value: _closeDate,
-                                          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                          desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                      //
-                                      //Format to string 13 Feb 2024
-                                      _closeDate = DateFormat("dd MMM yyyy")
-                                          .format(closeDate);
-                                      return Container(
-                                        margin: EdgeInsets.only(bottom: 15),
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 20),
-                                        child: Slidable(
-                                          //
-                                          //Specify a key if the Slidable  is dismissible.
-                                          key: UniqueKey(),
-                                          //
-                                          //The end action pane is the one at the right or the bottom side.
-                                          endActionPane: ActionPane(
-                                            motion: ScrollMotion(),
-                                            //
-                                            //A pane can dismiss the Slidable.
-                                            dismissible: DismissiblePane(
-                                              onDismissed: () {
-                                                FocusScope.of(context)
-                                                    .requestFocus(focusNode);
-                                                Future.delayed(
-                                                    Duration(milliseconds: 300),
-                                                    () {
-                                                  _removeJobsSearchSeekerLocal(
-                                                      i['_id']);
-                                                  if (_typeMyJob ==
-                                                      "SeekerSaveJob") {
-                                                    print("Slidable to unSave");
-                                                    unSaveUnHideMyJob(
-                                                        i['_id'],
-                                                        _typeMyJob,
-                                                        i['jobTitle']);
-                                                  } else if (_typeMyJob ==
-                                                      'SeekerHideJob') {
-                                                    print("Slidable to unHide");
-                                                    unSaveUnHideMyJob(
-                                                        i['_id'],
-                                                        _typeMyJob,
-                                                        i['jobTitle']);
-                                                    fetchProfileDashboardStatus();
-                                                  }
-                                                });
-                                              },
-                                            ),
+                                        //
+                                        //
+                                        //
+                                        //
+                                        //
+                                        //Card my job
+                                        child: Container(
+                                          decoration: boxDecoration(
+                                              null,
+                                              _tag == "Highlight"
+                                                  ? AppColors.lightOrange
+                                                  : AppColors.backgroundWhite,
+                                              _tag == "Highlight"
+                                                  ? AppColors.borderWaring
+                                                  : null,
+                                              // AppColors.backgroundWhite,
+                                              // null,
+                                              3),
+                                          child: Column(
                                             children: [
-                                              if (_typeMyJob == "SeekerSaveJob")
-                                                SlidableAction(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(20),
-                                                  ),
-                                                  backgroundColor:
-                                                      AppColors.lightPrimary,
-                                                  foregroundColor:
-                                                      AppColors.primary,
-                                                  icon: FontAwesomeIcons
-                                                      .solidHeart,
-                                                  label: 'unsave'.tr,
-                                                  onPressed: (context) {
-                                                    FocusScope.of(context)
-                                                        .requestFocus(
-                                                            focusNode);
-                                                    print("press unsave");
-                                                    _removeJobsSearchSeekerLocal(
-                                                        i['_id']);
-                                                    unSaveUnHideMyJob(
-                                                        i['_id'],
-                                                        _typeMyJob,
-                                                        i['jobTitle']);
-                                                  },
-                                                ),
-                                              if (_typeMyJob == "SeekerHideJob")
-                                                SlidableAction(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(20),
-                                                  ),
-                                                  backgroundColor:
-                                                      AppColors.buttonWarning,
-                                                  foregroundColor:
-                                                      AppColors.fontWhite,
-                                                  icon: FontAwesomeIcons
-                                                      .rotateLeft,
-                                                  label: 'unhide'.tr,
-                                                  onPressed: (constext) async {
-                                                    FocusScope.of(context)
-                                                        .requestFocus(
-                                                            focusNode);
-                                                    print("press hidded");
-                                                    var result =
-                                                        await showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel(
-                                                                title:
-                                                                    "unhide job"
-                                                                        .tr,
-                                                                smallText:
-                                                                    "unhide_job_explain"
-                                                                        .tr,
-                                                                contentText:
-                                                                    "${i['jobTitle']}",
-                                                                textButtonLeft:
-                                                                    'cancel'.tr,
-                                                                textButtonRight:
-                                                                    'confirm'
-                                                                        .tr,
-                                                              );
-                                                            });
-                                                    if (result == 'Ok') {
-                                                      print("press ok");
-                                                      _removeJobsSearchSeekerLocal(
-                                                          i['_id']);
-                                                      unSaveUnHideMyJob(
-                                                        i['_id'],
-                                                        _typeMyJob,
-                                                        i['jobTitle'],
-                                                      );
-                                                    }
-                                                  },
-                                                ),
-                                            ],
-                                          ),
-
-                                          //
-                                          //
-                                          //
-                                          //
-                                          //
-                                          //Card my job
-                                          child: Container(
-                                            decoration: boxDecoration(
-                                                null,
-                                                _tag == "Highlight"
-                                                    ? AppColors.lightOrange
-                                                    : AppColors.backgroundWhite,
-                                                _tag == "Highlight"
-                                                    ? AppColors.borderWaring
-                                                    : null,
-                                                // AppColors.backgroundWhite,
-                                                // null,
-                                                3),
-                                            child: Column(
-                                              children: [
+                                              //
+                                              //
+                                              //Content card jobs
+                                              GestureDetector(
                                                 //
                                                 //
-                                                //Content card jobs
-                                                GestureDetector(
-                                                  //
-                                                  //
-                                                  //press to MyJobDetail
-                                                  onTap: () {
-                                                    FocusScope.of(context)
-                                                        .requestFocus(
-                                                            focusNode);
-                                                    if (_typeMyJob !=
-                                                        "SeekerHideJob") {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              JobSearchDetail(
-                                                            jobId: i['jobId'],
-                                                          ),
+                                                //press to MyJobDetail
+                                                onTap: () {
+                                                  FocusScope.of(context)
+                                                      .requestFocus(focusNode);
+                                                  if (_typeMyJob !=
+                                                      "SeekerHideJob") {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            JobSearchDetail(
+                                                          jobId: i['jobId'],
                                                         ),
-                                                      ).then((value) {
-                                                        //Success ແມ່ນຄ່າທີ່ໄດ້ຈາກການ Navigator.pop ທີ່ api Save Job or unSave Job ເຮັດວຽກ
-                                                        if (value[0] ==
-                                                            'Success') {
-                                                          setState(() {
-                                                            _statusShowLoading =
-                                                                true;
-                                                          });
-                                                          onGoBack(value);
-                                                        }
-                                                      });
-                                                    }
-                                                  },
-                                                  child: Container(
-                                                    color: Colors.transparent,
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        //
-                                                        //
-                                                        //Logo Company and Status
-                                                        Container(
-                                                          child: Row(
-                                                            children: [
-                                                              //
-                                                              //
-                                                              //Company Logo/Name
-                                                              Expanded(
-                                                                child:
+                                                      ),
+                                                    ).then((value) {
+                                                      //Success ແມ່ນຄ່າທີ່ໄດ້ຈາກການ Navigator.pop ທີ່ api Save Job or unSave Job ເຮັດວຽກ
+                                                      if (value[0] ==
+                                                          'Success') {
+                                                        setState(() {
+                                                          _statusShowLoading =
+                                                              true;
+                                                        });
+                                                        onGoBack(value);
+                                                      }
+                                                    });
+                                                  }
+                                                },
+                                                child: Container(
+                                                  color: Colors.transparent,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      //
+                                                      //
+                                                      //Logo Company and Status
+                                                      Container(
+                                                        child: Row(
+                                                          children: [
+                                                            //
+                                                            //
+                                                            //Company Logo/Name
+                                                            Expanded(
+                                                              child: Container(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .only(
+                                                                  top: 15,
+                                                                  left: 15,
+                                                                  right: 15,
+                                                                ),
+                                                                child: Row(
+                                                                  children: [
                                                                     Container(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .only(
-                                                                    top: 15,
-                                                                    left: 15,
-                                                                    right: 15,
-                                                                  ),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Container(
-                                                                        width:
-                                                                            60,
-                                                                        height:
-                                                                            60,
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          border:
-                                                                              Border.all(
-                                                                            color:
-                                                                                AppColors.borderSecondary,
-                                                                          ),
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(10),
+                                                                      width: 60,
+                                                                      height:
+                                                                          60,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        border:
+                                                                            Border.all(
                                                                           color:
-                                                                              AppColors.backgroundWhite,
+                                                                              AppColors.borderSecondary,
                                                                         ),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10),
+                                                                        color: AppColors
+                                                                            .backgroundWhite,
+                                                                      ),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            5),
                                                                         child:
-                                                                            Padding(
-                                                                          padding: const EdgeInsets
-                                                                              .all(
-                                                                              5),
+                                                                            ClipRRect(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8),
                                                                           child:
-                                                                              ClipRRect(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(8),
-                                                                            child:
-                                                                                Center(
-                                                                              child: _logo == ""
-                                                                                  ? Image.asset(
-                                                                                      'assets/image/no-image-available.png',
-                                                                                      fit: BoxFit.contain,
-                                                                                    )
-                                                                                  : Image.network(
-                                                                                      "https://storage.googleapis.com/108-bucket/${_logo}",
-                                                                                      fit: BoxFit.contain,
-                                                                                      errorBuilder: (context, error, stackTrace) {
-                                                                                        return Image.asset(
-                                                                                          'assets/image/no-image-available.png',
-                                                                                          fit: BoxFit.contain,
-                                                                                        ); // Display an error message
-                                                                                      },
-                                                                                    ),
-                                                                            ),
+                                                                              Center(
+                                                                            child: _logo == ""
+                                                                                ? Image.asset(
+                                                                                    'assets/image/no-image-available.png',
+                                                                                    fit: BoxFit.contain,
+                                                                                  )
+                                                                                : Image.network(
+                                                                                    "https://storage.googleapis.com/108-bucket/${_logo}",
+                                                                                    fit: BoxFit.contain,
+                                                                                    errorBuilder: (context, error, stackTrace) {
+                                                                                      return Image.asset(
+                                                                                        'assets/image/no-image-available.png',
+                                                                                        fit: BoxFit.contain,
+                                                                                      ); // Display an error message
+                                                                                    },
+                                                                                  ),
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                      SizedBox(
-                                                                          width:
-                                                                              15),
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            15),
 
-                                                                      //
-                                                                      //
-                                                                      //Company Name
-                                                                      Expanded(
-                                                                        child:
-                                                                            Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Text(
-                                                                              "${_companyName}",
-                                                                              style: bodyTextMinNormal(null, null, null),
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                            ),
-                                                                            Text(
-                                                                              "${getTimeAgo(_dateTimeNow, openDate)}",
-                                                                              style: bodyTextSmall(null, null, null),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      )
-                                                                    ],
-                                                                  ),
+                                                                    //
+                                                                    //
+                                                                    //Company Name
+                                                                    Expanded(
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Text(
+                                                                            "${_companyName}",
+                                                                            style: bodyTextMinNormal(
+                                                                                null,
+                                                                                null,
+                                                                                null),
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                          ),
+                                                                          Text(
+                                                                            "${getTimeAgo(_dateTimeNow, openDate)}",
+                                                                            style: bodyTextSmall(
+                                                                                null,
+                                                                                null,
+                                                                                null),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    )
+                                                                  ],
                                                                 ),
                                                               ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 15,
-                                                        ),
-
-                                                        //
-                                                        //
-                                                        //Check _tag == Highlight
-                                                        //Position
-                                                        Container(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                            horizontal: 15,
-                                                          ),
-                                                          child: Row(
-                                                            children: [
-                                                              Expanded(
-                                                                child: Text(
-                                                                  "${_jobTitle}",
-                                                                  style:
-                                                                      bodyTextSuperMaxNormal(
-                                                                    null,
-                                                                    _tag == "Highlight"
-                                                                        ? AppColors
-                                                                            .fontWaring
-                                                                        : null,
-                                                                    FontWeight
-                                                                        .bold,
-                                                                  ),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                  maxLines: 2,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 15,
-                                                        ),
-
-                                                        //
-                                                        //
-                                                        //Work Location
-                                                        Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                            left: 15,
-                                                            right: 15,
-                                                          ),
-                                                          child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                "\uf5a0",
-                                                                style: fontAwesomeLight(
-                                                                    null,
-                                                                    12,
-                                                                    AppColors
-                                                                        .iconGrayOpacity,
-                                                                    null),
-                                                              ),
-                                                              SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  "${_workLocation}",
-                                                                  style:
-                                                                      bodyTextSmall(
-                                                                          null,
-                                                                          null,
-                                                                          null),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                  maxLines: 1,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-
-                                                        //
-                                                        //
-                                                        //Start Date to End Date
-                                                        Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                            left: 15,
-                                                            right: 15,
-                                                          ),
-                                                          child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                "\uf073",
-                                                                style: fontAwesomeLight(
-                                                                    null,
-                                                                    12,
-                                                                    AppColors
-                                                                        .iconGrayOpacity,
-                                                                    null),
-                                                              ),
-                                                              SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                              Text(
-                                                                '${_openDate}',
-                                                                style:
-                                                                    bodyTextSmall(
-                                                                        null,
-                                                                        null,
-                                                                        null),
-                                                              ),
-                                                              Text(' - '),
-                                                              Text(
-                                                                "${_closeDate}",
-                                                                style:
-                                                                    bodyTextSmall(
-                                                                        null,
-                                                                        null,
-                                                                        null),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 15,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-
-                                                Divider(
-                                                  height: 1,
-                                                  color: AppColors
-                                                      .borderGreyOpacity,
-                                                ),
-
-                                                //
-                                                //
-                                                //Bottom card jobs button unsave/unhide
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    if (_typeMyJob ==
-                                                        "SeekerHideJob")
-                                                      Material(
-                                                        color:
-                                                            Colors.transparent,
-                                                        child: InkWell(
-                                                          onTap: () async {
-                                                            FocusScope.of(
-                                                                    context)
-                                                                .requestFocus(
-                                                                    focusNode);
-                                                            print(
-                                                                "press button unhide");
-                                                            var result =
-                                                                await showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    builder:
-                                                                        (context) {
-                                                                      return NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel(
-                                                                        title: "unhide job"
-                                                                            .tr,
-                                                                        smallText:
-                                                                            "unhide_job_explain".tr,
-                                                                        contentText:
-                                                                            "${i['jobTitle']}",
-                                                                        textButtonLeft:
-                                                                            'cancel'.tr,
-                                                                        textButtonRight:
-                                                                            'confirm'.tr,
-                                                                      );
-                                                                    });
-                                                            if (result ==
-                                                                'Ok') {
-                                                              print("press ok");
-                                                              _removeJobsSearchSeekerLocal(
-                                                                  i['_id']);
-                                                              unSaveUnHideMyJob(
-                                                                i['_id'],
-                                                                _typeMyJob,
-                                                                i['jobTitle'],
-                                                              );
-                                                            }
-                                                          },
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    8),
-                                                          ),
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    15),
-                                                            child: Row(
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .ban,
-                                                                  size: IconSize
-                                                                      .xsIcon,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Text(
-                                                                  "hidded".tr,
-                                                                  style:
-                                                                      bodyTextMinNormal(
-                                                                          null,
-                                                                          null,
-                                                                          null),
-                                                                ),
-                                                              ],
                                                             ),
-                                                          ),
+                                                          ],
                                                         ),
                                                       ),
-                                                    if (_typeMyJob ==
-                                                        "SeekerSaveJob")
-                                                      Material(
-                                                        color:
-                                                            Colors.transparent,
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            FocusScope.of(
-                                                                    context)
-                                                                .requestFocus(
-                                                                    focusNode);
-                                                            print(
-                                                                "press button unsave");
-                                                            setState(() {
-                                                              i['isSaved'] =
-                                                                  !i['isSaved'];
-                                                            });
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+
+                                                      //
+                                                      //
+                                                      //Check _tag == Highlight
+                                                      //Position
+                                                      Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 15,
+                                                        ),
+                                                        child: Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Text(
+                                                                "${_jobTitle}",
+                                                                style:
+                                                                    bodyTextSuperMaxNormal(
+                                                                  null,
+                                                                  _tag == "Highlight"
+                                                                      ? AppColors
+                                                                          .fontWaring
+                                                                      : null,
+                                                                  FontWeight
+                                                                      .bold,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 2,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+
+                                                      //
+                                                      //
+                                                      //Work Location
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 15,
+                                                          right: 15,
+                                                        ),
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              "\uf5a0",
+                                                              style: fontAwesomeLight(
+                                                                  null,
+                                                                  12,
+                                                                  AppColors
+                                                                      .iconGrayOpacity,
+                                                                  null),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Expanded(
+                                                              child: Text(
+                                                                "${_workLocation}",
+                                                                style:
+                                                                    bodyTextSmall(
+                                                                        null,
+                                                                        null,
+                                                                        null),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+
+                                                      //
+                                                      //
+                                                      //Start Date to End Date
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 15,
+                                                          right: 15,
+                                                        ),
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              "\uf073",
+                                                              style: fontAwesomeLight(
+                                                                  null,
+                                                                  12,
+                                                                  AppColors
+                                                                      .iconGrayOpacity,
+                                                                  null),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Text(
+                                                              '${_openDate}',
+                                                              style:
+                                                                  bodyTextSmall(
+                                                                      null,
+                                                                      null,
+                                                                      null),
+                                                            ),
+                                                            Text(' - '),
+                                                            Text(
+                                                              "${_closeDate}",
+                                                              style:
+                                                                  bodyTextSmall(
+                                                                      null,
+                                                                      null,
+                                                                      null),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+
+                                              Divider(
+                                                height: 1,
+                                                color:
+                                                    AppColors.borderGreyOpacity,
+                                              ),
+
+                                              //
+                                              //
+                                              //Bottom card jobs button unsave/unhide
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  if (_typeMyJob ==
+                                                      "SeekerHideJob")
+                                                    Material(
+                                                      color: Colors.transparent,
+                                                      child: InkWell(
+                                                        onTap: () async {
+                                                          FocusScope.of(context)
+                                                              .requestFocus(
+                                                                  focusNode);
+                                                          print(
+                                                              "press button unhide");
+                                                          var result =
+                                                              await showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (context) {
+                                                                    return NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel(
+                                                                      title:
+                                                                          "unhide job"
+                                                                              .tr,
+                                                                      smallText:
+                                                                          "unhide_job_explain"
+                                                                              .tr,
+                                                                      contentText:
+                                                                          "${i['jobTitle']}",
+                                                                      textButtonLeft:
+                                                                          'cancel'
+                                                                              .tr,
+                                                                      textButtonRight:
+                                                                          'confirm'
+                                                                              .tr,
+                                                                    );
+                                                                  });
+                                                          if (result == 'Ok') {
+                                                            print("press ok");
                                                             _removeJobsSearchSeekerLocal(
                                                                 i['_id']);
                                                             unSaveUnHideMyJob(
@@ -1455,721 +975,124 @@ class _MyJobsState extends State<MyJobs> {
                                                               _typeMyJob,
                                                               i['jobTitle'],
                                                             );
-                                                          },
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    8),
-                                                          ),
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    15),
-                                                            child: Row(
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .solidHeart,
-                                                                  size: IconSize
-                                                                      .xsIcon,
-                                                                  color: AppColors
-                                                                      .iconPrimary,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Text(
-                                                                  "saved".tr,
-                                                                  style:
-                                                                      bodyTextMinNormal(
-                                                                          null,
-                                                                          null,
-                                                                          null),
-                                                                ),
-                                                              ],
-                                                            ),
+                                                          }
+                                                        },
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  8),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  15),
+                                                          child: Row(
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .ban,
+                                                                size: IconSize
+                                                                    .xsIcon,
+                                                              ),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Text(
+                                                                "hidded".tr,
+                                                                style:
+                                                                    bodyTextMinNormal(
+                                                                        null,
+                                                                        null,
+                                                                        null),
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    childCount: _listMyJobs.length + 1,
-                                  ),
-                                ),
-
-                              if (_typeMyJob == "SeekerRecommendJob")
-                                SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (BuildContext context, int indexRecommend) {
-                                      if (indexRecommend ==
-                                          _listRecommendJobs.length) {
-                                        return _hasMoreData
-                                            ? Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 0,
-                                                        vertical: 10),
-                                                child: Container(),
-                                              )
-                                            : Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Center(
-                                                    child: Text(
-                                                        'no have data'.tr)),
-                                              );
-                                      }
-                                      dynamic i =
-                                          _listRecommendJobs[indexRecommend];
-
-                                      _logo = i['employerId']['logo'];
-                                      _jobTitle = i['title'];
-                                      _companyName =
-                                          i['employerId']['companyName'];
-                                      _workLocation =
-                                          i['workingLocationId'][0]['name'];
-                                      _openDate = i['openingDate'];
-                                      _closeDate = i['closingDate'];
-                                      // _isClick = i['isClick'].toString();
-                                      // _tag = i['tag'];
-                                      // _disablePeople = i['disabledPeople'];
-                                      // _isSaved = i['isSaved'];
-                                      // _views = i['isClick'].toString();
-
-                                      //
-                                      //Open Date
-                                      //pars ISO to Flutter DateTime
-                                      parsDateTime(
-                                          value: '',
-                                          currentFormat: '',
-                                          desiredFormat: '');
-                                      DateTime openDate = parsDateTime(
-                                          value: _openDate,
-                                          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                          desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                      //
-                                      //Format to string 13 Feb 2024
-                                      _openDate = DateFormat('dd MMM yyyy')
-                                          .format(openDate);
-
-                                      //
-                                      //Close Date
-                                      //pars ISO to Flutter DateTime
-                                      parsDateTime(
-                                          value: '',
-                                          currentFormat: '',
-                                          desiredFormat: '');
-                                      DateTime closeDate = parsDateTime(
-                                          value: _closeDate,
-                                          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                          desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                      //
-                                      //Format to string 13 Feb 2024
-                                      _closeDate = DateFormat("dd MMM yyyy")
-                                          .format(closeDate);
-                                      return Container(
-                                        margin: EdgeInsets.only(bottom: 15),
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 20),
-                                        child: Slidable(
-                                          //
-                                          //Specify a key if the Slidable  is dismissible.
-                                          key: UniqueKey(),
-                                          //
-                                          //The end action pane is the one at the right or the bottom side.
-                                          endActionPane: ActionPane(
-                                            motion: ScrollMotion(),
-                                            //
-                                            //A pane can dismiss the Slidable.
-                                            dismissible: DismissiblePane(
-                                              onDismissed: () {
-                                                FocusScope.of(context)
-                                                    .requestFocus(focusNode);
-                                                Future.delayed(
-                                                    Duration(milliseconds: 300),
-                                                    () {
-                                                  _removeJobsSearchSeekerLocal(
-                                                      i['_id']);
+                                                    ),
                                                   if (_typeMyJob ==
-                                                      "SeekerSaveJob") {
-                                                    print("Slidable to unSave");
-                                                    unSaveUnHideMyJob(
-                                                        i['_id'],
-                                                        _typeMyJob,
-                                                        i['jobTitle']);
-                                                  } else if (_typeMyJob ==
-                                                      'SeekerHideJob') {
-                                                    print("Slidable to unHide");
-                                                    unSaveUnHideMyJob(
-                                                        i['_id'],
-                                                        _typeMyJob,
-                                                        i['jobTitle']);
-                                                  }
-                                                });
-                                              },
-                                            ),
-                                            children: [
-                                              if (_typeMyJob == "SeekerSaveJob")
-                                                SlidableAction(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(20),
-                                                  ),
-                                                  backgroundColor:
-                                                      AppColors.lightPrimary,
-                                                  foregroundColor:
-                                                      AppColors.primary,
-                                                  icon: FontAwesomeIcons
-                                                      .solidHeart,
-                                                  label: 'unsave'.tr,
-                                                  onPressed: (context) {
-                                                    FocusScope.of(context)
-                                                        .requestFocus(
-                                                            focusNode);
-                                                    print("press unsave");
-                                                    _removeJobsSearchSeekerLocal(
-                                                        i['_id']);
-                                                    unSaveUnHideMyJob(
-                                                        i['_id'],
-                                                        _typeMyJob,
-                                                        i['jobTitle']);
-                                                  },
-                                                ),
-                                              if (_typeMyJob == "SeekerHideJob")
-                                                SlidableAction(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(20),
-                                                  ),
-                                                  backgroundColor:
-                                                      AppColors.buttonWarning,
-                                                  foregroundColor:
-                                                      AppColors.fontWhite,
-                                                  icon: FontAwesomeIcons
-                                                      .rotateLeft,
-                                                  label: 'unhide'.tr,
-                                                  onPressed: (constext) async {
-                                                    FocusScope.of(context)
-                                                        .requestFocus(
-                                                            focusNode);
-                                                    print("press hidded");
-                                                    var result =
-                                                        await showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel(
-                                                                title:
-                                                                    "unhide job"
-                                                                        .tr,
-                                                                smallText:
-                                                                    "unhide_job_explain"
-                                                                        .tr,
-                                                                contentText:
-                                                                    "${i['jobTitle']}",
-                                                                textButtonLeft:
-                                                                    'cancel'.tr,
-                                                                textButtonRight:
-                                                                    'confirm'
-                                                                        .tr,
-                                                              );
-                                                            });
-                                                    if (result == 'Ok') {
-                                                      print("press ok");
-                                                      _removeJobsSearchSeekerLocal(
-                                                          i['_id']);
-                                                      unSaveUnHideMyJob(
-                                                        i['_id'],
-                                                        _typeMyJob,
-                                                        i['jobTitle'],
-                                                      );
-                                                    }
-                                                  },
-                                                ),
+                                                      "SeekerSaveJob")
+                                                    Material(
+                                                      color: Colors.transparent,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          FocusScope.of(context)
+                                                              .requestFocus(
+                                                                  focusNode);
+                                                          print(
+                                                              "press button unsave");
+                                                          setState(() {
+                                                            i['isSaved'] =
+                                                                !i['isSaved'];
+                                                          });
+                                                          _removeJobsSearchSeekerLocal(
+                                                              i['_id']);
+                                                          unSaveUnHideMyJob(
+                                                            i['_id'],
+                                                            _typeMyJob,
+                                                            i['jobTitle'],
+                                                          );
+                                                        },
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  8),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  15),
+                                                          child: Row(
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .solidHeart,
+                                                                size: IconSize
+                                                                    .xsIcon,
+                                                                color: AppColors
+                                                                    .iconPrimary,
+                                                              ),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Text(
+                                                                "saved".tr,
+                                                                style:
+                                                                    bodyTextMinNormal(
+                                                                        null,
+                                                                        null,
+                                                                        null),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
                                             ],
                                           ),
-
-                                          //
-                                          //
-                                          //
-                                          //
-                                          //
-                                          //Card my job
-                                          child: Container(
-                                            decoration: boxDecoration(
-                                                null,
-                                                _tag == "Highlight"
-                                                    ? AppColors.lightOrange
-                                                    : AppColors.backgroundWhite,
-                                                _tag == "Highlight"
-                                                    ? AppColors.borderWaring
-                                                    : null,
-                                                // AppColors.backgroundWhite,
-                                                // null,
-                                                3),
-                                            child: Column(
-                                              children: [
-                                                //
-                                                //
-                                                //Content card jobs
-                                                GestureDetector(
-                                                  //
-                                                  //
-                                                  //press to MyJobDetail
-                                                  onTap: () {
-                                                    FocusScope.of(context)
-                                                        .requestFocus(
-                                                            focusNode);
-                                                    if (_typeMyJob !=
-                                                        "SeekerHideJob") {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              JobSearchDetail(
-                                                            jobId: i['_id'],
-                                                          ),
-                                                        ),
-                                                      ).then((value) {
-                                                        //Success ແມ່ນຄ່າທີ່ໄດ້ຈາກການ Navigator.pop ທີ່ api Save Job or unSave Job ເຮັດວຽກ
-                                                        if (value[0] ==
-                                                            'Success') {
-                                                          setState(() {
-                                                            _statusShowLoading =
-                                                                true;
-                                                          });
-                                                          onGoBack(value);
-                                                        }
-                                                      });
-                                                    }
-                                                  },
-                                                  child: Container(
-                                                    color: Colors.transparent,
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        //
-                                                        //
-                                                        //Logo Company and Status
-                                                        Container(
-                                                          child: Row(
-                                                            children: [
-                                                              //
-                                                              //
-                                                              //Company Logo/Name
-                                                              Expanded(
-                                                                child:
-                                                                    Container(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .only(
-                                                                    top: 15,
-                                                                    left: 15,
-                                                                    right: 15,
-                                                                  ),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Container(
-                                                                        width:
-                                                                            60,
-                                                                        height:
-                                                                            60,
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          border:
-                                                                              Border.all(
-                                                                            color:
-                                                                                AppColors.borderSecondary,
-                                                                          ),
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(10),
-                                                                          color:
-                                                                              AppColors.backgroundWhite,
-                                                                        ),
-                                                                        child:
-                                                                            Padding(
-                                                                          padding: const EdgeInsets
-                                                                              .all(
-                                                                              5),
-                                                                          child:
-                                                                              ClipRRect(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(8),
-                                                                            child:
-                                                                                Center(
-                                                                              child: _logo == ""
-                                                                                  ? Image.asset(
-                                                                                      'assets/image/no-image-available.png',
-                                                                                      fit: BoxFit.contain,
-                                                                                    )
-                                                                                  : Image.network(
-                                                                                      "https://storage.googleapis.com/108-bucket/${_logo}",
-                                                                                      fit: BoxFit.contain,
-                                                                                      errorBuilder: (context, error, stackTrace) {
-                                                                                        return Image.asset(
-                                                                                          'assets/image/no-image-available.png',
-                                                                                          fit: BoxFit.contain,
-                                                                                        ); // Display an error message
-                                                                                      },
-                                                                                    ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      SizedBox(
-                                                                          width:
-                                                                              15),
-
-                                                                      //
-                                                                      //
-                                                                      //Company Name
-                                                                      Expanded(
-                                                                        child:
-                                                                            Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Text(
-                                                                              "${_companyName}",
-                                                                              style: bodyTextMinNormal(null, null, null),
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                            ),
-                                                                            Text(
-                                                                              "${getTimeAgo(_dateTimeNow, openDate)}",
-                                                                              style: bodyTextSmall(null, null, null),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 15,
-                                                        ),
-
-                                                        //
-                                                        //
-                                                        //Check _tag == Highlight
-                                                        //Position
-                                                        Container(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                            horizontal: 15,
-                                                          ),
-                                                          child: Row(
-                                                            children: [
-                                                              Expanded(
-                                                                child: Text(
-                                                                  "${_jobTitle}",
-                                                                  style:
-                                                                      bodyTextSuperMaxNormal(
-                                                                    null,
-                                                                    _tag == "Highlight"
-                                                                        ? AppColors
-                                                                            .fontWaring
-                                                                        : null,
-                                                                    FontWeight
-                                                                        .bold,
-                                                                  ),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                  maxLines: 2,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 15,
-                                                        ),
-
-                                                        //
-                                                        //
-                                                        //Work Location
-                                                        Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                            left: 15,
-                                                            right: 15,
-                                                          ),
-                                                          child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                "\uf5a0",
-                                                                style: fontAwesomeLight(
-                                                                    null,
-                                                                    12,
-                                                                    AppColors
-                                                                        .iconGrayOpacity,
-                                                                    null),
-                                                              ),
-                                                              SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  "${_workLocation}",
-                                                                  style:
-                                                                      bodyTextSmall(
-                                                                          null,
-                                                                          null,
-                                                                          null),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                  maxLines: 1,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-
-                                                        //
-                                                        //
-                                                        //Start Date to End Date
-                                                        Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                            left: 15,
-                                                            right: 15,
-                                                          ),
-                                                          child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                "\uf073",
-                                                                style: fontAwesomeLight(
-                                                                    null,
-                                                                    12,
-                                                                    AppColors
-                                                                        .iconGrayOpacity,
-                                                                    null),
-                                                              ),
-                                                              SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                              Text(
-                                                                '${_openDate}',
-                                                                style:
-                                                                    bodyTextSmall(
-                                                                        null,
-                                                                        null,
-                                                                        null),
-                                                              ),
-                                                              Text(' - '),
-                                                              Text(
-                                                                "${_closeDate}",
-                                                                style:
-                                                                    bodyTextSmall(
-                                                                        null,
-                                                                        null,
-                                                                        null),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 15,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-
-                                                // Divider(
-                                                //   height: 1,
-                                                //   color: AppColors.borderGreyOpacity,
-                                                // ),
-
-                                                //
-                                                //
-                                                //Bottom card jobs button unsave/unhide
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    if (_typeMyJob ==
-                                                        "SeekerHideJob")
-                                                      Material(
-                                                        color:
-                                                            Colors.transparent,
-                                                        child: InkWell(
-                                                          onTap: () async {
-                                                            FocusScope.of(
-                                                                    context)
-                                                                .requestFocus(
-                                                                    focusNode);
-                                                            print(
-                                                                "press button unhide");
-                                                            var result =
-                                                                await showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    builder:
-                                                                        (context) {
-                                                                      return NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel(
-                                                                        title: "unhide job"
-                                                                            .tr,
-                                                                        smallText:
-                                                                            "unhide_job_explain".tr,
-                                                                        contentText:
-                                                                            "${i['jobTitle']}",
-                                                                        textButtonLeft:
-                                                                            'cancel'.tr,
-                                                                        textButtonRight:
-                                                                            'confirm'.tr,
-                                                                      );
-                                                                    });
-                                                            if (result ==
-                                                                'Ok') {
-                                                              print("press ok");
-                                                              _removeJobsSearchSeekerLocal(
-                                                                  i['_id']);
-                                                              unSaveUnHideMyJob(
-                                                                i['_id'],
-                                                                _typeMyJob,
-                                                                i['jobTitle'],
-                                                              );
-                                                            }
-                                                          },
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    8),
-                                                          ),
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    15),
-                                                            child: Row(
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .ban,
-                                                                  size: IconSize
-                                                                      .xsIcon,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Text(
-                                                                  "hidded".tr,
-                                                                  style:
-                                                                      bodyTextMinNormal(
-                                                                          null,
-                                                                          null,
-                                                                          null),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    if (_typeMyJob ==
-                                                        "SeekerSaveJob")
-                                                      Material(
-                                                        color:
-                                                            Colors.transparent,
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            FocusScope.of(
-                                                                    context)
-                                                                .requestFocus(
-                                                                    focusNode);
-                                                            print(
-                                                                "press button unsave");
-                                                            setState(() {
-                                                              i['isSaved'] =
-                                                                  !i['isSaved'];
-                                                            });
-                                                            _removeJobsSearchSeekerLocal(
-                                                                i['_id']);
-                                                            unSaveUnHideMyJob(
-                                                              i['_id'],
-                                                              _typeMyJob,
-                                                              i['jobTitle'],
-                                                            );
-                                                          },
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    8),
-                                                          ),
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    15),
-                                                            child: Row(
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .solidHeart,
-                                                                  size: IconSize
-                                                                      .xsIcon,
-                                                                  color: AppColors
-                                                                      .iconPrimary,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Text(
-                                                                  "saved".tr,
-                                                                  style:
-                                                                      bodyTextMinNormal(
-                                                                          null,
-                                                                          null,
-                                                                          null),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
                                         ),
-                                      );
-                                    },
-                                    childCount: _listRecommendJobs.length + 1,
-                                  ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : ScreenNoData(
+                                  faIcon:
+                                      FontAwesomeIcons.fileCircleExclamation,
+                                  colorIcon: AppColors.primary,
+                                  text: "no have data".tr,
+                                  colorText: AppColors.primary,
                                 ),
+                        ),
 
-                              // if (_isLoadingMoreData)
-                              //   Padding(
-                              //     padding: const EdgeInsets.all(0),
-                              //     child: Center(child: CircularProgressIndicator()),
-                              //   ),
-                            ],
+                        if (_isLoadingMoreData)
+                          Padding(
+                            padding: const EdgeInsets.all(0),
+                            child: Center(child: CircularProgressIndicator()),
                           ),
-                        )
                       ],
                     ),
                   ),

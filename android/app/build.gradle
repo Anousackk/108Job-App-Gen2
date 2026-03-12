@@ -62,8 +62,8 @@ android {
         minSdkVersion 23
         targetSdk 35
         //Production
-        versionCode 123
-        versionName "3.6.3"
+        versionCode 125
+        versionName "3.6.5"
         multiDexEnabled true
         //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

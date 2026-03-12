@@ -467,6 +467,7 @@ class SimpleTextFieldSingleValidate extends StatefulWidget {
     this.prefixIcon,
     this.contenPadding,
     this.enabledBorder,
+    this.focusNode,
   }) : super(key: key);
   final String? hintText;
   // final TextStyle? hintStyleColor;
@@ -488,6 +489,7 @@ class SimpleTextFieldSingleValidate extends StatefulWidget {
   final Widget? suffixIcon, prefixIcon;
   final EdgeInsetsGeometry? contenPadding;
   final InputBorder? enabledBorder;
+  final FocusNode? focusNode;
 
   @override
   State<SimpleTextFieldSingleValidate> createState() =>
@@ -506,6 +508,7 @@ class _SimpleTextFieldSingleValidateState
         onTap: widget.press,
         onChanged: widget.changed,
         controller: widget.codeController,
+        focusNode: widget.focusNode,
         enabled: widget.enabled == null ? true : widget.enabled,
         toolbarOptions: ToolbarOptions(
           paste: true,

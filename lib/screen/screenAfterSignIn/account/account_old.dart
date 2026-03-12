@@ -124,7 +124,6 @@ class _AccountState extends State<Account> {
           return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
             contentText: "already_registered_attend".tr,
-            textButton: "ok".tr,
           );
         },
       );
@@ -309,7 +308,7 @@ class _AccountState extends State<Account> {
 
       //
       //
-      // Android 13(API 33+)
+      // Android 13+ (API 33+)
       if (sdkInt >= 33) {
         var statusPhotosAndroid = await Permission.photos.status;
 
@@ -432,7 +431,7 @@ class _AccountState extends State<Account> {
       }
       //
       //
-      // Below Android 13 (API 33)
+      // Android < 13 (API ≤ 32)
       else {
         var statusStorageAndroid = await Permission.storage.status;
 

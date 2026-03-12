@@ -3,11 +3,13 @@
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/provider/eventAvailableProvider.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class QRScanner extends StatefulWidget {
@@ -267,6 +269,84 @@ class _QRScannerState extends State<QRScanner> {
     }
   }
 
+  // pressCheckInBoothCompanyEvent(String qrString) async {
+  //   final eventAvailableProvider = context.read<EventAvailableProvider>();
+  //   // Display AlertDialog Loading First
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) {
+  //       return CustomLoadingLogoCircle();
+  //     },
+  //   );
+  //   final res =
+  //       await eventAvailableProvider.checkInBoothCompanyEvent(qrString, "");
+  //   final statusCode = res?["statusCode"];
+  //   print("${res}");
+  //   if (!context.mounted) return;
+  //   // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
+  //   Navigator.pop(context);
+  //   if (statusCode == 200 || statusCode == 201) {
+  //     await showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return NewVer2CustAlertDialogSuccessBtnConfirm(
+  //           title: "successfully".tr,
+  //           contentText: "Scan QR Code Successfully".tr,
+  //           textButton: "ok".tr,
+  //           press: () async {
+  //             // Close dialog
+  //             Navigator.of(context).pop();
+  //             // Navigate back to registerEvent.dart
+  //             if (Navigator.canPop(context)) {
+  //               Navigator.pop(context);
+  //             }
+  //           },
+  //         );
+  //       },
+  //     );
+  //     await eventAvailableProvider.fetchCheckInBoothBySeeker();
+  //   } else {
+  //     await showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return NewVer5CustAlertDialogWarningBtnConfirm(
+  //           title: "warning".tr,
+  //           contentText: "${res?["body"]?["message"]}",
+  //           textButton: "ok".tr,
+  //           press: () {
+  //             // Close dialog
+  //             Navigator.pop(context);
+  //             // Navigate back to registerEvent.dart
+  //             if (Navigator.canPop(context)) {
+  //               Navigator.pop(context);
+  //             }
+  //           },
+  //         );
+  //       },
+  //     );
+  //   }
+  // }
+
+  onDetectBoothVisitStamp(BarcodeCapture barcode) async {
+    final eventAvailableProvider = context.read<EventAvailableProvider>();
+    final qrCode = barcode.barcodes.firstOrNull?.rawValue;
+    print("Print QR Code: ${qrCode}");
+
+    if (qrCode != null) {
+      // ປິດສະແກນ
+      await scannerController.stop();
+      setState(() {
+        isScannerActive = false;
+      });
+      print("Scanned QR Code: $qrCode");
+
+      // pressCheckInBoothCompanyEvent(code.toString());
+      await eventAvailableProvider.checkInBoothCompanyEvent(
+          context, qrCode.toString(), "");
+    }
+  }
+
   @override
   void dispose() {
     scannerController.dispose();
@@ -286,7 +366,7 @@ class _QRScannerState extends State<QRScanner> {
       body: MobileScanner(
         key: scannerKey, //force rebuild when key changes
         controller: scannerController,
-        onDetect: onDetect,
+        onDetect: onDetectBoothVisitStamp,
         overlayBuilder: (context, constraints) {
           return isScannerActive
               ? Center(

@@ -292,7 +292,7 @@ class _AccountRenewState extends State<AccountRenew> {
 
       //
       //
-      // Android 13(API 33+)
+      // Android 13+ (API 33+)
       if (sdkInt >= 33) {
         var statusPhotosAndroid = await Permission.photos.status;
 
@@ -415,7 +415,7 @@ class _AccountRenewState extends State<AccountRenew> {
       }
       //
       //
-      // Below Android 13 (API 33)
+      // Android < 13 (API ≤ 32)
       else {
         var statusStorageAndroid = await Permission.storage.status;
 

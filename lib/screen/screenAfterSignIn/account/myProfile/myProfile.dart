@@ -100,7 +100,6 @@ class _MyProfileState extends State<MyProfile>
           return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
             contentText: "${res?["body"]?["message"]}",
-            textButton: "ok".tr,
           );
         },
       );

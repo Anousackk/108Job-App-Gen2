@@ -23,14 +23,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class Account extends StatefulWidget {
-  const Account(
-      {Key? key,
-      this.callBackToMyJobsSavedJob,
-      this.callBackToMyJobsAppliedJob,
-      this.hasInternet})
-      : super(key: key);
-  final VoidCallback? callBackToMyJobsSavedJob;
-  final Function(dynamic)? callBackToMyJobsAppliedJob;
+  const Account({Key? key, this.hasInternet}) : super(key: key);
+
   final hasInternet;
 
   @override
@@ -189,34 +183,91 @@ class _AccountState extends State<Account> {
 
       //
       //
-      // Android 13(API 33+)
+      // Android 13+ (API 33+)
       if (sdkInt >= 33) {
-        var statusPhotosAndroid = await Permission.photos.status;
+        // var statusPhotosAndroid = await Permission.photos.status;
 
-        print("Platform Android: " + statusPhotosAndroid.toString());
+        // print("Platform Android: " + statusPhotosAndroid.toString());
 
-        if (statusPhotosAndroid.isGranted) {
-          print("statusPhotosAndroid isGranted");
-          final ImagePicker _picker = ImagePicker();
-          final XFile? image = await _picker.pickImage(source: source);
+        // if (statusPhotosAndroid.isGranted) {
+        print("statusPhotosAndroid isGranted");
+        final ImagePicker _picker = ImagePicker();
+        final XFile? image = await _picker.pickImage(source: source);
 
-          //
-          //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
-          if (image == null) return;
+        //
+        //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
+        if (image == null) return;
 
+        setState(() {
+          _imageLoading = true;
+        });
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
+        final allowedExtensions = ['png', 'jpg', 'jpeg'];
+        final fileExtension = image.path.split('.').last.toLowerCase();
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
+        if (!allowedExtensions.contains(fileExtension)) {
+          print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
           setState(() {
-            _imageLoading = true;
+            _imageLoading = false;
           });
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return CustAlertDialogWarningWithoutBtn(
+                title: "warning".tr,
+                contentText: "profile_image_support".tr,
+              );
+            },
+          );
+          return;
+        }
+
+        File fileTemp = File(image.path);
+        setState(() {
+          _image = fileTemp;
+        });
+        var strImage = image.path;
+
+        print("strImage: " + strImage.toString());
+
+        //
+        //ຖ້າມີຟາຍຮູບ _image
+        if (_image != null) {
+          //
+          //api upload profile seeker
+          var valUploadFile =
+              await upLoadFile(strImage, uploadProfileApiSeeker);
 
           //
-          //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
-          final allowedExtensions = ['png', 'jpg', 'jpeg'];
-          final fileExtension = image.path.split('.').last.toLowerCase();
+          //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
+          //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
+          if (valUploadFile != null) {
+            print("if valUploadFile: " + valUploadFile.toString());
 
+            _fileValue = valUploadFile['file'];
+            print("fileValue: " + _fileValue.toString());
+
+            if (_fileValue != null || _fileValue != "") {
+              //
+              //api upload or update profile image seeker
+              await uploadOrUpdateProfileImageSeeker();
+
+              profileProvider.fetchProfileSeeker();
+
+              // setState(() {
+              //   profileProvider.imageSrc =
+              //       "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
+              // });
+            }
+          }
           //
-          //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
-          if (!allowedExtensions.contains(fileExtension)) {
-            print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
+          //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
+          else {
+            print("else valUploadFile: " + valUploadFile.toString());
             setState(() {
               _imageLoading = false;
             });
@@ -225,101 +276,44 @@ class _AccountState extends State<Account> {
               builder: (context) {
                 return CustAlertDialogWarningWithoutBtn(
                   title: "warning".tr,
-                  contentText: "profile_image_support".tr,
+                  contentText: "profile_image_size".tr,
                 );
               },
             );
-            return;
           }
-
-          File fileTemp = File(image.path);
-          setState(() {
-            _image = fileTemp;
-          });
-          var strImage = image.path;
-
-          print("strImage: " + strImage.toString());
-
-          //
-          //ຖ້າມີຟາຍຮູບ _image
-          if (_image != null) {
-            //
-            //api upload profile seeker
-            var valUploadFile =
-                await upLoadFile(strImage, uploadProfileApiSeeker);
-
-            //
-            //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
-            //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
-            if (valUploadFile != null) {
-              print("if valUploadFile: " + valUploadFile.toString());
-
-              _fileValue = valUploadFile['file'];
-              print("fileValue: " + _fileValue.toString());
-
-              if (_fileValue != null || _fileValue != "") {
-                //
-                //api upload or update profile image seeker
-                await uploadOrUpdateProfileImageSeeker();
-
-                profileProvider.fetchProfileSeeker();
-
-                // setState(() {
-                //   profileProvider.imageSrc =
-                //       "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
-                // });
-              }
-            }
-            //
-            //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
-            else {
-              print("else valUploadFile: " + valUploadFile.toString());
-              setState(() {
-                _imageLoading = false;
-              });
-              await showDialog(
-                context: context,
-                builder: (context) {
-                  return CustAlertDialogWarningWithoutBtn(
-                    title: "warning".tr,
-                    contentText: "profile_image_size".tr,
-                  );
-                },
-              );
-            }
-          }
-        } else if (statusPhotosAndroid.isDenied) {
-          print("statusPhotosAndroid isDenied");
-
-          await Permission.photos.request();
-        } else {
-          print("statusPhotosAndroid etc...");
-
-          // Display warning dialog
-          await showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) {
-              return NewVer5CustAlertDialogWarningBtnConfirm(
-                title: "warning".tr,
-                contentText: "want_access_photos".tr,
-                textButton: "ok".tr,
-                press: () async {
-                  await openAppSettings();
-
-                  Future.delayed(Duration(seconds: 1), () {
-                    // Close warning dialog
-                    if (Navigator.canPop(context)) Navigator.pop(context);
-                  });
-                },
-              );
-            },
-          );
         }
+        // } else if (statusPhotosAndroid.isDenied) {
+        //   print("statusPhotosAndroid isDenied");
+
+        //   await Permission.photos.request();
+        // } else {
+        //   print("statusPhotosAndroid etc...");
+
+        //   // Display warning dialog
+        //   await showDialog(
+        //     barrierDismissible: false,
+        //     context: context,
+        //     builder: (context) {
+        //       return NewVer5CustAlertDialogWarningBtnConfirm(
+        //         title: "warning".tr,
+        //         contentText: "want_access_photos".tr,
+        //         textButton: "ok".tr,
+        //         press: () async {
+        //           await openAppSettings();
+
+        //           Future.delayed(Duration(seconds: 1), () {
+        //             // Close warning dialog
+        //             if (Navigator.canPop(context)) Navigator.pop(context);
+        //           });
+        //         },
+        //       );
+        //     },
+        //   );
+        // }
       }
       //
       //
-      // Below Android 13 (API 33)
+      // Android < 13 (API ≤ 32)
       else {
         var statusStorageAndroid = await Permission.storage.status;
 
@@ -948,21 +942,22 @@ class _AccountState extends State<Account> {
                         children: [
                           //Save job / ວຽກທີ່ບັນທຶກໄວ້
                           AccountSetting(
-                              prefixIconStr: "\uf004",
-                              text: "saved_job".tr,
-                              amount: "${profileProvider.savedJobs}",
-                              suffixIconStr: "\uf054",
-                              press: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MyJobs(
-                                      myJobStatus: "",
-                                      hasInternet: true,
-                                    ),
+                            prefixIconStr: "\uf004",
+                            text: "saved_job".tr,
+                            amount: "${profileProvider.savedJobs}",
+                            suffixIconStr: "\uf054",
+                            press: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyJobs(
+                                    myJobStatus: "SeekerSaveJob",
+                                    // hasInternet: true,
                                   ),
-                                );
-                              }),
+                                ),
+                              );
+                            },
+                          ),
 
                           //Applied job / ວຽກທີ່ສະໝັກ
                           AccountSetting(
@@ -970,7 +965,17 @@ class _AccountState extends State<Account> {
                             text: "applied_job".tr,
                             amount: "${profileProvider.appliedJobs}",
                             suffixIconStr: "\uf054",
-                            press: () {},
+                            press: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyJobs(
+                                    myJobStatus: "AppliedJob",
+                                    // hasInternet: true,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
 
                           //Submitted CV / ຢື່ນສະໝັກວຽກ
@@ -983,13 +988,13 @@ class _AccountState extends State<Account> {
                           ),
 
                           //Company view profile / ບໍລິສັດເບິ່ງໂປຣໄຟສ
-                          AccountSetting(
-                            prefixIconStr: "\uf1ad",
-                            text: "company_view_profile".tr,
-                            amount: "${profileProvider.epmSavedSeeker}",
-                            suffixIconStr: "\uf054",
-                            press: () {},
-                          ),
+                          // AccountSetting(
+                          //   prefixIconStr: "\uf1ad",
+                          //   text: "company_view_profile".tr,
+                          //   amount: "${profileProvider.epmSavedSeeker}",
+                          //   suffixIconStr: "\uf054",
+                          //   press: () {},
+                          // ),
 
                           //Member Point / ຄະແນນສະສົມ
                           AccountSetting(

@@ -113,6 +113,7 @@ class AppColors {
   static Color success200 = HexColor("#E8FEDF");
   static Color success100 = HexColor("#F9FFF6");
   static Color teal = HexColor("#06BF8B");
+
   // static Color teal = Color(0xFF26A69A);
 
   //cyan
@@ -124,12 +125,22 @@ class AppColors {
   static Color cyan100 = HexColor("#E3FCFC");
 
   //primary
+  static Color primaryCustom = HexColor("#0067DC");
   static Color primary600 = HexColor("#0067BC");
   static Color primary500 = HexColor("#97CDFF");
   static Color primary400 = HexColor("#B5DBFF");
   static Color primary300 = HexColor("#D3EAFF");
   static Color primary200 = HexColor("#E1F1FF");
   static Color primary100 = HexColor("#F0F8FF");
+  static LinearGradient jobSearchCardGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFF2563EB),
+      Color(0xFF3B82F6),
+    ],
+  );
+
   static LinearGradient primaryRingGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,

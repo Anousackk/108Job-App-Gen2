@@ -168,12 +168,14 @@ class Button extends StatefulWidget {
     this.boxHeight,
     this.paddingButton,
     this.textFontFamily,
+    this.boxDecBorderRadius,
   }) : super(key: key);
   final String? text, textFontFamily;
   final Color? textColor, buttonColor, buttonBorderColor;
   final FontWeight? textFontWeight;
   final double? boxHeight;
   final WidgetStateProperty<EdgeInsetsGeometry?>? paddingButton;
+  final BorderRadiusGeometry? boxDecBorderRadius;
 
   final Function()? press;
 
@@ -203,7 +205,8 @@ class _ButtonState extends State<Button> {
           ),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.w),
+              borderRadius:
+                  widget.boxDecBorderRadius ?? BorderRadius.circular(12.w),
             ),
           ),
           backgroundColor: WidgetStateProperty.all(

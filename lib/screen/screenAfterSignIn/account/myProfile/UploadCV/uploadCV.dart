@@ -154,7 +154,7 @@ class _UploadCVState extends State<UploadCV> {
 
       print("sdkInt: " + sdkInt.toString());
 
-      // Android 13(API 33+)
+      // Android 13+ (API 33+)
       if (sdkInt >= 33) {
         var statusAudio = await Permission.audio.status;
         print("Platform Android: " + statusAudio.toString());
@@ -249,7 +249,7 @@ class _UploadCVState extends State<UploadCV> {
         }
       }
 
-      // Below Android 13 (API 33)
+      // Android < 13 (API ≤ 32)
       else {
         var statusStorageAndroid = await Permission.storage.status;
         print("Platform Android: " + "${statusStorageAndroid}");
@@ -504,145 +504,145 @@ class _UploadCVState extends State<UploadCV> {
 
       print("sdkInt: " + sdkInt.toString());
 
-      // Android 13(API 33+)
+      // Android 13+ (API 33+)
       if (sdkInt >= 33) {
-        var statusPhotosAndroid = await Permission.photos.status;
+        // var statusPhotosAndroid = await Permission.photos.status;
 
-        print("Platform Android: " + statusPhotosAndroid.toString());
+        // print("Platform Android: " + statusPhotosAndroid.toString());
 
-        if (statusPhotosAndroid.isGranted) {
-          print("statusPhotosAndroid isGranted");
-          final ImagePicker _picker = ImagePicker();
-          final XFile? image = await _picker.pickImage(source: source);
+        // if (statusPhotosAndroid.isGranted) {
+        print("statusPhotosAndroid isGranted");
+        final ImagePicker _picker = ImagePicker();
+        final XFile? image = await _picker.pickImage(source: source);
 
-          //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
-          if (image == null) {
-            Navigator.pop(context);
-            return;
+        //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
+        if (image == null) {
+          Navigator.pop(context);
+          return;
+        }
+
+        // setState(() {
+        //   _imageLoading = true;
+        // });
+
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
+        final allowedExtensions = ['png', 'jpg', 'jpeg'];
+        final fileExtension = image.path.split('.').last.toLowerCase();
+
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
+        if (!allowedExtensions.contains(fileExtension)) {
+          // Close loading dialog first
+          if (Navigator.of(context, rootNavigator: true).canPop()) {
+            Navigator.of(context, rootNavigator: true).pop();
           }
 
-          // setState(() {
-          //   _imageLoading = true;
-          // });
+          print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
 
-          //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
-          final allowedExtensions = ['png', 'jpg', 'jpeg'];
-          final fileExtension = image.path.split('.').last.toLowerCase();
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return CustAlertDialogWarningWithoutBtn(
+                title: "warning".tr,
+                contentText: "profile_image_support".tr,
+              );
+            },
+          );
+          return;
+        }
 
-          //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
-          if (!allowedExtensions.contains(fileExtension)) {
+        File fileTemp = File(image.path);
+        setState(() {
+          _image = fileTemp;
+        });
+        var strImage = image.path;
+        _strFileName = image.name;
+
+        print("strImage: " + strImage.toString());
+
+        //ຖ້າມີຟາຍຮູບ _image
+        if (_image != null) {
+          //api upload profile seeker
+          var valUploadFile =
+              await upLoadFile(strImage, uploadProfileApiSeeker);
+
+          //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
+          //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
+          if (valUploadFile != null) {
+            print("if valUploadFile: " + valUploadFile.toString());
+
+            _fileValue = valUploadFile['file'];
+            print("fileValue: " + _fileValue.toString());
+
+            if (_fileValue != null || _fileValue != "") {
+              // Api upload or update CV
+              uploadOrUpdateCV(_fileValue, false);
+
+              // Close loading dialog first
+              Navigator.pop(context);
+            }
+          }
+
+          //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
+          else {
             // Close loading dialog first
             if (Navigator.of(context, rootNavigator: true).canPop()) {
               Navigator.of(context, rootNavigator: true).pop();
             }
 
-            print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
+            print("else valUploadFile: " + valUploadFile.toString());
 
             await showDialog(
               context: context,
               builder: (context) {
                 return CustAlertDialogWarningWithoutBtn(
                   title: "warning".tr,
-                  contentText: "profile_image_support".tr,
+                  contentText: "profile_image_size".tr,
                 );
               },
             );
-            return;
           }
-
-          File fileTemp = File(image.path);
-          setState(() {
-            _image = fileTemp;
-          });
-          var strImage = image.path;
-          _strFileName = image.name;
-
-          print("strImage: " + strImage.toString());
-
-          //ຖ້າມີຟາຍຮູບ _image
-          if (_image != null) {
-            //api upload profile seeker
-            var valUploadFile =
-                await upLoadFile(strImage, uploadProfileApiSeeker);
-
-            //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
-            //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
-            if (valUploadFile != null) {
-              print("if valUploadFile: " + valUploadFile.toString());
-
-              _fileValue = valUploadFile['file'];
-              print("fileValue: " + _fileValue.toString());
-
-              if (_fileValue != null || _fileValue != "") {
-                // Api upload or update CV
-                uploadOrUpdateCV(_fileValue, false);
-
-                // Close loading dialog first
-                Navigator.pop(context);
-              }
-            }
-
-            //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
-            else {
-              // Close loading dialog first
-              if (Navigator.of(context, rootNavigator: true).canPop()) {
-                Navigator.of(context, rootNavigator: true).pop();
-              }
-
-              print("else valUploadFile: " + valUploadFile.toString());
-
-              await showDialog(
-                context: context,
-                builder: (context) {
-                  return CustAlertDialogWarningWithoutBtn(
-                    title: "warning".tr,
-                    contentText: "profile_image_size".tr,
-                  );
-                },
-              );
-            }
-          }
-        } else if (statusPhotosAndroid.isDenied) {
-          print("statusPhotosAndroid isDenied");
-
-          // Close loading dialog first
-          if (Navigator.of(context, rootNavigator: true).canPop()) {
-            Navigator.of(context, rootNavigator: true).pop();
-          }
-
-          await Permission.photos.request();
-        } else {
-          print("statusPhotosAndroid etc...");
-
-          // Close loading dialog first
-          if (Navigator.of(context, rootNavigator: true).canPop()) {
-            Navigator.of(context, rootNavigator: true).pop();
-          }
-
-          // Display warning dialog
-          await showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) {
-              return NewVer5CustAlertDialogWarningBtnConfirm(
-                title: "warning".tr,
-                contentText: "want_access_photos".tr,
-                textButton: "ok".tr,
-                press: () async {
-                  await openAppSettings();
-
-                  Future.delayed(Duration(seconds: 1), () {
-                    // Close warning dialog
-                    if (Navigator.canPop(context)) Navigator.pop(context);
-                  });
-                },
-              );
-            },
-          );
         }
+        // } else if (statusPhotosAndroid.isDenied) {
+        //   print("statusPhotosAndroid isDenied");
+
+        //   // Close loading dialog first
+        //   if (Navigator.of(context, rootNavigator: true).canPop()) {
+        //     Navigator.of(context, rootNavigator: true).pop();
+        //   }
+
+        //   await Permission.photos.request();
+        // } else {
+        //   print("statusPhotosAndroid etc...");
+
+        //   // Close loading dialog first
+        //   if (Navigator.of(context, rootNavigator: true).canPop()) {
+        //     Navigator.of(context, rootNavigator: true).pop();
+        //   }
+
+        //   // Display warning dialog
+        //   await showDialog(
+        //     barrierDismissible: false,
+        //     context: context,
+        //     builder: (context) {
+        //       return NewVer5CustAlertDialogWarningBtnConfirm(
+        //         title: "warning".tr,
+        //         contentText: "want_access_photos".tr,
+        //         textButton: "ok".tr,
+        //         press: () async {
+        //           await openAppSettings();
+
+        //           Future.delayed(Duration(seconds: 1), () {
+        //             // Close warning dialog
+        //             if (Navigator.canPop(context)) Navigator.pop(context);
+        //           });
+        //         },
+        //       );
+        //     },
+        //   );
+        // }
       }
 
-      // Below Android 13 (API 33)
+      // Android < 13 (API ≤ 32)
       else {
         var statusStorageAndroid = await Permission.storage.status;
 

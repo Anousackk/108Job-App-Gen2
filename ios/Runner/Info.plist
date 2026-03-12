@@ -83,6 +83,8 @@
 	<string>We need access to your Documents folder to upload and manage your files.</string>
 	<key>NSUserSelectedFileUsageDescription</key>
 	<string>We need access to the files you select in order to open and process them.</string>
+	<key>NSUserNotificationAlertStyle</key>
+	<string>alert</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

@@ -348,7 +348,9 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
                                 setState(() {
                                   _isAppliedEvenJobCompany = true;
                                 });
-                                applyByJobId("${widget.id}");
+                                // applyByJobId("${widget.id}");
+                                eventAvailableProvider.applyJobCompanyBySeeker(
+                                    context, "${widget.id}");
                               }
                             }
                           },

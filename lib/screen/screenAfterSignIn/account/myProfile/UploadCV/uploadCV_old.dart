@@ -178,7 +178,7 @@ class _UploadCVState extends State<UploadCV> {
 
       //
       //
-      // Android 13(API 33+)
+      // Android 13+ (API 33+)
       if (sdkInt >= 33) {
         var statusAudio = await Permission.audio.status;
         print("Platform Android: " + statusAudio.toString());
@@ -273,7 +273,7 @@ class _UploadCVState extends State<UploadCV> {
       }
       //
       //
-      // Below Android 13 (API 33)
+      // Android < 13 (API ≤ 32)
       else {
         var statusStorageAndroid = await Permission.storage.status;
         print("Platform Android: " + "${statusStorageAndroid}");
@@ -546,7 +546,7 @@ class _UploadCVState extends State<UploadCV> {
 
       //
       //
-      // Android 13(API 33+)
+      // Android 13+ (API 33+)
       if (sdkInt >= 33) {
         var statusPhotosAndroid = await Permission.photos.status;
 
@@ -696,7 +696,7 @@ class _UploadCVState extends State<UploadCV> {
       }
       //
       //
-      // Below Android 13 (API 33)
+      // Android < 13 (API ≤ 32)
       else {
         var statusStorageAndroid = await Permission.storage.status;
 
@@ -1168,10 +1168,11 @@ class _UploadCVState extends State<UploadCV> {
                                       press: () {
                                         showModalBottomSheet(
                                           shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(20),
-                                            topRight: Radius.circular(20),
-                                          )),
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(20),
+                                              topRight: Radius.circular(20),
+                                            ),
+                                          ),
                                           context: context,
                                           builder: (builder) =>
                                               ModalBottomCameraGallery(),

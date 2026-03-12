@@ -335,34 +335,90 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
       //
       //
-      // Android 13(API 33+)
+      // Android 13+ (API 33+)
       if (sdkInt >= 33) {
-        var statusPhotosAndroid = await Permission.photos.status;
+        // var statusPhotosAndroid = await Permission.photos.status;
 
-        print("Platform Android: " + statusPhotosAndroid.toString());
+        // print("Platform Android: " + statusPhotosAndroid.toString());
 
-        if (statusPhotosAndroid.isGranted) {
-          print("statusPhotosAndroid isGranted");
-          final ImagePicker _picker = ImagePicker();
-          final XFile? image = await _picker.pickImage(source: source);
+        // if (statusPhotosAndroid.isGranted) {
+        print("statusPhotosAndroid isGranted");
+        final ImagePicker _picker = ImagePicker();
+        final XFile? image = await _picker.pickImage(source: source);
 
-          //
-          //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
-          if (image == null) return;
+        //
+        //ຖ້າບໍ່ເລືອກຮູບໃຫ້ return ອອກເລີຍ
+        if (image == null) return;
 
+        setState(() {
+          _imageLoading = true;
+        });
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
+        final allowedExtensions = ['png', 'jpg', 'jpeg'];
+        final fileExtension = image.path.split('.').last.toLowerCase();
+
+        //
+        //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
+        if (!allowedExtensions.contains(fileExtension)) {
+          print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
           setState(() {
-            _imageLoading = true;
+            _imageLoading = false;
           });
 
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return CustAlertDialogWarningWithoutBtn(
+                title: "warning".tr,
+                contentText: "profile_image_support".tr,
+              );
+            },
+          );
+          return;
+        }
+
+        File fileTemp = File(image.path);
+        setState(() {
+          _image = fileTemp;
+        });
+        var strImage = image.path;
+
+        print("strImage: " + strImage.toString());
+
+        //
+        //ຖ້າມີຟາຍຮູບ _image
+        if (_image != null) {
           //
-          //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg'
-          final allowedExtensions = ['png', 'jpg', 'jpeg'];
-          final fileExtension = image.path.split('.').last.toLowerCase();
+          //api upload profile seeker
+          var valUploadFile =
+              await upLoadFile(strImage, uploadProfileApiSeeker);
 
           //
-          //ກວດຟາຍຮູບຖ້າບໍ່ແມ່ນ 'png', 'jpg', 'jpeg' ໃຫ້ return ອອກເລີຍ
-          if (!allowedExtensions.contains(fileExtension)) {
-            print("valUploadFile allowedExtensions 'png', 'jpg', 'jpeg'");
+          //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
+          //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
+          if (valUploadFile != null) {
+            print("if valUploadFile: " + valUploadFile.toString());
+
+            _fileValue = valUploadFile['file'];
+            print("fileValue: " + _fileValue.toString());
+
+            if (_fileValue != null || _fileValue != "") {
+              //
+              //api upload or update profile image seeker
+              await uploadOrUpdateProfileImageSeeker();
+
+              setState(() {
+                _imageSrc =
+                    "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
+              });
+            }
+          }
+          //
+          //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
+          else {
+            print("else valUploadFile: " + valUploadFile.toString());
             setState(() {
               _imageLoading = false;
             });
@@ -372,100 +428,44 @@ class _PersonalInformationState extends State<PersonalInformation> {
               builder: (context) {
                 return CustAlertDialogWarningWithoutBtn(
                   title: "warning".tr,
-                  contentText: "profile_image_support".tr,
+                  contentText: "profile_image_size".tr,
                 );
               },
             );
-            return;
           }
-
-          File fileTemp = File(image.path);
-          setState(() {
-            _image = fileTemp;
-          });
-          var strImage = image.path;
-
-          print("strImage: " + strImage.toString());
-
-          //
-          //ຖ້າມີຟາຍຮູບ _image
-          if (_image != null) {
-            //
-            //api upload profile seeker
-            var valUploadFile =
-                await upLoadFile(strImage, uploadProfileApiSeeker);
-
-            //
-            //ຫຼັງຈາກ api upload ສຳເລັດແລ້ວ
-            //valUploadFile != null ເຮັດວຽກ method uploadOrUpdateProfileImageSeeker()
-            if (valUploadFile != null) {
-              print("if valUploadFile: " + valUploadFile.toString());
-
-              _fileValue = valUploadFile['file'];
-              print("fileValue: " + _fileValue.toString());
-
-              if (_fileValue != null || _fileValue != "") {
-                //
-                //api upload or update profile image seeker
-                await uploadOrUpdateProfileImageSeeker();
-
-                setState(() {
-                  _imageSrc =
-                      "https://storage.googleapis.com/108-bucket/logos/${_fileValue["name"]}";
-                });
-              }
-            }
-            //
-            //valUploadFile == null ແຈ້ງເຕືອນຟາຍຮູບໃຫ່ຍເກີນໄປ
-            else {
-              print("else valUploadFile: " + valUploadFile.toString());
-              setState(() {
-                _imageLoading = false;
-              });
-
-              await showDialog(
-                context: context,
-                builder: (context) {
-                  return CustAlertDialogWarningWithoutBtn(
-                    title: "warning".tr,
-                    contentText: "profile_image_size".tr,
-                  );
-                },
-              );
-            }
-          }
-        } else if (statusPhotosAndroid.isDenied) {
-          print("statusPhotosAndroid isDenied");
-
-          await Permission.photos.request();
-        } else {
-          print("statusPhotosAndroid etc...");
-
-          // Display warning dialog
-          await showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) {
-              return NewVer5CustAlertDialogWarningBtnConfirm(
-                title: "warning".tr,
-                contentText: "want_access_photos".tr,
-                textButton: "ok".tr,
-                press: () async {
-                  await openAppSettings();
-
-                  Future.delayed(Duration(seconds: 1), () {
-                    // Close warning dialog
-                    if (Navigator.canPop(context)) Navigator.pop(context);
-                  });
-                },
-              );
-            },
-          );
         }
+        // } else if (statusPhotosAndroid.isDenied) {
+        //   print("statusPhotosAndroid isDenied");
+
+        //   await Permission.photos.request();
+        // } else {
+        //   print("statusPhotosAndroid etc...");
+
+        //   // Display warning dialog
+        //   await showDialog(
+        //     barrierDismissible: false,
+        //     context: context,
+        //     builder: (context) {
+        //       return NewVer5CustAlertDialogWarningBtnConfirm(
+        //         title: "warning".tr,
+        //         contentText: "want_access_photos".tr,
+        //         textButton: "ok".tr,
+        //         press: () async {
+        //           await openAppSettings();
+
+        //           Future.delayed(Duration(seconds: 1), () {
+        //             // Close warning dialog
+        //             if (Navigator.canPop(context)) Navigator.pop(context);
+        //           });
+        //         },
+        //       );
+        //     },
+        //   );
+        // }
       }
       //
       //
-      // Below Android 13 (API 33)
+      // Android < 13 (API ≤ 32)
       else {
         var statusStorageAndroid = await Permission.storage.status;
 

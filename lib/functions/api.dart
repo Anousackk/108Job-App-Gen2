@@ -197,6 +197,11 @@ const getCompanyIdAvailableEventSeekerApi =
     globalURL + "/get-event-company-job-list-app";
 const getEventBannerApi =
     globalURL + "/get-wii-fair-banners?supportedDevice=app";
+const getCheckInBoothBySeekerApi =
+    globalURL + "/get-checked-in-booths-by-seeker-wii-fair";
+const getAIMatchingJobAndAppliedJobApi = globalURL + "/get-jobs-wii-fair";
+const checkInBoothComapnyEventApi = globalURL + "/check-in-booth-wii-fair";
+const reedeemCodeEventApi = globalURL + "/redeem-code-wii-fair";
 //get-event-company-job-list-app
 
 //Get reuse type

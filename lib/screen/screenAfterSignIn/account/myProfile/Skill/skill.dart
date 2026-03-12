@@ -100,7 +100,7 @@ class _SkillState extends State<Skill> {
 
     page++;
     _listKeySkill.addAll(List<Map<String, dynamic>>.from(fetchKeySkill));
-    if (_listKeySkill.length >= totals || fetchKeySkill.length < perPage) {
+    if (_listKeySkill.length >= totals || fetchKeySkill.length == 0) {
       _hasMoreData = false;
     }
     _isLoadingMoreData = false;

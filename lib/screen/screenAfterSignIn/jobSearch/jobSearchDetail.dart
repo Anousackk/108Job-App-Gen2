@@ -124,6 +124,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     if (_isShowSalary) {
       _currency =
           _jobDetail.containsKey('currency') ? _jobDetail['currency'] : "";
+      print("currency: ${_currency}");
 
       if (_jobDetail.containsKey("minSalary") &&
           _jobDetail["minSalary"] != null) {
@@ -1048,6 +1049,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                             text: _education,
                                           ),
                                         ),
+
                                         // SizedBox(height: 15),
 
                                         // Divider(color: AppColors.dark200),
@@ -1061,14 +1063,26 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                           Padding(
                                             padding: EdgeInsets.symmetric(
                                                 vertical: 15),
-                                            child: SpaceBetweenTitleAndText(
-                                              icon: '\uf0d6',
-                                              title: "salary".tr,
-                                              text: "${_minSalaryFormatNumberStr}" +
-                                                  " - " +
-                                                  "${_maxSalaryFormatNumberStr}" +
-                                                  " " +
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child:
+                                                      SpaceBetweenTitleAndText(
+                                                    icon: '\uf0d6',
+                                                    title: "salary".tr,
+                                                    text: "${_minSalaryFormatNumberStr}" +
+                                                        " - " +
+                                                        "${_maxSalaryFormatNumberStr}",
+                                                  ),
+                                                ),
+                                                SizedBox(width: 2),
+                                                Text(
                                                   "${_currency}",
+                                                  style: TextStyle(
+                                                      fontFamily: 'Roboto',
+                                                      fontSize: 15),
+                                                ),
+                                              ],
                                             ),
                                           ),
 

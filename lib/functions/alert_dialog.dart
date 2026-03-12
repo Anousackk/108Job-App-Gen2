@@ -572,15 +572,13 @@ class CustAlertDialogSuccessWithoutBtn extends StatefulWidget {
     this.contentText,
     this.title,
     this.colorButton,
-    this.colorTextButton,
-    this.textButton,
     this.boxCircleColor,
     this.iconColor,
     this.strIcon,
   }) : super(key: key);
-  final String? strIcon, contentText, textButton;
+  final String? strIcon, contentText;
   final String? title;
-  final Color? boxCircleColor, iconColor, colorButton, colorTextButton;
+  final Color? boxCircleColor, iconColor, colorButton;
 
   @override
   State<CustAlertDialogSuccessWithoutBtn> createState() =>
@@ -884,16 +882,14 @@ class CustAlertDialogWarningWithoutBtn extends StatefulWidget {
     this.contentText,
     this.title,
     this.colorButton,
-    this.colorTextButton,
-    this.textButton,
     this.boxCircleColor,
     this.iconColor,
     this.strIcon,
     this.fontFamilyIcon,
   }) : super(key: key);
-  final String? strIcon, fontFamilyIcon, title, contentText, textButton;
+  final String? strIcon, fontFamilyIcon, title, contentText;
 
-  final Color? boxCircleColor, iconColor, colorButton, colorTextButton;
+  final Color? boxCircleColor, iconColor, colorButton;
 
   @override
   State<CustAlertDialogWarningWithoutBtn> createState() =>

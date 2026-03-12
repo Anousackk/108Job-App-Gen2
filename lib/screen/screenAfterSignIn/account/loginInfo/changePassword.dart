@@ -57,6 +57,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (res["message"] == "Password has changed") {
       await showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
             title: "successfully".tr,
