@@ -20,14 +20,12 @@ class LocalString extends Translations {
     {"key": "login", "en": "Log in", "la": "ເຂົ້າສູ່ລະບົບ"},
     {"key": "logout", "en": "Log out", "la": "ອອກຈາກລະບົບ"},
     {"key": "register", "en": "Register", "la": "ລົງທະບຽນ"},
-
     {"key": "profile", "en": "Profile", "la": "ໂປຣໄຟສ"},
     {"key": "my job", "en": "My jobs", "la": "ວຽກຂອງຂ້ອຍ"},
     {"key": "notification", "en": "Notification", "la": "ແຈ້ງເຕືອນ"},
     {"key": "account", "en": "Account", "la": "ບັນຊີ"},
     {"key": "my job alert", "en": "My job alert", "la": "ແຈ້ງເຕືອນວຽກ"},
     {"key": "employerLink", "en": "For Employer", "la": "ສຳລັບບໍລິສັດ"},
-
     {"key": "work province", "en": "Work Province", "la": "ແຂວງເຮັດວຽກ"},
     {
       "key": "company hiring now",
@@ -60,7 +58,6 @@ class LocalString extends Translations {
       "la": "ດາວໂຫລດແອັບ 108job"
     },
     {"key": "download", "en": "Download", "la": "ດາວໂຫລດ"},
-
     {
       "key": "download description",
       "en":
@@ -87,9 +84,7 @@ class LocalString extends Translations {
     {"key": "select", "en": "Select ", "la": "ເລືອກ"},
     {"key": "select by", "en": "Select by ", "la": "ເລືອກຕາມ"},
     {"key": "location", "en": "Location", "la": "ສະຖານທີ"},
-
     {"key": "education level", "en": "Education Level", "la": "ລະດັບການສຶກສາ"},
-
     {"key": "company", "en": "Company", "la": "ບໍລິສັດ"},
     {"key": "company size", "en": "Company Size", "la": "ຂະໜາດບໍລິສັດ"},
     {"key": "company name", "en": "Company name", "la": "ຊື່ບໍລິສັດ"},
@@ -104,13 +99,11 @@ class LocalString extends Translations {
     {"key": "search", "en": "Search ", "la": "ຄົ້ນຫາ"},
     {"key": "all article", "en": "All article", "la": "ບົດຄວາມທັງໝົດ"},
     {"key": "all categories", "en": "All categories", "la": "ໝວດໝູ່ທັງໝົດ"},
-
     {
       "key": "all job available",
       "en": "Job Available Total",
       "la": "ວຽກທີ່ເປີດຮັບສະໝັກທັງໝົດ"
     },
-
     {"key": "filter", "en": "Filters", "la": "ຕົວກອງ"},
     {"key": "all locaotion", "en": "All location", "la": "ສະຖານທີທັງໝົດ"},
     {
@@ -123,10 +116,8 @@ class LocalString extends Translations {
     {"key": "clear all", "en": "Clear all", "la": "ລ້າງທັງໝົດ"},
     {"key": "view more", "en": "View more", "la": "ເບິ່ງເພີ່ມຕື່ມ"},
     {"key": "photo", "en": "Photos", "la": "ຮູບພາບ"},
-
     {"key": "people", "en": "People", "la": "ບຸກຄະລາກອນ"},
     {"key": "address", "en": "Address", "la": "ທີ່ຢູ່"},
-
     {"key": "opening date", "en": "Opening Date", "la": "ມື້ເປີດຮັບສະໝັກ"},
     {"key": "closing date", "en": "Closing Date", "la": "ມື້ປິດຮັບສະໝັກ"},
     {"key": "contact", "en": "Contact", "la": "ຕິດຕໍ່"},
@@ -203,7 +194,6 @@ class LocalString extends Translations {
       "en": "Preferred Language",
       "la": "ພາສາທີ່ຕ້ອງການ"
     },
-
     {"key": "experience", "en": "Experience", "la": "ປະສົບການ"},
     {"key": "reset pass", "en": "Reset Password", "la": "ກູ້ຄືນລະຫັດຜ່ານ"},
     {"key": "set pass", "en": "Set Password", "la": "ຕັ້ງລະຫັດຜ່ານ"},
@@ -257,8 +247,6 @@ class LocalString extends Translations {
       "en": "You haven't added any yet.",
       "la": "ທ່ານຍັງບໍ່ໄດ້ມີຂໍ້ມູນເທື່ອ"
     },
-
-    //You haven't added any yet.
     {
       "key": "link sent to mail",
       "en": "Link reset will be sent to your email address registered",
@@ -277,7 +265,6 @@ class LocalString extends Translations {
     {"key": "expired on", "en": "Expired on", "la": "ໝົດກຳນົດພາຍໃນ"},
     {"key": "share on", "en": "Share on", "la": "ແບ່ງປັນ"},
     {"key": "total view", "en": "Total views", "la": "ຍອດເຂົ້າຊົມ"},
-
     {"key": "minute", "en": "minute", "la": "ນາທີ"},
     {"key": "minute ago", "en": "minute ago", "la": "ນາທີຜ່ານມາ"},
     {"key": "minutes ago", "en": "minutes ago", "la": "ນາທີຜ່ານມາ"},
@@ -314,7 +301,6 @@ class LocalString extends Translations {
       "la": "ທ່ານກຳລັງສະໝັກວຽກ"
     },
     {"key": "preview cv", "en": "Preview CV", "la": "ເບີ່ງຕົວຢ່າງ CV"},
-
     {
       "key": "cover letter is require",
       "en": "Cover letter is require",
@@ -335,12 +321,10 @@ class LocalString extends Translations {
       "en": "Yes, Apply",
       "la": "ຕົກລົງ, ສະໝັກເລີຍ",
     },
-
     {"key": "upload cv", "en": "Upload CV", "la": "ອັບໂຫລດ CV"},
     {"key": "upload new CV", "en": "Upload a new CV", "la": "ອັບໂຫລດ CV ໃໝ່"},
     {"key": "uploaded", "en": "Uploaded", "la": "ອັບໂຫລດແລ້ວ"},
     {"key": "uploading", "en": "Uploading", "la": "ກຳລັງອັບໂຫລດ"},
-
     {
       "key": "or copy link",
       "en": "Or copy link",
@@ -523,7 +507,6 @@ class LocalString extends Translations {
       "en": "Just now",
       "la": "ດຽວນີ້",
     },
-
     {
       "key": "general info",
       "en": "General Information",
@@ -564,7 +547,6 @@ class LocalString extends Translations {
       "en": "to the next level",
       "la": "ໄປອີກລະດັບ",
     },
-
     {
       "key": "let us know",
       "en": "Let us know more about you",
@@ -585,13 +567,6 @@ class LocalString extends Translations {
       "en": "Marital Status",
       "la": "ສະຖານະການແຕ່ງງານ",
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker Profile
     {
       "key": "personal_info",
       "en": "Personal Information",
@@ -653,13 +628,6 @@ class LocalString extends Translations {
           "To upgrade your membership, you'll need to provide the required information for each level.",
       "la": "ກະລຸນາຕື່ມຂໍ້ມູນດ້ານລຸ່ມ ເພື່ອອັບເກດລະດັບສະມາຊິກ.",
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker Profile - Profile setting
     {
       "key": "profile_setting",
       "en": "Profile Setting",
@@ -675,7 +643,6 @@ class LocalString extends Translations {
       "en": "Profile Searchable",
       "la": "ຄົ້ນຫາໂປຣໄຟສໄດ້",
     },
-
     {
       "key": "hide_from_companies",
       "en": "Hide from companies below",
@@ -686,13 +653,6 @@ class LocalString extends Translations {
       "en": "Add Company",
       "la": "ເພີ່ມບໍລິສັດ",
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker Profile - Upload CV
     {
       "key": "select_cv_file",
       "en": "Select CV file to upload",
@@ -754,18 +714,12 @@ class LocalString extends Translations {
       "en": "Download CV File",
       "la": "ດາວໂຫລດໄຟສຊີວີ້"
     },
-
     {"key": "create_cv", "en": "Create CV", "la": "ສ້າງຊີວີ້"},
     {
       "key": "cv_uploaded",
       "en": "Your CV has been updated successfully.",
       "la": "ອັບໂຫລດ CV ສຳເລັດແລ້ວ."
     },
-
-    //
-    //
-    //
-
     {
       "key": "details employment history",
       "en": "Input details of your employment history",
@@ -782,7 +736,6 @@ class LocalString extends Translations {
           "Add all the languages you can speak to increase your job prospects",
       "la": "ເພີ່ມພາສາທັງໝົດທີ່ທ່ານສາມາດເວົ້າໄດ້ ເພື່ອເພີ່ມໂອກາດໃນການຊອກວຽກ",
     },
-
     {
       "key": "you should list skills",
       "en":
@@ -845,7 +798,6 @@ class LocalString extends Translations {
       "en": "Question you my ask",
       "la": "ຄຳຖາມຍອດຮິດ",
     },
-
     {
       "key": "from",
       "en": "From",
@@ -861,25 +813,11 @@ class LocalString extends Translations {
       "en": "Responsibility",
       "la": "ໜ້າທີ່ຮັບຜິດຊອບ",
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker Profile - Information
     {
       "key": "profile_image",
       "en": "Profile Image",
       "la": "ຮູບໂປຣໄຟສ",
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker Profile - Work Preference
     {"key": "position", "en": "Position", "la": "ຕຳແໜ່ງ"},
     {"key": "salary", "en": "Salary", "la": "ເງິນເດືອນ"},
     {"key": "job level", "en": "Job Level", "la": "ລະດັບການເຮັດວຽກ"},
@@ -893,13 +831,6 @@ class LocalString extends Translations {
       "en": "Professional Summary",
       "la": "ສະຫຼຸບກ່ຽວກັບໜ້າວຽກ"
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker Profile - Work History
     {
       "key": "work_employer",
       "en": "Company",
@@ -935,7 +866,6 @@ class LocalString extends Translations {
       "en": "Responsibility detail",
       "la": "ລາຍລະອຽດໜ້າທີ່ຮັບຜິດຊອບ",
     },
-
     {
       "key": "button_no_experience",
       "en": "Have no experience",
@@ -946,13 +876,6 @@ class LocalString extends Translations {
       "en": "Have any experience",
       "la": "ມີປະສົບການເຮັດວຽກ",
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker Profile - Education
     {
       "key": "education_major",
       "en": "Major / Course name",
@@ -983,13 +906,6 @@ class LocalString extends Translations {
       "en": "I Presently study here",
       "la": "ບ່ອນຮຽນປະຈຸບັນ",
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker Account
     {
       "key": "profile_image_support",
       "en": "Supported file format PNG, JPG, JPEG",
@@ -1065,7 +981,6 @@ class LocalString extends Translations {
       "en": "Saved Job",
       "la": "ວຽກທີ່ບັນທຶກໄວ້",
     },
-
     {
       "key": "want_access_photos",
       "en":
@@ -1110,13 +1025,6 @@ class LocalString extends Translations {
       "en": "File",
       "la": "ເອກະສານ",
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker register event
     {
       "key": "back",
       "en": "Back",
@@ -1127,13 +1035,6 @@ class LocalString extends Translations {
       "en": "Register Event",
       "la": "ລົງທະບຽນເຂົ້າຮ່ວມງານ"
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker scan QR Code
     {
       "key": "scan_qr",
       "en": "Scan QR",
@@ -1154,13 +1055,6 @@ class LocalString extends Translations {
       "en": "Incorrect QR Code",
       "la": "QR Code ບໍ່ຖືກຕ້ອງ",
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker Events Tricket
     {
       "key": "event_name",
       "en": "Event",
@@ -1206,21 +1100,19 @@ class LocalString extends Translations {
       "en": "Can't save this photo",
       "la": "ບໍ່ສາມາດບັນທຶກຮູບພາບໄດ້",
     },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker JobSearch - Job Card
+    {"key": "see_more", "en": "See more", "la": "ເບິ່ງເພີ່ມ"},
+    {"key": "open_whatsapp", "en": "Open WhatsApp", "la": "ເປີດ WhatsApp"},
+    {
+      "key": "contact_us_whatsapp",
+      "en": "Contact us via WhatsApp",
+      "la": "ຕິດຕໍ່ພະນັກງານເພື່ອສອບຖາມ ຫຼື ແກ້ໄຂບັນຫາ"
+    },
+    {
+      "key": "new",
+      "en": "New",
+      "la": "ໃໝ່",
+    },
     {"key": "job_card_new_job", "en": "New", "la": "ວຽກໃຫມ່"},
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker JobSearch Detail
     {
       "key": "view_job_detail",
       "en": "View Job Detail",
@@ -1240,80 +1132,23 @@ class LocalString extends Translations {
       "en": "Visit Company Profile",
       "la": "ໄປໜ້າບໍລິສັດ"
     },
-
     {"key": "show_one_more", "en": "Show 1 more", "la": "ສະແດງເພີ່ມ"},
     {"key": "show_less", "en": "Show less", "la": "ສະແດງໜ້ອຍ"},
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker Home
-    {"key": "see_more", "en": "See more", "la": "ເບິ່ງເພີ່ມ"},
-    {"key": "open_whatsapp", "en": "Open WhatsApp", "la": "ເປີດ WhatsApp"},
-    {
-      "key": "contact_us_whatsapp",
-      "en": "Contact us via WhatsApp",
-      "la": "ຕິດຕໍ່ພະນັກງານເພື່ອສອບຖາມ ຫຼື ແກ້ໄຂບັນຫາ"
-    },
-    {
-      "key": "new",
-      "en": "New",
-      "la": "ໃໝ່",
-    },
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker Company Detail
+    {"key": "select_type", "en": "Select Type", "la": "ເລືອກປະເພດ"},
     {"key": "photo_gallery", "en": "Photo gallery", "la": "ຄັງຮູບພາບ"},
     {"key": "video", "en": "Video", "la": "ວິດີໂອ"},
     {"key": "about_company", "en": "About Company", "la": "ກ່ຽວກັບບໍລິສັດ"},
     {"key": "peoples", "en": "Peoples", "la": "ບຸກຄະລາກອນ"},
-
-    //
-    //
-    //
-    //
-    //
-    //Seeker My jobs
-
-    //
-    //
-    //
-    //
-    //
-    //Bottom Navigator Bar
     {
       "key": "check_internet_again",
       "en": "Check your internet and try again",
       "la": "ກວດສອບອິນເຕີເນັດຂອງທ່ານແລ້ວລອງໃໝ່ອີກຄັ້ງ",
     },
-
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-
     {
       "key": "proficiency",
       "en": "Proficiency",
       "la": "ຄວາມສາມາດ",
     },
-
     {
       "key": "how to set profile status",
       "en":
@@ -1594,7 +1429,6 @@ class LocalString extends Translations {
       "en": "Your password has changed.",
       "la": "ປ່ຽນລະຫັດສຳເລັດແລ້ວ.",
     },
-
     {
       "key": "try_again",
       "en": "Please try again",
@@ -1605,10 +1439,6 @@ class LocalString extends Translations {
       "en": "Curriculum vitaes (CVs) have been entirely deleted.",
       "la": "CV ຂອງທ່ານຈະຖືກລົບອອກຈາກລະບົບ.",
     },
-
-    //
-    //
-    // Vipo Duck
     {
       "key": "catch_duck_success",
       "en": "Catch Duck done.",
@@ -1636,10 +1466,6 @@ class LocalString extends Translations {
       "en": "Click me and get it now",
       "la": "ກົດຂ້ອຍແລ້ວຮັບເງິນໄປເລີຍ",
     },
-
-    //
-    //
-    // WiiFair
     {
       "key": "title_pls_update_profile",
       "en": "Please update your profile",
@@ -1652,7 +1478,6 @@ class LocalString extends Translations {
       "la": "ໄປໜ້າໂປຣໄຟສແລ້ວຕື່ມຂໍ້ມູນໃຫ້ຄົບ. ຈຶ່ງສາມາດລົງທະບຽນເຂົ້າຮ່ວມງານໄດ້."
     },
     {"key": "btn_event_detail", "en": "Event detail", "la": "ລາຍລະອຽດງານ"},
-
     {"key": "verified", "en": "Verified", "la": "ຢືນຢັນແລ້ວ"},
     {"key": "candidates", "en": "Candidates", "la": "ຜູ້ສະໝັກ"},
     {"key": "companies", "en": "Companies", "la": "ບໍລິສັດ"},
@@ -1675,7 +1500,6 @@ class LocalString extends Translations {
     {"key": "view_details", "en": "View details", "la": "ເບິ່ງລາຍລະອຽດ"},
     {"key": "apply", "en": "Apply", "la": "ສະໝັກ"},
     {"key": "negotiable", "en": "Negotiable", "la": "ສາມາດຕໍ່ລອງໄດ້"},
-
     {
       "key": "do_u_have_cv_file",
       "en": "Do you have a CV file? Please select",
@@ -1695,6 +1519,37 @@ class LocalString extends Translations {
     {"key": "recommend_job", "en": "Recommend job", "la": "ວຽກແນະນຳ"},
     {"key": "redeem_reward", "en": "Redeem Reward", "la": "ແລກລາງວັນ"},
     {"key": "submit", "en": "Submit", "la": "ກົດສົ່ງ"},
+    {
+      "key": "booth_stamp_card",
+      "en": "Booth stamp card",
+      "la": "ບັດສະສົມສະແຕ້ມ(ເຂົ້າຊົມບູດ)"
+    },
+    {
+      "key": "check_in_reedeem_reeward",
+      "en": "Booth Check In",
+      "la": "ເຊັກອິນເພື່ອແລກລາງວັນ"
+    },
+    {"key": "booth_check_in", "en": "Booth Check In", "la": "ເຊັກອິນ"},
+    {
+      "key": "please_enter_code_from_hr",
+      "en": "Please enter code from HR",
+      "la": "ກະລຸນາໃສ່ລະຫັດຈາກ HR"
+    },
+    {"key": "enter_text_code", "en": "Enter text code", "la": "ໃສ່ລະຫັດ"},
+    {"key": "your_jobs", "en": "Your Jobs", "la": "ວຽກຂອງທ່ານ"},
+    {
+      "key": "u_must_check_in",
+      "en":
+          "You must check in(visit booths) completely before you can redeem reward.",
+      "la": "ຕ້ອງເຊັກອິນ(ເຂົ້າຊົມບູດ) ໃຫ້ຄົບແລ້ວຈຶ່ງສາມາດແລກລາງວັນໄດ້."
+    },
+    {"key": "checked_in", "en": "Checked in", "la": "ເຊັກອິນແລ້ວ"},
+    {
+      "key": "must_check_in_all",
+      "en": "You must complete all",
+      "la": "ຕ້ອງເຊັກອິນໃຫ້ຄົບ"
+    },
+    {"key": "booth", "en": "Booth", "la": "ບູດທີ່"},
   ];
 
   @override
@@ -1711,20 +1566,4 @@ class LocalString extends Translations {
 
     return localizedStrings;
   }
-
-  // @override
-  // Map<String, Map<String, String>> get keys => {
-  //       'en_US': {
-  //         "language": "Eng",
-  //         "waiting": "Please wait...",
-  //         "createAccount": "Create an Account",
-  //         "alreadyHaveAccount": "I already have an account"
-  //       },
-  //       'lo_LA': {
-  //         "language": "Lao",
-  //         "waiting": "ກະລຸນາລໍຖ້າ...",
-  //         "createAccount": "ສ້າງບັນຊີ",
-  //         "alreadyHaveAccount": "ຂ້ອຍມີບັນຊີແລ້ວ"
-  //       }
-  //     };
 }

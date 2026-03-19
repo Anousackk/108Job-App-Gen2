@@ -57,8 +57,6 @@ class _FetchLanguageState extends State<FetchLanguage> {
     // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
     Navigator.pop(context);
 
-    print("delete language: " + "${res}");
-
     if (statusCode == 200 || statusCode == 201) {
       await profileProvider.fetchProfileSeeker();
     }
@@ -95,7 +93,6 @@ class _FetchLanguageState extends State<FetchLanguage> {
               });
             },
             onSaveSuccess: () async {
-              await profileProvider.fetchProfileSeeker();
               setState(() {
                 isShowFormAddLanguageSkill = false;
                 isShowFormUpdateLanguageSkill = false;
@@ -115,7 +112,6 @@ class _FetchLanguageState extends State<FetchLanguage> {
               });
             },
             onSaveSuccess: () async {
-              await profileProvider.fetchProfileSeeker();
               setState(() {
                 isShowFormAddLanguageSkill = false;
                 isShowFormUpdateLanguageSkill = false;

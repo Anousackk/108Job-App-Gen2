@@ -9,12 +9,9 @@ import 'package:app/functions/cupertinoDatePicker.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/parsDateTime.dart';
-import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
-import 'package:app/provider/localSharePrefsProvider.dart';
 import 'package:app/provider/profileProvider.dart';
 import 'package:app/provider/reuseTypeProvider.dart';
-import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
 import 'package:app/widget/listSingleSelectedAlertDialog.dart';
@@ -27,7 +24,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PersonalInformation extends StatefulWidget {
   const PersonalInformation(
@@ -39,7 +35,7 @@ class PersonalInformation extends StatefulWidget {
       : super(key: key);
   final String? id;
   final profile;
-  final Function()? pressButtonLeft, onSaveSuccess;
+  final VoidCallback? pressButtonLeft, onSaveSuccess;
 
   @override
   State<PersonalInformation> createState() => _PersonalInformationState();
@@ -622,7 +618,6 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
   pressAddPersonalInformation() async {
     final profileProvider = context.read<ProfileProvider>();
-
     // Display AlertDialog Loading First
     showDialog(
       context: context,
@@ -652,15 +647,12 @@ class _PersonalInformationState extends State<PersonalInformation> {
     // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
     Navigator.pop(context);
 
-    print("personal information: " + "${res}");
-
     if (statusCode == 200 || statusCode == 201) {
-      //After sucess work api fetchProfileSeeker
       await profileProvider.fetchProfileSeeker();
+
       // Call parent callback
-      if (widget.onSaveSuccess != null) {
-        widget.onSaveSuccess!();
-      }
+      if (!context.mounted) return;
+      widget.onSaveSuccess?.call();
     } else {
       await showDialog(
         context: context,

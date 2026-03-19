@@ -14,7 +14,7 @@ class HomeHeaderShirmmerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
       baseColor: AppColors.dark200,
-      highlightColor: AppColors.dark100,
+      highlightColor: AppColors.white,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
         child: Row(

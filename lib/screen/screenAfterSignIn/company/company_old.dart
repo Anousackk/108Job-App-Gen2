@@ -149,6 +149,7 @@ class _CompanyState extends State<Company> {
 
   pressTapMyJobType(String val) async {
     setState(() {
+      focusNode.unfocus();
       _statusShowLoading = true;
       _searchType = val;
 
@@ -340,6 +341,7 @@ class _CompanyState extends State<Company> {
                                 // flex: 8,
                                 child: SimpleTextFieldSingleValidate(
                                   codeController: _searchCompanyNameController,
+
                                   // contenPadding: EdgeInsets.symmetric(
                                   //     vertical: 2.5.w, horizontal: 3.5.w),
                                   contenPadding: EdgeInsets.symmetric(
@@ -441,8 +443,6 @@ class _CompanyState extends State<Company> {
                                             //Featured card
                                             return GestureDetector(
                                               onTap: () {
-                                                FocusScope.of(context)
-                                                    .requestFocus(focusNode);
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -701,8 +701,8 @@ class _CompanyState extends State<Company> {
                                                                           InkWell(
                                                                         onTap:
                                                                             () {
-                                                                          FocusScope.of(context)
-                                                                              .requestFocus(focusNode);
+                                                                          focusNode
+                                                                              .unfocus();
                                                                           setState(
                                                                               () {
                                                                             i['follow'] =
@@ -874,8 +874,6 @@ class _CompanyState extends State<Company> {
                                             children: [
                                               GestureDetector(
                                                 onTap: () {
-                                                  FocusScope.of(context)
-                                                      .requestFocus(focusNode);
                                                   pressTapMyJobType(
                                                       "AllCompanies");
                                                 },
@@ -1073,8 +1071,7 @@ class _CompanyState extends State<Company> {
                                       children: [
                                         GestureDetector(
                                           onTap: () {
-                                            FocusScope.of(context)
-                                                .requestFocus(focusNode);
+                                            focusNode.unfocus();
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -1240,9 +1237,7 @@ class _CompanyState extends State<Company> {
                                                   color: Colors.transparent,
                                                   child: InkWell(
                                                     onTap: () {
-                                                      FocusScope.of(context)
-                                                          .requestFocus(
-                                                              focusNode);
+                                                      focusNode.unfocus();
                                                       setState(() {
                                                         i['follow'] =
                                                             !i['follow'];

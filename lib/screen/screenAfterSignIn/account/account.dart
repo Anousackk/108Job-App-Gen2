@@ -13,7 +13,6 @@ import 'package:app/screen/ScreenAfterSignIn/Account/JobAlert/jobAlert.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/LoginInfo/loginInformation.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/myProfile.dart';
 import 'package:app/screen/screenAfterSignIn/myJob/myJob.dart';
-import 'package:app/widget/appbar.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -478,15 +477,15 @@ class _AccountState extends State<Account> {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
-        appBar: AppBarDefault(
-          backgroundColor: AppColors.backgroundWhite,
-          textTitle: "account".tr,
-          textColor: AppColors.fontDark,
-          leadingPress: () {
-            Navigator.pop(context);
-          },
-          leadingIcon: Icon(Icons.arrow_back),
-        ),
+        // appBar: AppBarDefault(
+        //   backgroundColor: AppColors.backgroundWhite,
+        //   textTitle: "account".tr,
+        //   textColor: AppColors.fontDark,
+        //   leadingPress: () {
+        //     Navigator.pop(context);
+        //   },
+        //   leadingIcon: Icon(Icons.arrow_back),
+        // ),
         body: SafeArea(
           child: Container(
             color: AppColors.dark100.withOpacity(0.7),

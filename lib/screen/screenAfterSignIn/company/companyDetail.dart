@@ -6,6 +6,8 @@ import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/helpers/companyHelper.dart';
+import 'package:app/provider/companyProvider.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
@@ -16,6 +18,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -32,7 +35,7 @@ class CompanyDetail extends StatefulWidget {
 }
 
 class _CompanyDetailState extends State<CompanyDetail>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, CompanyHelper {
   late TabController _tabController;
   late YoutubePlayerController _youtubeController;
   ScrollController _scrollController = ScrollController();
@@ -61,7 +64,7 @@ class _CompanyDetailState extends State<CompanyDetail>
   String _phone = "";
   String _email = "";
   String _videoLink = "";
-  String _checkStatusFollow = "";
+  String _statusFollwString = "";
   String _benefitName = "";
   String _jobOpeningName = "";
   String _jobOpeningWorkingLocation = "";
@@ -83,26 +86,26 @@ class _CompanyDetailState extends State<CompanyDetail>
     });
   }
 
-  String _callBackCompanyId = "";
-  dynamic _callBackIsFollow;
+  String _companyIdCallBack = "";
+  dynamic _isFollowCallBack;
 
   getDetailCompany(String companyId) async {
     var res = await postData(getCompanyDetailSeekerApi + '${companyId}', {});
 
     var companyInfo = res['companyInfo'];
     _id = companyInfo['_id'];
-    _logo = companyInfo['logo'];
-    _cardCover = companyInfo['cardCover'];
-    _companyName = companyInfo['companyName'];
-    _industry = companyInfo["industry"];
-    _address = companyInfo['address'];
-    _email = companyInfo['appliedEmails'];
-    _phone = companyInfo['phone'];
-    _website = companyInfo["website"];
-    _facebook = companyInfo["facebook"];
-    _youtube = companyInfo['youtube'];
-    _tiktok = companyInfo['titok'];
-    _linkIn = companyInfo["linkIn"];
+    _logo = companyInfo['logo'] ?? "";
+    _cardCover = companyInfo['cardCover'] ?? "";
+    _companyName = companyInfo['companyName'] ?? "";
+    _industry = companyInfo["industry"] ?? "";
+    _address = companyInfo['address'] ?? "";
+    _email = companyInfo['appliedEmails'] ?? "";
+    _phone = companyInfo['phone'] ?? "";
+    _website = companyInfo["website"] ?? "";
+    _facebook = companyInfo["facebook"] ?? "";
+    _youtube = companyInfo['youtube'] ?? "";
+    _tiktok = companyInfo['titok'] ?? "";
+    _linkIn = companyInfo["linkIn"] ?? "";
     _videoLink = companyInfo["videoLink"] ?? "";
     _followerTotals = companyInfo['followerTotals'].toString();
     _aboutCompany = companyInfo['aboutCompany'] ?? "";
@@ -154,9 +157,72 @@ class _CompanyDetailState extends State<CompanyDetail>
     setState(() {});
   }
 
-  followCompany(String companyName, String companyId) async {
+  // followCompany(String companyName, String companyId) async {
+  //   //
+  //   //ສະແດງ AlertDialog Loading
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) {
+  //       return CustomLoadingLogoCircle();
+  //     },
+  //   );
+  //   var res = await postData(addFollowCompanySeekerApi + '${companyId}', {});
+  //   var message = res['message'];
+  //   print(message);
+  //   getDetailCompany(widget.companyId);
+  //   if (message == "Followed") {
+  //     Navigator.pop(context);
+  //     await showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (context) {
+  //         return NewVer2CustAlertDialogSuccessBtnConfirm(
+  //           strIcon: "\uf004",
+  //           title: "follow".tr + " " + "successfully".tr,
+  //           contentText: "$companyName",
+  //           textButton: "ok".tr,
+  //           press: () {
+  //             Navigator.pop(context);
+  //             setState(() {
+  //               _statusFollwString = "Success";
+  //             });
+  //           },
+  //         );
+  //       },
+  //     );
+  //   } else if (message == "Unfollow") {
+  //     Navigator.pop(context);
+  //     await showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (context) {
+  //         return NewVer2CustAlertDialogSuccessBtnConfirm(
+  //           strIcon: "\uf7a9",
+  //           boxCircleColor: AppColors.warning200,
+  //           iconColor: AppColors.warning600,
+  //           title: "unfollow".tr + " " + "successfully".tr,
+  //           contentText: "$companyName",
+  //           textButton: "ok".tr,
+  //           buttonColor: AppColors.warning200,
+  //           textButtonColor: AppColors.warning600,
+  //           widgetBottomColor: AppColors.warning200,
+  //           press: () {
+  //             Navigator.pop(context);
+  //             setState(() {
+  //               _statusFollwString = "Success";
+  //             });
+  //           },
+  //         );
+  //       },
+  //     );
+  //   }
+  // }
+
+  pressSubmitCVCompany(String companyId, String companyName) async {
+    final companyProvider = context.read<CompanyProvider>();
     //
-    //ສະແດງ AlertDialog Loading
+    // Display AlertDialog Loading
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -165,81 +231,16 @@ class _CompanyDetailState extends State<CompanyDetail>
       },
     );
 
-    var res = await postData(addFollowCompanySeekerApi + '${companyId}', {});
-    var message = res['message'];
-    print(message);
+    final res = await companyProvider.submitCVCompany(companyId);
 
-    getDetailCompany(widget.companyId);
+    final statusCode = res?["statusCode"];
 
-    if (message == "Followed") {
-      Navigator.pop(context);
+    if (!context.mounted) return;
 
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            strIcon: "\uf004",
-            title: "follow".tr + " " + "successfully".tr,
-            contentText: "$companyName",
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-              setState(() {
-                _checkStatusFollow = "Success";
-              });
-            },
-          );
-        },
-      );
-    } else if (message == "Unfollow") {
-      Navigator.pop(context);
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            strIcon: "\uf7a9",
-            boxCircleColor: AppColors.warning200,
-            iconColor: AppColors.warning600,
-            title: "unfollow".tr + " " + "successfully".tr,
-            contentText: "$companyName",
-            textButton: "ok".tr,
-            buttonColor: AppColors.warning200,
-            textButtonColor: AppColors.warning600,
-            widgetBottomColor: AppColors.warning200,
-            press: () {
-              Navigator.pop(context);
-              setState(() {
-                _checkStatusFollow = "Success";
-              });
-            },
-          );
-        },
-      );
-    }
-  }
+    // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
+    Navigator.pop(context);
 
-  submittedCV(String companyName, String companyId) async {
-    //
-    //ສະແດງ AlertDialog Loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustomLoadingLogoCircle();
-      },
-    );
-
-    var res = await postData(submitCVSeekerApi + '${companyId}', {});
-    var message = res['message'];
-    print(message);
-
-    getDetailCompany(widget.companyId);
-
-    if (message == "Submitted successfully") {
-      Navigator.pop(context);
-
+    if (statusCode == 200 || statusCode == 201) {
       await showDialog(
         barrierDismissible: false,
         context: context,
@@ -254,7 +255,7 @@ class _CompanyDetailState extends State<CompanyDetail>
           );
         },
       );
-    } else if (message == "You had already submitted") {
+    } else if (statusCode == 409) {
       Navigator.pop(context);
 
       await showDialog(
@@ -262,20 +263,17 @@ class _CompanyDetailState extends State<CompanyDetail>
         builder: (context) {
           return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            contentText: "$message",
+            contentText: "${res?["body"]?["message"]}",
           );
         },
       );
-    } else if (message == "Your member level can not Submit CV" &&
-        _memberLevel == "Basic Member") {
-      Navigator.pop(context);
-
+    } else {
       await showDialog(
         context: context,
         builder: (context) {
           return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            contentText: "$message",
+            contentText: "${res?["body"]?["message"]}",
           );
         },
       );
@@ -484,9 +482,9 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         child: GestureDetector(
                                           onTap: () {
                                             Navigator.of(context).pop([
-                                              _checkStatusFollow,
-                                              _callBackCompanyId,
-                                              _callBackIsFollow
+                                              _statusFollwString,
+                                              _companyIdCallBack,
+                                              _isFollowCallBack
                                             ]);
                                           },
                                           child: _cardCover == ""
@@ -1606,12 +1604,12 @@ class _CompanyDetailState extends State<CompanyDetail>
                                       colorText: AppColors.fontDark,
                                       text: "follow".tr,
                                       press: () {
-                                        followCompany(
-                                            _companyName, widget.companyId);
+                                        followAndUnFollowCompanyHelper(
+                                            widget.companyId, _companyName);
                                         setState(() {
                                           _isFollow = !_isFollow;
-                                          _callBackCompanyId = _id;
-                                          _callBackIsFollow = _isFollow;
+                                          _companyIdCallBack = _id;
+                                          _isFollowCallBack = _isFollow;
                                         });
                                       },
                                     )
@@ -1635,12 +1633,12 @@ class _CompanyDetailState extends State<CompanyDetail>
                                       colorText: AppColors.fontPrimary,
                                       text: "following".tr,
                                       press: () {
-                                        followCompany(
-                                            _companyName, widget.companyId);
+                                        followAndUnFollowCompanyHelper(
+                                            widget.companyId, _companyName);
                                         setState(() {
                                           _isFollow = !_isFollow;
-                                          _callBackCompanyId = _id;
-                                          _callBackIsFollow = _isFollow;
+                                          _companyIdCallBack = _id;
+                                          _isFollowCallBack = _isFollow;
                                         });
                                       },
                                     ),
@@ -1661,32 +1659,6 @@ class _CompanyDetailState extends State<CompanyDetail>
                                         EdgeInsets.all(10),
                                       ),
                                       text: "submit cv".tr,
-                                      // press: () async {
-                                      //   var result = await showDialog(
-                                      //       context: context,
-                                      //       builder: (context) {
-                                      //         return AlertDialogBtnConfirmCancelBetween(
-                                      //           title: "submit cv".tr,
-                                      //           contentText: "${_companyName}" +
-                                      //               "\n" +
-                                      //               "are_you_sure_sent_cv".tr,
-                                      //           textLeft: 'cancel'.tr,
-                                      //           textRight: 'confirm'.tr,
-                                      //           colorTextRight:
-                                      //               AppColors.fontPrimary,
-                                      //           borderColorButtonRight:
-                                      //               AppColors.borderPrimary,
-                                      //         );
-                                      //       });
-                                      //   if (result == 'Ok') {
-                                      //     print("confirm submit cv");
-                                      //     submittedCV(
-                                      //       _companyName,
-                                      //       widget.companyId,
-                                      //     );
-                                      //   }
-                                      // },
-
                                       press: () async {
                                         var result = await showDialog(
                                             context: context,
@@ -1710,10 +1682,12 @@ class _CompanyDetailState extends State<CompanyDetail>
                                             });
                                         if (result == 'Ok') {
                                           print("confirm submit cv");
-                                          submittedCV(
-                                            _companyName,
-                                            widget.companyId,
-                                          );
+                                          pressSubmitCVCompany(
+                                              widget.companyId, _companyName);
+
+                                          setState(() {
+                                            _isSubmit = !_isSubmit;
+                                          });
                                         }
                                       },
                                     )
@@ -1730,12 +1704,7 @@ class _CompanyDetailState extends State<CompanyDetail>
                                       text: "submitted cv".tr,
                                       buttonColor: AppColors.buttonGreyWhite,
                                       textColor: AppColors.fontDark,
-                                      press: () {
-                                        submittedCV(
-                                          _companyName,
-                                          widget.companyId,
-                                        );
-                                      },
+                                      press: () {},
                                     ),
                             )
                           ],

@@ -9,7 +9,6 @@ import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/provider/profileProvider.dart';
-import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
 import 'package:app/widget/listSingleSelectedAlertDialog.dart';
@@ -19,7 +18,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class Education extends StatefulWidget {
@@ -169,13 +167,12 @@ class _EducationState extends State<Education> {
     // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
     Navigator.pop(context);
 
-    print("education: " + "${res}");
-
     if (statusCode == 200 || statusCode == 201) {
+      await profileProvider.fetchProfileSeeker();
+
       // Call parent callback
-      if (widget.onSaveSuccess != null) {
-        widget.onSaveSuccess!();
-      }
+      if (!context.mounted) return;
+      widget.onSaveSuccess?.call();
     } else {
       await showDialog(
         context: context,

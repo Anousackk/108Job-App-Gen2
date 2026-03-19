@@ -7,6 +7,9 @@ import 'package:app/functions/htmlWidget.dart';
 import 'package:app/functions/iconSize.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/helpers/jobSearchHelper.dart';
+import 'package:app/provider/jobSearchProvider.dart';
+import 'package:app/provider/profileDashboardStatus.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/myProfile.dart';
 import 'package:app/screen/ScreenAfterSignIn/JobSearch/Widget/iconAndText.dart';
 import 'package:app/screen/screenAfterSignIn/company/companyDetail.dart';
@@ -20,6 +23,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sizer/sizer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -36,7 +40,8 @@ class JobSearchDetail extends StatefulWidget {
   State<JobSearchDetail> createState() => _JobSearchDetailState();
 }
 
-class _JobSearchDetailState extends State<JobSearchDetail> {
+class _JobSearchDetailState extends State<JobSearchDetail>
+    with JobSearchHelper {
   QuillController _quillController = QuillController.basic();
   FocusNode editorFocusNode = FocusNode();
   HtmlEditorController _htmlEditorController = HtmlEditorController();
@@ -44,7 +49,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
   double _webViewHeight = 100;
 
   List _allOnlineJob = [];
-  String _id = "";
+  String _jobId = "";
   String _companyID = "";
   String _companyName = "";
   String _logo = "";
@@ -93,7 +98,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     dynamic _jobDetail = res['jobDetail'];
     print("jobId: " + _jobDetail['jobId'].toString());
 
-    _id = _jobDetail['jobId'];
+    _jobId = _jobDetail['jobId'];
     _companyID = _jobDetail['companyID'];
     _companyName = _jobDetail['companyName'];
     _logo = _jobDetail['logo'];
@@ -221,7 +226,6 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     //           launchUrl(uri);
     //           return NavigationDecision.prevent;
     //         }
-
     //         return NavigationDecision.navigate;
     //       },
     //       onPageFinished: (url) async {
@@ -230,7 +234,6 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     //                 "document.documentElement.scrollHeight.toString()");
     //         final newHeight =
     //             double.tryParse(heightStr.toString().replaceAll('"', ''));
-
     //         if (newHeight != null && mounted) {
     //           setState(() => _webViewHeight = newHeight);
     //         }
@@ -247,6 +250,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     //
     //
     //ກວດວ່າເປັນວຽກໃໝ່ບໍ່ ມາຈາກໜ້າຄົ້ນຫາວຽກ ຖ້າເປັນວຽກໃໝ່ຈະສົ່ງ newJob ເປັນ false ກັບຄືນ
+
     if (widget.newJob == true) {
       _callBackJobSearchId = widget.jobId;
       _callBackIsNewJob = false;
@@ -257,10 +261,10 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
     }
   }
 
-  saveAndUnSaveJob() async {
+  pressApplyJob() async {
+    final jobSearchProvider = context.read<JobSearchProvider>();
     //
-    //
-    //ສະແດງ AlertDialog Loading
+    // Display AlertDialog Loading
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -269,81 +273,15 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
       },
     );
 
-    var res = await postData(saveJobSeekerApi, {
-      "_id": "",
-      "JobId": _id,
-    });
-    print(res);
+    var res = await jobSearchProvider.applyJobSearch(_jobId);
+    final statusCode = res?["statusCode"];
 
-    if (res['message'] == "Saved" || res['message'] == "Unsaved") {
-      Navigator.pop(context);
-    }
+    if (!context.mounted) return;
 
-    if (res['message'] == "Saved") {
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            strIcon: "\uf004",
-            title: "save job".tr + " " + "successfully".tr,
-            contentText: "$_title",
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-              setState(() {
-                _checkStatusCallBack = "Success";
-              });
-            },
-          );
-        },
-      );
-    } else if (res['message'] == "Unsaved") {
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            strIcon: "\uf7a9",
-            boxCircleColor: AppColors.warning200,
-            iconColor: AppColors.warning600,
-            title: "unsave job".tr + " " + "successfully".tr,
-            contentText: "$_title",
-            textButton: "ok".tr,
-            buttonColor: AppColors.warning200,
-            textButtonColor: AppColors.warning600,
-            widgetBottomColor: AppColors.warning200,
-            press: () {
-              Navigator.pop(context);
-              setState(() {
-                _checkStatusCallBack = "Success";
-              });
-            },
-          );
-        },
-      );
-    }
-  }
+    // Close AlertDialog Loading after api done
+    Navigator.pop(context);
 
-  applyJob() async {
-    //
-    //ສະແດງ AlertDialog Loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustomLoadingLogoCircle();
-      },
-    );
-
-    var res = await postData(applyJobSeekerApi, {
-      "JobId": _id,
-      "isCoverLetter": null,
-    });
-    var message = res['message'];
-
-    print(res);
-    if (message == "Applied succeed") {
+    if (statusCode == 200 || statusCode == 201) {
       Navigator.pop(context);
       setState(() {
         _isApplied = !_isApplied;
@@ -361,12 +299,16 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
               Navigator.pop(context);
               // Navigator.of(context).pop('Success');
               setState(() {
-                _checkStatusCallBack = "Success";
+                _checkStatusCallBack = "JobSearchDetailAction";
               });
             },
           );
         },
       );
+
+      context
+          .read<ProfileDashboardStatusProvider>()
+          .fetchProfileDashboardStatus();
     } else {
       Navigator.pop(context);
       await showDialog(
@@ -374,59 +316,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
         builder: (context) {
           return CustAlertDialogWarningWithoutBtn(
             title: "warning".tr,
-            contentText: "$message",
-          );
-        },
-      );
-    }
-  }
-
-  followCompany(String companyName, String companyId) async {
-    //
-    //ສະແດງ AlertDialog Loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustomLoadingLogoCircle();
-      },
-    );
-
-    var res = await postData(addFollowCompanySeekerApi + '${companyId}', {});
-    var message = res['message'];
-    print(message);
-
-    if (message == "Followed") {
-      Navigator.pop(context);
-
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "followed".tr + " " + "successfully".tr,
-            contentText: "$companyName",
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-            },
-          );
-        },
-      );
-    } else if (message == "Unfollow") {
-      Navigator.pop(context);
-
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "unfollowed".tr + " " + "successfully".tr,
-            contentText: "$companyName",
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-            },
+            contentText: "${res?["body"]?["message"]}",
           );
         },
       );
@@ -786,7 +676,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                   color: Colors.transparent,
                                   child: InkWell(
                                     onTap: () async {
-                                      sharePlusDynamiclink(context, _id);
+                                      sharePlusDynamiclink(context, _jobId);
                                     },
                                     borderRadius: BorderRadius.circular(100),
                                     child: Container(
@@ -1887,11 +1777,21 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                   flex: 1,
                                   child: GestureDetector(
                                     onTap: () {
-                                      saveAndUnSaveJob();
+                                      saveAndUnSaveJobHelper(
+                                        _jobId,
+                                        _title,
+                                        onPressOkay: () {
+                                          Navigator.pop(context);
+                                          setState(() {
+                                            _checkStatusCallBack =
+                                                "JobSearchDetailAction";
+                                          });
+                                        },
+                                      );
 
                                       setState(() {
                                         _isSaved = !_isSaved;
-                                        _callBackJobSearchId = _id;
+                                        _callBackJobSearchId = _jobId;
                                         _callBackIsSave = _isSaved;
                                       });
                                     },
@@ -2018,8 +1918,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                                     );
                                                   });
                                               if (result == 'Ok') {
-                                                print("confirm apply");
-                                                applyJob();
+                                                pressApplyJob();
                                               }
                                             },
                                           )
@@ -2041,7 +1940,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                             colorText: AppColors.fontWaring,
                                             text: "applied".tr,
                                             press: () {
-                                              // applyJob();
+                                              // pressApplyJob();
                                             },
                                           ),
                                   ),
@@ -2067,7 +1966,7 @@ class _JobSearchDetailState extends State<JobSearchDetail> {
                                 //       colorText: AppColors.fontGreyOpacity,
                                 //       text: "ປິດຮັບສະໝັກແລ້ວ",
                                 //       // press: () {
-                                //       //   applyJob();
+                                //       //   pressApplyJob();
                                 //       // },
                                 //     ),
                                 //   ),

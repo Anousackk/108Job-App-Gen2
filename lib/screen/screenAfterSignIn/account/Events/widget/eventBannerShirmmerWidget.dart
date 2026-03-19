@@ -13,21 +13,15 @@ class EventBannerShirmmerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
       baseColor: AppColors.dark200,
-      highlightColor: AppColors.dark100,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(
-            aspectRatio: 16 / 6,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.backgroundWhite,
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
+      highlightColor: AppColors.white,
+      child: AspectRatio(
+        aspectRatio: 16 / 6,
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.backgroundWhite,
+            borderRadius: BorderRadius.circular(10),
           ),
-          // SizedBox(height: 30),
-        ],
+        ),
       ),
     );
   }

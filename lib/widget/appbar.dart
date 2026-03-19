@@ -19,6 +19,7 @@ class AppBarDefault extends StatefulWidget implements PreferredSizeWidget {
     this.fontWeight,
     this.textTitleFontFamily,
     this.elevation,
+    this.systemOverlayStyleColor,
   }) : super(key: key);
   final String textTitle;
   final String? textTitleFontFamily;
@@ -27,6 +28,7 @@ class AppBarDefault extends StatefulWidget implements PreferredSizeWidget {
   final Color? backgroundColor, textColor;
   final Icon leadingIcon;
   final double? elevation;
+  final SystemUiOverlayStyle? systemOverlayStyleColor;
 
   final Function()? leadingPress;
 
@@ -41,6 +43,9 @@ class _AppBarDefaultState extends State<AppBarDefault> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      systemOverlayStyle: widget.systemOverlayStyleColor == null
+          ? SystemUiOverlayStyle.light
+          : widget.systemOverlayStyleColor,
       backgroundColor: widget.backgroundColor == null
           ? AppColors.backgroundAppBar
           : widget.backgroundColor,

@@ -137,15 +137,6 @@ class _WorkHistoryState extends State<WorkHistory> {
 
   pressAddWorkHistorySeeker() async {
     final profileProvider = context.read<ProfileProvider>();
-    final converter =
-        QuillDeltaToHtmlConverter(_quillController.document.toDelta().toJson());
-    String quillConvertDeltaToHTML = converter.convert();
-    print(quillConvertDeltaToHTML.toString());
-
-    // String quillConvertDeltaToHTML =
-    //     _quillController.document.toDelta().toHtml();
-    // print(quillConvertDeltaToHTML.toString());
-
     // Display AlertDialog Loading First
     showDialog(
       context: context,
@@ -155,10 +146,18 @@ class _WorkHistoryState extends State<WorkHistory> {
       },
     );
 
+    final converter =
+        QuillDeltaToHtmlConverter(_quillController.document.toDelta().toJson());
+    String quillConvertDeltaToHTML = converter.convert();
+    print(quillConvertDeltaToHTML.toString());
+
+    // String quillConvertDeltaToHTML =
+    //     _quillController.document.toDelta().toHtml();
+    // print(quillConvertDeltaToHTML.toString());
+
     final res = await profileProvider.addWorkHistory(
       _id,
       _company,
-
       _fromMonthYear != null ? _fromMonthYear.toString() : _fromMonthYear,
       _toMonthYear != null ? _toMonthYear.toString() : _toMonthYear,
       _jobTitle,
@@ -171,9 +170,6 @@ class _WorkHistoryState extends State<WorkHistory> {
 
     final updateNoExPerience = await profileProvider.updateNoExperience(false);
 
-    print("workHistory: " + "${res['workHistory']}");
-    print("updateNoExperience: " + "${updateNoExPerience}");
-
     final statusCode = res?["statusCode"];
 
     if (!context.mounted) return;
@@ -182,6 +178,8 @@ class _WorkHistoryState extends State<WorkHistory> {
     Navigator.pop(context);
 
     if (statusCode == 200 || statusCode == 201) {
+      await profileProvider.fetchProfileSeeker();
+
       // Call parent callback
       if (widget.onSaveSuccess != null) {
         widget.onSaveSuccess!();

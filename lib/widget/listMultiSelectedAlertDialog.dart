@@ -54,197 +54,192 @@ class _ListMultiSelectedAlertDialogState
 
   @override
   Widget build(BuildContext context) {
-    return StatefulBuilder(
-      builder: (context, setState) {
-        return AlertDialog(
-          titlePadding: EdgeInsets.zero,
-          contentPadding: EdgeInsets.zero,
-          insetPadding: EdgeInsets.zero,
+    return AlertDialog(
+      titlePadding: EdgeInsets.zero,
+      contentPadding: EdgeInsets.zero,
+      insetPadding: EdgeInsets.zero,
 
-          //
-          //
-          //Title
-          title: Container(
-            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            decoration: BoxDecoration(
-              color: AppColors.backgroundWhite,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: Container(
-                      height: 45,
-                      width: 45,
-                      color: AppColors.iconLight.withOpacity(0.1),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "\uf060",
-                          style: fontAwesomeRegular(null, 20, null, null),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Text(
-                  "${widget.title}",
-                  style: bodyTextMedium(null, null, FontWeight.bold),
-                ),
-                Container(
+      //
+      //
+      //Title
+      title: Container(
+        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+        decoration: BoxDecoration(
+          color: AppColors.backgroundWhite,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Container(
                   height: 45,
                   width: 45,
-                )
-              ],
-            ),
-          ),
-
-          //
-          //
-          //Content Selection
-          content: Container(
-            color: AppColors.backgroundWhite,
-            child: Column(
-              children: [
-                if (widget.status == "seekerHideCompany")
-                  //
-                  //
-                  //Search company name
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-                    child: SimpleTextFieldSingleValidate(
-                      codeController: widget.codeController,
-                      contenPadding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      enabledBorder: enableOutlineBorder(AppColors.borderBG),
-                      changed: widget.changed,
-                      hintText: "search".tr + " " + "company name".tr,
-                      inputColor: AppColors.inputWhite,
+                  color: AppColors.iconLight.withOpacity(0.1),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "\uf060",
+                      style: fontAwesomeRegular(null, 20, null, null),
                     ),
                   ),
-                Expanded(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    child: ListView.builder(
-                        physics: ClampingScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: _listItems.length,
-                        itemBuilder: (context, index) {
-                          dynamic i = _listItems[index];
-                          String name;
-
-                          if (widget.status == "seekerHideCompany") {
-                            name = i['companyName'];
-                          } else {
-                            name = i['name'];
-                          }
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                final id = i['_id']?.toString() ?? "";
-
-                                // ignore empty IDs
-                                if (id.isEmpty) return;
-
-                                if (_selectedArray.contains(id)) {
-                                  _selectedArray.removeWhere((e) => e == id);
-                                } else {
-                                  _selectedArray.add(id);
-                                }
-
-                                // remove empty values for safety
-                                _selectedArray
-                                    .removeWhere((e) => e.toString().isEmpty);
-
-                                print(_selectedArray);
-                              });
-                              // setState(() {
-                              //   //
-                              //   //ຖ້າໂຕທີ່ເລືອກ _id ກົງກັບ _selectedArray(_id) ແມ່ນລົບອອກ
-                              //   if (_selectedArray.contains(i['_id'])) {
-                              //     _selectedArray
-                              //         .removeWhere((e) => e == i['_id']);
-                              //     print(_selectedArray);
-
-                              //     return;
-                              //   }
-                              //   //
-                              //   //ເອົາຂໍ້ມູນທີ່ເລືອກ Add ເຂົ້າໃນ Array _selectedArray
-                              //   _selectedArray.add(i['_id']);
-                              //   print(_selectedArray);
-                              // });
-                            },
-                            child: Container(
-                              color: AppColors.backgroundWhite,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 20),
-                              child: Row(
-                                children: [
-                                  _selectedArray.contains(i['_id'])
-                                      ? Icon(Icons.check_box,
-                                          color: AppColors.iconPrimary)
-                                      : Icon(Icons.check_box_outline_blank),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      '${name}',
-                                      style: bodyTextNormal(
-                                          null,
-                                          _selectedArray.contains(i['_id'])
-                                              ? AppColors.fontPrimary
-                                              : null,
-                                          FontWeight.bold),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-
-                                  //
-                                  //_selectedArray.contains(i['_id']) // ໃຊ້ contains ກວດຄ່າ(_id)ທີ່ຢູ່ໃນ Array _selectedArray ວ່າຕົງກັນບໍ່
-                                  // if (_selectedArray.contains(i['_id']))
-                                  //   FaIcon(
-                                  //     FontAwesomeIcons.check,
-                                  //     color: AppColors.iconPrimary,
-                                  //   )
-                                ],
-                              ),
-                            ),
-                          );
-                        }),
-                  ),
                 ),
-              ],
+              ),
             ),
-          ),
-          actions: [
-            Column(
-              children: [
-                SizedBox(
-                  height: 10,
-                ),
-                Button(
-                  text: "confirm".tr,
-                  textFontWeight: FontWeight.bold,
-                  press: () {
-                    Navigator.of(context).pop(_selectedArray);
-                  },
-                ),
-                SizedBox(
-                  height: 30,
-                )
-              ],
+            Text(
+              "${widget.title}",
+              style: bodyTextMedium(null, null, FontWeight.bold),
+            ),
+            Container(
+              height: 45,
+              width: 45,
             )
           ],
-        );
-      },
+        ),
+      ),
+
+      //
+      //
+      //Content Selection
+      content: Container(
+        color: AppColors.backgroundWhite,
+        child: Column(
+          children: [
+            if (widget.status == "seekerHideCompany")
+              //
+              //
+              //Search company name
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                child: SimpleTextFieldSingleValidate(
+                  codeController: widget.codeController,
+                  contenPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  enabledBorder: enableOutlineBorder(AppColors.borderBG),
+                  changed: widget.changed,
+                  hintText: "search".tr + " " + "company name".tr,
+                  inputColor: AppColors.inputWhite,
+                ),
+              ),
+            Expanded(
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: ListView.builder(
+                    physics: ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: _listItems.length,
+                    itemBuilder: (context, index) {
+                      dynamic i = _listItems[index];
+                      String name;
+
+                      if (widget.status == "seekerHideCompany") {
+                        name = i['companyName'];
+                      } else {
+                        name = i['name'];
+                      }
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            final id = i['_id']?.toString() ?? "";
+
+                            // ignore empty IDs
+                            if (id.isEmpty) return;
+
+                            if (_selectedArray.contains(id)) {
+                              _selectedArray.removeWhere((e) => e == id);
+                            } else {
+                              _selectedArray.add(id);
+                            }
+
+                            // remove empty values for safety
+                            _selectedArray
+                                .removeWhere((e) => e.toString().isEmpty);
+
+                            print(_selectedArray);
+                          });
+                          // setState(() {
+                          //   //
+                          //   //ຖ້າໂຕທີ່ເລືອກ _id ກົງກັບ _selectedArray(_id) ແມ່ນລົບອອກ
+                          //   if (_selectedArray.contains(i['_id'])) {
+                          //     _selectedArray
+                          //         .removeWhere((e) => e == i['_id']);
+                          //     print(_selectedArray);
+
+                          //     return;
+                          //   }
+                          //   //
+                          //   //ເອົາຂໍ້ມູນທີ່ເລືອກ Add ເຂົ້າໃນ Array _selectedArray
+                          //   _selectedArray.add(i['_id']);
+                          //   print(_selectedArray);
+                          // });
+                        },
+                        child: Container(
+                          color: AppColors.backgroundWhite,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 20),
+                          child: Row(
+                            children: [
+                              _selectedArray.contains(i['_id'])
+                                  ? Icon(Icons.check_box,
+                                      color: AppColors.iconPrimary)
+                                  : Icon(Icons.check_box_outline_blank),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  '${name}',
+                                  style: bodyTextNormal(
+                                      null,
+                                      _selectedArray.contains(i['_id'])
+                                          ? AppColors.fontPrimary
+                                          : null,
+                                      FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+
+                              //
+                              //_selectedArray.contains(i['_id']) // ໃຊ້ contains ກວດຄ່າ(_id)ທີ່ຢູ່ໃນ Array _selectedArray ວ່າຕົງກັນບໍ່
+                              // if (_selectedArray.contains(i['_id']))
+                              //   FaIcon(
+                              //     FontAwesomeIcons.check,
+                              //     color: AppColors.iconPrimary,
+                              //   )
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        Column(
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Button(
+              text: "confirm".tr,
+              textFontWeight: FontWeight.bold,
+              press: () {
+                Navigator.of(context).pop(_selectedArray);
+              },
+            ),
+            SizedBox(
+              height: 30,
+            )
+          ],
+        )
+      ],
     );
   }
 }

@@ -1,13 +1,11 @@
 // ignore_for_file: camel_case_types, prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, avoid_init_to_null, avoid_print, prefer_typing_uninitialized_variables, unused_field, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, prefer_final_fields, prefer_if_null_operators, prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
 import 'package:app/functions/alert_dialog.dart';
-import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/provider/profileProvider.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/Education/education.dart';
-import 'package:app/widget/appbar.dart';
 import 'package:app/widget/boxDecDottedBorderProfileDetail.dart';
 import 'package:app/widget/button.dart';
 import 'package:flutter/material.dart';
@@ -61,8 +59,6 @@ class _FetchEducationState extends State<FetchEducation> {
     // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
     Navigator.pop(context);
 
-    print("delete education: " + "${res}");
-
     if (statusCode == 200 || statusCode == 201) {
       await profileProvider.fetchProfileSeeker();
     }
@@ -99,7 +95,6 @@ class _FetchEducationState extends State<FetchEducation> {
               });
             },
             onSaveSuccess: () async {
-              await profileProvider.fetchProfileSeeker();
               setState(() {
                 isShowFormAddEducation = false;
                 isShowFormUpdateEducation = false;
@@ -119,7 +114,6 @@ class _FetchEducationState extends State<FetchEducation> {
               });
             },
             onSaveSuccess: () async {
-              await profileProvider.fetchProfileSeeker();
               setState(() {
                 isShowFormAddEducation = false;
                 isShowFormUpdateEducation = false;

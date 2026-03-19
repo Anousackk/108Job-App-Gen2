@@ -144,9 +144,9 @@ class _SkillState extends State<Skill> {
     // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
     Navigator.pop(context);
 
-    print("skill : " + "${res}");
-
     if (statusCode == 200 || statusCode == 201) {
+      await profileProvider.fetchProfileSeeker();
+
       // Call parent callback
       if (widget.onSaveSuccess != null) {
         widget.onSaveSuccess!();

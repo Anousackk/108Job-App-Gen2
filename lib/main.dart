@@ -1,14 +1,18 @@
 // ignore_for_file: prefer_const_constructors, unused_local_variable, avoid_print, unused_element, prefer_adjacent_string_concatenation, unnecessary_new, await_only_futures, prefer_const_declarations, override_on_non_overriding_member, deprecated_member_use, unnecessary_brace_in_string_interps, unnecessary_string_interpolations, non_constant_identifier_names, prefer_const_literals_to_create_immutables, unused_field, unrelated_type_equality_checks, avoid_unnecessary_containers, sized_box_for_whitespace, body_might_complete_normally_nullable, prefer_final_fields, prefer_interpolation_to_compose_strings, unnecessary_import, use_build_context_synchronously
 import 'dart:io';
 import 'package:app/alertUpgraderMessages.dart';
+import 'package:app/customUpgradeAlert.dart';
 import 'package:app/firebase_options.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/i18n/i18n.dart';
 import 'package:app/provider/avatarProvider.dart';
 import 'package:app/provider/bannerProvider.dart';
+import 'package:app/provider/companyProvider.dart';
 import 'package:app/provider/eventAvailableProvider.dart';
+import 'package:app/provider/jobSearchProvider.dart';
 import 'package:app/provider/localSharePrefsProvider.dart';
+import 'package:app/provider/myJobProvider.dart';
 import 'package:app/provider/notifierProvider.dart';
 import 'package:app/provider/popupBanner.dart';
 import 'package:app/provider/profileDashboardStatus.dart';
@@ -500,6 +504,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider(create: (_) => LocalSharedPrefsProvider()),
         ChangeNotifierProvider(create: (_) => RecommendJobAIProvider()),
         ChangeNotifierProvider(create: (_) => ProfileDashboardStatusProvider()),
+        ChangeNotifierProvider(create: (_) => JobSearchProvider()),
+        ChangeNotifierProvider(create: (_) => MyJobProvider()),
+        ChangeNotifierProvider(create: (_) => CompanyProvider()),
       ],
       child: Sizer(
         builder: (context, orientation, deviceType) {
@@ -527,14 +534,14 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 fontFamily:
                     Get.locale == Locale('lo', 'LA') || Get.locale == null
                         ? 'NotoSansLaoLoopedRegular'
-                        : 'SatoshiMedium',
+                        : Get.locale == Locale('en', 'US')
+                            ? 'SatoshiMedium'
+                            : 'SatoshiMedium',
                 // primaryColor: primaryColor,
                 appBarTheme: AppBarTheme(
                   backgroundColor: AppColors.backgroundWhite,
-
-                  // color: AppColors.red,
                   elevation: 0,
-
+                  // color: AppColors.red,
                   // systemOverlayStyle: SystemUiOverlayStyle.dark,
                   // systemOverlayStyle: SystemUiOverlayStyle(
                   //     statusBarColor: AppColors.white,
@@ -549,43 +556,24 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 //   systemOverlayStyle: SystemUiOverlayStyle.dark,
                 //   backgroundColor: AppColors.backgroundAppBar,
                 // ),
-                body: UpgradeAlert(
-                  showIgnore: false,
-                  showLater: false,
-                  barrierDismissible: false,
-                  showReleaseNotes: false,
-                  dialogStyle: Platform.isIOS
-                      ? UpgradeDialogStyle.cupertino
-                      : UpgradeDialogStyle.material,
+
+                body: CustomUpgradeAlert(
                   upgrader: Upgrader(
                     // debugDisplayAlways: true,
                     // debugLogging: true,
                     durationUntilAlertAgain: Duration.zero,
                     messages: MyUpgraderMessages(),
                   ),
-                  // upgrader: Upgrader(
-                  // debugDisplayAlways: true,
-                  // debugLogging: true,
-                  // durationUntilAlertAgain: Duration.zero,
-                  // messages: UpgraderMessages(),
-                  // messages: MyUpgraderMessages(),
-                  // upgraderDevice: UpgraderDevice(),
-                  // storeController: UpgraderStoreController(
-                  //   onAndroid: () => UpgraderPlayStore(),
-                  //   oniOS: () => UpgraderAppStore(),
-                  // ),
-                  // storeController: MyStoreController(),
-                  // ),
                   child: _sharePreEmpToken == null ? Login() : Home(),
                 ),
               ),
               localizationsDelegates: [
                 // add your localizations delegates here
-                DefaultMaterialLocalizations.delegate,
-                DefaultWidgetsLocalizations.delegate,
                 // GlobalMaterialLocalizations.delegate,
                 // GlobalCupertinoLocalizations.delegate,
                 // GlobalWidgetsLocalizations.delegate,
+                DefaultMaterialLocalizations.delegate,
+                DefaultWidgetsLocalizations.delegate,
                 FlutterQuillLocalizations.delegate,
               ],
               routes: routes,

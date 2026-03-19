@@ -13,20 +13,15 @@ class BoxContainProfileShirmmerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
       baseColor: AppColors.dark200,
-      highlightColor: AppColors.dark100,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 170,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.backgroundWhite,
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
+      highlightColor: AppColors.white,
+      child: SizedBox(
+        height: 170,
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.backgroundWhite,
+            borderRadius: BorderRadius.circular(10),
           ),
-        ],
+        ),
       ),
     );
   }

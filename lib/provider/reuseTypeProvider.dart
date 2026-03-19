@@ -15,6 +15,45 @@ class ReuseTypeProvider extends ChangeNotifier {
   List listProvince = [];
   List listIndustry = [];
 
+  // Job search filter lists
+  List listIndustryFilter = [];
+  List listProvinceFilter = [];
+  List listJobExperienceFilter = [];
+  List listEducationLevelFilter = [];
+  List listJobLevelFilter = [];
+
+  Future<void> fetchReuseFilterJobSearchSeeker(
+      String lang, String resValue) async {
+    try {
+      var res =
+          await fetchData(getReuseFilterJobSearchSeekerApi + "lang=$lang");
+
+      Iterable<dynamic> iterableRes = res[resValue] ?? [];
+
+      switch (resValue) {
+        case 'industry':
+          listIndustryFilter = iterableRes.toList();
+          break;
+        case 'workLocation':
+          listProvinceFilter = iterableRes.toList();
+          break;
+        case 'jobExperience':
+          listJobExperienceFilter = iterableRes.toList();
+          break;
+        case 'educationLevel':
+          listEducationLevelFilter = iterableRes.toList();
+          break;
+        case 'jobLevel':
+          listJobLevelFilter = iterableRes.toList();
+          break;
+      }
+
+      notifyListeners();
+    } catch (e) {
+      print("Fetch reuse filter job search error: $e");
+    }
+  }
+
   Future<void> fetchReuseTypeSeeker(String lang, String type) async {
     try {
       var res = await fetchData(

@@ -1,11 +1,11 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, avoid_print, prefer_final_fields, unused_field, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, deprecated_member_use, prefer_interpolation_to_compose_strings, use_build_context_synchronously, unused_local_variable, unnecessary_string_interpolations, prefer_adjacent_string_concatenation, prefer_is_empty
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, avoid_print, prefer_final_fields, unused_field, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, deprecated_member_use, prefer_interpolation_to_compose_strings, use_build_context_synchronously, unused_local_variable, unnecessary_string_interpolations, prefer_adjacent_string_concatenation, prefer_is_empty, unnecessary_null_comparison
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/helpers/eventAvailableHelper.dart';
 import 'package:app/provider/eventAvailableProvider.dart';
-import 'package:app/provider/profileDashboardStatus.dart';
 import 'package:app/provider/profileProvider.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/Events/eventTicket.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/Events/positionCompany.dart';
@@ -17,6 +17,7 @@ import 'package:app/screen/screenAfterSignIn/account/Events/widget/eventBannerSh
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -32,7 +33,8 @@ class RegisterEvent extends StatefulWidget {
   State<RegisterEvent> createState() => _RegisterEventState();
 }
 
-class _RegisterEventState extends State<RegisterEvent> {
+class _RegisterEventState extends State<RegisterEvent>
+    with EventAvailableHelper {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<FormState> _redeemFormKey = GlobalKey<FormState>();
   final TextEditingController _textCodeController = TextEditingController();
@@ -40,90 +42,20 @@ class _RegisterEventState extends State<RegisterEvent> {
   int? _pressIndexBox;
   int _selectedTabRecommendAndAppliedJob = 0;
 
+  String boothMustCheckIn = "";
+  String boothCurrentCheckIn = "";
+
   void _clearCodeEmpty() {
     _textCodeController.clear();
   }
 
-  pressApplyEvent() async {
-    final eventAvailableProvider = context.read<EventAvailableProvider>();
-
-    // Display AlertDialog Loading First
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustomLoadingLogoCircle();
-      },
-    );
-
-    final res = await eventAvailableProvider.applyEvent();
-
-    final statusCode = res?["statusCode"];
-
-    if (!context.mounted) return;
-
-    // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
-    Navigator.pop(context);
-
-    print("apply event: " + res.toString());
-
-    if (statusCode == 200 || statusCode == 201) {
-      await eventAvailableProvider.fetchEventAvailable();
-      await eventAvailableProvider.fetchStatisticEvent();
-
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "successfully".tr,
-            contentText: "registered_attend".tr,
-            textButton: "ok".tr,
-            press: () {
-              Navigator.of(context).pop(); // Close dialog
-            },
-          );
-        },
-      );
-    } else if (statusCode == 409) {
-      var result = await showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) {
-            return NewVer2CustAlertDialogWarningBtnConfirmCancel(
-              title: "title_pls_update_profile".tr,
-              contentText: "text_pls_update_profile_complete".tr,
-              textButtonLeft: "cancel".tr,
-              textButtonRight: 'continue'.tr,
-            );
-          });
-      if (result == "Ok") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyProfile(
-              status: "Event",
-            ),
-          ),
-        );
-      }
-    } else {
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return CustAlertDialogWarningWithoutBtn(
-            title: "warning".tr,
-            contentText: "${res?["body"]?["message"]}",
-          );
-        },
-      );
-    }
-  }
-
   pullDownRefreshScreen() {
     // Future.delayed(Duration(seconds: 1), () {
+    context.read<ProfileProvider>().fetchProfileSeeker();
+    context.read<EventAvailableProvider>().fetchCompanyEventAvailable();
+    context.read<EventAvailableProvider>().fetchEventBanner();
     context.read<EventAvailableProvider>().fetchStatisticEvent();
     context.read<EventAvailableProvider>().fetchEventAvailable();
-    context.read<ProfileProvider>().fetchProfileSeeker();
     context.read<EventAvailableProvider>().fetchCheckInBoothBySeeker();
     context.read<EventAvailableProvider>().fetchAIMatchingJobAndAppliedJob();
 
@@ -138,8 +70,8 @@ class _RegisterEventState extends State<RegisterEvent> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<EventAvailableProvider>().fetchCompanyEventAvailable();
     });
-    context.read<EventAvailableProvider>().fetchStatisticEvent();
     context.read<EventAvailableProvider>().fetchEventBanner();
+    context.read<EventAvailableProvider>().fetchStatisticEvent();
     context.read<EventAvailableProvider>().fetchCheckInBoothBySeeker();
     context.read<EventAvailableProvider>().fetchAIMatchingJobAndAppliedJob();
   }
@@ -155,6 +87,13 @@ class _RegisterEventState extends State<RegisterEvent> {
   Widget build(BuildContext context) {
     final profileProvider = context.watch<ProfileProvider>();
     final eventAvailableProvider = context.watch<EventAvailableProvider>();
+
+    if (eventAvailableProvider.boothsCheckedIn != "" &&
+        eventAvailableProvider.boothsCheckedIn.isNotEmpty) {
+      final boothParts = eventAvailableProvider.boothsCheckedIn.split("/");
+      boothCurrentCheckIn = boothParts[0];
+      boothMustCheckIn = boothParts[1];
+    }
 
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
@@ -193,7 +132,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                   ),
                   child: Align(
                     child: Text(
-                      "\uf143",
+                      "\uf145",
                       style: fontAwesomeSolid(null, 20, AppColors.teal, null),
                     ),
                   ),
@@ -269,49 +208,58 @@ class _RegisterEventState extends State<RegisterEvent> {
                                     top: 20,
                                     bottom: 90,
                                   ),
-                                  child: eventAvailableProvider
-                                          .isLoadingCompanyEventAvailable
-                                      ? EventBannerShirmmerWidget()
-                                      : AspectRatio(
-                                          // aspectRatio: 16 / 9,
-                                          aspectRatio: 16 / 6,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: AppColors.dark100,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: AppColors.dark
-                                                      .withOpacity(0.05),
-                                                  offset: Offset(3, 2),
-                                                  blurRadius: 4,
-                                                  spreadRadius: 0,
-                                                ),
-                                              ],
-                                            ),
-                                            width: double.infinity,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              // child: Image.asset(
-                                              //   'assets/image/cover_wiifair_10.jpg',
-                                              // ),
-
-                                              child: Image.network(
-                                                "${eventAvailableProvider.eventBannerImage}",
-                                                fit: BoxFit.contain,
-                                                errorBuilder: (context, error,
-                                                    stackTrace) {
-                                                  return Image.asset(
-                                                    'assets/image/108job-logo-text.png',
-                                                    fit: BoxFit.contain,
-                                                  ); // Display an error message
-                                                },
-                                              ),
-                                            ),
+                                  child: AspectRatio(
+                                    // aspectRatio: 16 / 9,
+                                    aspectRatio: 16 / 6,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: AppColors.dark
+                                                .withOpacity(0.05),
+                                            offset: Offset(3, 2),
+                                            blurRadius: 4,
+                                            spreadRadius: 0,
                                           ),
-                                        ),
+                                        ],
+                                      ),
+                                      width: double.infinity,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: (eventAvailableProvider
+                                                .eventBannerImage.isEmpty)
+                                            ? Container(
+                                                padding: EdgeInsets.all(10),
+                                                color:
+                                                    AppColors.backgroundWhite,
+                                                child: Image.asset(
+                                                  "assets/image/108job-logo-text.png",
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              )
+                                            : CachedNetworkImage(
+                                                imageUrl: eventAvailableProvider
+                                                    .eventBannerImage,
+                                                fit: BoxFit.contain,
+                                                // Display shimmer loading image
+                                                placeholder: (context, url) =>
+                                                    EventBannerShirmmerWidget(),
+                                                // Can not load image / error url
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Container(
+                                                  color:
+                                                      AppColors.backgroundWhite,
+                                                  child: Image.asset(
+                                                    "assets/image/108job-logo-text.png",
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
 
                                 //Box Statistic Event
@@ -505,22 +453,24 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                 borderRadius:
                                                     BorderRadius.circular(100),
                                                 child: profileProvider
-                                                            .imageSrc ==
-                                                        ""
+                                                        .imageSrc.isEmpty
                                                     ? Image.asset(
                                                         'assets/image/defprofile.jpg',
                                                         fit: BoxFit.cover,
                                                       )
-                                                    : Image.network(
-                                                        "${profileProvider.imageSrc}",
+                                                    : CachedNetworkImage(
+                                                        imageUrl:
+                                                            "${profileProvider.imageSrc}",
                                                         fit: BoxFit.cover,
-                                                        errorBuilder: (context,
-                                                            error, stackTrace) {
-                                                          return Image.asset(
-                                                            'assets/image/defprofile.jpg',
-                                                            fit: BoxFit.cover,
-                                                          ); // Display an error message
-                                                        },
+                                                        // placeholder: (context,
+                                                        //         url) =>
+                                                        //     EventBannerShirmmerWidget(),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            Image.asset(
+                                                          "assets/image/defprofile.jpg",
+                                                          fit: BoxFit.cover,
+                                                        ),
                                                       ),
                                               ),
                                             ),
@@ -602,7 +552,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                 color: AppColors.dark
                                                     .withOpacity(0.9),
                                                 borderRadius:
-                                                    BorderRadius.circular(15),
+                                                    BorderRadius.circular(10),
                                               ),
                                               child: Column(
                                                 children: [
@@ -613,7 +563,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        "BOOTH VISIT STAMPS",
+                                                        "booth_stamp_card".tr,
                                                         style: bodyTextNormal(
                                                             null,
                                                             AppColors.teal,
@@ -909,8 +859,14 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                             return NewVer5CustAlertDialogWarningBtnConfirm(
                                                               title:
                                                                   "warning".tr,
-                                                              contentText:
-                                                                  "Booth visit: ${eventAvailableProvider.boothsCheckedIn}"
+                                                              contentText: "u_must_check_in".tr +
+                                                                  "\n\n" +
+                                                                  "checked_in"
+                                                                      .tr +
+                                                                  ": ${boothCurrentCheckIn} \n" +
+                                                                  "must_check_in_all"
+                                                                      .tr +
+                                                                  ": ${boothMustCheckIn}"
                                                                       .tr,
                                                               textButton:
                                                                   "ok".tr,
@@ -975,10 +931,23 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                                         100));
 
                                                             // Api Reedeem Reward Event
-                                                            eventAvailableProvider
-                                                                .reedeemCodeEvent(
-                                                                    context,
-                                                                    "${_textCodeController.text}");
+
+                                                            reedeemCodeEventHelper(
+                                                                "${_textCodeController.text}",
+                                                                onPressOkay:
+                                                                    () {
+                                                              // Close dialog
+                                                              Navigator.pop(
+                                                                  context);
+
+                                                              // Navigate back to registerEvent.dart
+                                                              if (Navigator
+                                                                  .canPop(
+                                                                      context)) {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              }
+                                                            });
 
                                                             _clearCodeEmpty();
                                                           }
@@ -1053,7 +1022,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     color: AppColors.backgroundWhite,
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(10),
                                     boxShadow: [
                                       BoxShadow(
                                         color: AppColors.dark.withOpacity(0.1),
@@ -1072,7 +1041,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            'Jobs & Applications',
+                                            "your_jobs".tr,
                                             style: bodyTextMedium(
                                                 null,
                                                 AppColors.fontDark,
@@ -1135,7 +1104,8 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                                       null,
                                                                       AppColors
                                                                           .teal,
-                                                                      null),
+                                                                      FontWeight
+                                                                          .bold),
                                                                 ),
                                                               ),
                                                             )
@@ -1201,7 +1171,8 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                                       null,
                                                                       AppColors
                                                                           .teal,
-                                                                      null),
+                                                                      FontWeight
+                                                                          .bold),
                                                                 ),
                                                               ),
                                                             )
@@ -1260,6 +1231,8 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                                       "title"],
                                                                   company: job[
                                                                       "companyName"],
+                                                                  booth: job[
+                                                                      "boothName"],
                                                                   press: () {
                                                                     Navigator
                                                                         .push(
@@ -1270,6 +1243,8 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                                                 DetailPositionComapny(
                                                                           id: job[
                                                                               "_id"],
+                                                                          companyName:
+                                                                              job["companyName"],
                                                                           logo:
                                                                               eventAvailableProvider.companyLogoEventAvailable,
                                                                           title:
@@ -1323,6 +1298,8 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                                       "title"],
                                                                   company: job[
                                                                       "companyName"],
+                                                                  booth: job[
+                                                                      "boothName"],
                                                                   press: () {
                                                                     Navigator
                                                                         .push(
@@ -1333,6 +1310,8 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                                                 DetailPositionComapny(
                                                                           id: job[
                                                                               "_id"],
+                                                                          companyName:
+                                                                              job["companyName"],
                                                                           logo:
                                                                               eventAvailableProvider.companyLogoEventAvailable,
                                                                           title:
@@ -1375,12 +1354,11 @@ class _RegisterEventState extends State<RegisterEvent> {
                                                       .appliedJobEvent.length >
                                                   3))
                                         Button(
-                                          boxDecBorderRadius:
-                                              BorderRadius.circular(10),
+                                          // boxDecBorderRadius:
+                                          //     BorderRadius.circular(10),
                                           buttonColor:
-                                              AppColors.backgroundWhite,
-                                          buttonBorderColor:
-                                              AppColors.borderDark,
+                                              AppColors.teal.withOpacity(0.05),
+                                          buttonBorderColor: AppColors.teal,
                                           text: "view more".tr,
                                           textColor: AppColors.fontDark,
                                           textFontWeight: FontWeight.bold,
@@ -1412,7 +1390,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                                 width: double.infinity,
                                 child: Column(
                                   children: [
-                                    //ບໍລິສັດທີ່ເປີດຮັບສະໝັກພະນັກງານ
+                                    // Title company currently hiring
                                     Text(
                                       "companies_current_hiring".tr,
                                       style: bodyTextMedium(
@@ -1424,16 +1402,277 @@ class _RegisterEventState extends State<RegisterEvent> {
                                     //GridView Of Company Hiring
                                     if (eventAvailableProvider
                                         .companyEventAvailable.isNotEmpty)
-                                      GridView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
+                                      // Old GridView with 2 columns - commented out
+                                      // GridView.builder(
+                                      //   physics: NeverScrollableScrollPhysics(),
+                                      //   shrinkWrap: true,
+                                      //   gridDelegate:
+                                      //       SliverGridDelegateWithFixedCrossAxisCount(
+                                      //     crossAxisCount: 2,
+                                      //     crossAxisSpacing: 10,
+                                      //     mainAxisSpacing: 10,
+                                      //     childAspectRatio: 0.88,
+                                      //   ),
+                                      //   itemCount: eventAvailableProvider
+                                      //       .companyEventAvailable.length,
+                                      //   itemBuilder: (context, index) {
+                                      //     final i = eventAvailableProvider
+                                      //         .companyEventAvailable[index];
+                                      //     bool isPressBox =
+                                      //         _pressIndexBox == index;
+                                      //     return GestureDetector(
+                                      //       onTapDown: (_) {
+                                      //         setState(() {
+                                      //           _pressIndexBox = index;
+                                      //         });
+                                      //       },
+                                      //       onTapUp: (_) {
+                                      //         setState(() {
+                                      //           _pressIndexBox =
+                                      //               null; // Reset after tap is done
+                                      //         });
+                                      //       },
+                                      //       onTapCancel: () {
+                                      //         setState(() {
+                                      //           _pressIndexBox =
+                                      //               null; // Reset if touch is canceled (e.g. dragged away)
+                                      //         });
+                                      //       },
+                                      //       onTap: () {
+                                      //         eventAvailableProvider
+                                      //                 .companyIdEventAvailable =
+                                      //             i["_id"] ?? "";
+                                      //         eventAvailableProvider
+                                      //             .companyNameEventAvailable = i[
+                                      //                 "companyName"] ??
+                                      //             "";
+                                      //         eventAvailableProvider
+                                      //             .companyLogoEventAvailable = i[
+                                      //                 "logo"] ??
+                                      //             "";
+                                      //         Navigator.push(
+                                      //           context,
+                                      //           MaterialPageRoute(
+                                      //             builder: (context) => PositionCompany(
+                                      //                 // companyAvailableEventId:
+                                      //                 //     i["_id"],
+                                      //                 // logo: i["logo"],
+                                      //                 // eventAvailableIsApplied:
+                                      //                 // eventAvailableProvider
+                                      //                 //     .isApplied,
+                                      //                 ),
+                                      //           ),
+                                      //         );
+                                      //       },
+                                      //       child: Stack(
+                                      //         clipBehavior: Clip.none,
+                                      //         children: [
+                                      //           // Box Card Company Hiring
+                                      //           Container(
+                                      //             decoration: BoxDecoration(
+                                      //               border: Border.all(
+                                      //                   color: isPressBox
+                                      //                       ? AppColors.teal
+                                      //                       : AppColors
+                                      //                           .dark200),
+                                      //               borderRadius:
+                                      //                   BorderRadius.circular(
+                                      //                       10),
+                                      //               color: isPressBox
+                                      //                   ? AppColors.teal
+                                      //                       .withOpacity(0.2)
+                                      //                   : AppColors
+                                      //                       .backgroundWhite,
+                                      //             ),
+                                      //             padding: EdgeInsets.all(10),
+                                      //             child: Column(
+                                      //               mainAxisAlignment:
+                                      //                   MainAxisAlignment
+                                      //                       .center,
+                                      //               children: [
+                                      //                 //Image company
+                                      //                 Container(
+                                      //                   width: 70,
+                                      //                   height: 70,
+                                      //                   decoration:
+                                      //                       BoxDecoration(
+                                      //                     color: AppColors
+                                      //                         .backgroundWhite,
+                                      //                     borderRadius:
+                                      //                         BorderRadius
+                                      //                             .circular(5),
+                                      //                     border: Border.all(
+                                      //                       color:
+                                      //                           AppColors.teal,
+                                      //                     ),
+                                      //                   ),
+                                      //                   child: Padding(
+                                      //                     padding:
+                                      //                         EdgeInsets.all(
+                                      //                             10),
+                                      //                     child: ClipRRect(
+                                      //                       borderRadius:
+                                      //                           BorderRadius
+                                      //                               .circular(
+                                      //                                   5),
+                                      //                       child: i["logo"] ==
+                                      //                               ""
+                                      //                           ? Image.asset(
+                                      //                               "assets/image/logo_wiifair_10.jpg",
+                                      //                             )
+                                      //                           : Image.network(
+                                      //                               "https://storage.googleapis.com/108-bucket/${i["logo"]}",
+                                      //                               fit: BoxFit
+                                      //                                   .contain,
+                                      //                               errorBuilder:
+                                      //                                   (context,
+                                      //                                       error,
+                                      //                                       stackTrace) {
+                                      //                                 return Image
+                                      //                                     .asset(
+                                      //                                   "assets/image/logo_wiifair_10.jpg",
+                                      //                                   fit: BoxFit
+                                      //                                       .contain,
+                                      //                                 ); // Display an error message
+                                      //                               },
+                                      //                             ),
+                                      //                     ),
+                                      //                   ),
+                                      //                 ),
+                                      //                 SizedBox(height: 10),
+                                      //                 //Company name
+                                      //                 Flexible(
+                                      //                   child: Text(
+                                      //                     "${i["companyName"]}",
+                                      //                     style: bodyTextNormal(
+                                      //                         null,
+                                      //                         isPressBox
+                                      //                             ? AppColors
+                                      //                                 .teal
+                                      //                             : null,
+                                      //                         FontWeight.bold),
+                                      //                     maxLines: 1,
+                                      //                     overflow: TextOverflow
+                                      //                         .ellipsis,
+                                      //                     textAlign:
+                                      //                         TextAlign.center,
+                                      //                   ),
+                                      //                 ),
+                                      //                 SizedBox(height: 15),
+                                      //                 //Company need position
+                                      //                 Container(
+                                      //                   padding: EdgeInsets
+                                      //                       .symmetric(
+                                      //                           horizontal: 10,
+                                      //                           vertical: 10),
+                                      //                   decoration:
+                                      //                       BoxDecoration(
+                                      //                     color: isPressBox
+                                      //                         ? AppColors.teal
+                                      //                         : AppColors
+                                      //                             .buttonBG,
+                                      //                     borderRadius:
+                                      //                         BorderRadius
+                                      //                             .circular(8),
+                                      //                   ),
+                                      //                   child: Row(
+                                      //                     mainAxisAlignment:
+                                      //                         MainAxisAlignment
+                                      //                             .center,
+                                      //                     crossAxisAlignment:
+                                      //                         CrossAxisAlignment
+                                      //                             .center,
+                                      //                     children: [
+                                      //                       Text(
+                                      //                         "curently_open"
+                                      //                             .tr,
+                                      //                         style: bodyTextNormal(
+                                      //                             null,
+                                      //                             isPressBox
+                                      //                                 ? AppColors
+                                      //                                     .fontWhite
+                                      //                                 : AppColors
+                                      //                                     .fontGrey,
+                                      //                             null),
+                                      //                       ),
+                                      //                       Text(
+                                      //                         " ${i["jobTotals"]} ",
+                                      //                         style: bodyTextNormal(
+                                      //                             "SatoshiBold",
+                                      //                             isPressBox
+                                      //                                 ? AppColors
+                                      //                                     .fontWhite
+                                      //                                 : AppColors
+                                      //                                     .teal,
+                                      //                             FontWeight
+                                      //                                 .bold),
+                                      //                       ),
+                                      //                       Flexible(
+                                      //                         child: Text(
+                                      //                           "position".tr,
+                                      //                           style: bodyTextNormal(
+                                      //                               null,
+                                      //                               isPressBox
+                                      //                                   ? AppColors
+                                      //                                       .fontWhite
+                                      //                                   : AppColors
+                                      //                                       .fontGrey,
+                                      //                               null),
+                                      //                           overflow:
+                                      //                               TextOverflow
+                                      //                                   .ellipsis,
+                                      //                         ),
+                                      //                       ),
+                                      //                     ],
+                                      //                   ),
+                                      //                 )
+                                      //               ],
+                                      //             ),
+                                      //           ),
+                                      //           // Status Online Of Box Company Hiring
+                                      //           if (i["isOnline"])
+                                      //             Positioned(
+                                      //               top: 0,
+                                      //               right: 0,
+                                      //               child: Container(
+                                      //                 padding:
+                                      //                     EdgeInsets.symmetric(
+                                      //                         horizontal: 8,
+                                      //                         vertical: 3),
+                                      //                 decoration: BoxDecoration(
+                                      //                   color: AppColors.teal,
+                                      //                   borderRadius:
+                                      //                       BorderRadius.only(
+                                      //                     bottomLeft:
+                                      //                         Radius.circular(
+                                      //                             10),
+                                      //                     topRight:
+                                      //                         Radius.circular(
+                                      //                             10),
+                                      //                   ),
+                                      //                 ),
+                                      //                 child: Text(
+                                      //                   "online".tr,
+                                      //                   style:
+                                      //                       bodyTextMiniSmall(
+                                      //                           null,
+                                      //                           AppColors
+                                      //                               .fontWhite,
+                                      //                           FontWeight
+                                      //                               .bold),
+                                      //                 ),
+                                      //               ),
+                                      //             )
+                                      //         ],
+                                      //       ),
+                                      //     );
+                                      //   },
+                                      // ),
+
+                                      // ListView company job available
+                                      ListView.builder(
                                         shrinkWrap: true,
-                                        gridDelegate:
-                                            SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2,
-                                          crossAxisSpacing: 10,
-                                          mainAxisSpacing: 10,
-                                          childAspectRatio: 0.88,
-                                        ),
+                                        physics: NeverScrollableScrollPhysics(),
                                         itemCount: eventAvailableProvider
                                             .companyEventAvailable.length,
                                         itemBuilder: (context, index) {
@@ -1443,253 +1682,324 @@ class _RegisterEventState extends State<RegisterEvent> {
                                           bool isPressBox =
                                               _pressIndexBox == index;
 
-                                          return GestureDetector(
-                                            onTapDown: (_) {
-                                              setState(() {
-                                                _pressIndexBox = index;
-                                              });
-                                            },
-                                            onTapUp: (_) {
-                                              setState(() {
-                                                _pressIndexBox =
-                                                    null; // Reset after tap is done
-                                              });
-                                            },
-                                            onTapCancel: () {
-                                              setState(() {
-                                                _pressIndexBox =
-                                                    null; // Reset if touch is canceled (e.g. dragged away)
-                                              });
-                                            },
-                                            onTap: () {
-                                              eventAvailableProvider
-                                                      .companyIdEventAvailable =
-                                                  i["_id"] ?? "";
-                                              eventAvailableProvider
-                                                  .companyNameEventAvailable = i[
-                                                      "companyName"] ??
-                                                  "";
-                                              eventAvailableProvider
-                                                  .companyLogoEventAvailable = i[
-                                                      "logo"] ??
-                                                  "";
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => PositionCompany(
-                                                      // companyAvailableEventId:
-                                                      //     i["_id"],
-                                                      // logo: i["logo"],
-                                                      // eventAvailableIsApplied:
-                                                      // eventAvailableProvider
-                                                      //     .isApplied,
-                                                      ),
-                                                ),
-                                              );
-                                            },
-                                            child: Stack(
-                                              clipBehavior: Clip.none,
-                                              children: [
-                                                // Box Card Company Hiring
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: isPressBox
-                                                            ? AppColors.teal
-                                                            : AppColors
-                                                                .dark200),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    color: isPressBox
-                                                        ? AppColors.teal
-                                                            .withOpacity(0.2)
-                                                        : AppColors
-                                                            .backgroundWhite,
-                                                  ),
-                                                  padding: EdgeInsets.all(10),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      //Image company
-                                                      Container(
-                                                        width: 70,
-                                                        height: 70,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: AppColors
-                                                              .backgroundWhite,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5),
-                                                          border: Border.all(
-                                                            color:
-                                                                AppColors.teal,
-                                                          ),
+                                          return Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 10),
+                                            child: GestureDetector(
+                                              onTapDown: (_) {
+                                                setState(() {
+                                                  _pressIndexBox = index;
+                                                });
+                                              },
+                                              onTapUp: (_) {
+                                                setState(() {
+                                                  _pressIndexBox =
+                                                      null; // Reset after tap is done
+                                                });
+                                              },
+                                              onTapCancel: () {
+                                                setState(() {
+                                                  _pressIndexBox =
+                                                      null; // Reset if touch is canceled (e.g. dragged away)
+                                                });
+                                              },
+                                              onTap: () {
+                                                eventAvailableProvider
+                                                    .companyIdEventAvailable = i[
+                                                        "_id"] ??
+                                                    "";
+                                                eventAvailableProvider
+                                                    .companyNameEventAvailable = i[
+                                                        "companyName"] ??
+                                                    "";
+                                                eventAvailableProvider
+                                                    .companyLogoEventAvailable = i[
+                                                        "logo"] ??
+                                                    "";
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => PositionCompany(
+                                                        // companyAvailableEventId:
+                                                        //     i["_id"],
+                                                        // logo: i["logo"],
+                                                        // eventAvailableIsApplied:
+                                                        // eventAvailableProvider
+                                                        //     .isApplied,
                                                         ),
-                                                        child: Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  10),
-                                                          child: ClipRRect(
+                                                  ),
+                                                );
+                                              },
+                                              child: Stack(
+                                                clipBehavior: Clip.none,
+                                                children: [
+                                                  // Box Card Company Hiring
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: isPressBox
+                                                              ? AppColors.teal
+                                                              : AppColors
+                                                                  .dark200),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      color: isPressBox
+                                                          ? AppColors.teal
+                                                              .withOpacity(0.2)
+                                                          : AppColors
+                                                              .backgroundWhite,
+                                                    ),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            // horizontal: 20,
+                                                            vertical: 30),
+                                                    child: Row(
+                                                      children: [
+                                                        SizedBox(width: 20),
+
+                                                        // Company image
+                                                        Container(
+                                                          width: 50,
+                                                          height: 50,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: AppColors
+                                                                .backgroundWhite,
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
                                                                         5),
-                                                            child: i["logo"] ==
-                                                                    ""
-                                                                ? Image.asset(
-                                                                    "assets/image/logo_wiifair_10.jpg",
-                                                                  )
-                                                                : Image.network(
-                                                                    "https://storage.googleapis.com/108-bucket/${i["logo"]}",
-                                                                    fit: BoxFit
-                                                                        .contain,
-                                                                    errorBuilder:
-                                                                        (context,
-                                                                            error,
-                                                                            stackTrace) {
-                                                                      return Image
-                                                                          .asset(
-                                                                        "assets/image/logo_wiifair_10.jpg",
+                                                            border: Border.all(
+                                                                color: AppColors
+                                                                    .teal,
+                                                                width: 2),
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    5),
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          3),
+                                                              child: i["logo"]
+                                                                      .toString()
+                                                                      .isEmpty
+                                                                  ? Image.asset(
+                                                                      "assets/image/no-image-available.png",
+                                                                    )
+                                                                  : CachedNetworkImage(
+                                                                      imageUrl:
+                                                                          "https://storage.googleapis.com/108-bucket/${i["logo"]}",
+                                                                      fit: BoxFit
+                                                                          .contain,
+                                                                      // placeholder:
+                                                                      //     (context, url) =>
+                                                                      //         EventBannerShirmmerWidget(),
+                                                                      errorWidget: (context,
+                                                                              url,
+                                                                              error) =>
+                                                                          Image
+                                                                              .asset(
+                                                                        "assets/image/no-image-available.png",
                                                                         fit: BoxFit
                                                                             .contain,
-                                                                      ); // Display an error message
-                                                                    },
-                                                                  ),
+                                                                      ),
+                                                                    ),
+                                                              // Image.network(
+                                                              //     "https://storage.googleapis.com/108-bucket/${i["logo"]}",
+                                                              //     fit: BoxFit
+                                                              //         .contain,
+                                                              //     errorBuilder: (context,
+                                                              //         error,
+                                                              //         stackTrace) {
+                                                              //       return Image
+                                                              //           .asset(
+                                                              //         "assets/image/logo_wiifair_10.jpg",
+                                                              //         fit: BoxFit
+                                                              //             .contain,
+                                                              //       ); // Display an error message
+                                                              //     },
+                                                              //   ),
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      SizedBox(height: 10),
+                                                        SizedBox(width: 20),
 
-                                                      //Company name
-                                                      Flexible(
-                                                        child: Text(
-                                                          "${i["companyName"]}",
-                                                          style: bodyTextNormal(
-                                                              null,
-                                                              isPressBox
-                                                                  ? AppColors
-                                                                      .teal
-                                                                  : null,
-                                                              FontWeight.bold),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 15),
-
-                                                      //Company need position
-                                                      Container(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 10),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: isPressBox
-                                                              ? AppColors.teal
-                                                              : AppColors
-                                                                  .buttonBG,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Text(
-                                                              "curently_open"
-                                                                  .tr,
-                                                              style: bodyTextNormal(
-                                                                  null,
-                                                                  isPressBox
-                                                                      ? AppColors
-                                                                          .fontWhite
-                                                                      : AppColors
-                                                                          .fontGrey,
-                                                                  null),
-                                                            ),
-                                                            Text(
-                                                              " ${i["jobTotals"]} ",
-                                                              style: bodyTextNormal(
-                                                                  "SatoshiBold",
-                                                                  isPressBox
-                                                                      ? AppColors
-                                                                          .fontWhite
-                                                                      : AppColors
-                                                                          .teal,
-                                                                  FontWeight
-                                                                      .bold),
-                                                            ),
-                                                            Flexible(
-                                                              child: Text(
-                                                                "position".tr,
+                                                        // Expanded company name, position
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              //Company name
+                                                              Text(
+                                                                "${i["companyName"]}",
                                                                 style: bodyTextNormal(
                                                                     null,
                                                                     isPressBox
                                                                         ? AppColors
-                                                                            .fontWhite
-                                                                        : AppColors
-                                                                            .fontGrey,
-                                                                    null),
+                                                                            .teal
+                                                                        : null,
+                                                                    FontWeight
+                                                                        .bold),
+                                                                maxLines: 1,
                                                                 overflow:
                                                                     TextOverflow
                                                                         .ellipsis,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
                                                               ),
+                                                              SizedBox(
+                                                                  height: 5),
+
+                                                              //Company need position
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    "curently_open"
+                                                                        .tr,
+                                                                    style: bodyTextNormal(
+                                                                        null,
+                                                                        isPressBox
+                                                                            ? AppColors.teal
+                                                                            : AppColors.fontGrey,
+                                                                        null),
+                                                                  ),
+                                                                  Text(
+                                                                    " ${i["jobTotals"]} ",
+                                                                    style: bodyTextNormal(
+                                                                        "SatoshiBold",
+                                                                        isPressBox
+                                                                            ? AppColors
+                                                                                .teal
+                                                                            : AppColors
+                                                                                .teal,
+                                                                        FontWeight
+                                                                            .bold),
+                                                                  ),
+                                                                  Text(
+                                                                    "position"
+                                                                        .tr,
+                                                                    style: bodyTextNormal(
+                                                                        null,
+                                                                        isPressBox
+                                                                            ? AppColors.teal
+                                                                            : AppColors.fontGrey,
+                                                                        null),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                  ),
+                                                                ],
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+
+                                                        SizedBox(width: 10),
+
+                                                        // Comapny booth
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          5,
+                                                                      horizontal:
+                                                                          8),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: AppColors
+                                                                .dark100,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        4),
+                                                            border: Border.all(
+                                                                color: AppColors
+                                                                    .dark200),
+                                                          ),
+                                                          child: RichText(
+                                                            text: TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text: "booth"
+                                                                          .tr +
+                                                                      ": ",
+                                                                  style:
+                                                                      bodyTextSmall(
+                                                                          null,
+                                                                          null,
+                                                                          null),
+                                                                ),
+                                                                TextSpan(
+                                                                  text: i["boothName"]
+                                                                      .toString(),
+                                                                  style: bodyTextSmall(
+                                                                      "SatoshiMedium",
+                                                                      AppColors
+                                                                          .teal,
+                                                                      FontWeight
+                                                                          .bold),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 10),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  // Status Online Of Box Company Hiring
+                                                  if (i["isOnline"])
+                                                    Positioned(
+                                                      top: 10,
+                                                      right: 10,
+                                                      child: Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 3),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: AppColors.teal,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                        ),
+                                                        child: Row(
+                                                          children: [
+                                                            Icon(
+                                                              Icons.circle,
+                                                              color: AppColors
+                                                                  .fontWhite,
+                                                              size: 8,
+                                                            ),
+                                                            SizedBox(width: 3),
+                                                            Text(
+                                                              "online".tr,
+                                                              style: bodyTextSmall(
+                                                                  null,
+                                                                  AppColors
+                                                                      .fontWhite,
+                                                                  FontWeight
+                                                                      .bold),
                                                             ),
                                                           ],
                                                         ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-
-                                                // Status Online Of Box Company Hiring
-                                                if (i["isOnline"])
-                                                  Positioned(
-                                                    top: 0,
-                                                    right: 0,
-                                                    child: Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 8,
-                                                              vertical: 3),
-                                                      decoration: BoxDecoration(
-                                                        color: AppColors.teal,
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          bottomLeft:
-                                                              Radius.circular(
-                                                                  10),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  10),
-                                                        ),
                                                       ),
-                                                      child: Text(
-                                                        "online".tr,
-                                                        style:
-                                                            bodyTextMiniSmall(
-                                                                null,
-                                                                AppColors
-                                                                    .fontWhite,
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ),
-                                                  )
-                                              ],
+                                                    )
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
@@ -1731,7 +2041,7 @@ class _RegisterEventState extends State<RegisterEvent> {
                           //         "Basic Job Seeker" ||
                           //     profileProvider.memberLevel ==
                           //         "Expert Job Seeker") {
-                          pressApplyEvent();
+                          applyEventHelper();
                           // } else {
                           //   var result = await showDialog(
                           //       barrierDismissible: false,
@@ -1794,15 +2104,13 @@ class _RegisterEventState extends State<RegisterEvent> {
                             Expanded(
                               flex: 1,
                               child: Button(
-                                buttonColor: AppColors.teal,
-                                buttonBorderColor: AppColors.teal,
+                                buttonColor: AppColors.info100,
+                                buttonBorderColor: AppColors.info,
                                 text: "Code",
-                                textColor: AppColors.fontWhite,
-                                textFontWeight: FontWeight.bold,
+                                textColor: AppColors.fontDark,
                                 press: () {
                                   modalBottomSheetCodeAndConfirm(
-                                      context, "Booth Check-In By Code",
-                                      () async {
+                                      context, "booth_check_in".tr, () async {
                                     if (_redeemFormKey.currentState!
                                         .validate()) {
                                       // Handle redeem logic here
@@ -1817,9 +2125,19 @@ class _RegisterEventState extends State<RegisterEvent> {
                                           Duration(milliseconds: 100));
 
                                       // Api Check In Booth By Seeker
-                                      eventAvailableProvider
-                                          .checkInBoothCompanyEvent(context, "",
-                                              "${_textCodeController.text}");
+                                      checkInBoothCompanyEventHelper(
+                                        "",
+                                        "${_textCodeController.text}",
+                                        onPressOkay: () {
+                                          // Close dialog
+                                          Navigator.of(context).pop();
+
+                                          // Navigate back to registerEvent.dart
+                                          if (Navigator.canPop(context)) {
+                                            Navigator.pop(context);
+                                          }
+                                        },
+                                      );
 
                                       _clearCodeEmpty();
                                     }
@@ -1834,15 +2152,15 @@ class _RegisterEventState extends State<RegisterEvent> {
                             Expanded(
                               flex: 2,
                               child: ButtonWithIconLeft(
-                                colorButton: AppColors.warning,
-                                buttonBorderColor: AppColors.warning,
+                                colorButton: AppColors.info,
+                                buttonBorderColor: AppColors.info,
                                 widgetIcon: Icon(
-                                  Icons.camera_alt,
-                                  color: AppColors.iconLight,
+                                  Icons.camera_alt_outlined,
+                                  color: AppColors.iconDark,
+                                  size: 20,
                                 ),
-                                text: "Booth Check-In",
-                                colorText: AppColors.fontWhite,
-                                fontWeight: FontWeight.bold,
+                                text: "check_in_reedeem_reeward".tr,
+                                colorText: AppColors.fontDark,
                                 press: () {
                                   Navigator.push(
                                     context,
@@ -1893,96 +2211,97 @@ class _RegisterEventState extends State<RegisterEvent> {
                 ),
               ),
               child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          title,
-                          style: bodyTextMedium(
-                              null, AppColors.fontDark, FontWeight.bold),
-                        ),
-                      ],
+                    Container(
+                      color: AppColors.teal,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            title,
+                            style: bodyTextMedium(
+                                null, AppColors.fontWhite, FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
-
-                    SizedBox(height: 10),
-                    Divider(
-                      color: AppColors.borderGreyOpacity,
-                      thickness: 1,
-                    ),
-                    SizedBox(height: 20),
 
                     // Form
                     Form(
                       key: _redeemFormKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Enter Text Code",
-                            style:
-                                bodyTextNormal(null, AppColors.fontDark, null),
-                          ),
-                          SizedBox(height: 15),
-
-                          // Input field
-                          SimpleTextFieldSingleValidate(
-                            codeController: _textCodeController,
-                            inputColor: AppColors.inputWhite,
-                            enabledBorder: enableOutlineBorder(
-                              AppColors.borderGreyOpacity,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "enter_text_code".tr,
+                              style: bodyTextNormal(
+                                  null, AppColors.fontDark, null),
                             ),
-                            hintText: "Enter text code",
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return "required".tr;
-                              }
-                              return null;
-                            },
-                          ),
+                            SizedBox(height: 15),
 
-                          SizedBox(height: 40),
-
-                          // Confirm button
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Button(
-                                  // boxDecBorderRadius: BorderRadius.circular(10),
-                                  buttonColor: AppColors.buttonBG,
-                                  text: "close".tr,
-                                  textColor: AppColors.fontDark,
-                                  press: () {
-                                    // Dismiss keyboard completely
-                                    FocusScope.of(context).unfocus();
-                                    // Wait a bit for keyboard to fully dismiss
-                                    Future.delayed(Duration(milliseconds: 100),
-                                        () {
-                                      _clearCodeEmpty();
-                                      Navigator.pop(context);
-                                    });
-                                  },
-                                ),
+                            // Input field
+                            SimpleTextFieldSingleValidate(
+                              codeController: _textCodeController,
+                              inputColor: AppColors.inputWhite,
+                              enabledBorder: enableOutlineBorder(
+                                AppColors.borderGreyOpacity,
                               ),
-                              SizedBox(width: 10),
-                              Expanded(
-                                child: Button(
+                              hintText: "enter_text_code".tr,
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return "required".tr;
+                                }
+                                return null;
+                              },
+                            ),
+
+                            SizedBox(height: 40),
+
+                            // Confirm button
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Button(
                                     // boxDecBorderRadius: BorderRadius.circular(10),
-                                    buttonColor: AppColors.teal,
-                                    text: "submit".tr,
-                                    textColor: AppColors.fontWhite,
-                                    textFontWeight: FontWeight.bold,
-                                    press: pressSubmit),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 30),
-                        ],
+                                    buttonColor: AppColors.buttonBG,
+                                    text: "close".tr,
+                                    textColor: AppColors.fontDark,
+                                    press: () {
+                                      // Dismiss keyboard completely
+                                      FocusScope.of(context).unfocus();
+                                      // Wait a bit for keyboard to fully dismiss
+                                      Future.delayed(
+                                          Duration(milliseconds: 100), () {
+                                        _clearCodeEmpty();
+                                        Navigator.pop(context);
+                                      });
+                                    },
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Button(
+                                      // boxDecBorderRadius: BorderRadius.circular(10),
+                                      buttonColor: AppColors.teal,
+                                      text: "submit".tr,
+                                      textColor: AppColors.fontWhite,
+                                      textFontWeight: FontWeight.bold,
+                                      press: pressSubmit),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 40),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -2021,19 +2340,34 @@ class _RegisterEventState extends State<RegisterEvent> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: text.isNotEmpty
-                    ? Image.network(
-                        "https://storage.googleapis.com/108-bucket/$text",
+                    ? CachedNetworkImage(
+                        imageUrl:
+                            "https://storage.googleapis.com/108-bucket/$text",
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.image_not_supported,
-                            size: 14,
-                            color: isChecked
-                                ? AppColors.teal // Green icon for checked
-                                : AppColors.fontGrey, // Grey icon for unchecked
-                          );
-                        },
+                        // placeholder: (context,
+                        //         url) =>
+                        //     EventBannerShirmmerWidget(),
+                        errorWidget: (context, url, error) => Icon(
+                          Icons.image_not_supported,
+                          size: 14,
+                          color: isChecked
+                              ? AppColors.teal // Green icon for checked
+                              : AppColors.fontGrey, // Grey icon for unchecked
+                        ),
                       )
+                    // Image.network(
+                    //     "https://storage.googleapis.com/108-bucket/$text",
+                    //     fit: BoxFit.contain,
+                    //     errorBuilder: (context, error, stackTrace) {
+                    //       return Icon(
+                    //         Icons.image_not_supported,
+                    //         size: 14,
+                    //         color: isChecked
+                    //             ? AppColors.teal // Green icon for checked
+                    //             : AppColors.fontGrey, // Grey icon for unchecked
+                    //       );
+                    //     },
+                    //   )
                     : Icon(
                         Icons.image_not_supported,
                         size: 15,
@@ -2071,88 +2405,147 @@ class _RegisterEventState extends State<RegisterEvent> {
       {required String logo,
       required String jobTitle,
       required String company,
+      required String booth,
       Function()? press}) {
-    return GestureDetector(
-      onTap: press,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          color: AppColors.backgroundWhite,
-          border: Border(
-            top: BorderSide(color: AppColors.dark200, width: 0.5),
-            // bottom: BorderSide(color: AppColors.dark200, width: 0.5),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        splashColor: AppColors.white,
+        highlightColor: AppColors.primary100,
+        onTap: press,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          decoration: BoxDecoration(
+            // color: AppColors.backgroundWhite,
+            border: Border(
+              top: BorderSide(color: AppColors.dark200, width: 0.5),
+              // bottom: BorderSide(color: AppColors.dark200, width: 0.5),
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            // Company logo circle
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.backgroundWhite,
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.borderBG),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(3),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: logo == ""
-                      ? Icon(
-                          Icons.image_not_supported,
-                          size: 20,
-                          color: AppColors.fontGrey, // Grey icon for unchecked
-                        )
-                      : Image.network(
-                          "https://storage.googleapis.com/108-bucket/$logo",
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
+          child: Row(
+            children: [
+              // Company logo circle
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundWhite,
+                  // shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: AppColors.borderBG),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(5),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: logo.isEmpty
+                          ? Icon(
                               Icons.image_not_supported,
                               size: 20,
                               color:
                                   AppColors.fontGrey, // Grey icon for unchecked
-                            ); // Display an error message
-                          },
-                        ),
+                            )
+                          : CachedNetworkImage(
+                              imageUrl:
+                                  "https://storage.googleapis.com/108-bucket/$logo",
+                              fit: BoxFit.contain,
+                              // placeholder: (context, url) =>
+                              //     EventBannerShirmmerWidget(),
+                              errorWidget: (context, url, error) => Icon(
+                                Icons.image_not_supported,
+                                size: 20,
+                                color: AppColors
+                                    .fontGrey, // Grey icon for unchecked
+                              ),
+                            )
+                      // Image.network(
+                      //     "https://storage.googleapis.com/108-bucket/$logo",
+                      //     fit: BoxFit.contain,
+                      //     errorBuilder: (context, error, stackTrace) {
+                      //       return Icon(
+                      //         Icons.image_not_supported,
+                      //         size: 20,
+                      //         color:
+                      //             AppColors.fontGrey, // Grey icon for unchecked
+                      //       ); // Display an error message
+                      //     },
+                      //   ),
+                      ),
                 ),
               ),
-            ),
-            SizedBox(width: 12),
-            // Job Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Job title
-                  Text(
-                    jobTitle,
-                    style: bodyTextNormal(
-                        null, AppColors.fontDark, FontWeight.bold),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 5),
+              SizedBox(width: 12),
+              // Job Details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Job title
+                    Text(
+                      jobTitle,
+                      style: bodyTextNormal(
+                          null, AppColors.fontDark, FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 5),
 
-                  // Comapny name
-                  Text(
-                    company,
-                    style: bodyTextSmall(null, AppColors.fontGrey, null),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                    // Comapny name
+                    Text(
+                      company,
+                      style: bodyTextSmall(null, AppColors.fontGrey, null),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    // SizedBox(height: 5),
+
+                    // Row(
+                    //   children: [
+                    //     Text(
+                    //       "Booth".tr + ": ",
+                    //       style: bodyTextSmall(null, null, null),
+                    //     ),
+                    //     Text(
+                    //       "$booth",
+                    //       style: bodyTextSmall(null, AppColors.teal, null),
+                    //     ),
+                    //   ],
+                    // ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(width: 10),
-            // Arrow Icon
-            Icon(
-              Icons.arrow_forward_ios,
-              color: AppColors.iconDark,
-              size: 14,
-            ),
-          ],
+              SizedBox(width: 10),
+              // Arrow Icon
+              // Icon(
+              //   Icons.arrow_forward_ios,
+              //   color: AppColors.iconDark,
+              //   size: 14,
+              // ),
+              Container(
+                padding:
+                    EdgeInsetsDirectional.symmetric(vertical: 5, horizontal: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.dark100,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: AppColors.dark200),
+                ),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "booth".tr + ": ",
+                        style: bodyTextSmall(null, null, null),
+                      ),
+                      TextSpan(
+                        text: booth,
+                        style: bodyTextSmall(
+                            "SatoshiMedium", AppColors.teal, FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

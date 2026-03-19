@@ -736,6 +736,8 @@ class _LoginInformationState extends State<LoginInformation> {
                         Material(
                           color: Colors.transparent,
                           child: InkWell(
+                            splashColor: AppColors.white,
+                            highlightColor: AppColors.primary100,
                             onTap: () async {
                               var result = await showDialog(
                                   context: context,
@@ -808,6 +810,8 @@ class _AddGeneralInformationState extends State<AddGeneralInformation> {
         Material(
           color: Colors.transparent,
           child: InkWell(
+            splashColor: AppColors.white,
+            highlightColor: AppColors.primary100,
             onTap: widget.press,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -871,6 +875,8 @@ class _ConnectOtherPlatformState extends State<ConnectOtherPlatform> {
         Material(
           color: Colors.transparent,
           child: InkWell(
+            splashColor: AppColors.white,
+            highlightColor: AppColors.primary100,
             onTap: widget.press,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),

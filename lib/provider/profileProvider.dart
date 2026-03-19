@@ -1,5 +1,6 @@
-// ignore_for_file: avoid_print, unnecessary_null_in_if_null_operators, prefer_interpolation_to_compose_strings, unnecessary_brace_in_string_interps, prefer_final_fields
+// ignore_for_file: avoid_print, unnecessary_null_in_if_null_operators, prefer_interpolation_to_compose_strings, unnecessary_brace_in_string_interps, prefer_final_fields, prefer_adjacent_string_concatenation
 
+import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:flutter/material.dart';
 
@@ -310,6 +311,8 @@ class ProfileProvider extends ChangeNotifier {
         "event": event,
       });
 
+      print("personal information: ${res}");
+
       return res;
     } catch (e) {
       print("Add personal information error: $e");
@@ -340,6 +343,8 @@ class ProfileProvider extends ChangeNotifier {
         "event": event,
       });
 
+      print("Work Preference: ${res}");
+
       return res;
     } catch (e) {
       print("Add work preference error: $e");
@@ -347,15 +352,14 @@ class ProfileProvider extends ChangeNotifier {
   }
 
   addEducation(
-    String? id,
-    String subject,
-    String startYear,
-    String endYear,
-    String school,
-    String qualifications,
-    bool currentlyStudying,
-    String event,
-  ) async {
+      String? id,
+      String subject,
+      String startYear,
+      String endYear,
+      String school,
+      String qualifications,
+      bool currentlyStudying,
+      String event) async {
     try {
       var res = await postDataStatusCode(addEducationSeekerApi, {
         "_id": id,
@@ -368,6 +372,8 @@ class ProfileProvider extends ChangeNotifier {
         "event": event,
       });
 
+      print("education: " + "${res}");
+
       return res;
     } catch (e) {
       print("Add education error: $e");
@@ -377,6 +383,8 @@ class ProfileProvider extends ChangeNotifier {
   deleteEducation(String id) async {
     try {
       var res = await deleteDataStatusCode(deleteEducationSeekerApi + id);
+
+      print("delete education: ${res}");
 
       return res;
     } catch (e) {
@@ -389,6 +397,8 @@ class ProfileProvider extends ChangeNotifier {
       var res = await postDataStatusCode(
           noExperienceSeekerApi, {"noExperience": val});
 
+      print("Update No Experience: $res");
+
       return res;
     } catch (e) {
       print("Update no experience error: $e");
@@ -396,15 +406,14 @@ class ProfileProvider extends ChangeNotifier {
   }
 
   addWorkHistory(
-    String? id,
-    String company,
-    String? startYear,
-    String? endYear,
-    String position,
-    String? responsibility,
-    bool isCurrentJob,
-    String event,
-  ) async {
+      String? id,
+      String company,
+      String? startYear,
+      String? endYear,
+      String position,
+      String? responsibility,
+      bool isCurrentJob,
+      String event) async {
     try {
       var res = await postDataStatusCode(addWorkHistorySeekerApi, {
         "_id": id,
@@ -417,6 +426,8 @@ class ProfileProvider extends ChangeNotifier {
         "event": event,
       });
 
+      print("workHistory: " + "${res['workHistory']}");
+
       return res;
     } catch (e) {
       print("Add work history error: $e");
@@ -427,18 +438,16 @@ class ProfileProvider extends ChangeNotifier {
     try {
       var res = await deleteDataStatusCode(deleteWorkHistorySeekerApi + id);
 
+      print("delete work history: $res");
+
       return res;
     } catch (e) {
       print("Delete work history error: $e");
     }
   }
 
-  addLanguageSkill(
-    String? id,
-    String languageId,
-    String languageLevelId,
-    String event,
-  ) async {
+  addLanguageSkill(String? id, String languageId, String languageLevelId,
+      String event) async {
     try {
       var res = await postDataStatusCode(addLanguageSeekerApi, {
         "_id": id,
@@ -446,6 +455,7 @@ class ProfileProvider extends ChangeNotifier {
         "LanguageLevelId": languageLevelId,
         "event": event,
       });
+      print("languageSkill: ${res}");
 
       return res;
     } catch (e) {
@@ -456,19 +466,16 @@ class ProfileProvider extends ChangeNotifier {
   deleteLanguageSkill(String id) async {
     try {
       var res = await deleteDataStatusCode(deleteLanguageSeekerApi + id);
+      print("delete language: ${res}");
 
       return res;
     } catch (e) {
-      print("Delete work history error: $e");
+      print("Delete language error: $e");
     }
   }
 
   addSkill(
-    String? id,
-    String keySkill,
-    String skillLevelId,
-    String event,
-  ) async {
+      String? id, String keySkill, String skillLevelId, String event) async {
     try {
       var res = await postDataStatusCode(addSkillSeekerApi, {
         "_id": id,
@@ -476,6 +483,8 @@ class ProfileProvider extends ChangeNotifier {
         "skillLevelId": skillLevelId,
         "event": event,
       });
+
+      print("skill : ${res}");
 
       return res;
     } catch (e) {
@@ -486,6 +495,8 @@ class ProfileProvider extends ChangeNotifier {
   deleteSkill(String id) async {
     try {
       var res = await deleteDataStatusCode(deleteSkillSeekerApi + id);
+
+      print("delete skill: ${res}");
 
       return res;
     } catch (e) {

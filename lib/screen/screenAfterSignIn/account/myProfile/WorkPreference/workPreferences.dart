@@ -185,15 +185,12 @@ class _WorkPreferencesState extends State<WorkPreferences> {
     // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
     Navigator.pop(context);
 
-    print("Work Preference API Response: " + "${res}");
-
     if (statusCode == 200 || statusCode == 201) {
-      //After sucess work api fetchProfileSeeker
       await profileProvider.fetchProfileSeeker();
+
       // Call parent callback
-      if (widget.onSaveSuccess != null) {
-        widget.onSaveSuccess!();
-      }
+      if (!context.mounted) return;
+      widget.onSaveSuccess?.call();
     } else {
       await showDialog(
         context: context,
@@ -605,7 +602,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                 setState(() {
                                   //value = []
                                   //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                  if (value.length > 0) {
+                                  if (value != null && value.length > 0) {
                                     _selectedProvincesListItem = value;
                                     _provinceName =
                                         []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
@@ -695,7 +692,7 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                                   print(value);
                                   //value = []
                                   //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                  if (value.length > 0) {
+                                  if (value != null && value.length > 0) {
                                     _selectedIndustriesListItem = value;
                                     _industryName =
                                         []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
@@ -870,8 +867,6 @@ class _WorkPreferencesState extends State<WorkPreferences> {
                             press: () {
                               FocusScope.of(context).requestFocus(focusNode);
                               if (formkey.currentState!.validate()) {
-                                print(
-                                    "for check formkey.currentState!.validate()");
                                 if (_selectedProvincesListItem.isEmpty ||
                                     _selectedIndustriesListItem.isEmpty) {
                                   setState(() {

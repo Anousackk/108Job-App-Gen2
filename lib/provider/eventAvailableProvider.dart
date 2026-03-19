@@ -1,10 +1,8 @@
-// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps
+// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps, use_build_context_synchronously, prefer_interpolation_to_compose_strings
 
-import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class EventAvailableProvider extends ChangeNotifier {
   //Private Variables
@@ -21,6 +19,7 @@ class EventAvailableProvider extends ChangeNotifier {
   bool _isLoadingCompanyEventAvailable = false;
   bool _isRedeemAvailableBooth = false;
   bool _isAlreadyRedeemedBooth = false;
+  bool _isLoadingPositionCompany = false;
 
   String _eventInfoId = "";
   String _eventInfoName = "";
@@ -59,6 +58,7 @@ class EventAvailableProvider extends ChangeNotifier {
   bool get isLoadingCompanyEventAvailable => _isLoadingCompanyEventAvailable;
   bool get isRedeemAvailableBooth => _isRedeemAvailableBooth;
   bool get isAlreadyRedeemedBooth => _isAlreadyRedeemedBooth;
+  bool get isLoadingPositionCompany => _isLoadingPositionCompany;
 
   String get eventInfoId => _eventInfoId;
   String get eventInfoName => _eventInfoName;
@@ -177,8 +177,11 @@ class EventAvailableProvider extends ChangeNotifier {
   fetchEventBanner() async {
     try {
       var res = await fetchData(getEventBannerApi);
+      List? info = res["info"];
 
-      _eventBannerImage = res["info"][0]["image"];
+      _eventBannerImage = (info != null && info.isNotEmpty)
+          ? res["info"][0]["image"] ?? ""
+          : "";
       notifyListeners();
 
       print("Fetch Banner Event is working");
@@ -188,8 +191,8 @@ class EventAvailableProvider extends ChangeNotifier {
   }
 
   fetchCompanyEventAvailable() async {
-    _isLoadingCompanyEventAvailable = true;
-    notifyListeners();
+    // _isLoadingCompanyEventAvailable = true;
+    // notifyListeners();
     try {
       var res = await postData(
           getCompanyAvailableEventSeekerApi, {"page": "", "perPage": ""});
@@ -205,6 +208,8 @@ class EventAvailableProvider extends ChangeNotifier {
   }
 
   fetchCompanyByIdListPosition() async {
+    _isLoadingPositionCompany = true;
+    notifyListeners();
     try {
       var res = await postData(getCompanyIdAvailableEventSeekerApi, {
         "companyId": _companyIdEventAvailable,
@@ -214,6 +219,8 @@ class EventAvailableProvider extends ChangeNotifier {
 
       _companyListPosition = res["info"];
       _companyName = res["companyName"];
+
+      _isLoadingPositionCompany = false;
       notifyListeners();
 
       print("Fetch Company By Id List Position is working");
@@ -222,10 +229,12 @@ class EventAvailableProvider extends ChangeNotifier {
     }
   }
 
-  applyEvent() async {
+  applyEvent(BuildContext context) async {
     try {
-      var res = await postDataStatusCode(
+      final res = await postDataStatusCode(
           applyEventSeekerApi, {"eventId": eventInfoId});
+
+      print("apply event: " + res.toString());
 
       return res;
     } catch (e) {
@@ -233,59 +242,13 @@ class EventAvailableProvider extends ChangeNotifier {
     }
   }
 
-  applyJobCompanyBySeeker(BuildContext context, String jobId) async {
+  applyJobCompanyBySeeker(String jobId) async {
     try {
-      // Display AlertDialog Loading First
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return CustomLoadingLogoCircle();
-        },
-      );
       final res = await postDataStatusCode(applyJobIdSeekerApi, {"_id": jobId});
-      final statusCode = res?["statusCode"];
 
-      print("${res}");
+      print("Apply Job Company By Seeker: ${res}");
 
-      if (!context.mounted) return;
-
-      // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
-      Navigator.pop(context);
-
-      if (statusCode == 200 || statusCode == 201) {
-        // Display success dialog
-        await showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (dialogContext) {
-            return NewVer2CustAlertDialogSuccessBtnConfirm(
-              title: "successfully".tr,
-              contentText: "applied_success".tr,
-              textButton: "ok".tr,
-              press: () async {
-                // Close success dialog
-                Navigator.of(dialogContext).pop();
-              },
-            );
-          },
-        );
-
-        await fetchCompanyByIdListPosition();
-        await fetchAIMatchingJobAndAppliedJob();
-      } else {
-        // Display warning dialog
-        await showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (dialogContext) {
-            return CustAlertDialogWarningWithoutBtn(
-              title: "warning".tr,
-              contentText: "already_applied".tr,
-            );
-          },
-        );
-      }
+      return res;
     } catch (e) {
       print("Apply Job Company By Seeker Error: $e");
     }
@@ -327,143 +290,28 @@ class EventAvailableProvider extends ChangeNotifier {
     }
   }
 
-  checkInBoothCompanyEvent(
-      BuildContext context, String qrString, String code) async {
+  checkInBoothCompanyEvent(String qrString, String code) async {
     try {
-      // Display AlertDialog Loading First
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return CustomLoadingLogoCircle();
-        },
-      );
-
       final res = await postDataStatusCode(checkInBoothComapnyEventApi, {
         "qrString": qrString,
         "code": code,
       });
+      print("check in booth company event: ${res}");
 
-      final statusCode = res?["statusCode"];
-
-      print("${res}");
-
-      if (!context.mounted) return;
-
-      // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
-      Navigator.pop(context);
-
-      if (statusCode == 200 || statusCode == 201) {
-        // Display success dialog
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return NewVer2CustAlertDialogSuccessBtnConfirm(
-              title: "successfully".tr,
-              contentText: "Scan QR Code Successfully",
-              textButton: "ok".tr,
-              press: () async {
-                // Close dialog
-                Navigator.of(context).pop();
-
-                // Navigate back to registerEvent.dart
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            );
-          },
-        );
-
-        await fetchCheckInBoothBySeeker();
-      } else {
-        // Display dialog warning
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return NewVer5CustAlertDialogWarningBtnConfirm(
-              title: "warning".tr,
-              contentText: "${res?["body"]?["message"]}",
-              textButton: "ok".tr,
-              press: () {
-                // Close dialog
-                Navigator.pop(context);
-
-                // Navigate back to registerEvent.dart
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            );
-          },
-        );
-      }
-
-      // return res;
+      return res;
     } catch (e) {
       print("Check In Booth Company Event Error: $e");
     }
   }
 
-  reedeemCodeEvent(BuildContext context, String redeemCode) async {
+  reedeemCodeEvent(String redeemCode) async {
     try {
-      // Display AlertDialog Loading First
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return CustomLoadingLogoCircle();
-        },
-      );
       final res = await postDataStatusCode(
           reedeemCodeEventApi, {"redeemCode": redeemCode});
 
-      final statusCode = res?["statusCode"];
+      print("Reedeem Code Event: $res");
 
-      print("${res}");
-
-      if (!context.mounted) return;
-
-      // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
-      Navigator.pop(context);
-
-      if (statusCode == 200 || statusCode == 201) {
-        // Display success dialog
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return NewVer2CustAlertDialogSuccessBtnConfirm(
-              title: "successfully".tr,
-              contentText: "Reedeem Reward Successfully",
-              press: () {
-                // Close dialog
-                Navigator.pop(context);
-
-                // Navigate back to registerEvent.dart
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            );
-          },
-        );
-
-        fetchCheckInBoothBySeeker();
-      } else {
-        // Display dialog warning
-        await showDialog(
-          context: context,
-          builder: (context) {
-            return CustAlertDialogWarningWithoutBtn(
-              title: "warning".tr,
-              contentText: "${res?["body"]?["message"]}",
-            );
-          },
-        );
-      }
+      return res;
     } catch (e) {
       print("Reedeem Code Event Error: $e");
     }

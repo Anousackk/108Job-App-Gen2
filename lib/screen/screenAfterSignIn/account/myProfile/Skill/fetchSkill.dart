@@ -57,8 +57,6 @@ class _FetchSkillState extends State<FetchSkill> {
     // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
     Navigator.pop(context);
 
-    print("delete skill: " + "${res}");
-
     if (statusCode == 200 || statusCode == 201) {
       await profileProvider.fetchProfileSeeker();
     }
@@ -93,8 +91,6 @@ class _FetchSkillState extends State<FetchSkill> {
               });
             },
             onSaveSuccess: () async {
-              await profileProvider.fetchProfileSeeker();
-
               setState(() {
                 isShowFormAddSkill = false;
                 isShowFormUpdateSkill = false;
@@ -114,8 +110,6 @@ class _FetchSkillState extends State<FetchSkill> {
               });
             },
             onSaveSuccess: () async {
-              await profileProvider.fetchProfileSeeker();
-
               setState(() {
                 isShowFormAddSkill = false;
                 isShowFormUpdateSkill = false;

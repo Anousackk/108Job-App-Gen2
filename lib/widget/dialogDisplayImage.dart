@@ -3,7 +3,7 @@
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
+import 'dart:convert';
 
 class DialogSingleImage extends StatelessWidget {
   const DialogSingleImage({
@@ -12,6 +12,29 @@ class DialogSingleImage extends StatelessWidget {
   }) : super(key: key);
 
   final String imagePath;
+
+  Widget _buildBase64Image(String base64String) {
+    try {
+      // Extract the base64 part from the data URL
+      final base64Data = base64String.split(',')[1];
+      return Image.memory(
+        base64.decode(base64Data),
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/image/no-image-available.png',
+            fit: BoxFit.contain,
+          );
+        },
+      );
+    } catch (e) {
+      // If there's any error parsing the base64, show the no-image placeholder
+      return Image.asset(
+        'assets/image/no-image-available.png',
+        fit: BoxFit.contain,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,16 +57,18 @@ class DialogSingleImage extends StatelessWidget {
 
                         fit: BoxFit.contain,
                       )
-                    : Image.network(
-                        imagePath,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            'assets/image/no-image-available.png',
+                    : imagePath.startsWith('data:')
+                        ? _buildBase64Image(imagePath)
+                        : Image.network(
+                            imagePath,
                             fit: BoxFit.contain,
-                          ); // Display an error message
-                        },
-                      ),
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/image/no-image-available.png',
+                                fit: BoxFit.contain,
+                              ); // Display an error message
+                            },
+                          ),
               ),
             ),
           ),

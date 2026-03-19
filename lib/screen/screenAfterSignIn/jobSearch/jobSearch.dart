@@ -6,13 +6,13 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/iconSize.dart';
-import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/parsDateTime.dart';
-import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/helpers/jobSearchHelper.dart';
+import 'package:app/provider/localSharePrefsProvider.dart';
+import 'package:app/provider/reuseTypeProvider.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
-import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
 import 'package:app/widget/listJobFuncSelectedAlertDialog.dart';
@@ -24,6 +24,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class JobSearch extends StatefulWidget {
   const JobSearch(
@@ -47,7 +48,7 @@ class JobSearch extends StatefulWidget {
 }
 
 class _JobSearchState extends State<JobSearch>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, JobSearchHelper {
   late final StreamSubscription<InternetStatus> _subscription;
   late final AppLifecycleListener _listener;
   TextEditingController _searchTitleController = TextEditingController();
@@ -58,13 +59,8 @@ class _JobSearchState extends State<JobSearch>
 
   //
   //Get list items all
-  List _listProvinces = [];
-  List _listEducationsLevels = [];
-  List _listIndustries = [];
-  List _listJobLevels = [];
   List _listJobsSearch = [];
   List _listJobFunctions = [];
-  List _ListJobExperiences = [];
 
   //
   //Selected list item(ສະເພາະເຂົ້າ Database)
@@ -119,26 +115,6 @@ class _JobSearchState extends State<JobSearch>
   dynamic slidableAction(String val) {
     print(val);
   }
-
-  // String getTimeAgo(DateTime dateTimeNow, DateTime openDateTime) {
-  //   Duration difference = openDateTime.difference(dateTimeNow).abs();
-  //   if (difference.inDays > 365) {
-  //     return '${difference.inDays ~/ 365} year${difference.inDays ~/ 365 == 1 ? '' : 's'} ago';
-  //   } else
-  //   if (difference.inDays >= 30) {
-  //     return '${difference.inDays ~/ 30} month${difference.inDays ~/ 30 == 1 ? '' : 's'} ago';
-  //   } else if (difference.inDays >= 7) {
-  //     return '${difference.inDays ~/ 7} week${difference.inDays ~/ 7 == 1 ? '' : 's'} ago';
-  //   } else if (difference.inDays >= 1) {
-  //     return '${difference.inDays} day${difference.inDays == 1 ? '' : 's'} ago';
-  //   } else if (difference.inHours >= 1) {
-  //     return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';
-  //   } else if (difference.inMinutes >= 1) {
-  //     return '${difference.inMinutes} minute${difference.inMinutes == 1 ? '' : 's'} ago';
-  //   } else {
-  //     return "just now".tr;
-  //   }
-  // }
 
   String getTimeAgo(DateTime dateTimeNow, DateTime openDateTime) {
     Duration difference = openDateTime.difference(dateTimeNow).abs();
@@ -231,6 +207,7 @@ class _JobSearchState extends State<JobSearch>
   }
 
   checkSelectedListItemFromHomePage() {
+    final reuseTypeProvider = context.read<ReuseTypeProvider>();
     dynamic i = widget.selectedListItem;
     String str = widget.type;
 
@@ -241,7 +218,7 @@ class _JobSearchState extends State<JobSearch>
           _industryName =
               []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
 
-          for (var item in _listIndustries) {
+          for (var item in reuseTypeProvider.listIndustryFilter) {
             //
             //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedIndustryListItem ກົງກັບ _listIndustries ບໍ່
             if (_selectedIndustryListItem.contains(item['_id'])) {
@@ -260,7 +237,7 @@ class _JobSearchState extends State<JobSearch>
         _provinceName =
             []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
 
-        for (var item in _listProvinces) {
+        for (var item in reuseTypeProvider.listProvinceFilter) {
           //
           //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedProvincesListItem ກົງກັບ _listProvinces ບໍ່
           if (_selectedProvincesListItem.contains(item['_id'])) {
@@ -276,6 +253,112 @@ class _JobSearchState extends State<JobSearch>
     }
   }
 
+  _removeJobsSearchSeekerLocal(String jobId) {
+    setState(() {
+      _listJobsSearch.removeWhere((id) => id['jobId'] == jobId);
+    });
+  }
+
+  getJobFunctionsSeeker() async {
+    var res = await fetchData(getJobFunctionsSeekerApi);
+    _listJobFunctions = res['mapper'];
+    setState(() {});
+  }
+
+  getJobsSearchSeeker() async {
+    if (!_hasMoreData) {
+      _isLoadingMoreData = false;
+      return;
+    }
+
+    //
+    // Display AlertDialog Loading
+    if (_statusShowLoading) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return CustomLoadingLogoCircle();
+        },
+      );
+    }
+
+    // Fetch data from API
+    var res = await postData(getJobsSearchSeekerApi, {
+      "title": _searchTitle,
+      "postDateLastest": _postDateLastest,
+      "jobFunctionIds": _selectedJobFunctionsItems,
+      "industryIds": _selectedIndustryListItem,
+      "workingLocationIds": _selectedProvincesListItem,
+      "jobExperienceId": _selectedJobExperienceListItem,
+      "jobEducationLevelId": _selectedEducationLeavelListItem,
+      "jobLevelId": _selectedJobLevelListItem,
+      "page": page,
+      "perPage": perPage
+    });
+
+    List fetchedData = res['jobList'];
+    // _listJobsSearch = res['jobList'];
+    totals = int.parse(res['totals'].toString());
+
+    page++;
+    _listJobsSearch.addAll(List<Map<String, dynamic>>.from(fetchedData));
+    if (_listJobsSearch.length >= totals || fetchedData.length == 0) {
+      _hasMoreData = false;
+    }
+    _isLoadingMoreData = false;
+    _isLoadingForm = false;
+
+    if (res['jobList'] != null && _statusShowLoading) {
+      _statusShowLoading = false;
+      Navigator.pop(context);
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  getJobsSearchByTypingSearchSeeker() async {
+    setState(() {
+      _hasMoreData = true;
+      page = 1;
+    });
+    if (!_hasMoreData) {
+      _isLoadingMoreData = false;
+      return;
+    }
+
+    //
+    //
+    //Fetch data from API
+    var res = await postData(getJobsSearchSeekerApi, {
+      "title": _searchTitle,
+      "postDateLastest": _postDateLastest,
+      "jobFunctionIds": _selectedJobFunctionsItems,
+      "industryIds": _selectedIndustryListItem,
+      "workingLocationIds": _selectedProvincesListItem,
+      "jobExperienceId": _selectedJobExperienceListItem,
+      "jobEducationLevelId": _selectedEducationLeavelListItem,
+      "jobLevelId": _selectedJobLevelListItem,
+      "page": page,
+      "perPage": perPage
+    });
+    List fetchedData = res['jobList'];
+    totals = int.parse(res['totals'].toString());
+
+    page++;
+    _listJobsSearch.clear();
+    _listJobsSearch.addAll(List<Map<String, dynamic>>.from(fetchedData));
+    if (_listJobsSearch.length >= totals || fetchedData.length == 0) {
+      _hasMoreData = false;
+    }
+    _isLoadingMoreData = false;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   //error setState() called after dispose(). it can help!!!
   @override
   void setState(fn) {
@@ -285,45 +368,28 @@ class _JobSearchState extends State<JobSearch>
   }
 
   getSharedPreferences() async {
-    // final prefs = await SharedPreferences.getInstance();
-    // var getLanguageSharePref = prefs.getString('setLanguage');
-    // var getLanguageApiSharePref = prefs.getString('setLanguageApi');
-    // print("local " + getLanguageSharePref.toString());
-    // print("api " + getLanguageApiSharePref.toString());
+    final localLanguage = await context
+        .read<LocalSharedPrefsProvider>()
+        .localLanguageFromSharedPreference();
+    final reuseTypeProvider = context.read<ReuseTypeProvider>();
 
-    var getLanguageSharePref = await SharedPrefsHelper.getString("setLanguage");
-    var getLanguageApiSharePref =
-        await SharedPrefsHelper.getString("setLanguageApi");
-
-    setState(() {
-      _localeLanguageApi = getLanguageApiSharePref.toString();
-    });
-
-    getReuseFilterJobSearchSeeker(
-        _localeLanguageApi, _listIndustries, "industry");
-    getReuseFilterJobSearchSeeker(
-        _localeLanguageApi, _listProvinces, "workLocation");
-    getReuseFilterJobSearchSeeker(
-        _localeLanguageApi, _ListJobExperiences, "jobExperience");
-    getReuseFilterJobSearchSeeker(
-        _localeLanguageApi, _listEducationsLevels, "educationLevel");
-    getReuseFilterJobSearchSeeker(
-        _localeLanguageApi, _listJobLevels, "jobLevel");
+    await reuseTypeProvider.fetchReuseFilterJobSearchSeeker(
+        localLanguage, 'industry');
+    await reuseTypeProvider.fetchReuseFilterJobSearchSeeker(
+        localLanguage, 'workLocation');
+    await reuseTypeProvider.fetchReuseFilterJobSearchSeeker(
+        localLanguage, 'jobExperience');
+    await reuseTypeProvider.fetchReuseFilterJobSearchSeeker(
+        localLanguage, 'educationLevel');
+    await reuseTypeProvider.fetchReuseFilterJobSearchSeeker(
+        localLanguage, 'jobLevel');
   }
 
   @override
   void initState() {
     super.initState();
 
-    // print("widget hasInternet jobsearch: " + "${widget.hasInternet}");
-    // if (widget.hasInternet == false) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     showInternetDisconnected(context);
-    //   });
-    // } else {
-    // _isLoadingForm = true;
     getSharedPreferences();
-
     getJobFunctionsSeeker();
 
     if (widget.topWorkLocation != null) {
@@ -408,6 +474,8 @@ class _JobSearchState extends State<JobSearch>
 
   @override
   Widget build(BuildContext context) {
+    final reuseTypeProvider = context.watch<ReuseTypeProvider>();
+
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: GestureDetector(
@@ -418,15 +486,15 @@ class _JobSearchState extends State<JobSearch>
           }
         },
         child: Scaffold(
-          appBar: AppBarDefault(
-            backgroundColor: AppColors.backgroundWhite,
-            textTitle: 'job search'.tr,
-            textColor: AppColors.fontDark,
-            leadingIcon: Icon(Icons.arrow_back, color: AppColors.fontDark),
-            leadingPress: () {
-              Navigator.pop(context);
-            },
-          ),
+          // appBar: AppBarDefault(
+          //   backgroundColor: AppColors.backgroundWhite,
+          //   textTitle: 'job search'.tr,
+          //   textColor: AppColors.fontDark,
+          //   leadingIcon: Icon(Icons.arrow_back, color: AppColors.fontDark),
+          //   leadingPress: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
           body: SafeArea(
             child: Container(
               color: AppColors.background,
@@ -686,12 +754,13 @@ class _JobSearchState extends State<JobSearch>
                                                   spacing: 10,
                                                   runSpacing: 10,
                                                   children: List.generate(
-                                                    _listEducationsLevels
+                                                    reuseTypeProvider
+                                                        .listEducationLevelFilter
                                                         .length,
                                                     (index) {
-                                                      dynamic i =
-                                                          _listEducationsLevels[
-                                                              index];
+                                                      dynamic i = reuseTypeProvider
+                                                              .listEducationLevelFilter[
+                                                          index];
 
                                                       String
                                                           educationLevelName =
@@ -1049,8 +1118,8 @@ class _JobSearchState extends State<JobSearch>
                                                       return ListMultiSelectedAlertDialog(
                                                         title:
                                                             "work province".tr,
-                                                        listItems:
-                                                            _listProvinces,
+                                                        listItems: reuseTypeProvider
+                                                            .listProvinceFilter,
                                                         selectedListItem:
                                                             _selectedProvincesListItem,
                                                       );
@@ -1059,14 +1128,16 @@ class _JobSearchState extends State<JobSearch>
                                                     setState(() {
                                                       //value = []
                                                       //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                      if (value.length > 0) {
+                                                      if (value != null &&
+                                                          value.length > 0) {
                                                         _selectedProvincesListItem =
                                                             value;
                                                         _provinceName =
                                                             []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
 
                                                         for (var item
-                                                            in _listProvinces) {
+                                                            in reuseTypeProvider
+                                                                .listProvinceFilter) {
                                                           //
                                                           //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedProvincesListItem ກົງກັບ _listProvinces ບໍ່
                                                           if (_selectedProvincesListItem
@@ -1129,8 +1200,8 @@ class _JobSearchState extends State<JobSearch>
                                                     builder: (context) {
                                                       return ListMultiSelectedAlertDialog(
                                                         title: "industry".tr,
-                                                        listItems:
-                                                            _listIndustries,
+                                                        listItems: reuseTypeProvider
+                                                            .listIndustryFilter,
                                                         selectedListItem:
                                                             _selectedIndustryListItem,
                                                       );
@@ -1139,14 +1210,16 @@ class _JobSearchState extends State<JobSearch>
                                                     setState(() {
                                                       //value = []
                                                       //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                      if (value.length > 0) {
+                                                      if (value != null &&
+                                                          value.length > 0) {
                                                         _selectedIndustryListItem =
                                                             value;
                                                         _industryName =
                                                             []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
 
                                                         for (var item
-                                                            in _listIndustries) {
+                                                            in reuseTypeProvider
+                                                                .listIndustryFilter) {
                                                           //
                                                           //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedIndustryListItem ກົງກັບ _listIndustries ບໍ່
                                                           if (_selectedIndustryListItem
@@ -1209,8 +1282,8 @@ class _JobSearchState extends State<JobSearch>
                                                       return ListMultiSelectedAlertDialog(
                                                         title:
                                                             "job experience".tr,
-                                                        listItems:
-                                                            _ListJobExperiences,
+                                                        listItems: reuseTypeProvider
+                                                            .listJobExperienceFilter,
                                                         selectedListItem:
                                                             _selectedJobExperienceListItem,
                                                       );
@@ -1219,14 +1292,16 @@ class _JobSearchState extends State<JobSearch>
                                                     setState(() {
                                                       //value = []
                                                       //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                      if (value.length > 0) {
+                                                      if (value != null &&
+                                                          value.length > 0) {
                                                         _selectedJobExperienceListItem =
                                                             value;
                                                         _jobExperienceName =
                                                             []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
 
                                                         for (var item
-                                                            in _ListJobExperiences) {
+                                                            in reuseTypeProvider
+                                                                .listJobExperienceFilter) {
                                                           //
                                                           //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedJobExperienceListItem ກົງກັບ _listJobExperience ບໍ່
                                                           if (_selectedJobExperienceListItem
@@ -1291,8 +1366,8 @@ class _JobSearchState extends State<JobSearch>
                                                     builder: (context) {
                                                       return ListMultiSelectedAlertDialog(
                                                         title: "job level".tr,
-                                                        listItems:
-                                                            _listJobLevels,
+                                                        listItems: reuseTypeProvider
+                                                            .listJobLevelFilter,
                                                         selectedListItem:
                                                             _selectedJobLevelListItem,
                                                       );
@@ -1301,14 +1376,16 @@ class _JobSearchState extends State<JobSearch>
                                                     setState(() {
                                                       //value = []
                                                       //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                      if (value.length > 0) {
+                                                      if (value != null &&
+                                                          value.length > 0) {
                                                         _selectedJobLevelListItem =
                                                             value;
                                                         _jobLevelName =
                                                             []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
 
                                                         for (var item
-                                                            in _listJobLevels) {
+                                                            in reuseTypeProvider
+                                                                .listJobLevelFilter) {
                                                           //
                                                           //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedJobLevelListItem ກົງກັບ _listJobLevels ບໍ່
                                                           if (_selectedJobLevelListItem
@@ -1521,12 +1598,14 @@ class _JobSearchState extends State<JobSearch>
 
                                     var indexJobsSearch =
                                         _listJobsSearch[index];
-                                    _title = indexJobsSearch['title'];
-                                    _logo = indexJobsSearch['logo'];
+                                    _title = indexJobsSearch['title'] ?? "";
+                                    _logo = indexJobsSearch['logo'] ?? "";
                                     _companyName =
-                                        indexJobsSearch['companyName'];
+                                        indexJobsSearch['companyName'] ?? "";
                                     _workingLocations =
-                                        indexJobsSearch['workingLocations'];
+                                        indexJobsSearch['workingLocations'] ??
+                                            "";
+
                                     _openDate = indexJobsSearch['openingDate'];
                                     _closeDate = indexJobsSearch['closingDate'];
                                     _isClick =
@@ -1593,8 +1672,12 @@ class _JobSearchState extends State<JobSearch>
                                                   "hide dismiss the Slidable");
                                               _removeJobsSearchSeekerLocal(
                                                   indexJobsSearch['jobId']);
-                                              hideJob(indexJobsSearch['jobId'],
-                                                  indexJobsSearch['title']);
+                                              hideJobHelper(
+                                                indexJobsSearch['jobId']
+                                                    .toString(),
+                                                indexJobsSearch['title']
+                                                    .toString(),
+                                              );
                                             },
                                           ),
                                           children: [
@@ -1620,9 +1703,12 @@ class _JobSearchState extends State<JobSearch>
                                                         !indexJobsSearch[
                                                             'isSaved'];
                                                   });
-                                                  saveAndUnSaveJob(
-                                                      indexJobsSearch['jobId'],
-                                                      indexJobsSearch['title']);
+                                                  saveAndUnSaveJobHelper(
+                                                    indexJobsSearch['jobId']
+                                                        .toString(),
+                                                    indexJobsSearch['title']
+                                                        .toString(),
+                                                  );
                                                   slidableController.close();
                                                 },
                                               ),
@@ -1649,9 +1735,11 @@ class _JobSearchState extends State<JobSearch>
                                                         !indexJobsSearch[
                                                             'isSaved'];
                                                   });
-                                                  saveAndUnSaveJob(
-                                                    indexJobsSearch['jobId'],
-                                                    indexJobsSearch['title'],
+                                                  saveAndUnSaveJobHelper(
+                                                    indexJobsSearch['jobId']
+                                                        .toString(),
+                                                    indexJobsSearch['title']
+                                                        .toString(),
                                                   );
 
                                                   slidableController.close();
@@ -1694,9 +1782,12 @@ class _JobSearchState extends State<JobSearch>
                                                   print("press ok");
                                                   _removeJobsSearchSeekerLocal(
                                                       indexJobsSearch['jobId']);
-                                                  hideJob(
-                                                      indexJobsSearch['jobId'],
-                                                      indexJobsSearch['title']);
+                                                  hideJobHelper(
+                                                    indexJobsSearch['jobId']
+                                                        .toString(),
+                                                    indexJobsSearch['title']
+                                                        .toString(),
+                                                  );
                                                 }
                                               },
                                             ),
@@ -1840,7 +1931,7 @@ class _JobSearchState extends State<JobSearch>
                                                                               BorderRadius.circular(8),
                                                                           child:
                                                                               Center(
-                                                                            child: _logo == ""
+                                                                            child: _logo.isEmpty
                                                                                 ? Image.asset(
                                                                                     'assets/image/no-image-available.png',
                                                                                     fit: BoxFit.contain,
@@ -2231,11 +2322,14 @@ class _JobSearchState extends State<JobSearch>
                                                           _removeJobsSearchSeekerLocal(
                                                               indexJobsSearch[
                                                                   'jobId']);
-                                                          hideJob(
-                                                              indexJobsSearch[
-                                                                  'jobId'],
-                                                              indexJobsSearch[
-                                                                  'title']);
+                                                          hideJobHelper(
+                                                            indexJobsSearch[
+                                                                    'jobId']
+                                                                .toString(),
+                                                            indexJobsSearch[
+                                                                    'title']
+                                                                .toString(),
+                                                          );
                                                         }
                                                       },
                                                       borderRadius:
@@ -2290,11 +2384,14 @@ class _JobSearchState extends State<JobSearch>
                                                               !indexJobsSearch[
                                                                   'isSaved'];
                                                         });
-                                                        saveAndUnSaveJob(
-                                                            indexJobsSearch[
-                                                                'jobId'],
-                                                            indexJobsSearch[
-                                                                'title']);
+                                                        saveAndUnSaveJobHelper(
+                                                          indexJobsSearch[
+                                                                  'jobId']
+                                                              .toString(),
+                                                          indexJobsSearch[
+                                                                  'title']
+                                                              .toString(),
+                                                        );
                                                       },
                                                       borderRadius:
                                                           BorderRadius.only(
@@ -2371,260 +2468,5 @@ class _JobSearchState extends State<JobSearch>
         ),
       ),
     );
-  }
-
-  onGoBack(dynamic value) async {
-    print("onGoBack");
-    await getJobsSearchSeeker();
-  }
-
-  _removeJobsSearchSeekerLocal(String jobId) {
-    setState(() {
-      _listJobsSearch.removeWhere((id) => id['jobId'] == jobId);
-    });
-  }
-
-  getReuseFilterJobSearchSeeker(
-      String lang, List listValue, String resValue) async {
-    var res =
-        await fetchData(getReuseFilterJobSearchSeekerApi + "lang=${lang}");
-
-    if (widget.selectedListItem != null) {
-      checkSelectedListItemFromHomePage();
-    }
-
-    setState(() {
-      Iterable<dynamic> iterableRes = res[resValue.toString()] ?? [];
-      listValue.clear(); // Clear the existing list
-      listValue.addAll(iterableRes); // Add elements from the response
-    });
-  }
-
-  getJobFunctionsSeeker() async {
-    var res = await fetchData(getJobFunctionsSeekerApi);
-    _listJobFunctions = res['mapper'];
-    setState(() {});
-  }
-
-  getJobsSearchSeeker() async {
-    // if (_isLoadingMoreData || !_hasMoreData) return;
-    if (!_hasMoreData) {
-      _isLoadingMoreData = false;
-      return;
-    }
-
-    print("working");
-
-    // setState(() {
-    //   _isLoadingMoreData = true;
-    // });
-
-    //
-    //ສະແດງ AlertDialog Loading
-    if (_statusShowLoading) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return CustomLoadingLogoCircle();
-        },
-      );
-    }
-
-    // Fetch data from API
-    var res = await postData(getJobsSearchSeekerApi, {
-      "title": _searchTitle,
-      "postDateLastest": _postDateLastest,
-      "jobFunctionIds": _selectedJobFunctionsItems,
-      "industryIds": _selectedIndustryListItem,
-      "workingLocationIds": _selectedProvincesListItem,
-      "jobExperienceId": _selectedJobExperienceListItem,
-      "jobEducationLevelId": _selectedEducationLeavelListItem,
-      "jobLevelId": _selectedJobLevelListItem,
-      "page": page,
-      "perPage": perPage
-    });
-
-    List fetchedData = res['jobList'];
-    // _listJobsSearch = res['jobList'];
-    totals = int.parse(res['totals'].toString());
-
-    page++;
-    _listJobsSearch.addAll(List<Map<String, dynamic>>.from(fetchedData));
-    if (_listJobsSearch.length >= totals || fetchedData.length == 0) {
-      _hasMoreData = false;
-    }
-    _isLoadingMoreData = false;
-    _isLoadingForm = false;
-
-    if (res['jobList'] != null && _statusShowLoading) {
-      _statusShowLoading = false;
-      Navigator.pop(context);
-    }
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  getJobsSearchByTypingSearchSeeker() async {
-    // Display loading dialog
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: false,
-    //   builder: (context) {
-    //     return CustomLoadingLogoCircle();
-    //   },
-    // );
-
-    setState(() {
-      _hasMoreData = true;
-      page = 1;
-    });
-    if (!_hasMoreData) {
-      _isLoadingMoreData = false;
-      return;
-    }
-
-    //
-    //
-    //Fetch data from API
-    var res = await postData(getJobsSearchSeekerApi, {
-      "title": _searchTitle,
-      "postDateLastest": _postDateLastest,
-      "jobFunctionIds": _selectedJobFunctionsItems,
-      "industryIds": _selectedIndustryListItem,
-      "workingLocationIds": _selectedProvincesListItem,
-      "jobExperienceId": _selectedJobExperienceListItem,
-      "jobEducationLevelId": _selectedEducationLeavelListItem,
-      "jobLevelId": _selectedJobLevelListItem,
-      "page": page,
-      "perPage": perPage
-    });
-    List fetchedData = res['jobList'];
-    totals = int.parse(res['totals'].toString());
-
-    page++;
-    _listJobsSearch.clear();
-    _listJobsSearch.addAll(List<Map<String, dynamic>>.from(fetchedData));
-    if (_listJobsSearch.length >= totals || fetchedData.length == 0) {
-      _hasMoreData = false;
-    }
-    _isLoadingMoreData = false;
-
-    // if (!context.mounted) return;
-    // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
-    // Navigator.pop(context);
-
-    // _isLoading = false;
-    // if (res['jobList'] != null && _statusShowLoading) {
-    //   _statusShowLoading = false;
-    //   Navigator.pop(context);
-    // }
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  saveAndUnSaveJob(String jobId, String jobTitle) async {
-    //
-    //ສະແດງ AlertDialog Loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustomLoadingLogoCircle();
-      },
-    );
-
-    var res = await postData(saveJobSeekerApi, {
-      "_id": "",
-      "JobId": jobId,
-    });
-    print(res);
-
-    if (res['message'] == "Saved" || res['message'] == "Unsaved") {
-      Navigator.pop(context);
-    }
-
-    if (res['message'] == "Saved") {
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            strIcon: "\uf004",
-            title: "save job".tr + " " + "successfully".tr,
-            contentText: "$jobTitle",
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-            },
-          );
-        },
-      );
-    } else if (res['message'] == "Unsaved") {
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            strIcon: "\uf7a9",
-            boxCircleColor: AppColors.warning200,
-            iconColor: AppColors.warning600,
-            title: "unsave job".tr + " " + "successfully".tr,
-            contentText: "$jobTitle ",
-            textButton: "ok".tr,
-            buttonColor: AppColors.warning200,
-            textButtonColor: AppColors.warning600,
-            widgetBottomColor: AppColors.warning200,
-            press: () {
-              Navigator.pop(context);
-            },
-          );
-        },
-      );
-    }
-  }
-
-  hideJob(String jobId, String jobTitle) async {
-    //
-    //ສະແດງ AlertDialog Loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustomLoadingLogoCircle();
-      },
-    );
-    var res = await postData(hideJobSeekerApi, {
-      "_id": "",
-      "JobId": jobId,
-    });
-    print(res);
-
-    //Hide succeed
-    //UnHide succeed
-    if (res['message'] == "Hide succeed") {
-      Navigator.pop(context);
-    }
-
-    if (res['message'] == "Hide succeed") {
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "hide job".tr + " " + "successfully".tr,
-            contentText: "$jobTitle ",
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-            },
-          );
-        },
-      );
-    }
   }
 }

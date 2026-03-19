@@ -6,6 +6,7 @@ import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -98,6 +99,7 @@ class _HybridHtmlViewerState extends State<HybridHtmlViewer> {
 
     return Scaffold(
       appBar: AppBarDefault(
+        systemOverlayStyleColor: SystemUiOverlayStyle.dark,
         backgroundColor: AppColors.backgroundWhite,
         textTitle: "job_detail".tr,
         textColor: AppColors.fontDark,

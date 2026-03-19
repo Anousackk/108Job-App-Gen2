@@ -5,14 +5,12 @@ import 'dart:async';
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
-import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/helpers/companyHelper.dart';
 import 'package:app/screen/screenAfterSignIn/company/companyDetail.dart';
-import 'package:app/widget/appbar.dart';
 import 'package:app/widget/input.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
@@ -29,7 +27,7 @@ class Company extends StatefulWidget {
   State<Company> createState() => _CompanyState();
 }
 
-class _CompanyState extends State<Company> {
+class _CompanyState extends State<Company> with CompanyHelper {
   TextEditingController _searchCompanyNameController = TextEditingController();
   ScrollController _scrollController = ScrollController();
   FocusScopeNode _currentFocus = FocusScopeNode();
@@ -148,7 +146,16 @@ class _CompanyState extends State<Company> {
   //   }
   // }
 
-  pressTapMyJobType(String val) async {
+  resetAndFetchCompanies() {
+    setState(() {
+      _hasMoreData = true;
+      page = 1;
+      _companies.clear();
+    });
+    fetchCompanies(_searchType);
+  }
+
+  pressTapTypeCompany(String val) async {
     setState(() {
       _statusShowLoading = true;
       _searchType = val;
@@ -158,13 +165,11 @@ class _CompanyState extends State<Company> {
       } else if (_searchType == "Following") {
       } else if (_searchType == "SubmittedCV") {}
     });
-    _companies.clear();
-    page = 1;
-    _hasMoreData = true;
-    fetchCompanies(val);
+
+    resetAndFetchCompanies();
   }
 
-  checkTypeMyJobFromHomePage() {
+  checkTypeCompanyFromHomePage() {
     if (widget.companyType == "Hiring") {
       setState(() {
         _searchType = widget.companyType;
@@ -175,72 +180,70 @@ class _CompanyState extends State<Company> {
     }
   }
 
-  followCompany(String companyName, String companyId) async {
-    //
-    //ສະແດງ AlertDialog Loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return CustomLoadingLogoCircle();
-      },
+  Widget _buildFilterOption({
+    required IconData icon,
+    required String title,
+    required bool isSelected,
+    required VoidCallback press,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: press,
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppColors.backgroundWhite
+                : AppColors.backgroundWhite,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color:
+                  isSelected ? AppColors.primaryCustom : AppColors.borderWhite,
+              // width: isSelected ? 2 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.primaryCustom
+                      : AppColors.backgroundWhite,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: isSelected ? AppColors.fontWhite : AppColors.fontDark,
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  style: bodyTextNormal(
+                    null,
+                    isSelected ? AppColors.primaryCustom : AppColors.fontDark,
+                    isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
-
-    var res = await postData(addFollowCompanySeekerApi + '${companyId}', {});
-    var message = res['message'];
-    print(message);
-
-    // await fetchCompanies(_searchType);
-    // await fetchCompanyFeature();
-
-    if (message == "Followed") {
-      Navigator.pop(context);
-
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            strIcon: "\uf004",
-            title: "follow".tr + " " + "successfully".tr,
-            contentText: "$companyName ",
-            textButton: "ok".tr,
-            press: () {
-              Navigator.pop(context);
-            },
-          );
-        },
-      );
-    } else if (message == "Unfollow") {
-      Navigator.pop(context);
-
-      await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            strIcon: "\uf7a9",
-            boxCircleColor: AppColors.warning200,
-            iconColor: AppColors.warning600,
-            title: "unfollow".tr + " " + "successfully".tr,
-            contentText: "$companyName",
-            textButton: "ok".tr,
-            buttonColor: AppColors.warning200,
-            textButtonColor: AppColors.warning600,
-            widgetBottomColor: AppColors.warning200,
-            press: () {
-              Navigator.pop(context);
-            },
-          );
-        },
-      );
-    }
-  }
-
-  onGoBack(dynamic value) async {
-    print("onGoBack");
-    await fetchCompanies(_searchType);
-    // await fetchCompanyFeature();
   }
 
   //error setState() called after dispose(). it can help!!!
@@ -262,7 +265,7 @@ class _CompanyState extends State<Company> {
     //   });
     // } else {
     if (widget.companyType == "Hiring") {
-      checkTypeMyJobFromHomePage();
+      checkTypeCompanyFromHomePage();
     } else {
       fetchCompanies("AllCompanies");
       // fetchCompanyFeature();
@@ -308,15 +311,15 @@ class _CompanyState extends State<Company> {
           //   backgroundColor: AppColors.backgroundWhite,
           // ),
 
-          appBar: AppBarDefault(
-            backgroundColor: AppColors.backgroundWhite,
-            textTitle: 'company'.tr,
-            textColor: AppColors.fontDark,
-            leadingIcon: Icon(Icons.arrow_back, color: AppColors.fontDark),
-            leadingPress: () {
-              Navigator.pop(context);
-            },
-          ),
+          // appBar: AppBarDefault(
+          //   backgroundColor: AppColors.backgroundWhite,
+          //   textTitle: 'company'.tr,
+          //   textColor: AppColors.fontDark,
+          //   leadingIcon: Icon(Icons.arrow_back, color: AppColors.fontDark),
+          //   leadingPress: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
           body: SafeArea(
             child: _isLoading
                 ? Container(
@@ -351,6 +354,7 @@ class _CompanyState extends State<Company> {
                               Expanded(
                                 child: SimpleTextFieldSingleValidate(
                                   codeController: _searchCompanyNameController,
+                                  focusNode: focusNode,
                                   contenPadding: EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 15),
                                   enabledBorder: enableOutlineBorder(
@@ -391,133 +395,126 @@ class _CompanyState extends State<Company> {
                               //Filter type company
                               GestureDetector(
                                 onTap: () {
+                                  focusNode.unfocus();
                                   showModalBottomSheet(
                                     context: context,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(10),
-                                      ),
-                                    ),
+                                    backgroundColor: Colors.transparent,
                                     isScrollControlled: true,
                                     builder: (context) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom: MediaQuery.of(context)
-                                              .viewInsets
-                                              .bottom,
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: AppColors.backgroundWhite,
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            topRight: Radius.circular(10),
+                                          ),
                                         ),
-                                        child: Wrap(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Padding(
+                                            // Handle bar
+                                            // Container(
+                                            //   margin: EdgeInsets.only(top: 12),
+                                            //   width: 40,
+                                            //   height: 4,
+                                            //   decoration: BoxDecoration(
+                                            //     color: AppColors.borderBG,
+                                            //     borderRadius:
+                                            //         BorderRadius.circular(2),
+                                            //   ),
+                                            // ),
+
+                                            // Header
+                                            Container(
                                               padding: EdgeInsets.symmetric(
-                                                  vertical: 30, horizontal: 0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
+                                                  horizontal: 20, vertical: 20),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primaryCustom,
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  topRight: Radius.circular(10),
+                                                ),
+                                              ),
+                                              child: Row(
                                                 children: [
-                                                  //Filter title
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 20),
-                                                    child: Text(
-                                                      "ເລືອກປະເພດ",
-                                                      style: bodyTextMedium(
-                                                          null,
-                                                          null,
-                                                          FontWeight.bold),
-                                                    ),
+                                                  Text(
+                                                    "select_type".tr,
+                                                    style: bodyTextMedium(
+                                                        null,
+                                                        AppColors.fontWhite,
+                                                        FontWeight.bold),
                                                   ),
-                                                  SizedBox(height: 10),
+                                                ],
+                                              ),
+                                            ),
 
+                                            // Options
+                                            Padding(
+                                              padding: const EdgeInsets.all(20),
+                                              child: Column(
+                                                children: [
                                                   // Type AllCompanies
-                                                  ListTile(
-                                                    leading: _searchType ==
-                                                            "AllCompanies"
-                                                        ? Icon(
-                                                            Icons
-                                                                .check_circle_sharp,
-                                                            color: AppColors
-                                                                .iconPrimary,
-                                                          )
-                                                        : Icon(Icons
-                                                            .circle_outlined),
-                                                    title:
-                                                        Text("all company".tr),
-                                                    onTap: () {
+                                                  _buildFilterOption(
+                                                    icon:
+                                                        Icons.business_outlined,
+                                                    title: "all company".tr,
+                                                    isSelected: _searchType ==
+                                                        "AllCompanies",
+                                                    press: () {
                                                       Navigator.pop(context);
-
-                                                      pressTapMyJobType(
+                                                      pressTapTypeCompany(
                                                           "AllCompanies");
                                                     },
                                                   ),
 
-                                                  // Type Hiring
-                                                  ListTile(
-                                                    leading: _searchType ==
-                                                            "Hiring"
-                                                        ? Icon(
-                                                            Icons
-                                                                .check_circle_sharp,
-                                                            color: AppColors
-                                                                .iconPrimary,
-                                                          )
-                                                        : Icon(Icons
-                                                            .circle_outlined),
-                                                    title:
-                                                        Text("hiring now".tr),
-                                                    onTap: () {
-                                                      Navigator.pop(context);
+                                                  SizedBox(height: 8),
 
-                                                      pressTapMyJobType(
+                                                  // Type Hiring
+                                                  _buildFilterOption(
+                                                    icon: Icons.work_outline,
+                                                    title: "hiring now".tr,
+                                                    isSelected:
+                                                        _searchType == "Hiring",
+                                                    press: () {
+                                                      Navigator.pop(context);
+                                                      pressTapTypeCompany(
                                                           "Hiring");
                                                     },
                                                   ),
 
-                                                  // Type Following
-                                                  ListTile(
-                                                    leading: _searchType ==
-                                                            "Following"
-                                                        ? Icon(
-                                                            Icons
-                                                                .check_circle_sharp,
-                                                            color: AppColors
-                                                                .iconPrimary,
-                                                          )
-                                                        : Icon(Icons
-                                                            .circle_outlined),
-                                                    title: Text("following".tr),
-                                                    onTap: () {
-                                                      Navigator.pop(context);
+                                                  SizedBox(height: 8),
 
-                                                      pressTapMyJobType(
+                                                  // Type Following
+                                                  _buildFilterOption(
+                                                    icon:
+                                                        Icons.favorite_outline,
+                                                    title: "following".tr,
+                                                    isSelected: _searchType ==
+                                                        "Following",
+                                                    press: () {
+                                                      Navigator.pop(context);
+                                                      pressTapTypeCompany(
                                                           "Following");
                                                     },
                                                   ),
 
-                                                  // Type SubmittedCV
-                                                  ListTile(
-                                                    leading: _searchType ==
-                                                            "SubmittedCV"
-                                                        ? Icon(
-                                                            Icons
-                                                                .check_circle_sharp,
-                                                            color: AppColors
-                                                                .iconPrimary,
-                                                          )
-                                                        : Icon(Icons
-                                                            .circle_outlined),
-                                                    title: Text("applied".tr),
-                                                    onTap: () {
-                                                      Navigator.pop(context);
+                                                  SizedBox(height: 8),
 
-                                                      pressTapMyJobType(
+                                                  // Type SubmittedCV
+                                                  _buildFilterOption(
+                                                    icon: Icons.send_outlined,
+                                                    title: "applied".tr,
+                                                    isSelected: _searchType ==
+                                                        "SubmittedCV",
+                                                    press: () {
+                                                      Navigator.pop(context);
+                                                      pressTapTypeCompany(
                                                           "SubmittedCV");
                                                     },
                                                   ),
                                                 ],
                                               ),
-                                            ),
+                                            )
                                           ],
                                         ),
                                       );
@@ -586,8 +583,7 @@ class _CompanyState extends State<Company> {
                                   //onTap company box card
                                   GestureDetector(
                                     onTap: () {
-                                      FocusScope.of(context)
-                                          .requestFocus(focusNode);
+                                      focusNode.unfocus();
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -596,6 +592,8 @@ class _CompanyState extends State<Company> {
                                           ),
                                         ),
                                       ).then((value) {
+                                        print(
+                                            "Company Detail Callback: $value");
                                         if (value[1] != "") {
                                           setState(() {
                                             dynamic company =
@@ -818,18 +816,15 @@ class _CompanyState extends State<Company> {
                                                                   .transparent,
                                                               child: InkWell(
                                                                 onTap: () {
-                                                                  FocusScope.of(
-                                                                          context)
-                                                                      .requestFocus(
-                                                                          focusNode);
+                                                                  focusNode
+                                                                      .unfocus();
                                                                   setState(() {
                                                                     i['follow'] =
                                                                         !i['follow'];
                                                                   });
-                                                                  followCompany(
-                                                                    i['companyName'],
-                                                                    i['_id'],
-                                                                  );
+                                                                  followAndUnFollowCompanyHelper(
+                                                                      i['_id'],
+                                                                      i['companyName']);
                                                                 },
                                                                 borderRadius:
                                                                     BorderRadius

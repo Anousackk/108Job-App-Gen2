@@ -80,7 +80,7 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage('assets/image/eng.png'),
+                    image: AssetImage('assets/image/lao.png'),
                   ),
                 ),
               ),
@@ -99,7 +99,7 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage('assets/image/lao.png'),
+                    image: AssetImage('assets/image/eng.png'),
                   ),
                 ),
               ),

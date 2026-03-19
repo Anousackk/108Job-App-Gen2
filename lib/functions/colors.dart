@@ -105,6 +105,14 @@ class AppColors {
   static Color warning200 = HexColor("#FEF1D0");
   static Color warning100 = HexColor("#FFF8E7");
 
+  //info
+  static Color info600 = HexColor("#FDB913");
+  static Color info500 = HexColor("#FDC843");
+  static Color info400 = HexColor("#FEDD89");
+  static Color info300 = HexColor("#FEDD89");
+  static Color info200 = HexColor("#FEF1D0");
+  static Color info100 = HexColor("#FFF8E7");
+
   //success
   static Color success600 = HexColor("#006A43");
   static Color success500 = HexColor("#76C49E");

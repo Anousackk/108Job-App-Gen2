@@ -15,7 +15,7 @@ class CompanyHiringShirmmerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
       baseColor: AppColors.dark200,
-      highlightColor: AppColors.dark100,
+      highlightColor: AppColors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

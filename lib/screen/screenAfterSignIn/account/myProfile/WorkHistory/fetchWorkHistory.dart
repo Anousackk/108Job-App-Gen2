@@ -44,7 +44,6 @@ class _FetchWorkHistoryState extends State<FetchWorkHistory> {
 
   pressDeleteWorkHistory(String id) async {
     final profileProvider = context.read<ProfileProvider>();
-
     // Display AlertDialog Loading First
     showDialog(
       context: context,
@@ -63,8 +62,6 @@ class _FetchWorkHistoryState extends State<FetchWorkHistory> {
     // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
     Navigator.pop(context);
 
-    print("delete work history: " + "${res}");
-
     if (statusCode == 200 || statusCode == 201) {
       await profileProvider.fetchProfileSeeker();
     }
@@ -73,11 +70,23 @@ class _FetchWorkHistoryState extends State<FetchWorkHistory> {
   pressUpdateNoExperience(bool val) async {
     final profileProvider = context.read<ProfileProvider>();
 
+    // Display AlertDialog Loading First
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CustomLoadingLogoCircle();
+      },
+    );
+
     final res = await profileProvider.updateNoExperience(val);
 
     final statusCode = res?["statusCode"];
 
-    print("Update No Experience: $res");
+    if (!context.mounted) return;
+
+    // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
+    Navigator.pop(context);
 
     if (statusCode == 200 || statusCode == 201) {
       await profileProvider.fetchProfileSeeker();
@@ -112,7 +121,6 @@ class _FetchWorkHistoryState extends State<FetchWorkHistory> {
               });
             },
             onSaveSuccess: () async {
-              await profileProvider.fetchProfileSeeker();
               setState(() {
                 isShowFormAddWorkHistory = false;
                 isShowFormUpdateWorkHistory = false;
@@ -131,7 +139,6 @@ class _FetchWorkHistoryState extends State<FetchWorkHistory> {
               });
             },
             onSaveSuccess: () async {
-              await profileProvider.fetchProfileSeeker();
               setState(() {
                 isShowFormUpdateWorkHistory = false;
               });

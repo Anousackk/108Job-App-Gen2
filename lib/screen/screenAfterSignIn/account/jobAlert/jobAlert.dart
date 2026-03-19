@@ -642,7 +642,8 @@ class _JobAlertState extends State<JobAlert> {
                                                 setState(() {
                                                   //value = []
                                                   //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                  if (value.length > 0) {
+                                                  if (value != null &&
+                                                      value.length > 0) {
                                                     _selectedProvincesListItem =
                                                         value;
                                                     _provinceName =
@@ -723,7 +724,8 @@ class _JobAlertState extends State<JobAlert> {
                                                 setState(() {
                                                   //value = []
                                                   //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                  if (value.length > 0) {
+                                                  if (value != null &&
+                                                      value.length > 0) {
                                                     _selectedIndustryListItem =
                                                         value;
                                                     _industryName =
@@ -806,7 +808,8 @@ class _JobAlertState extends State<JobAlert> {
                                                 setState(() {
                                                   //value = []
                                                   //ຕອນປິດ showDialog ຖ້າວ່າມີຄ່າໃຫ້ເຮັດຟັງຊັນນີ້
-                                                  if (value.length > 0) {
+                                                  if (value != null &&
+                                                      value.length > 0) {
                                                     _selectedJobLevelListItem =
                                                         value;
                                                     _jobLevelName =

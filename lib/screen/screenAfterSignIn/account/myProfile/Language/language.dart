@@ -66,7 +66,6 @@ class _LanguageState extends State<Language> {
 
   pressAddLanguageSkill() async {
     final profileProvider = context.read<ProfileProvider>();
-
     // Display AlertDialog Loading First
     showDialog(
       context: context,
@@ -90,9 +89,9 @@ class _LanguageState extends State<Language> {
     // Close AlertDialog Loading ຫຼັງຈາກ api ເຮັດວຽກແລ້ວ
     Navigator.pop(context);
 
-    print("languageSkill: " + "${res}");
-
     if (statusCode == 200 || statusCode == 201) {
+      await profileProvider.fetchProfileSeeker();
+
       // Call parent callback
       if (widget.onSaveSuccess != null) {
         widget.onSaveSuccess!();

@@ -1,21 +1,19 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, non_constant_identifier_names, unused_field, prefer_final_fields, prefer_const_literals_to_create_immutables, avoid_print, use_build_context_synchronously, curly_braces_in_flow_control_structures, prefer_interpolation_to_compose_strings, unnecessary_null_comparison
 
 import 'package:app/functions/alert_dialog.dart';
-import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/formatNumber.dart';
 import 'package:app/functions/htmlWidget.dart';
-import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/textSize.dart';
+import 'package:app/helpers/eventAvailableHelper.dart';
 import 'package:app/provider/eventAvailableProvider.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/dialogDisplayImage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill_delta_from_html/parser/html_to_delta.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-// import 'package:flutter_quill_extensions/flutter_quill_embeds.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
@@ -29,8 +27,9 @@ class DetailPositionComapny extends StatefulWidget {
     this.logo,
     required this.isAppliedEvenJobCompany,
     required this.isNegotiable,
+    required this.companyName,
   }) : super(key: key);
-  final String id, title, salary, description;
+  final String id, companyName, title, salary, description;
   final String? logo;
   final bool isAppliedEvenJobCompany, isNegotiable;
 
@@ -38,7 +37,8 @@ class DetailPositionComapny extends StatefulWidget {
   State<DetailPositionComapny> createState() => _DetailPositionComapnyState();
 }
 
-class _DetailPositionComapnyState extends State<DetailPositionComapny> {
+class _DetailPositionComapnyState extends State<DetailPositionComapny>
+    with EventAvailableHelper {
   QuillController _quillController = QuillController.basic();
   FocusNode editorFocusNode = FocusNode();
   ScrollController _editorScrollController = ScrollController();
@@ -61,7 +61,7 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
             .replaceAll('</figure>', '')
             .replaceAll('</p>', '<br>');
 
-        print(cleanedHtml.toString());
+        print("cleanedHtml: " + cleanedHtml.toString());
         _splitFigureDes = cleanedHtml;
 
         final delta = HtmlToDelta().convert(cleanedHtml);
@@ -74,64 +74,57 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
     });
   }
 
-  applyByJobId(String jobId) async {
-    var res = await postData(applyJobIdSeekerApi, {"_id": jobId});
-    print("res applyByJobId: " + res.toString());
-
-    if (res["message"] == "Your applied is complete.") {
-      // ສະແດງ success dialog
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (dialogContext) {
-          return NewVer2CustAlertDialogSuccessBtnConfirm(
-            title: "successfully".tr,
-            contentText: "applied_success".tr,
-            textButton: "ok".tr,
-            press: () async {
-              // ປິດ success dialog
-              Navigator.of(dialogContext).pop();
-
-              // ຖ້າ success dialog ປີດກ່ອນແລ້ວຈຶ່ງກັບໄປໜ້າ PositionCompany
-              await Future.delayed(Duration(milliseconds: 200));
-
-              // ກັບໄປໜ້າ PositionCompany
-              if (Navigator.canPop(context))
-                Navigator.of(context).pop("AppliedEventJobCompany");
-              ;
-            },
-          );
-        },
-      );
-
-      return true;
-    } else {
-      // ສະແດງ warning dialog
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (dialogContext) {
-          return NewVer5CustAlertDialogWarningBtnConfirm(
-            title: "warning".tr,
-            contentText: "already_applied".tr,
-            textButton: "ok".tr,
-            press: () async {
-              // ປິດ success dialog
-              Navigator.of(dialogContext).pop();
-
-              // ຖ້າ success dialog ປີດກ່ອນແລ້ວຈຶ່ງກັບໄປໜ້າ PositionCompany
-              await Future.delayed(Duration(milliseconds: 200));
-
-              // ກັບໄປໜ້າ PositionCompany
-              if (Navigator.canPop(context)) Navigator.pop(context);
-            },
-          );
-        },
-      );
-
-      return true;
-    }
-  }
+  // applyByJobId(String jobId) async {
+  //   var res = await postData(applyJobIdSeekerApi, {"_id": jobId});
+  //   print("res applyByJobId: " + res.toString());
+  //   if (res["message"] == "Your applied is complete.") {
+  //     // ສະແດງ success dialog
+  //     showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (dialogContext) {
+  //         return NewVer2CustAlertDialogSuccessBtnConfirm(
+  //           title: "successfully".tr,
+  //           contentText: "applied_success".tr,
+  //           textButton: "ok".tr,
+  //           press: () async {
+  //             // ປິດ success dialog
+  //             Navigator.of(dialogContext).pop();
+  //             // ຖ້າ success dialog ປີດກ່ອນແລ້ວຈຶ່ງກັບໄປໜ້າ PositionCompany
+  //             await Future.delayed(Duration(milliseconds: 200));
+  //             // ກັບໄປໜ້າ PositionCompany
+  //             if (Navigator.canPop(context))
+  //               Navigator.of(context).pop("AppliedEventJobCompany");
+  //             ;
+  //           },
+  //         );
+  //       },
+  //     );
+  //     return true;
+  //   } else {
+  //     // ສະແດງ warning dialog
+  //     showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (dialogContext) {
+  //         return NewVer5CustAlertDialogWarningBtnConfirm(
+  //           title: "warning".tr,
+  //           contentText: "already_applied".tr,
+  //           textButton: "ok".tr,
+  //           press: () async {
+  //             // ປິດ success dialog
+  //             Navigator.of(dialogContext).pop();
+  //             // ຖ້າ success dialog ປີດກ່ອນແລ້ວຈຶ່ງກັບໄປໜ້າ PositionCompany
+  //             await Future.delayed(Duration(milliseconds: 200));
+  //             // ກັບໄປໜ້າ PositionCompany
+  //             if (Navigator.canPop(context)) Navigator.pop(context);
+  //           },
+  //         );
+  //       },
+  //     );
+  //     return true;
+  //   }
+  // }
 
   @override
   void initState() {
@@ -147,6 +140,7 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBarDefault(
+          systemOverlayStyleColor: SystemUiOverlayStyle.dark,
           backgroundColor: AppColors.backgroundWhite,
           textTitle: "",
           fontWeight: FontWeight.bold,
@@ -168,9 +162,19 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      //
-                      //
+                      //Company name
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          "${widget.companyName}",
+                          style: bodyTextMedium(null, null, FontWeight.bold),
+                        ),
+                      ),
+
+                      SizedBox(height: 20),
+
                       //Section BoxDecoration Position / Salary
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -185,8 +189,6 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              //
-                              //
                               //Position title
                               Text(
                                 "${widget.title}",
@@ -196,8 +198,6 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
 
                               SizedBox(height: 20),
 
-                              //
-                              //
                               //Salary
                               Row(
                                 children: [
@@ -235,8 +235,6 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
 
                       // Text("${widget.description}"),
 
-                      //
-                      //
                       //Section BoxDecoration Editor Description
                       Container(
                         width: double.infinity,
@@ -349,8 +347,7 @@ class _DetailPositionComapnyState extends State<DetailPositionComapny> {
                                   _isAppliedEvenJobCompany = true;
                                 });
                                 // applyByJobId("${widget.id}");
-                                eventAvailableProvider.applyJobCompanyBySeeker(
-                                    context, "${widget.id}");
+                                applyJobCompanyBySeekerHelper("${widget.id}");
                               }
                             }
                           },

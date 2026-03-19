@@ -10,6 +10,7 @@ import 'package:app/screen/screenAfterSignIn/message/messageDetail.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:app/widget/screenNoData.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -101,6 +102,7 @@ class _MessagesState extends State<Messages> {
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
       child: Scaffold(
         appBar: AppBarDefault(
+          systemOverlayStyleColor: SystemUiOverlayStyle.dark,
           backgroundColor: AppColors.backgroundWhite,
           elevation: 1.0,
           textTitle: "message".tr,

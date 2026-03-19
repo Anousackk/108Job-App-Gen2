@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, unused_local_variable, prefer_final_fields, prefer_if_null_operators, use_build_context_synchronously, prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unused_field, avoid_print, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, unused_local_variable, prefer_final_fields, prefer_if_null_operators, use_build_context_synchronously, prefer_interpolation_to_compose_strings, deprecated_member_use
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -7,12 +7,11 @@ import 'dart:ui' as ui;
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/colors.dart';
 import 'package:app/functions/launchInBrowser.dart';
-import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/provider/eventAvailableProvider.dart';
 import 'package:app/provider/profileProvider.dart';
 import 'package:app/widget/appbar.dart';
-import 'package:app/widget/button.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -238,11 +237,12 @@ class _EventTicketState extends State<EventTicket> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0,
-          backgroundColor: AppColors.teal,
+          backgroundColor: AppColors.backgroundWhite,
+          // elevation: 1.0,
         ),
         body: Container(
           height: double.infinity,
-          color: AppColors.teal,
+          color: AppColors.backgroundWhite,
           child: SingleChildScrollView(
             physics: ClampingScrollPhysics(),
             child: Column(
@@ -251,7 +251,7 @@ class _EventTicketState extends State<EventTicket> {
                 //
                 //Appbar custom
                 AppBarThreeWidgt(
-                  boxColor: AppColors.teal,
+                  boxColor: AppColors.backgroundWhite,
                   //
                   //
                   //Widget Leading
@@ -265,13 +265,13 @@ class _EventTicketState extends State<EventTicket> {
                       child: Container(
                         height: 45,
                         width: 45,
-                        color: AppColors.iconLight.withOpacity(0.1),
+                        color: AppColors.background,
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
                             "\uf060",
                             style: fontAwesomeRegular(
-                                null, 20, AppColors.iconLight, null),
+                                null, 20, AppColors.iconDark, null),
                           ),
                         ),
                       ),
@@ -297,13 +297,13 @@ class _EventTicketState extends State<EventTicket> {
                       child: Container(
                         height: 45,
                         width: 45,
-                        color: AppColors.iconLight.withOpacity(0.1),
+                        color: AppColors.background,
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
                             "\uf019",
                             style: fontAwesomeRegular(
-                                null, 20, AppColors.iconLight, null),
+                                null, 20, AppColors.iconDark, null),
                           ),
                         ),
                       ),
@@ -319,7 +319,7 @@ class _EventTicketState extends State<EventTicket> {
                 RepaintBoundary(
                   key: _globalKey,
                   child: Container(
-                    color: AppColors.teal,
+                    color: AppColors.backgroundWhite,
                     child: Column(
                       children: [
                         //Profile image and name
@@ -331,42 +331,63 @@ class _EventTicketState extends State<EventTicket> {
                               Container(
                                 width: 110,
                                 height: 110,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.dark.withOpacity(0.08),
+                                      blurRadius: 5,
+                                      spreadRadius: 0,
+                                      offset: Offset(3, 4),
+                                    ),
+                                  ],
+                                ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(100),
-                                  child: profileProvider.imageSrc == ""
+                                  child: profileProvider.imageSrc.isEmpty
                                       ? Image.asset(
                                           'assets/image/defprofile.jpg',
                                           fit: BoxFit.cover,
                                         )
-                                      : Image.network(
-                                          profileProvider.imageSrc,
+                                      : CachedNetworkImage(
+                                          imageUrl:
+                                              "${profileProvider.imageSrc}",
                                           fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return Image.asset(
-                                              'assets/image/defprofile.jpg',
-                                              fit: BoxFit.cover,
-                                            ); // Display an error message
-                                          },
+
+                                          // placeholder: (context,
+                                          //         url) =>
+                                          //     EventBannerShirmmerWidget(),
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
+                                            "assets/image/defprofile.jpg",
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
+                                  // Image.network(
+                                  //     profileProvider.imageSrc,
+                                  //     fit: BoxFit.cover,
+                                  //     errorBuilder:
+                                  //         (context, error, stackTrace) {
+                                  //       return Image.asset(
+                                  //         'assets/image/defprofile.jpg',
+                                  //         fit: BoxFit.cover,
+                                  //       ); // Display an error message
+                                  //     },
+                                  //   ),
                                 ),
                               ),
 
-                              SizedBox(
-                                height: 5,
-                              ),
+                              SizedBox(height: 10),
 
                               //Profile firstName lastName
                               Text(
                                 "${profileProvider.firstName} ${profileProvider.lastName}",
                                 style: bodyTextMaxNormal(
-                                    null, AppColors.fontWhite, FontWeight.bold),
+                                    null, AppColors.fontDark, FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
+                              SizedBox(height: 20),
                             ],
                           ),
                         ),
@@ -376,8 +397,16 @@ class _EventTicketState extends State<EventTicket> {
                           padding: EdgeInsets.symmetric(vertical: 20),
                           margin: EdgeInsets.symmetric(horizontal: 20),
                           decoration: BoxDecoration(
-                            color: AppColors.backgroundWhite,
+                            color: AppColors.dark100.withOpacity(0.7),
                             borderRadius: BorderRadius.circular(20),
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //     color: AppColors.dark.withOpacity(0.08),
+                            //     blurRadius: 5,
+                            //     spreadRadius: 0,
+                            //     offset: Offset(3, 8),
+                            //   ),
+                            // ],
                             // boxShadow: [
                             //   BoxShadow(
                             //     offset: Offset(3, 3),
@@ -414,7 +443,7 @@ class _EventTicketState extends State<EventTicket> {
                               //Dotted line
                               Container(
                                 height: 30,
-                                color: AppColors.backgroundWhite,
+                                // color: AppColors.dark100.withOpacity(0.1),
                                 child: Stack(
                                   alignment: Alignment.center,
                                   children: [
@@ -432,13 +461,13 @@ class _EventTicketState extends State<EventTicket> {
                                         width: 20,
                                         height: 30,
                                         decoration: BoxDecoration(
-                                          color: AppColors.teal,
+                                          color: AppColors.backgroundWhite,
                                           borderRadius: const BorderRadius.only(
                                             topRight: Radius.circular(20),
                                             bottomRight: Radius.circular(20),
                                           ),
                                           border: Border.all(
-                                            color: AppColors.teal,
+                                            color: AppColors.backgroundWhite,
                                             width: 0,
                                           ),
                                         ),
@@ -452,13 +481,13 @@ class _EventTicketState extends State<EventTicket> {
                                         width: 20,
                                         height: 30,
                                         decoration: BoxDecoration(
-                                          color: AppColors.teal,
+                                          color: AppColors.backgroundWhite,
                                           borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(20),
                                             bottomLeft: Radius.circular(20),
                                           ),
                                           border: Border.all(
-                                            color: AppColors.teal,
+                                            color: AppColors.backgroundWhite,
                                             width: 0,
                                           ),
                                         ),
@@ -502,12 +531,12 @@ class _EventTicketState extends State<EventTicket> {
                                       text:
                                           "${eventAvailableProvider.eventInfoOpeningTime}",
                                     ),
-                                    SizedBox(height: 15),
-                                    EventTicketInfo(
-                                      title: "event_attendee_code".tr + ":",
-                                      text:
-                                          "${eventAvailableProvider.candidateID}",
-                                    ),
+                                    // SizedBox(height: 15),
+                                    // EventTicketInfo(
+                                    //   title: "event_attendee_code".tr + ":",
+                                    //   text:
+                                    //       "${eventAvailableProvider.candidateID}",
+                                    // ),
                                   ],
                                 ),
                               ),

@@ -118,61 +118,53 @@ class _QRScannerState extends State<QRScanner> {
     }
   }
 
-  onDetect(BarcodeCapture barcode) async {
-    final code = barcode.barcodes.firstOrNull?.rawValue;
-    print("Print Code: ${code}");
-
-    if (code != null) {
-      // ປິດສະແກນ
-      await scannerController.stop();
-      setState(() {
-        isScannerActive = false;
-      });
-      print("Scanned code: $code");
-
-      // ຖ້າວ່າ code ມີ "id" ຈະຕັດຄຳອອກ(id)ແລ້ວເອົາແຕ່ຄ່າທີ່ຢູ່ຫຼັງ id
-      if (code.contains("id")) {
-        String id = code.split("id").last;
-        print("job wii/ job fest id: $id");
-
-        applyByJobId(id.toString());
-      }
-      // ຖ້າວ່າ code ບໍ່ມີ "id" ຈະສະແດງ warning dialog
-      else {
-        print("no id found.");
-
-        // ສະແດງ warning dialog
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (dialogContext) {
-            return NewVer5CustAlertDialogWarningBtnConfirm(
-              title: "warning".tr,
-              contentText: "incorrect_qr_code".tr + "\n(${code})",
-              textButton: "ok".tr,
-              press: () async {
-                // ປິດ success dialog
-                Navigator.of(dialogContext).pop();
-
-                // ຖ້າ success dialog ປີດກ່ອນແລ້ວຈຶ່ງກັບໄປໜ້າ Account
-                await Future.delayed(Duration(milliseconds: 200));
-
-                // ກັບໄປໜ້າ Account
-                if (Navigator.canPop(context)) Navigator.pop(context);
-              },
-            );
-          },
-        );
-      }
-
-      // ຖ້າວ່າ code ເປັນແບບ url ຈະເຮັດຟັງຊັ້ນ openLaunchURLBrowser() ເພື່ອເປີດຢູ່ browser
-      if (Uri.tryParse(code)?.hasAbsolutePath == true) {
-        print("Open LaunchURL working");
-
-        await openLaunchURLBrowser(code);
-      }
-    }
-  }
+  // onDetect(BarcodeCapture barcode) async {
+  //   final code = barcode.barcodes.firstOrNull?.rawValue;
+  //   print("Print Code: ${code}");
+  //   if (code != null) {
+  //     // ປິດສະແກນ
+  //     await scannerController.stop();
+  //     setState(() {
+  //       isScannerActive = false;
+  //     });
+  //     print("Scanned code: $code");
+  //     // ຖ້າວ່າ code ມີ "id" ຈະຕັດຄຳອອກ(id)ແລ້ວເອົາແຕ່ຄ່າທີ່ຢູ່ຫຼັງ id
+  //     if (code.contains("id")) {
+  //       String id = code.split("id").last;
+  //       print("job wii/ job fest id: $id");
+  //       applyByJobId(id.toString());
+  //     }
+  //     // ຖ້າວ່າ code ບໍ່ມີ "id" ຈະສະແດງ warning dialog
+  //     else {
+  //       print("no id found.");
+  //       // ສະແດງ warning dialog
+  //       showDialog(
+  //         barrierDismissible: false,
+  //         context: context,
+  //         builder: (dialogContext) {
+  //           return NewVer5CustAlertDialogWarningBtnConfirm(
+  //             title: "warning".tr,
+  //             contentText: "incorrect_qr_code".tr + "\n(${code})",
+  //             textButton: "ok".tr,
+  //             press: () async {
+  //               // ປິດ success dialog
+  //               Navigator.of(dialogContext).pop();
+  //               // ຖ້າ success dialog ປີດກ່ອນແລ້ວຈຶ່ງກັບໄປໜ້າ Account
+  //               await Future.delayed(Duration(milliseconds: 200));
+  //               // ກັບໄປໜ້າ Account
+  //               if (Navigator.canPop(context)) Navigator.pop(context);
+  //             },
+  //           );
+  //         },
+  //       );
+  //     }
+  //     // ຖ້າວ່າ code ເປັນແບບ url ຈະເຮັດຟັງຊັ້ນ openLaunchURLBrowser() ເພື່ອເປີດຢູ່ browser
+  //     if (Uri.tryParse(code)?.hasAbsolutePath == true) {
+  //       print("Open LaunchURL working");
+  //       await openLaunchURLBrowser(code);
+  //     }
+  //   }
+  // }
 
   checkCameraPermission() async {
     var status = await Permission.camera.status;
@@ -342,8 +334,57 @@ class _QRScannerState extends State<QRScanner> {
       print("Scanned QR Code: $qrCode");
 
       // pressCheckInBoothCompanyEvent(code.toString());
-      await eventAvailableProvider.checkInBoothCompanyEvent(
-          context, qrCode.toString(), "");
+      final res = await eventAvailableProvider.checkInBoothCompanyEvent(
+          qrCode.toString(), "");
+
+      final statusCode = res?["statusCode"];
+
+      if (statusCode == 200 || statusCode == 201) {
+        // Display success dialog
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return NewVer2CustAlertDialogSuccessBtnConfirm(
+              title: "successfully".tr,
+              contentText: "Scan QR Code Successfully",
+              textButton: "ok".tr,
+              press: () async {
+                // Close dialog
+                Navigator.of(context).pop();
+
+                // Navigate back to registerEvent.dart
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            );
+          },
+        );
+        await eventAvailableProvider.fetchCheckInBoothBySeeker();
+      } else {
+        // Display dialog warning
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return NewVer5CustAlertDialogWarningBtnConfirm(
+              title: "warning".tr,
+              contentText: "${res?["body"]?["message"]}",
+              textButton: "ok".tr,
+              press: () {
+                // Close dialog
+                Navigator.pop(context);
+
+                // Navigate back to registerEvent.dart
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            );
+          },
+        );
+      }
     }
   }
 
