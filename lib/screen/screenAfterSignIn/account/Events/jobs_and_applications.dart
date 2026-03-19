@@ -129,12 +129,12 @@ class _JobsApplicationsScreenState extends State<JobsApplicationsScreen>
     );
   }
 
-  Widget _screenAppliedJob() {
-    return ListView(
-      padding: EdgeInsets.all(20),
-      children: [],
-    );
-  }
+  // Widget _screenAppliedJob() {
+  //   return ListView(
+  //     padding: EdgeInsets.all(20),
+  //     children: [],
+  //   );
+  // }
 
   Widget cardItemAIMatchingJobAndAppliedJob(
       {required String logo,
