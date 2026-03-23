@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, prefer_interpolation_to_compose_strings
 
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/provider/eventAvailableProvider.dart';
@@ -30,9 +30,7 @@ mixin EventAvailableHelper<T extends StatefulWidget> on State<T> {
     Navigator.pop(context);
 
     if (statusCode == 200 || statusCode == 201) {
-      await eventAvailableProvider.fetchEventAvailable();
-      await eventAvailableProvider.fetchStatisticEvent();
-      await showDialog(
+      showDialog(
         context: context,
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
@@ -46,6 +44,10 @@ mixin EventAvailableHelper<T extends StatefulWidget> on State<T> {
           );
         },
       );
+
+      await eventAvailableProvider.fetchEventAvailable();
+      await eventAvailableProvider.fetchStatisticEvent();
+      await eventAvailableProvider.fetchCheckInBoothBySeeker();
     } else if (statusCode == 409) {
       var result = await showDialog(
           barrierDismissible: false,
@@ -82,7 +84,7 @@ mixin EventAvailableHelper<T extends StatefulWidget> on State<T> {
   }
 
   checkInBoothCompanyEventHelper(String qrString, String code,
-      {VoidCallback? onPressOkay}) async {
+      {VoidCallback? onPressOkay, VoidCallback? onPressOkayWarning}) async {
     final eventAvailableProvider = context.read<EventAvailableProvider>();
     // Display AlertDialog Loading First
     showDialog(
@@ -104,13 +106,13 @@ mixin EventAvailableHelper<T extends StatefulWidget> on State<T> {
 
     if (statusCode == 200 || statusCode == 201) {
       // Display success dialog
-      await showDialog(
+      showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
             title: "successfully".tr,
-            contentText: "Scan QR Code Successfully",
+            contentText: "booth_check_in".tr + " " + "successfully".tr,
             textButton: "ok".tr,
             press: onPressOkay ?? () => Navigator.pop(context),
           );
@@ -119,12 +121,15 @@ mixin EventAvailableHelper<T extends StatefulWidget> on State<T> {
       await eventAvailableProvider.fetchCheckInBoothBySeeker();
     } else {
       // Display dialog warning
-      await showDialog(
+      showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (context) {
-          return CustAlertDialogWarningWithoutBtn(
+          return NewVer5CustAlertDialogWarningBtnConfirm(
             title: "warning".tr,
             contentText: "${res?["body"]?["message"]}",
+            textButton: "ok".tr,
+            press: onPressOkayWarning ?? () => Navigator.pop(context),
           );
         },
       );
@@ -152,7 +157,7 @@ mixin EventAvailableHelper<T extends StatefulWidget> on State<T> {
 
     if (statusCode == 200 || statusCode == 201) {
       // Display success dialog
-      await showDialog(
+      showDialog(
         barrierDismissible: false,
         context: context,
         builder: (dialogContext) {
@@ -206,13 +211,14 @@ mixin EventAvailableHelper<T extends StatefulWidget> on State<T> {
 
     if (statusCode == 200 || statusCode == 201) {
       // Display success dialog
-      await showDialog(
+      showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
           return NewVer2CustAlertDialogSuccessBtnConfirm(
             title: "successfully".tr,
-            contentText: "Reedeem Reward Successfully",
+            contentText: "redeem_reward".tr + " " + "successfully".tr,
+            textButton: "ok".tr,
             press: onPressOkay ?? () => Navigator.pop(context),
           );
         },
@@ -221,7 +227,7 @@ mixin EventAvailableHelper<T extends StatefulWidget> on State<T> {
       await eventAvailableProvider.fetchCheckInBoothBySeeker();
     } else {
       // Display dialog warning
-      await showDialog(
+      showDialog(
         context: context,
         builder: (context) {
           return CustAlertDialogWarningWithoutBtn(

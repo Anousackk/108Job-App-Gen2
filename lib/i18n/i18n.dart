@@ -1518,6 +1518,7 @@ class LocalString extends Translations {
     {"key": "blank", "en": "Blank", "la": "ບໍ່ສຳເລັດ"},
     {"key": "recommend_job", "en": "Recommend job", "la": "ວຽກແນະນຳ"},
     {"key": "redeem_reward", "en": "Redeem Reward", "la": "ແລກລາງວັນ"},
+    {"key": "redeemed", "en": "Redeemed", "la": "ແລກລາງວັນແລ້ວ"},
     {"key": "submit", "en": "Submit", "la": "ກົດສົ່ງ"},
     {
       "key": "booth_stamp_card",
@@ -1529,7 +1530,7 @@ class LocalString extends Translations {
       "en": "Booth Check In",
       "la": "ເຊັກອິນເພື່ອແລກລາງວັນ"
     },
-    {"key": "booth_check_in", "en": "Booth Check In", "la": "ເຊັກອິນ"},
+    {"key": "booth_check_in", "en": "Booth Check In", "la": "ເຊັກອິນບູດ"},
     {
       "key": "please_enter_code_from_hr",
       "en": "Please enter code from HR",

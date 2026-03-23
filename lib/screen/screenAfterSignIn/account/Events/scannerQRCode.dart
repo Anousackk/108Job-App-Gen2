@@ -3,6 +3,7 @@
 import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/helpers/eventAvailableHelper.dart';
 import 'package:app/provider/eventAvailableProvider.dart';
 import 'package:app/widget/appbar.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class QRScanner extends StatefulWidget {
   State<QRScanner> createState() => _QRScannerState();
 }
 
-class _QRScannerState extends State<QRScanner> {
+class _QRScannerState extends State<QRScanner> with EventAvailableHelper {
   Key scannerKey = UniqueKey(); // used to force rebuild
   MobileScannerController scannerController = MobileScannerController(
     // useNewCameraSelector: true,
@@ -333,58 +334,24 @@ class _QRScannerState extends State<QRScanner> {
       });
       print("Scanned QR Code: $qrCode");
 
-      // pressCheckInBoothCompanyEvent(code.toString());
-      final res = await eventAvailableProvider.checkInBoothCompanyEvent(
-          qrCode.toString(), "");
+      // Api Check In Booth By Seeker
+      checkInBoothCompanyEventHelper(qrCode.toString(), "", onPressOkay: () {
+        // Close dialog
+        Navigator.of(context).pop();
 
-      final statusCode = res?["statusCode"];
+        // Navigate back to registerEvent.dart
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      }, onPressOkayWarning: () {
+        // Close dialog
+        Navigator.pop(context);
 
-      if (statusCode == 200 || statusCode == 201) {
-        // Display success dialog
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return NewVer2CustAlertDialogSuccessBtnConfirm(
-              title: "successfully".tr,
-              contentText: "Scan QR Code Successfully",
-              textButton: "ok".tr,
-              press: () async {
-                // Close dialog
-                Navigator.of(context).pop();
-
-                // Navigate back to registerEvent.dart
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            );
-          },
-        );
-        await eventAvailableProvider.fetchCheckInBoothBySeeker();
-      } else {
-        // Display dialog warning
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return NewVer5CustAlertDialogWarningBtnConfirm(
-              title: "warning".tr,
-              contentText: "${res?["body"]?["message"]}",
-              textButton: "ok".tr,
-              press: () {
-                // Close dialog
-                Navigator.pop(context);
-
-                // Navigate back to registerEvent.dart
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            );
-          },
-        );
-      }
+        // Navigate back to registerEvent.dart
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      });
     }
   }
 

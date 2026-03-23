@@ -793,9 +793,6 @@ class _HomeState extends State<Home> {
                           // ====================================================================
                           // PROMOTIONAL BANNER CAROUSEL
                           // ====================================================================
-                          // if (topBannerProvider.isLoadingTopBanner) ...[
-                          //   TopBannerShirmmerWidget()
-                          // ] else
                           if (topBannerProvider.listTopBanners.isNotEmpty) ...[
                             Container(
                               child: Stack(
@@ -887,79 +884,6 @@ class _HomeState extends State<Home> {
                             ),
                             // SizedBox(height: 20),
                           ],
-
-                          // ====================================================================
-                          // SEARCH BAR WITH INPUT AND BUTTON
-                          // ====================================================================
-
-                          // Container(
-                          //   padding: EdgeInsets.symmetric(
-                          //       horizontal: 15, vertical: 5),
-                          //   decoration: BoxDecoration(
-                          //     color: AppColors.inputWhite,
-                          //     borderRadius: BorderRadius.circular(15),
-                          //   ),
-                          //   child: Row(
-                          //     children: [
-                          //       // Search Icon
-                          //       Icon(
-                          //         Icons.search,
-                          //         color: AppColors.iconSecondary,
-                          //         size: 22,
-                          //       ),
-                          //       SizedBox(width: 10),
-                          //       // Search Input Field
-                          //       Expanded(
-                          //         child: TextField(
-                          //           controller: _searchController,
-                          //           focusNode: _searchFocusNode,
-                          //           decoration: InputDecoration(
-                          //             hintText: "Job title or company...",
-                          //             hintStyle: bodyTextNormal(
-                          //                 null, AppColors.secondary, null),
-                          //             border: InputBorder.none,
-                          //           ),
-                          //         ),
-                          //       ),
-                          //       // Search Button
-                          //       GestureDetector(
-                          //         onTap: () {
-                          //           _searchFocusNode.unfocus();
-                          //           Navigator.push(
-                          //             context,
-                          //             MaterialPageRoute(
-                          //               builder: (context) => JobSearch(
-                          //                 topWorkLocation: null,
-                          //                 topIndustry: null,
-                          //                 type: "",
-                          //                 selectedListItem: null,
-                          //                 initialSearchQuery:
-                          //                     _searchController.text.trim(),
-                          //               ),
-                          //             ),
-                          //           ).then((val) {
-                          //             _searchController.text = "";
-                          //           });
-                          //         },
-                          //         child: Container(
-                          //           padding: EdgeInsets.symmetric(
-                          //               horizontal: 20, vertical: 10),
-                          //           decoration: BoxDecoration(
-                          //             color: AppColors.primaryCustom,
-                          //             borderRadius:
-                          //                 BorderRadius.circular(10),
-                          //           ),
-                          //           child: Text(
-                          //             "search".tr,
-                          //             style: bodyTextNormal(
-                          //                 null, AppColors.fontWhite, null),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          // SizedBox(height: 10),
                         ],
                       ),
                     ),
@@ -1457,9 +1381,6 @@ class _HomeState extends State<Home> {
                                                                     "${profileProvider.imageSrc}",
                                                                 fit: BoxFit
                                                                     .cover,
-                                                                // placeholder: (context,
-                                                                //         url) =>
-                                                                //     TopBannerShirmmerWidget(),
                                                                 errorWidget: (context,
                                                                         url,
                                                                         error) =>
@@ -1774,9 +1695,6 @@ class _HomeState extends State<Home> {
                                                                     "https://storage.googleapis.com/108-bucket/${logoCompany}",
                                                                 fit: BoxFit
                                                                     .contain,
-                                                                // placeholder: (context,
-                                                                //         url) =>
-                                                                //     TopBannerShirmmerWidget(),
                                                                 errorWidget: (context,
                                                                         url,
                                                                         error) =>

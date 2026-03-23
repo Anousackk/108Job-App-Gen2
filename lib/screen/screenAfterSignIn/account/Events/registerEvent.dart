@@ -833,14 +833,13 @@ class _RegisterEventState extends State<RegisterEvent>
                                                         BorderRadius.circular(
                                                             10),
                                                     buttonColor:
-                                                        eventAvailableProvider
-                                                                .isAlreadyRedeemedBooth
-                                                            ? AppColors
-                                                                .buttonSecondary
+                                                        !eventAvailableProvider
+                                                                .isRedeemAvailableBooth
+                                                            ? AppColors.dark500
                                                             : AppColors.teal,
                                                     text: eventAvailableProvider
                                                             .isAlreadyRedeemedBooth
-                                                        ? "Already Reedeem"
+                                                        ? "redeemed".tr
                                                         : "redeem_reward".tr,
                                                     textColor:
                                                         AppColors.fontWhite,
@@ -878,31 +877,24 @@ class _RegisterEventState extends State<RegisterEvent>
                                                           },
                                                         );
                                                       }
+
                                                       // That booth is already redeemed
-                                                      else if (eventAvailableProvider
-                                                          .isAlreadyRedeemedBooth) {
-                                                        // Display warning dialog
-                                                        // await showDialog(
-                                                        //   barrierDismissible:
-                                                        //       false,
-                                                        //   context: context,
-                                                        //   builder: (context) {
-                                                        //     return NewVer5CustAlertDialogWarningBtnConfirm(
-                                                        //       title:
-                                                        //           "warning".tr,
-                                                        //       contentText:
-                                                        //           "Already redeem"
-                                                        //               .tr,
-                                                        //       textButton:
-                                                        //           "ok".tr,
-                                                        //       press: () {
-                                                        //         Navigator.pop(
-                                                        //             context);
-                                                        //       },
-                                                        //     );
-                                                        //   },
-                                                        // );
-                                                      }
+                                                      // else if (eventAvailableProvider
+                                                      //     .isAlreadyRedeemedBooth) {
+                                                      //   // Display warning dialog
+                                                      //   await showDialog(
+                                                      //     context: context,
+                                                      //     builder: (context) {
+                                                      //       return CustAlertDialogWarningWithoutBtn(
+                                                      //         title:
+                                                      //             "warning".tr,
+                                                      //         contentText:
+                                                      //             "redeemed".tr,
+                                                      //       );
+                                                      //     },
+                                                      //   );
+                                                      // }
+
                                                       // That booth is available for redemption
                                                       else if (eventAvailableProvider
                                                               .isRedeemAvailableBooth &&
@@ -910,7 +902,7 @@ class _RegisterEventState extends State<RegisterEvent>
                                                               .isAlreadyRedeemedBooth) {
                                                         modalBottomSheetCodeAndConfirm(
                                                             context,
-                                                            "Redeem Reward",
+                                                            "redeem_reward".tr,
                                                             () async {
                                                           if (_redeemFormKey
                                                               .currentState!
@@ -2323,7 +2315,7 @@ class _RegisterEventState extends State<RegisterEvent>
           Container(
             height: 43,
             width: 43,
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: isChecked
                   ? AppColors.backgroundWhite // Light for checked
@@ -2338,7 +2330,7 @@ class _RegisterEventState extends State<RegisterEvent>
               height: 43,
               width: 43,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
                 child: text.isNotEmpty
                     ? CachedNetworkImage(
                         imageUrl:
