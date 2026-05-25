@@ -11,7 +11,9 @@ import 'package:app/functions/parsDateTime.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/helpers/jobSearchHelper.dart';
 import 'package:app/provider/localSharePrefsProvider.dart';
+import 'package:app/provider/provinceProvider.dart';
 import 'package:app/provider/reuseTypeProvider.dart';
+import 'package:app/screen/screenAfterSignIn/jobSearch/Widget/jobSearchChatWithAI.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:app/widget/button.dart';
 import 'package:app/widget/input.dart';
@@ -25,6 +27,10 @@ import 'package:get/get.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+// ============================================================
+// AI Chat Bottom Sheet
+// ============================================================
 
 class JobSearch extends StatefulWidget {
   const JobSearch(
@@ -208,10 +214,15 @@ class _JobSearchState extends State<JobSearch>
 
   checkSelectedListItemFromHomePage() {
     final reuseTypeProvider = context.read<ReuseTypeProvider>();
+    final provinceProvider = context.read<ProvinceProvider>();
     dynamic i = widget.selectedListItem;
     String str = widget.type;
 
     if (i != null) {
+      setState(() {
+        _isLoadingForm = true;
+      });
+
       if (str == "Industry") {
         setState(() {
           _selectedIndustryListItem = i;
@@ -233,20 +244,24 @@ class _JobSearchState extends State<JobSearch>
           filterColor();
         });
       } else if (str == "Province") {
-        _selectedProvincesListItem = i;
-        _provinceName =
-            []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+        setState(() {
+          _selectedProvincesListItem = i;
+          _provinceName =
+              []; //ເຊັດໃຫ້ເປັນຄ່າວ່າງກ່ອນທຸກເທື່ອທີ່ເລີ່ມເຮັດຟັງຊັນນີ້
+          _listJobsSearch = [];
+          page = 1;
+          _hasMoreData = true;
 
-        for (var item in reuseTypeProvider.listProvinceFilter) {
-          //
-          //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedProvincesListItem ກົງກັບ _listProvinces ບໍ່
-          if (_selectedProvincesListItem.contains(item['_id'])) {
+          for (var item in provinceProvider.listProvince) {
             //
-            //add Provinces Name ເຂົ້າໃນ _provinceName
-
-            _provinceName.add(item['name']);
+            //ກວດວ່າຂໍ້ມູນທີ່ເລືອກຕອນສົ່ງກັບມາ _selectedProvincesListItem ກົງກັບ listProvince ບໍ່
+            if (_selectedProvincesListItem.contains(item['_id'])) {
+              //
+              //add Provinces Name ເຂົ້າໃນ _provinceName
+              _provinceName.add(item['name']);
+            }
           }
-        }
+        });
         getJobsSearchSeeker();
         filterColor();
       }
@@ -385,6 +400,21 @@ class _JobSearchState extends State<JobSearch>
         localLanguage, 'jobLevel');
   }
 
+  clearAllFilterThenFetchJobsSearch({bool? showLoading}) async {
+    await clearValueFilterAll();
+
+    setState(() {
+      // _statusShowLoading = showLoading ?? true;
+      _isLoadingForm = true;
+      _listJobsSearch.clear();
+      _hasMoreData = true;
+      page = 1;
+    });
+
+    await getJobsSearchSeeker();
+    filterColor();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -461,6 +491,15 @@ class _JobSearchState extends State<JobSearch>
   }
 
   @override
+  void didUpdateWidget(covariant JobSearch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedListItem != widget.selectedListItem &&
+        widget.selectedListItem != null) {
+      checkSelectedListItemFromHomePage();
+    }
+  }
+
+  @override
   void dispose() {
     //
     //Cancel the timer when the widget is disposed
@@ -470,6 +509,38 @@ class _JobSearchState extends State<JobSearch>
     // _subscription.cancel();
     // _listener.dispose();
     super.dispose();
+  }
+
+  void _showAIChatBottomSheet(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: AppColors.dark500,
+      transitionDuration: const Duration(milliseconds: 420),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        );
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(curved),
+          child: FadeTransition(
+            opacity: Tween<double>(begin: 0.0, end: 1.0).animate(curved),
+            child: child,
+          ),
+        );
+      },
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return const Align(
+          alignment: Alignment.bottomCenter,
+          child: AIChatBottomSheet(),
+        );
+      },
+    );
   }
 
   @override
@@ -495,6 +566,60 @@ class _JobSearchState extends State<JobSearch>
           //     Navigator.pop(context);
           //   },
           // ),
+
+          //
+          //
+          // Ask with AI floating button
+          // floatingActionButton: Container(
+          //   decoration: BoxDecoration(
+          //     gradient: LinearGradient(
+          //       colors: [AppColors.primaryCustom, const Color(0xFF00AAFF)],
+          //       begin: Alignment.centerLeft,
+          //       end: Alignment.centerRight,
+          //     ),
+          //     borderRadius: BorderRadius.circular(30),
+          //     // boxShadow: [
+          //     //   BoxShadow(
+          //     //     color: AppColors.primaryCustom.withOpacity(0.38),
+          //     //     blurRadius: 14,
+          //     //     offset: const Offset(0, 5),
+          //     //   ),
+          //     // ],
+          //   ),
+          //   child: Material(
+          //     color: Colors.transparent,
+          //     child: InkWell(
+          //       borderRadius: BorderRadius.circular(30),
+          //       onTap: () => _showAIChatBottomSheet(context),
+          //       child: Padding(
+          //         padding:
+          //             const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
+          //         child: Row(
+          //           mainAxisSize: MainAxisSize.min,
+          //           children: [
+          //             Image.asset(
+          //               'assets/image/ai.png',
+          //               width: 18,
+          //               height: 18,
+          //               fit: BoxFit.contain,
+          //               color: AppColors.iconLight,
+          //             ),
+          //             SizedBox(width: 8),
+          //             Text(
+          //               'Ask',
+          //               style: TextStyle(
+          //                 color: Colors.white,
+          //                 fontWeight: FontWeight.bold,
+          //                 fontSize: 14,
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+
           body: SafeArea(
             child: Container(
               color: AppColors.background,
@@ -633,7 +758,7 @@ class _JobSearchState extends State<JobSearch>
                                                     horizontal: 20,
                                                     vertical: 20),
                                                 child: Text(
-                                                  "clear all".tr,
+                                                  "clear_all_filter".tr,
                                                   style: bodyTextNormal(
                                                       null,
                                                       AppColors.fontPrimary,
@@ -974,8 +1099,12 @@ class _JobSearchState extends State<JobSearch>
                                                           _isValidateValue ==
                                                               true
                                                       ? AppColors.borderDanger
-                                                      : AppColors
-                                                          .borderSecondary,
+                                                      : _selectedJobFunctionsItems
+                                                              .isNotEmpty
+                                                          ? AppColors
+                                                              .primaryCustom
+                                                          : AppColors
+                                                              .borderSecondary,
                                               paddingFaIcon:
                                                   EdgeInsets.symmetric(
                                                       horizontal: 10),
@@ -1101,7 +1230,11 @@ class _JobSearchState extends State<JobSearch>
                                               colorInput:
                                                   AppColors.backgroundWhite,
                                               colorBorder:
-                                                  AppColors.borderSecondary,
+                                                  _selectedProvincesListItem
+                                                          .isNotEmpty
+                                                      ? AppColors.primaryCustom
+                                                      : AppColors
+                                                          .borderSecondary,
                                               paddingFaIcon:
                                                   EdgeInsets.symmetric(
                                                       horizontal: 10),
@@ -1184,7 +1317,11 @@ class _JobSearchState extends State<JobSearch>
                                               colorInput:
                                                   AppColors.backgroundWhite,
                                               colorBorder:
-                                                  AppColors.borderSecondary,
+                                                  _selectedIndustryListItem
+                                                          .isNotEmpty
+                                                      ? AppColors.primaryCustom
+                                                      : AppColors
+                                                          .borderSecondary,
                                               paddingFaIcon:
                                                   EdgeInsets.symmetric(
                                                       horizontal: 10),
@@ -1265,7 +1402,11 @@ class _JobSearchState extends State<JobSearch>
                                               colorInput:
                                                   AppColors.backgroundWhite,
                                               colorBorder:
-                                                  AppColors.borderSecondary,
+                                                  _selectedJobExperienceListItem
+                                                          .isNotEmpty
+                                                      ? AppColors.primaryCustom
+                                                      : AppColors
+                                                          .borderSecondary,
                                               paddingFaIcon:
                                                   EdgeInsets.symmetric(
                                                       horizontal: 10),
@@ -1350,7 +1491,11 @@ class _JobSearchState extends State<JobSearch>
                                               colorInput:
                                                   AppColors.backgroundWhite,
                                               colorBorder:
-                                                  AppColors.borderSecondary,
+                                                  _selectedJobLevelListItem
+                                                          .isNotEmpty
+                                                      ? AppColors.primaryCustom
+                                                      : AppColors
+                                                          .borderSecondary,
                                               paddingFaIcon:
                                                   EdgeInsets.symmetric(
                                                       horizontal: 10),
@@ -1435,7 +1580,8 @@ class _JobSearchState extends State<JobSearch>
                                             print(
                                                 'Calling API Get JobsSearch After Press Button Apply');
                                             setState(() {
-                                              _statusShowLoading = true;
+                                              // _statusShowLoading = true;
+                                              _isLoadingForm = true;
                                               _listJobsSearch.clear();
                                               _hasMoreData = true;
                                               page = 1;
@@ -1473,41 +1619,6 @@ class _JobSearchState extends State<JobSearch>
                             ),
                           ),
                         ),
-
-                        //BoxDecoration Filter
-                        // Expanded(
-                        //   flex: 2,
-                        //   child: Container(
-                        //     child: BoxDecorationInput(
-                        //         mainAxisAlignmentTextIcon:
-                        //             MainAxisAlignment.center,
-                        //         heigth: 45,
-                        //         boxDecBorderRadius:
-                        //             BorderRadius.circular(8),
-                        //         colorInput: _isCheckFilterColor
-                        //             ? AppColors.lightPrimary
-                        //             : AppColors.greyShimmer,
-                        //         colorBorder: _isCheckFilterColor
-                        //             ? AppColors.borderPrimary
-                        //             : AppColors.borderBG,
-                        //         widgetFaIcon: FaIcon(
-                        //           FontAwesomeIcons.barsStaggered,
-                        //           size: 15,
-                        //           color: _isCheckFilterColor
-                        //               ? AppColors.iconPrimary
-                        //               : AppColors.iconGray,
-                        //         ),
-                        //         paddingFaIcon:
-                        //             EdgeInsets.symmetric(horizontal: 10),
-                        //         // text: "",
-                        //         // fontWeight: FontWeight.bold,
-                        //         colorText: _isCheckFilterColor
-                        //             ? AppColors.fontPrimary
-                        //             : AppColors.fontGrey,
-                        //         validateText: Container(),
-                        //         press: () {}),
-                        //   ),
-                        // )
                       ],
                     ),
                   ),
@@ -1519,16 +1630,32 @@ class _JobSearchState extends State<JobSearch>
                     padding: const EdgeInsets.symmetric(
                         vertical: 15, horizontal: 20),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "${totals} ",
-                          style: bodyTextNormal(
-                              null, AppColors.fontPrimary, FontWeight.bold),
+                        Row(
+                          children: [
+                            Text(
+                              "${totals} ",
+                              style: bodyTextNormal(
+                                  null, AppColors.fontPrimary, FontWeight.bold),
+                            ),
+                            Text(
+                              "job_opening".tr,
+                              style: bodyTextNormal(null, null, null),
+                            ),
+                          ],
                         ),
-                        Text(
-                          "job_opening".tr,
-                          style: bodyTextNormal(null, null, null),
-                        ),
+                        if (_isCheckFilterColor)
+                          GestureDetector(
+                            onTap: () {
+                              clearAllFilterThenFetchJobsSearch();
+                            },
+                            child: Text(
+                              "clear_all_filter".tr,
+                              style:
+                                  bodyTextNormal(null, AppColors.primary, null),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -1547,782 +1674,860 @@ class _JobSearchState extends State<JobSearch>
                         )
                       : Expanded(
                           child: _listJobsSearch.length > 0
-                              ? ListView.builder(
-                                  controller:
-                                      _scrollController, // Use the scroll controller
-                                  physics: ClampingScrollPhysics(),
-                                  itemCount: _listJobsSearch.length + 1,
-                                  itemBuilder: (context, index) {
-                                    if (index == _listJobsSearch.length) {
-                                      return _hasMoreData
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 0,
-                                                      vertical: 10),
-                                              child: Container(
-                                                  // child: Text("Loading"),
-                                                  ),
-                                            )
-                                          // Padding(
-                                          //     padding:
-                                          //         const EdgeInsets.all(8.0),
-                                          //     child: ElevatedButton(
-                                          //       style: ButtonStyle(
-                                          //           backgroundColor:
-                                          //               MaterialStatePropertyAll(
-                                          //                   AppColors
-                                          //                       .lightPrimary)),
-                                          //       onPressed: () => {
-                                          //         setState(() {
-                                          //           _isLoadingMoreData = true;
-                                          //         }),
-                                          //         getJobsSearchSeeker(),
-                                          //       },
-                                          //       child: Text(
-                                          //         'view more'.tr,
-                                          //         style: TextStyle(
-                                          //             color: AppColors
-                                          //                 .fontPrimary),
-                                          //       ),
-                                          //     ),
-                                          //   )
-                                          : Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Center(
-                                                child: Text('no have data'.tr),
-                                              ),
-                                            );
+                              ? RefreshIndicator(
+                                  onRefresh: () async {
+                                    await clearAllFilterThenFetchJobsSearch();
+                                    if (_scrollController.hasClients) {
+                                      _scrollController.animateTo(
+                                        0,
+                                        duration: Duration(milliseconds: 500),
+                                        curve: Curves.easeOut,
+                                      );
                                     }
-
-                                    var indexJobsSearch =
-                                        _listJobsSearch[index];
-                                    _title = indexJobsSearch['title'] ?? "";
-                                    _logo = indexJobsSearch['logo'] ?? "";
-                                    _companyName =
-                                        indexJobsSearch['companyName'] ?? "";
-                                    _workingLocations =
-                                        indexJobsSearch['workingLocations'] ??
-                                            "";
-
-                                    _openDate = indexJobsSearch['openingDate'];
-                                    _closeDate = indexJobsSearch['closingDate'];
-                                    _isClick =
-                                        indexJobsSearch['isClick'].toString();
-                                    _tag = indexJobsSearch['tag'];
-                                    _disablePeople =
-                                        indexJobsSearch['disabledPeople'];
-                                    _isSaved = indexJobsSearch['isSaved'];
-
-                                    //
-                                    //Open Date
-                                    //pars ISO to Flutter DateTime
-                                    parsDateTime(
-                                        value: '',
-                                        currentFormat: '',
-                                        desiredFormat: '');
-                                    DateTime openDate = parsDateTime(
-                                        value: _openDate,
-                                        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                        desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                    //
-                                    //Format to string 13 Feb 2024
-                                    _openDate = DateFormat('dd MMM yyyy')
-                                        .format(openDate);
-
-                                    //
-                                    //Close Date
-                                    //pars ISO to Flutter DateTime
-                                    parsDateTime(
-                                        value: '',
-                                        currentFormat: '',
-                                        desiredFormat: '');
-                                    DateTime closeDate = parsDateTime(
-                                        value: _closeDate,
-                                        currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
-                                        desiredFormat: "yyyy-MM-dd HH:mm:ss");
-                                    //
-                                    //Format to string 13 Feb 2024
-                                    _closeDate = DateFormat("dd MMM yyyy")
-                                        .format(closeDate);
-
-                                    return Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 20),
-                                      margin: EdgeInsets.only(bottom: 15),
-                                      child: Slidable(
-                                        //check status newJob = true ບໍ່ໃຫ້ສະໄລໄດ້ ຖ້າເປັນ false ສາມາດສະໄລໄດ້
-                                        // enabled: !i['newJob'] ? true : false,
-                                        //
-                                        //Specify a key if the Slidable  is dismissible.
-                                        key: UniqueKey(),
-                                        //
-                                        //The end action pane is the one at the right or the bottom side.
-                                        endActionPane: ActionPane(
-                                          motion: ScrollMotion(),
-                                          //
-                                          //A pane can dismiss the Slidable.
-                                          dismissible: DismissiblePane(
-                                            onDismissed: () {
-                                              // FocusScope.of(context)
-                                              //     .requestFocus(focusNode);
-                                              focusNode.unfocus();
-                                              print(
-                                                  "hide dismiss the Slidable");
-                                              _removeJobsSearchSeekerLocal(
-                                                  indexJobsSearch['jobId']);
-                                              hideJobHelper(
-                                                indexJobsSearch['jobId']
-                                                    .toString(),
-                                                indexJobsSearch['title']
-                                                    .toString(),
+                                  },
+                                  child: ListView.builder(
+                                    controller:
+                                        _scrollController, // Use the scroll controller
+                                    physics: AlwaysScrollableScrollPhysics(),
+                                    itemCount: _listJobsSearch.length + 1,
+                                    itemBuilder: (context, index) {
+                                      if (index == _listJobsSearch.length) {
+                                        return _hasMoreData
+                                            ? Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 0,
+                                                        vertical: 10),
+                                                child: Container(
+                                                    // child: Text("Loading"),
+                                                    ),
+                                              )
+                                            // Padding(
+                                            //     padding:
+                                            //         const EdgeInsets.all(8.0),
+                                            //     child: ElevatedButton(
+                                            //       style: ButtonStyle(
+                                            //           backgroundColor:
+                                            //               MaterialStatePropertyAll(
+                                            //                   AppColors
+                                            //                       .lightPrimary)),
+                                            //       onPressed: () => {
+                                            //         setState(() {
+                                            //           _isLoadingMoreData = true;
+                                            //         }),
+                                            //         getJobsSearchSeeker(),
+                                            //       },
+                                            //       child: Text(
+                                            //         'view more'.tr,
+                                            //         style: TextStyle(
+                                            //             color: AppColors
+                                            //                 .fontPrimary),
+                                            //       ),
+                                            //     ),
+                                            //   )
+                                            : Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Center(
+                                                  child:
+                                                      Text('no have data'.tr),
+                                                ),
                                               );
-                                            },
-                                          ),
-                                          children: [
-                                            if (!_isSaved)
-                                              SlidableAction(
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(20),
-                                                ),
-                                                backgroundColor:
-                                                    AppColors.buttonPrimary,
-                                                foregroundColor:
-                                                    AppColors.fontWhite,
-                                                icon: FontAwesomeIcons.heart,
-                                                label: 'save'.tr,
-                                                onPressed: (context) {
-                                                  print(
-                                                      "press SlidableAction save");
-                                                  setState(() {
-                                                    // FocusScope.of(context)
-                                                    //     .requestFocus(focusNode);
-                                                    focusNode.unfocus();
-                                                    indexJobsSearch['isSaved'] =
-                                                        !indexJobsSearch[
-                                                            'isSaved'];
-                                                  });
-                                                  saveAndUnSaveJobHelper(
-                                                    indexJobsSearch['jobId']
-                                                        .toString(),
-                                                    indexJobsSearch['title']
-                                                        .toString(),
-                                                  );
-                                                  slidableController.close();
-                                                },
-                                              ),
-                                            if (_isSaved)
-                                              SlidableAction(
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(20),
-                                                ),
-                                                backgroundColor:
-                                                    AppColors.lightPrimary,
-                                                foregroundColor:
-                                                    AppColors.primary,
-                                                icon:
-                                                    FontAwesomeIcons.solidHeart,
-                                                label: 'saved'.tr,
-                                                onPressed: (context) {
-                                                  // FocusScope.of(context)
-                                                  //     .requestFocus(focusNode);
-                                                  focusNode.unfocus();
-                                                  print(
-                                                      "press SlidableAction  unsave");
-                                                  setState(() {
-                                                    indexJobsSearch['isSaved'] =
-                                                        !indexJobsSearch[
-                                                            'isSaved'];
-                                                  });
-                                                  saveAndUnSaveJobHelper(
-                                                    indexJobsSearch['jobId']
-                                                        .toString(),
-                                                    indexJobsSearch['title']
-                                                        .toString(),
-                                                  );
+                                      }
 
-                                                  slidableController.close();
-                                                },
-                                              ),
-                                            SlidableAction(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(20),
-                                              ),
-                                              backgroundColor:
-                                                  AppColors.buttonWarning,
-                                              foregroundColor:
-                                                  AppColors.fontWhite,
-                                              icon: FontAwesomeIcons.ban,
-                                              label: 'hide'.tr,
-                                              onPressed: (constext) async {
+                                      var indexJobsSearch =
+                                          _listJobsSearch[index];
+                                      _title = indexJobsSearch['title'] ?? "";
+                                      _logo = indexJobsSearch['logo'] ?? "";
+                                      _companyName =
+                                          indexJobsSearch['companyName'] ?? "";
+                                      _workingLocations =
+                                          indexJobsSearch['workingLocations'] ??
+                                              "";
+
+                                      _openDate =
+                                          indexJobsSearch['openingDate'];
+                                      _closeDate =
+                                          indexJobsSearch['closingDate'];
+                                      _isClick =
+                                          indexJobsSearch['isClick'].toString();
+                                      _tag = indexJobsSearch['tag'];
+                                      _disablePeople =
+                                          indexJobsSearch['disabledPeople'];
+                                      _isSaved = indexJobsSearch['isSaved'];
+
+                                      //
+                                      //Open Date
+                                      //pars ISO to Flutter DateTime
+                                      parsDateTime(
+                                          value: '',
+                                          currentFormat: '',
+                                          desiredFormat: '');
+                                      DateTime openDate = parsDateTime(
+                                          value: _openDate,
+                                          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+                                          desiredFormat: "yyyy-MM-dd HH:mm:ss");
+                                      //
+                                      //Format to string 13 Feb 2024
+                                      _openDate = DateFormat('dd MMM yyyy')
+                                          .format(openDate);
+
+                                      //
+                                      //Close Date
+                                      //pars ISO to Flutter DateTime
+                                      parsDateTime(
+                                          value: '',
+                                          currentFormat: '',
+                                          desiredFormat: '');
+                                      DateTime closeDate = parsDateTime(
+                                          value: _closeDate,
+                                          currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+                                          desiredFormat: "yyyy-MM-dd HH:mm:ss");
+                                      //
+                                      //Format to string 13 Feb 2024
+                                      _closeDate = DateFormat("dd MMM yyyy")
+                                          .format(closeDate);
+
+                                      return Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        margin: EdgeInsets.only(bottom: 15),
+                                        child: Slidable(
+                                          //check status newJob = true ບໍ່ໃຫ້ສະໄລໄດ້ ຖ້າເປັນ false ສາມາດສະໄລໄດ້
+                                          // enabled: !i['newJob'] ? true : false,
+                                          //
+                                          //Specify a key if the Slidable  is dismissible.
+                                          key: UniqueKey(),
+                                          //
+                                          //The end action pane is the one at the right or the bottom side.
+                                          endActionPane: ActionPane(
+                                            motion: ScrollMotion(),
+                                            //
+                                            //A pane can dismiss the Slidable.
+                                            dismissible: DismissiblePane(
+                                              onDismissed: () {
                                                 // FocusScope.of(context)
                                                 //     .requestFocus(focusNode);
                                                 focusNode.unfocus();
                                                 print(
-                                                    "press SlidableAction hide job");
-                                                var result = await showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel(
-                                                        title:
-                                                            "hide_job_post".tr,
-                                                        smallText:
-                                                            "hide_job_explain"
-                                                                .tr,
-                                                        contentText:
-                                                            "${indexJobsSearch['title']}",
-                                                        textButtonLeft:
-                                                            'cancel'.tr,
-                                                        textButtonRight:
-                                                            'confirm'.tr,
-                                                      );
-                                                    });
-                                                if (result == 'Ok') {
-                                                  print("press ok");
-                                                  _removeJobsSearchSeekerLocal(
-                                                      indexJobsSearch['jobId']);
-                                                  hideJobHelper(
-                                                    indexJobsSearch['jobId']
-                                                        .toString(),
-                                                    indexJobsSearch['title']
-                                                        .toString(),
-                                                  );
-                                                }
+                                                    "hide dismiss the Slidable");
+                                                _removeJobsSearchSeekerLocal(
+                                                    indexJobsSearch['jobId']);
+                                                hideJobHelper(
+                                                  indexJobsSearch['jobId']
+                                                      .toString(),
+                                                  indexJobsSearch['title']
+                                                      .toString(),
+                                                );
                                               },
                                             ),
-                                          ],
-                                        ),
-
-                                        //
-                                        //
-                                        //
-                                        //
-                                        //
-                                        //Card Job Search
-                                        child: Container(
-                                          decoration: boxDecoration(
-                                              null,
-                                              _tag == "Highlight"
-                                                  ? AppColors.lightOrange
-                                                  : AppColors.backgroundWhite,
-                                              _tag == "Highlight"
-                                                  ? AppColors.borderWaring
-                                                  : null,
-                                              3),
-                                          child: Column(
                                             children: [
-                                              //
-                                              //
-                                              //
-                                              //
-                                              //
-                                              //Content card jobs search
-                                              GestureDetector(
-                                                //
-                                                //
-                                                //press to JobSearchDetail
-                                                onTap: () {
-                                                  // Unfocus search field before navigation
-                                                  focusNode.unfocus();
+                                              if (!_isSaved)
+                                                SlidableAction(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(20),
+                                                  ),
+                                                  backgroundColor:
+                                                      AppColors.buttonPrimary,
+                                                  foregroundColor:
+                                                      AppColors.fontWhite,
+                                                  icon: FontAwesomeIcons.heart,
+                                                  label: 'save'.tr,
+                                                  onPressed: (context) {
+                                                    print(
+                                                        "press SlidableAction save");
+                                                    setState(() {
+                                                      // FocusScope.of(context)
+                                                      //     .requestFocus(focusNode);
+                                                      focusNode.unfocus();
+                                                      indexJobsSearch[
+                                                              'isSaved'] =
+                                                          !indexJobsSearch[
+                                                              'isSaved'];
+                                                    });
+                                                    saveAndUnSaveJobHelper(
+                                                      indexJobsSearch['jobId']
+                                                          .toString(),
+                                                      indexJobsSearch['title']
+                                                          .toString(),
+                                                    );
+                                                    slidableController.close();
+                                                  },
+                                                ),
+                                              if (_isSaved)
+                                                SlidableAction(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(20),
+                                                  ),
+                                                  backgroundColor:
+                                                      AppColors.lightPrimary,
+                                                  foregroundColor:
+                                                      AppColors.primary,
+                                                  icon: FontAwesomeIcons
+                                                      .solidHeart,
+                                                  label: 'saved'.tr,
+                                                  onPressed: (context) {
+                                                    // FocusScope.of(context)
+                                                    //     .requestFocus(focusNode);
+                                                    focusNode.unfocus();
+                                                    print(
+                                                        "press SlidableAction  unsave");
+                                                    setState(() {
+                                                      indexJobsSearch[
+                                                              'isSaved'] =
+                                                          !indexJobsSearch[
+                                                              'isSaved'];
+                                                    });
+                                                    saveAndUnSaveJobHelper(
+                                                      indexJobsSearch['jobId']
+                                                          .toString(),
+                                                      indexJobsSearch['title']
+                                                          .toString(),
+                                                    );
 
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          JobSearchDetail(
-                                                        jobId: indexJobsSearch[
-                                                            'jobId'],
-                                                        newJob: indexJobsSearch[
-                                                            'newJob'],
-                                                      ),
-                                                    ),
-                                                  ).then((value) {
-                                                    print("${value}");
-                                                    //
-                                                    //
-                                                    //ຖ້າມີ job id and status save/unsave job ຄ່າທີ່ໄດ້ຈາກການ Navigator.pop JobSearchDetail
-                                                    if (value[1] != "" &&
-                                                        value[2] != null) {
-                                                      setState(() {
-                                                        dynamic job =
-                                                            _listJobsSearch
-                                                                .firstWhere((e) =>
-                                                                    e['jobId'] ==
-                                                                    value[1]);
-                                                        // print(
-                                                        //     "working save job: " +
-                                                        //         job.toString());
-                                                        job["isSaved"] =
-                                                            value[2];
+                                                    slidableController.close();
+                                                  },
+                                                ),
+                                              SlidableAction(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(20),
+                                                ),
+                                                backgroundColor:
+                                                    AppColors.buttonWarning,
+                                                foregroundColor:
+                                                    AppColors.fontWhite,
+                                                icon: FontAwesomeIcons.ban,
+                                                label: 'hide'.tr,
+                                                onPressed: (constext) async {
+                                                  // FocusScope.of(context)
+                                                  //     .requestFocus(focusNode);
+                                                  focusNode.unfocus();
+                                                  print(
+                                                      "press SlidableAction hide job");
+                                                  var result = await showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel(
+                                                          title: "hide_job_post"
+                                                              .tr,
+                                                          smallText:
+                                                              "hide_job_explain"
+                                                                  .tr,
+                                                          contentText:
+                                                              "${indexJobsSearch['title']}",
+                                                          textButtonLeft:
+                                                              'cancel'.tr,
+                                                          textButtonRight:
+                                                              'confirm'.tr,
+                                                        );
                                                       });
-                                                    }
-                                                    //
-                                                    //
-                                                    //ຖ້າມີ job id and new job ຄ່າທີ່ໄດ້ຈາກການ Navigator.pop JobSearchDetail
-                                                    if (value[1] != "" &&
-                                                        value[3] != null) {
-                                                      setState(() {
-                                                        dynamic job =
-                                                            _listJobsSearch
-                                                                .firstWhere((e) =>
-                                                                    e['jobId'] ==
-                                                                    value[1]);
-                                                        // print(
-                                                        //     "working new job: " +
-                                                        //         job.toString());
-                                                        job["newJob"] =
-                                                            value[3];
-                                                      });
-                                                    }
-                                                  });
+                                                  if (result == 'Ok') {
+                                                    print("press ok");
+                                                    _removeJobsSearchSeekerLocal(
+                                                        indexJobsSearch[
+                                                            'jobId']);
+                                                    hideJobHelper(
+                                                      indexJobsSearch['jobId']
+                                                          .toString(),
+                                                      indexJobsSearch['title']
+                                                          .toString(),
+                                                    );
+                                                  }
                                                 },
-                                                child: Container(
-                                                  color: Colors.transparent,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
+                                              ),
+                                            ],
+                                          ),
+
+                                          //
+                                          //
+                                          //
+                                          //
+                                          //
+                                          //Card Job Search
+                                          child: Container(
+                                            decoration: boxDecoration(
+                                                null,
+                                                _tag == "Highlight"
+                                                    ? AppColors.lightOrange
+                                                    : AppColors.backgroundWhite,
+                                                _tag == "Highlight"
+                                                    ? AppColors.borderWaring
+                                                    : null,
+                                                3),
+                                            child: Column(
+                                              children: [
+                                                //
+                                                //
+                                                //
+                                                //
+                                                //
+                                                //Content card jobs search
+                                                GestureDetector(
+                                                  //
+                                                  //
+                                                  //press to JobSearchDetail
+                                                  onTap: () {
+                                                    // Unfocus search field before navigation
+                                                    focusNode.unfocus();
+
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            JobSearchDetail(
+                                                          jobId:
+                                                              indexJobsSearch[
+                                                                  'jobId'],
+                                                          newJob:
+                                                              indexJobsSearch[
+                                                                  'newJob'],
+                                                        ),
+                                                      ),
+                                                    ).then((value) {
+                                                      print("${value}");
                                                       //
                                                       //
-                                                      //Logo Company and Status
-                                                      Container(
-                                                        child: Row(
-                                                          children: [
-                                                            //
-                                                            //
-                                                            //Company Logo/Name
-                                                            Expanded(
-                                                              child: Container(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .only(
-                                                                  top: 15,
-                                                                  left: 15,
-                                                                  right: 15,
-                                                                ),
-                                                                child: Row(
-                                                                  children: [
+                                                      //ຖ້າມີ job id and status save/unsave job ຄ່າທີ່ໄດ້ຈາກການ Navigator.pop JobSearchDetail
+                                                      if (value[1] != "" &&
+                                                          value[2] != null) {
+                                                        setState(() {
+                                                          dynamic job = _listJobsSearch
+                                                              .firstWhere((e) =>
+                                                                  e['jobId'] ==
+                                                                  value[1]);
+                                                          // print(
+                                                          //     "working save job: " +
+                                                          //         job.toString());
+                                                          job["isSaved"] =
+                                                              value[2];
+                                                        });
+                                                      }
+                                                      //
+                                                      //
+                                                      //ຖ້າມີ job id and new job ຄ່າທີ່ໄດ້ຈາກການ Navigator.pop JobSearchDetail
+                                                      if (value[1] != "" &&
+                                                          value[3] != null) {
+                                                        setState(() {
+                                                          dynamic job = _listJobsSearch
+                                                              .firstWhere((e) =>
+                                                                  e['jobId'] ==
+                                                                  value[1]);
+                                                          // print(
+                                                          //     "working new job: " +
+                                                          //         job.toString());
+                                                          job["newJob"] =
+                                                              value[3];
+                                                        });
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    color: Colors.transparent,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        //
+                                                        //
+                                                        //Logo Company and Status
+                                                        Container(
+                                                          child: Row(
+                                                            children: [
+                                                              //
+                                                              //
+                                                              //Company Logo/Name
+                                                              Expanded(
+                                                                child:
                                                                     Container(
-                                                                      width: 60,
-                                                                      height:
-                                                                          60,
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .only(
+                                                                    top: 15,
+                                                                    left: 15,
+                                                                    right: 15,
+                                                                  ),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Container(
+                                                                        width:
+                                                                            60,
+                                                                        height:
+                                                                            60,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          border:
+                                                                              Border.all(
+                                                                            color:
+                                                                                AppColors.borderSecondary,
+                                                                          ),
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10),
+                                                                          color:
+                                                                              AppColors.backgroundWhite,
+                                                                        ),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .all(
+                                                                              5),
+                                                                          child:
+                                                                              ClipRRect(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(8),
+                                                                            child:
+                                                                                Center(
+                                                                              child: _logo.isEmpty
+                                                                                  ? Image.asset(
+                                                                                      'assets/image/no-image-available.png',
+                                                                                      fit: BoxFit.contain,
+                                                                                    )
+                                                                                  : Image.network(
+                                                                                      "https://storage.googleapis.com/108-bucket/${_logo}",
+                                                                                      fit: BoxFit.contain,
+                                                                                      errorBuilder: (context, error, stackTrace) {
+                                                                                        return Image.asset(
+                                                                                          'assets/image/no-image-available.png',
+                                                                                          fit: BoxFit.contain,
+                                                                                        ); // Display an error message
+                                                                                      },
+                                                                                    ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          width:
+                                                                              15),
+
+                                                                      //
+                                                                      //
+                                                                      //Company Name
+                                                                      Expanded(
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Text(
+                                                                              "${_companyName}",
+                                                                              style: bodyTextMinNormal(null, null, null),
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                            ),
+                                                                            Text(
+                                                                              "${getTimeAgo(_dateTimeNow, openDate)}",
+                                                                              style: bodyTextSmall(null, null, null),
+                                                                            ),
+
+                                                                            // Row(
+                                                                            //   children: [
+                                                                            //     Text(
+                                                                            //       "${_isClick}",
+                                                                            //       style: bodyTextNormal(null,
+                                                                            //           AppColors
+                                                                            //               .primary,
+                                                                            //           null),
+                                                                            //     ),
+                                                                            //     Text(
+                                                                            //         " Views")
+                                                                            //   ],
+                                                                            // ),
+                                                                          ],
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+
+                                                              //
+                                                              //
+                                                              //Jobs Seach check status
+                                                              Column(
+                                                                children: [
+                                                                  //Check status HOT
+                                                                  // if (_tag ==
+                                                                  //     "Highlight")
+                                                                  //   Align(
+                                                                  //     alignment:
+                                                                  //         Alignment
+                                                                  //             .centerRight,
+                                                                  //     child:
+                                                                  //         Container(
+                                                                  //       decoration:
+                                                                  //           BoxDecoration(
+                                                                  //         color: AppColors
+                                                                  //             .danger,
+                                                                  //         borderRadius:
+                                                                  //             BorderRadius.only(
+                                                                  //           topRight:
+                                                                  //               Radius.circular(5),
+                                                                  //           bottomLeft:
+                                                                  //               Radius.circular(10),
+                                                                  //         ),
+                                                                  //       ),
+                                                                  //       padding: EdgeInsets.symmetric(
+                                                                  //           horizontal:
+                                                                  //               10,
+                                                                  //           vertical:
+                                                                  //               5),
+                                                                  //       child:
+                                                                  //           Text(
+                                                                  //         "HOT",
+                                                                  //         style: bodyTextNormal(null,
+                                                                  //             AppColors.fontWhite,
+                                                                  //             null),
+                                                                  //       ),
+                                                                  //     ),
+                                                                  //   ),
+                                                                  //
+                                                                  //
+                                                                  // Check status disable people
+                                                                  // if (_disablePeople)
+                                                                  //   Padding(
+                                                                  //     padding: const EdgeInsets
+                                                                  //         .only(
+                                                                  //         right:
+                                                                  //             15,
+                                                                  //         bottom:
+                                                                  //             15),
+                                                                  //     child:
+                                                                  //         Container(
+                                                                  //       padding:
+                                                                  //           EdgeInsets.all(
+                                                                  //               10),
+                                                                  //       // margin: EdgeInsets
+                                                                  //       //     .only(
+                                                                  //       //   top: _tag ==
+                                                                  //       //           "Highlight"
+                                                                  //       //       ? 5
+                                                                  //       //       : 15,
+                                                                  //       //   right:
+                                                                  //       //       15,
+                                                                  //       // ),
+                                                                  //       decoration:
+                                                                  //           BoxDecoration(
+                                                                  //         color: AppColors
+                                                                  //             .warning,
+                                                                  //         borderRadius:
+                                                                  //             BorderRadius.circular(5),
+                                                                  //       ),
+                                                                  //       child:
+                                                                  //           FaIcon(
+                                                                  //         FontAwesomeIcons
+                                                                  //             .wheelchair,
+                                                                  //         color: AppColors
+                                                                  //             .iconLight,
+                                                                  //       ),
+                                                                  //     ),
+                                                                  //   ),
+
+                                                                  //
+                                                                  //
+                                                                  //Status new job/Saved
+                                                                  if (indexJobsSearch[
+                                                                      'newJob'])
+                                                                    Container(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .topCenter,
+                                                                      padding:
+                                                                          EdgeInsets
+                                                                              .symmetric(
+                                                                        horizontal:
+                                                                            8,
+                                                                        vertical:
+                                                                            4,
+                                                                      ),
+                                                                      margin: EdgeInsets
+                                                                          .only(
+                                                                        right:
+                                                                            15,
+                                                                      ),
                                                                       decoration:
                                                                           BoxDecoration(
-                                                                        border:
-                                                                            Border.all(
-                                                                          color:
-                                                                              AppColors.borderSecondary,
-                                                                        ),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(10),
                                                                         color: AppColors
-                                                                            .backgroundWhite,
+                                                                            .primary,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(5),
                                                                       ),
                                                                       child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .all(
-                                                                            5),
-                                                                        child:
-                                                                            ClipRRect(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(8),
-                                                                          child:
-                                                                              Center(
-                                                                            child: _logo.isEmpty
-                                                                                ? Image.asset(
-                                                                                    'assets/image/no-image-available.png',
-                                                                                    fit: BoxFit.contain,
-                                                                                  )
-                                                                                : Image.network(
-                                                                                    "https://storage.googleapis.com/108-bucket/${_logo}",
-                                                                                    fit: BoxFit.contain,
-                                                                                    errorBuilder: (context, error, stackTrace) {
-                                                                                      return Image.asset(
-                                                                                        'assets/image/no-image-available.png',
-                                                                                        fit: BoxFit.contain,
-                                                                                      ); // Display an error message
-                                                                                    },
-                                                                                  ),
-                                                                          ),
+                                                                          Text(
+                                                                        // i['newJob'] &&
+                                                                        //         !i['isSaved']
+                                                                        //     ? "New"
+                                                                        //     : !i['newJob'] && i['isSaved']
+                                                                        //         ? "Saved"
+                                                                        //         : "Viewed",
+                                                                        "job_card_new_job"
+                                                                            .tr,
+                                                                        style:
+                                                                            bodyTextMiniSmall(
+                                                                          null,
+                                                                          AppColors
+                                                                              .fontWhite,
+                                                                          null,
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
-                                                                        width:
-                                                                            15),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
 
-                                                                    //
-                                                                    //
-                                                                    //Company Name
-                                                                    Expanded(
-                                                                      child:
-                                                                          Column(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          Text(
-                                                                            "${_companyName}",
-                                                                            style: bodyTextMinNormal(
-                                                                                null,
-                                                                                null,
-                                                                                null),
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                          ),
-                                                                          Text(
-                                                                            "${getTimeAgo(_dateTimeNow, openDate)}",
-                                                                            style: bodyTextSmall(
-                                                                                null,
-                                                                                null,
-                                                                                null),
-                                                                          ),
+                                                        SizedBox(height: 15),
 
-                                                                          // Row(
-                                                                          //   children: [
-                                                                          //     Text(
-                                                                          //       "${_isClick}",
-                                                                          //       style: bodyTextNormal(null,
-                                                                          //           AppColors
-                                                                          //               .primary,
-                                                                          //           null),
-                                                                          //     ),
-                                                                          //     Text(
-                                                                          //         " Views")
-                                                                          //   ],
-                                                                          // ),
-                                                                        ],
-                                                                      ),
-                                                                    )
-                                                                  ],
+                                                        //
+                                                        //
+                                                        //Check _tag == Highlight
+                                                        //Position
+                                                        Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                            horizontal: 15,
+                                                          ),
+                                                          child: Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: Text(
+                                                                  "${_title}",
+                                                                  style: bodyTextSuperMaxNormal(
+                                                                      null,
+                                                                      _tag == "Highlight"
+                                                                          ? AppColors
+                                                                              .fontWaring
+                                                                          : null,
+                                                                      FontWeight
+                                                                          .bold),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  maxLines: 2,
                                                                 ),
                                                               ),
-                                                            ),
-
-                                                            //
-                                                            //
-                                                            //Jobs Seach check status
-                                                            Column(
-                                                              children: [
-                                                                //Check status HOT
-                                                                // if (_tag ==
-                                                                //     "Highlight")
-                                                                //   Align(
-                                                                //     alignment:
-                                                                //         Alignment
-                                                                //             .centerRight,
-                                                                //     child:
-                                                                //         Container(
-                                                                //       decoration:
-                                                                //           BoxDecoration(
-                                                                //         color: AppColors
-                                                                //             .danger,
-                                                                //         borderRadius:
-                                                                //             BorderRadius.only(
-                                                                //           topRight:
-                                                                //               Radius.circular(5),
-                                                                //           bottomLeft:
-                                                                //               Radius.circular(10),
-                                                                //         ),
-                                                                //       ),
-                                                                //       padding: EdgeInsets.symmetric(
-                                                                //           horizontal:
-                                                                //               10,
-                                                                //           vertical:
-                                                                //               5),
-                                                                //       child:
-                                                                //           Text(
-                                                                //         "HOT",
-                                                                //         style: bodyTextNormal(null,
-                                                                //             AppColors.fontWhite,
-                                                                //             null),
-                                                                //       ),
-                                                                //     ),
-                                                                //   ),
-                                                                //
-                                                                //
-                                                                // Check status disable people
-                                                                // if (_disablePeople)
-                                                                //   Padding(
-                                                                //     padding: const EdgeInsets
-                                                                //         .only(
-                                                                //         right:
-                                                                //             15,
-                                                                //         bottom:
-                                                                //             15),
-                                                                //     child:
-                                                                //         Container(
-                                                                //       padding:
-                                                                //           EdgeInsets.all(
-                                                                //               10),
-                                                                //       // margin: EdgeInsets
-                                                                //       //     .only(
-                                                                //       //   top: _tag ==
-                                                                //       //           "Highlight"
-                                                                //       //       ? 5
-                                                                //       //       : 15,
-                                                                //       //   right:
-                                                                //       //       15,
-                                                                //       // ),
-                                                                //       decoration:
-                                                                //           BoxDecoration(
-                                                                //         color: AppColors
-                                                                //             .warning,
-                                                                //         borderRadius:
-                                                                //             BorderRadius.circular(5),
-                                                                //       ),
-                                                                //       child:
-                                                                //           FaIcon(
-                                                                //         FontAwesomeIcons
-                                                                //             .wheelchair,
-                                                                //         color: AppColors
-                                                                //             .iconLight,
-                                                                //       ),
-                                                                //     ),
-                                                                //   ),
-
-                                                                //
-                                                                //
-                                                                //Status new job/Saved
-                                                                if (indexJobsSearch[
-                                                                    'newJob'])
-                                                                  Container(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .topCenter,
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .symmetric(
-                                                                      horizontal:
-                                                                          8,
-                                                                      vertical:
-                                                                          4,
-                                                                    ),
-                                                                    margin:
-                                                                        EdgeInsets
-                                                                            .only(
-                                                                      right: 15,
-                                                                    ),
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: AppColors
-                                                                          .primary,
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              5),
-                                                                    ),
-                                                                    child: Text(
-                                                                      // i['newJob'] &&
-                                                                      //         !i['isSaved']
-                                                                      //     ? "New"
-                                                                      //     : !i['newJob'] && i['isSaved']
-                                                                      //         ? "Saved"
-                                                                      //         : "Viewed",
-                                                                      "job_card_new_job"
-                                                                          .tr,
-                                                                      style:
-                                                                          bodyTextMiniSmall(
-                                                                        null,
-                                                                        AppColors
-                                                                            .fontWhite,
-                                                                        null,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                              ],
-                                                            ),
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
 
-                                                      SizedBox(height: 15),
+                                                        SizedBox(height: 15),
 
-                                                      //
-                                                      //
-                                                      //Check _tag == Highlight
-                                                      //Position
-                                                      Container(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                          horizontal: 15,
-                                                        ),
-                                                        child: Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Text(
-                                                                "${_title}",
-                                                                style: bodyTextSuperMaxNormal(
+                                                        //
+                                                        //
+                                                        //Work Location
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                            left: 15,
+                                                            right: 15,
+                                                          ),
+                                                          child: Row(
+                                                            // crossAxisAlignment:
+                                                            //     CrossAxisAlignment
+                                                            //         .start,
+                                                            children: [
+                                                              Text(
+                                                                "\uf5a0",
+                                                                style: fontAwesomeLight(
                                                                     null,
-                                                                    _tag == "Highlight"
-                                                                        ? AppColors
-                                                                            .fontWaring
-                                                                        : null,
-                                                                    FontWeight
-                                                                        .bold),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 2,
+                                                                    12,
+                                                                    AppColors
+                                                                        .iconGrayOpacity,
+                                                                    null),
                                                               ),
-                                                            ),
-                                                          ],
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Expanded(
+                                                                child: Text(
+                                                                  "${_workingLocations}",
+                                                                  style:
+                                                                      bodyTextSmall(
+                                                                          null,
+                                                                          null,
+                                                                          null),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  maxLines: 1,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
+                                                        SizedBox(height: 5),
 
-                                                      SizedBox(height: 15),
-
-                                                      //
-                                                      //
-                                                      //Work Location
-                                                      Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                          left: 15,
-                                                          right: 15,
-                                                        ),
-                                                        child: Row(
-                                                          // crossAxisAlignment:
-                                                          //     CrossAxisAlignment
-                                                          //         .start,
-                                                          children: [
-                                                            Text(
-                                                              "\uf5a0",
-                                                              style: fontAwesomeLight(
-                                                                  null,
-                                                                  12,
-                                                                  AppColors
-                                                                      .iconGrayOpacity,
-                                                                  null),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Expanded(
-                                                              child: Text(
-                                                                "${_workingLocations}",
+                                                        //
+                                                        //
+                                                        //Start Date to End Date
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                            left: 15,
+                                                            right: 15,
+                                                          ),
+                                                          child: Row(
+                                                            // crossAxisAlignment:
+                                                            //     CrossAxisAlignment
+                                                            //         .start,
+                                                            children: [
+                                                              Text(
+                                                                "\uf073",
+                                                                style: fontAwesomeLight(
+                                                                    null,
+                                                                    12,
+                                                                    AppColors
+                                                                        .iconGrayOpacity,
+                                                                    null),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Text(
+                                                                '${_openDate}',
                                                                 style:
                                                                     bodyTextSmall(
                                                                         null,
                                                                         null,
                                                                         null),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 1,
                                                               ),
-                                                            ),
-                                                          ],
+                                                              Text(' - '),
+                                                              Text(
+                                                                "${_closeDate}",
+                                                                style:
+                                                                    bodyTextSmall(
+                                                                        null,
+                                                                        null,
+                                                                        null),
+                                                              )
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                      SizedBox(height: 5),
-
-                                                      //
-                                                      //
-                                                      //Start Date to End Date
-                                                      Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                          left: 15,
-                                                          right: 15,
-                                                        ),
-                                                        child: Row(
-                                                          // crossAxisAlignment:
-                                                          //     CrossAxisAlignment
-                                                          //         .start,
-                                                          children: [
-                                                            Text(
-                                                              "\uf073",
-                                                              style: fontAwesomeLight(
-                                                                  null,
-                                                                  12,
-                                                                  AppColors
-                                                                      .iconGrayOpacity,
-                                                                  null),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Text(
-                                                              '${_openDate}',
-                                                              style:
-                                                                  bodyTextSmall(
-                                                                      null,
-                                                                      null,
-                                                                      null),
-                                                            ),
-                                                            Text(' - '),
-                                                            Text(
-                                                              "${_closeDate}",
-                                                              style:
-                                                                  bodyTextSmall(
-                                                                      null,
-                                                                      null,
-                                                                      null),
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 15),
-                                                    ],
+                                                        SizedBox(height: 15),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
 
-                                              Divider(
-                                                height: 1,
-                                                color:
-                                                    AppColors.borderGreyOpacity,
-                                              ),
+                                                Divider(
+                                                  height: 1,
+                                                  color: AppColors
+                                                      .borderGreyOpacity,
+                                                ),
 
-                                              //
-                                              //
-                                              //Section footer card jobs search/ button hide job and save job
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  //
-                                                  //
-                                                  //button hide job
-                                                  Material(
-                                                    color: Colors.transparent,
-                                                    child: InkWell(
-                                                      onTap: () async {
-                                                        // FocusScope.of(context)
-                                                        //     .requestFocus(focusNode);
-                                                        focusNode.unfocus();
-                                                        var result =
-                                                            await showDialog(
-                                                                context:
-                                                                    context,
-                                                                builder:
-                                                                    (context) {
-                                                                  return NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel(
-                                                                    title:
-                                                                        "hide_job_post"
-                                                                            .tr,
-                                                                    smallText:
-                                                                        "hide_job_explain"
-                                                                            .tr,
-                                                                    contentText:
-                                                                        "${indexJobsSearch['title']}",
-                                                                    textButtonLeft:
-                                                                        'cancel'
-                                                                            .tr,
-                                                                    textButtonRight:
-                                                                        'confirm'
-                                                                            .tr,
-                                                                  );
-                                                                });
-                                                        if (result == 'Ok') {
-                                                          print("press ok");
-                                                          _removeJobsSearchSeekerLocal(
+                                                //
+                                                //
+                                                //Section footer card jobs search/ button hide job and save job
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    //
+                                                    //
+                                                    //button hide job
+                                                    Material(
+                                                      color: Colors.transparent,
+                                                      child: InkWell(
+                                                        onTap: () async {
+                                                          // FocusScope.of(context)
+                                                          //     .requestFocus(focusNode);
+                                                          focusNode.unfocus();
+                                                          var result =
+                                                              await showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (context) {
+                                                                    return NewVer4CustAlertDialogWarning3TxtBtnConfirmCancel(
+                                                                      title:
+                                                                          "hide_job_post"
+                                                                              .tr,
+                                                                      smallText:
+                                                                          "hide_job_explain"
+                                                                              .tr,
+                                                                      contentText:
+                                                                          "${indexJobsSearch['title']}",
+                                                                      textButtonLeft:
+                                                                          'cancel'
+                                                                              .tr,
+                                                                      textButtonRight:
+                                                                          'confirm'
+                                                                              .tr,
+                                                                    );
+                                                                  });
+                                                          if (result == 'Ok') {
+                                                            print("press ok");
+                                                            _removeJobsSearchSeekerLocal(
+                                                                indexJobsSearch[
+                                                                    'jobId']);
+                                                            hideJobHelper(
                                                               indexJobsSearch[
-                                                                  'jobId']);
-                                                          hideJobHelper(
+                                                                      'jobId']
+                                                                  .toString(),
+                                                              indexJobsSearch[
+                                                                      'title']
+                                                                  .toString(),
+                                                            );
+                                                          }
+                                                        },
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  8),
+                                                        ),
+                                                        child: Container(
+                                                          color: AppColors
+                                                              .backgroundWhite
+                                                              .withOpacity(0.1),
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  15),
+                                                          child: Row(
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .ban,
+                                                                size: IconSize
+                                                                    .xsIcon,
+                                                              ),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Text(
+                                                                "hide".tr,
+                                                                style:
+                                                                    bodyTextMinNormal(
+                                                                        null,
+                                                                        null,
+                                                                        null),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                    //
+                                                    //
+                                                    //button save job
+                                                    Material(
+                                                      color: Colors.transparent,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          // FocusScope.of(context)
+                                                          //     .requestFocus(focusNode);
+                                                          focusNode.unfocus();
+                                                          setState(() {
+                                                            indexJobsSearch[
+                                                                    'isSaved'] =
+                                                                !indexJobsSearch[
+                                                                    'isSaved'];
+                                                          });
+                                                          saveAndUnSaveJobHelper(
                                                             indexJobsSearch[
                                                                     'jobId']
                                                                 .toString(),
@@ -2330,130 +2535,89 @@ class _JobSearchState extends State<JobSearch>
                                                                     'title']
                                                                 .toString(),
                                                           );
-                                                        }
-                                                      },
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        bottomLeft:
-                                                            Radius.circular(8),
-                                                      ),
-                                                      child: Container(
-                                                        color: AppColors
-                                                            .backgroundWhite
-                                                            .withOpacity(0.1),
-                                                        padding:
-                                                            EdgeInsets.all(15),
-                                                        child: Row(
-                                                          children: [
-                                                            FaIcon(
-                                                              FontAwesomeIcons
-                                                                  .ban,
-                                                              size: IconSize
-                                                                  .xsIcon,
-                                                            ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Text(
-                                                              "hide".tr,
-                                                              style:
-                                                                  bodyTextMinNormal(
-                                                                      null,
-                                                                      null,
-                                                                      null),
-                                                            ),
-                                                          ],
+                                                        },
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  8),
                                                         ),
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                  //
-                                                  //
-                                                  //button save job
-                                                  Material(
-                                                    color: Colors.transparent,
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        // FocusScope.of(context)
-                                                        //     .requestFocus(focusNode);
-                                                        focusNode.unfocus();
-                                                        setState(() {
-                                                          indexJobsSearch[
-                                                                  'isSaved'] =
-                                                              !indexJobsSearch[
-                                                                  'isSaved'];
-                                                        });
-                                                        saveAndUnSaveJobHelper(
-                                                          indexJobsSearch[
-                                                                  'jobId']
-                                                              .toString(),
-                                                          indexJobsSearch[
-                                                                  'title']
-                                                              .toString(),
-                                                        );
-                                                      },
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        bottomRight:
-                                                            Radius.circular(8),
-                                                      ),
-                                                      child: Container(
-                                                        color: AppColors
-                                                            .backgroundWhite
-                                                            .withOpacity(0.1),
-                                                        padding:
-                                                            EdgeInsets.all(15),
-                                                        child: Row(
-                                                          children: [
-                                                            _isSaved
-                                                                ? FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .solidHeart,
-                                                                    size: IconSize
-                                                                        .xsIcon,
-                                                                    color: AppColors
-                                                                        .iconPrimary,
-                                                                  )
-                                                                : FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .heart,
-                                                                    size: IconSize
-                                                                        .xsIcon,
-                                                                  ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Text(
+                                                        child: Container(
+                                                          color: AppColors
+                                                              .backgroundWhite
+                                                              .withOpacity(0.1),
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  15),
+                                                          child: Row(
+                                                            children: [
                                                               _isSaved
-                                                                  ? "saved".tr
-                                                                  : "save".tr,
-                                                              style:
-                                                                  bodyTextMinNormal(
-                                                                      null,
-                                                                      null,
-                                                                      null),
-                                                            ),
-                                                          ],
+                                                                  ? FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .solidHeart,
+                                                                      size: IconSize
+                                                                          .xsIcon,
+                                                                      color: AppColors
+                                                                          .iconPrimary,
+                                                                    )
+                                                                  : FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .heart,
+                                                                      size: IconSize
+                                                                          .xsIcon,
+                                                                    ),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Text(
+                                                                _isSaved
+                                                                    ? "saved".tr
+                                                                    : "save".tr,
+                                                                style:
+                                                                    bodyTextMinNormal(
+                                                                        null,
+                                                                        null,
+                                                                        null),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
+                                      );
+                                    },
+                                  ),
                                 )
-                              : ScreenNoData(
-                                  faIcon:
-                                      FontAwesomeIcons.fileCircleExclamation,
-                                  colorIcon: AppColors.primary,
-                                  text: "no have data".tr,
-                                  colorText: AppColors.primary,
+                              : RefreshIndicator(
+                                  onRefresh: () async {
+                                    await clearAllFilterThenFetchJobsSearch(
+                                        showLoading: false);
+                                  },
+                                  child: ListView(
+                                    controller: _scrollController,
+                                    physics: AlwaysScrollableScrollPhysics(),
+                                    children: [
+                                      Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.6,
+                                        alignment: Alignment.center,
+                                        child: ScreenNoData(
+                                          faIcon: FontAwesomeIcons
+                                              .fileCircleExclamation,
+                                          colorIcon: AppColors.primary,
+                                          text: "no have data".tr,
+                                          colorText: AppColors.primary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                         ),
                   if (_isLoadingMoreData)

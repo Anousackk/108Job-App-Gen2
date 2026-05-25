@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps, use_build_context_synchronously, prefer_interpolation_to_compose_strings
+// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps, use_build_context_synchronously, prefer_interpolation_to_compose_strings, unnecessary_null_in_if_null_operators
 
 import 'package:app/functions/api.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
@@ -111,6 +111,8 @@ class EventAvailableProvider extends ChangeNotifier {
         print("res containsKey message: ${res["message"]}");
         return;
       }
+
+      print("res: $res");
 
       _eventInfo = res["eventInfo"] ?? null;
       _isApplied = res["isApplied"] as bool? ?? false;

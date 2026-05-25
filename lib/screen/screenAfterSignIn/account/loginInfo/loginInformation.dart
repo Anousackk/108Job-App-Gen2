@@ -6,6 +6,7 @@ import 'package:app/functions/alert_dialog.dart';
 import 'package:app/functions/api.dart';
 import 'package:app/functions/auth_service.dart';
 import 'package:app/functions/colors.dart';
+import 'package:app/functions/deviceInfoHelper.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/screen/login/login.dart';
@@ -14,8 +15,6 @@ import 'package:app/screen/screenAfterSignIn/account/loginInfo/changePassword.da
 import 'package:app/screen/screenAfterSignIn/account/loginInfo/deleteAccount.dart';
 import 'package:app/screen/screenAfterSignIn/account/loginInfo/setPassPlatforms.dart';
 import 'package:app/widget/appbar.dart';
-import 'package:apple_product_name/apple_product_name.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -69,36 +68,10 @@ class _LoginInformationState extends State<LoginInformation> {
   }
 
   loadInfo() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-
-    if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      print('iOS-running name: ${iosInfo.name}');
-      print('iOS-running systemVersion: '
-              '${iosInfo.systemName}' +
-          ' ' +
-          '${iosInfo.systemVersion}');
-      var name = iosInfo.name;
-      var systemName = iosInfo.systemName;
-      var systemVersion = iosInfo.systemVersion;
-      var productName = iosInfo.utsname.productName;
-      setState(() {
-        _modelName = productName.toString();
-      });
-    } else if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      print('Running on version.release: ${androidInfo.version.release}');
-      print('Running on model: ' "${androidInfo.brand}" +
-          ' ' +
-          "${androidInfo.model}");
-
-      var brand = androidInfo.brand.toString();
-      var model = androidInfo.model.toString();
-      var versionRelease = androidInfo.version.release.toString();
-      setState(() {
-        _modelName = brand.toString() + ' ' + model.toString();
-      });
-    }
+    final info = await DeviceInfoHelper.getDeviceInfo();
+    setState(() {
+      _modelName = info.modelName;
+    });
   }
 
   logOut() async {

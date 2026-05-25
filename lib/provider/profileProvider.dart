@@ -47,7 +47,7 @@ class ProfileProvider extends ChangeNotifier {
 
   bool _isProfileVerified = false;
   bool _isLoadingProfile = true;
-  bool _isSearchable = false;
+  bool _isSearchable = true;
   bool _personalInformationStatus = false;
   bool _workPreferenceStatus = false;
   bool _resumeStatus = false;

@@ -24,6 +24,29 @@ class ReuseTypeProvider extends ChangeNotifier {
 
   Future<void> fetchReuseFilterJobSearchSeeker(
       String lang, String resValue) async {
+    // Guard: skip API call if data is already loaded
+    final bool alreadyLoaded;
+    switch (resValue) {
+      case 'industry':
+        alreadyLoaded = listIndustryFilter.isNotEmpty;
+        break;
+      case 'workLocation':
+        alreadyLoaded = listProvinceFilter.isNotEmpty;
+        break;
+      case 'jobExperience':
+        alreadyLoaded = listJobExperienceFilter.isNotEmpty;
+        break;
+      case 'educationLevel':
+        alreadyLoaded = listEducationLevelFilter.isNotEmpty;
+        break;
+      case 'jobLevel':
+        alreadyLoaded = listJobLevelFilter.isNotEmpty;
+        break;
+      default:
+        alreadyLoaded = false;
+    }
+    if (alreadyLoaded) return;
+
     try {
       var res =
           await fetchData(getReuseFilterJobSearchSeekerApi + "lang=$lang");

@@ -12,6 +12,7 @@ import 'package:app/provider/profileProvider.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/JobAlert/jobAlert.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/LoginInfo/loginInformation.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/myProfile.dart';
+import 'package:app/screen/screenAfterSignIn/account/myProfile/ProfileSetting/profileSetting.dart';
 import 'package:app/screen/screenAfterSignIn/myJob/myJob.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class Account extends StatefulWidget {
-  const Account({Key? key, this.hasInternet}) : super(key: key);
+  const Account({Key? key, this.hasInternet, this.onTapMyJobStatus})
+      : super(key: key);
 
   final hasInternet;
+  final Function(String status)? onTapMyJobStatus;
 
   @override
   State<Account> createState() => _AccountState();
@@ -814,6 +817,25 @@ class _AccountState extends State<Account> {
                                   );
                                 },
                               ),
+
+                              if (profileProvider.memberLevel != "Basic Member")
+                                //Profile setting / ຕັ້ງຄ່າໂປຣໄຟລ໌
+                                AccountSetting(
+                                  prefixIconStr: "\uf013",
+                                  text: "profile_setting".tr,
+                                  suffixIconStr: "\uf054",
+                                  press: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProfileSetting(
+                                          isSearchable:
+                                              profileProvider.isSearchable,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
                             ],
                           ),
                         ),
@@ -946,15 +968,9 @@ class _AccountState extends State<Account> {
                             amount: "${profileProvider.savedJobs}",
                             suffixIconStr: "\uf054",
                             press: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MyJobs(
-                                    myJobStatus: "SeekerSaveJob",
-                                    // hasInternet: true,
-                                  ),
-                                ),
-                              );
+                              if (widget.onTapMyJobStatus != null) {
+                                widget.onTapMyJobStatus!("SeekerSaveJob");
+                              }
                             },
                           ),
 
@@ -965,15 +981,9 @@ class _AccountState extends State<Account> {
                             amount: "${profileProvider.appliedJobs}",
                             suffixIconStr: "\uf054",
                             press: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MyJobs(
-                                    myJobStatus: "AppliedJob",
-                                    // hasInternet: true,
-                                  ),
-                                ),
-                              );
+                              if (widget.onTapMyJobStatus != null) {
+                                widget.onTapMyJobStatus!("AppliedJob");
+                              }
                             },
                           ),
 
@@ -982,7 +992,7 @@ class _AccountState extends State<Account> {
                             prefixIconStr: "\uf316",
                             text: "submitted_cv".tr,
                             amount: "${profileProvider.submitedCV}",
-                            suffixIconStr: "\uf054",
+                            // suffixIconStr: "\uf054",
                             press: () {},
                           ),
 
@@ -1000,7 +1010,7 @@ class _AccountState extends State<Account> {
                             prefixIconStr: "\uf2e8",
                             text: "member_point".tr,
                             amount: "${profileProvider.totalPoint}",
-                            suffixIconStr: "\uf054",
+                            // suffixIconStr: "\uf054",
                             press: () {},
                           ),
                         ],
@@ -1165,11 +1175,14 @@ class _AccountSettingState extends State<AccountSetting> {
               SizedBox(
                 width: 5,
               ),
-              Text(
-                "${widget.suffixIconStr}",
-                style: fontAwesomeSolid(widget.fontFamilySuffixIcon,
-                    IconSize.xsIcon, widget.suffixIconColor, null),
-              )
+              if (widget.suffixIconStr != null && widget.suffixIconStr != "")
+                Text(
+                  "${widget.suffixIconStr}",
+                  style: fontAwesomeSolid(widget.fontFamilySuffixIcon,
+                      IconSize.xsIcon, widget.suffixIconColor, null),
+                )
+              else
+                SizedBox(width: 10),
             ],
           ),
         ),

@@ -35,7 +35,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
   String _logo = "";
   String _companyName = "";
 
-  bool _isSearchable = false;
+  bool _isSearchable = true;
   bool _isLoading = true;
   bool _statusShowLoading = false;
 

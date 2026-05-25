@@ -124,9 +124,13 @@ class _MyJobsState extends State<MyJobs> {
 
     print("Fetch My Job is working");
 
-    List fetchMyJobs = res['info'] ?? [];
+    List fetchMyJobs = (res != null && res is Map && res['info'] != null)
+        ? List.from(res['info'])
+        : [];
     // _listMyJobs = res['info'];
-    totals = res['totals'] ?? 0;
+    totals = (res != null && res is Map && res['totals'] != null)
+        ? res['totals']
+        : 0;
 
     page++;
     _listMyJobs.addAll(List<Map<String, dynamic>>.from(fetchMyJobs));
@@ -136,7 +140,7 @@ class _MyJobsState extends State<MyJobs> {
     _isLoadingMoreData = false;
     _isLoading = false;
 
-    if (res['info'] != null && _statusShowLoading) {
+    if (_statusShowLoading) {
       _statusShowLoading = false;
       Navigator.pop(context);
     }
@@ -163,8 +167,12 @@ class _MyJobsState extends State<MyJobs> {
       "perPage": perPage,
     });
 
-    List fetchMyJobs = res['info'];
-    totals = res['totals'];
+    List fetchMyJobs = (res != null && res is Map && res['info'] != null)
+        ? List.from(res['info'])
+        : [];
+    totals = (res != null && res is Map && res['totals'] != null)
+        ? res['totals']
+        : 0;
 
     page++;
     _listMyJobs.clear();
@@ -290,7 +298,9 @@ class _MyJobsState extends State<MyJobs> {
   void initState() {
     super.initState();
 
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
     initStateCheckTypeMyJobStatus();
+    // });
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==

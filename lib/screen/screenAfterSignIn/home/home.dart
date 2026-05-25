@@ -1,10 +1,11 @@
 // ignore_for_file: prefer_final_fields, unused_local_variable, avoid_print, prefer_interpolation_to_compose_strings, unused_field, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, prefer_is_empty, use_build_context_synchronously, deprecated_member_use, prefer_adjacent_string_concatenation, sized_box_for_whitespace
 
 import 'dart:async';
-import 'dart:io';
-
+import 'package:app/provider/globalSettingProvider.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/MyProfile/myProfile.dart';
+import 'package:app/screen/screenAfterSignIn/home/Widget/jobByProvinceShirmmerWidget.dart';
 import 'package:app/screen/screenAfterSignIn/home/Widget/topbannerShimmerWidget.dart';
+import 'package:app/widget/listMultiSelectedAlertDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -16,6 +17,7 @@ import 'package:app/functions/colors.dart';
 import 'package:app/functions/internetDisconnected.dart';
 import 'package:app/functions/launchInBrowser.dart';
 import 'package:app/functions/parsDateTime.dart';
+import 'package:app/functions/deviceInfoHelper.dart';
 import 'package:app/functions/sharePreferencesHelper.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/provider/bannerProvider.dart';
@@ -25,6 +27,7 @@ import 'package:app/provider/popupBanner.dart';
 import 'package:app/provider/profileDashboardStatus.dart';
 import 'package:app/provider/profileProvider.dart';
 import 'package:app/provider/recommendJobByAI.dart';
+import 'package:app/provider/provinceProvider.dart';
 import 'package:app/provider/reuseTypeProvider.dart';
 import 'package:app/screen/Main/changeLanguage.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/Events/registerEvent.dart';
@@ -34,17 +37,17 @@ import 'package:app/screen/login/login.dart';
 import 'package:app/screen/screenAfterSignIn/account/account.dart';
 import 'package:app/screen/screenAfterSignIn/company/company.dart';
 import 'package:app/screen/screenAfterSignIn/home/Widget/profileShimmerWidget.dart';
+import 'package:app/screen/screenAfterSignIn/home/Widget/adminChatSupportDialog.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearch.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
-import 'package:app/screen/screenAfterSignIn/myJob/myJob.dart';
+import 'package:app/screen/screenAfterSignIn/myJob/myJob_old.dart';
+// import 'package:app/screen/screenAfterSignIn/myJob/myJob.dart';
 import 'package:app/widget/button.dart';
-import 'package:apple_product_name/apple_product_name.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:get/get.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:intl/intl.dart';
@@ -76,6 +79,8 @@ class _HomeState extends State<Home> {
 
   // List _listTopBanners = [];
   // List _listPopupBanner = [];
+  List<dynamic> _selectedProvincesListItem = [];
+  String _homeToJobSearchType = "";
 
   String _modelName = "";
 
@@ -94,36 +99,10 @@ class _HomeState extends State<Home> {
   bool _hasShownDisconnectedDialog = false;
 
   loadInfo() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-
-    if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      print('iOS-running name: ${iosInfo.name}');
-      print('iOS-running systemVersion: '
-              '${iosInfo.systemName}' +
-          ' ' +
-          '${iosInfo.systemVersion}');
-      var name = iosInfo.name;
-      var systemName = iosInfo.systemName;
-      var systemVersion = iosInfo.systemVersion;
-      var productName = iosInfo.utsname.productName;
-      setState(() {
-        _modelName = productName.toString();
-      });
-    } else if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      print('Running on version.release: ${androidInfo.version.release}');
-      print('Running on model: ' "${androidInfo.brand}" +
-          ' ' +
-          "${androidInfo.model}");
-
-      var brand = androidInfo.brand.toString();
-      var model = androidInfo.model.toString();
-      var versionRelease = androidInfo.version.release.toString();
-      setState(() {
-        _modelName = brand.toString() + ' ' + model.toString();
-      });
-    }
+    final info = await DeviceInfoHelper.getDeviceInfo();
+    setState(() {
+      _modelName = info.modelName;
+    });
   }
 
   logOut() async {
@@ -325,6 +304,7 @@ class _HomeState extends State<Home> {
     await getTokenSharedPre();
 
     Future.delayed(Duration(seconds: 1), () {
+      context.read<GlobalSettingProvider>().fetchGlobalSetting();
       context.read<BannerProvider>().fetchTopBanner();
       context.read<EventAvailableProvider>().fetchStatisticEvent();
       context.read<EventAvailableProvider>().fetchEventAvailable();
@@ -396,6 +376,8 @@ class _HomeState extends State<Home> {
         _localeLanguageApi, 'Province');
     await reuseTypeProvider.fetchReuseTypeSeeker(
         _localeLanguageApi, 'Industry');
+
+    await context.read<ProvinceProvider>().fetchProvince(localLanguage);
   }
 
   onTapBottomNav(int index) {
@@ -415,8 +397,20 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
 
-    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+    loadInfo();
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
       print("New refresh fcmToken: $newToken");
+      _fcmToken = newToken;
+      var resAddToken = await postData(apiAddTokenSeeker, {
+        "notifyToken": [
+          {
+            "appToken": _fcmToken,
+            "model": _modelName,
+          }
+        ]
+      });
+      print("onTokenRefresh add token success: ${resAddToken}");
     });
 
     internetConnectionChecker();
@@ -437,6 +431,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final reuseTypeProvider = context.watch<ReuseTypeProvider>();
+    final provinceProvider = context.watch<ProvinceProvider>();
     final profileProvider = context.watch<ProfileProvider>();
     final topBannerProvider = context.watch<BannerProvider>();
     final eventAvailableProvider = context.watch<EventAvailableProvider>();
@@ -468,6 +464,8 @@ class _HomeState extends State<Home> {
           children: [
             // Tab 0 Home
             _buildHomeBottomNavigationBar(
+              reuseTypeProvider: reuseTypeProvider,
+              provinceProvider: provinceProvider,
               profileProvider: profileProvider,
               topBannerProvider: topBannerProvider,
               eventAvailableProvider: eventAvailableProvider,
@@ -480,15 +478,27 @@ class _HomeState extends State<Home> {
             JobSearch(
               topWorkLocation: null,
               topIndustry: null,
-              type: "",
-              selectedListItem: null,
+              type: _homeToJobSearchType,
+              selectedListItem: _selectedProvincesListItem.isNotEmpty
+                  ? _selectedProvincesListItem
+                  : null,
             ),
 
             // Tab 2 Company
             Company(companyType: ""),
 
-            // Tab 3 Account
-            Account(),
+            // Tab 3 My Jobs
+            MyJobs(myJobStatus: _myJobStatus),
+
+            // Tab 4 Account
+            Account(
+              onTapMyJobStatus: (status) {
+                setState(() {
+                  _myJobStatus = status;
+                });
+                onTapBottomNav(3);
+              },
+            ),
           ],
         ),
 
@@ -573,13 +583,34 @@ class _HomeState extends State<Home> {
               label: "company".tr,
             ),
 
-            // Account
+            // My Jobs
             BottomNavigationBarItem(
               icon: Padding(
                 padding: const EdgeInsets.only(
                   top: 0,
                 ),
                 child: _currentIndex == 3
+                    ? Text(
+                        "\uf0b1",
+                        style: fontAwesomeSolid(
+                            null, 18, AppColors.iconPrimary, null),
+                      )
+                    : Text(
+                        "\uf0b1",
+                        style: fontAwesomeRegular(
+                            null, 18, AppColors.iconGrayOpacity, null),
+                      ),
+              ),
+              label: "my job".tr,
+            ),
+
+            // Account
+            BottomNavigationBarItem(
+              icon: Padding(
+                padding: const EdgeInsets.only(
+                  top: 0,
+                ),
+                child: _currentIndex == 4
                     ? Text(
                         "\uf007",
                         style: fontAwesomeSolid(
@@ -595,11 +626,97 @@ class _HomeState extends State<Home> {
             )
           ],
         ),
+
+        // floatingActionButton: Padding(
+        //   padding: const EdgeInsets.only(bottom: 10.0, right: 4.0),
+        //   child: Column(
+        //     mainAxisSize: MainAxisSize.min,
+        //     crossAxisAlignment: CrossAxisAlignment.end,
+        //     children: [
+        //       // Chat/Message Floating Button
+        //       GestureDetector(
+        //         onTap: () {
+        //           // Navigator.push(
+        //           //   context,
+        //           //   MaterialPageRoute(
+        //           //     builder: (context) => Messages(),
+        //           //   ),
+        //           // );
+        //         },
+        //         child: Container(
+        //           width: 54,
+        //           height: 54,
+        //           decoration: BoxDecoration(
+        //             gradient: LinearGradient(
+        //               colors: [
+        //                 AppColors.primaryCustom,
+        //                 AppColors.primaryCustom.withBlue(255).withGreen(150),
+        //               ],
+        //               begin: Alignment.topLeft,
+        //               end: Alignment.bottomRight,
+        //             ),
+        //             shape: BoxShape.circle,
+        //             boxShadow: [
+        //               BoxShadow(
+        //                 color: AppColors.primaryCustom.withOpacity(0.35),
+        //                 blurRadius: 10,
+        //                 offset: Offset(0, 5),
+        //               ),
+        //             ],
+        //           ),
+        //           child: Stack(
+        //             alignment: Alignment.center,
+        //             clipBehavior: Clip.none,
+        //             children: [
+        //               Text(
+        //                 "\uf590",
+        //                 style: fontAwesomeSolid(null, 22, Colors.white, null),
+        //               ),
+        //               if (profileDashboardStatusProvider.totalMessages != 0)
+        //                 Positioned(
+        //                   top: -2,
+        //                   right: -2,
+        //                   child: Container(
+        //                     padding: EdgeInsets.all(4),
+        //                     decoration: BoxDecoration(
+        //                       color: AppColors.danger,
+        //                       shape: BoxShape.circle,
+        //                       border: Border.all(color: Colors.white, width: 2),
+        //                     ),
+        //                     constraints: BoxConstraints(
+        //                       minWidth: 20,
+        //                       minHeight: 20,
+        //                     ),
+        //                     child: Center(
+        //                       child: Text(
+        //                         profileDashboardStatusProvider.totalMessages >=
+        //                                 100
+        //                             ? "99+"
+        //                             : "${profileDashboardStatusProvider.totalMessages}",
+        //                         style: TextStyle(
+        //                           color: Colors.white,
+        //                           fontSize: 8.5,
+        //                           fontWeight: FontWeight.bold,
+        //                           fontFamily: "Inter",
+        //                         ),
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 ),
+        //             ],
+        //           ),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ),
     );
   }
 
   Widget _buildHomeBottomNavigationBar({
+    required ReuseTypeProvider reuseTypeProvider,
+    required ProvinceProvider provinceProvider,
     required ProfileProvider profileProvider,
     required BannerProvider topBannerProvider,
     required EventAvailableProvider eventAvailableProvider,
@@ -675,7 +792,7 @@ class _HomeState extends State<Home> {
                             ChangeLanguage(callBackSetLanguage: (val) {}),
                             SizedBox(width: 25),
 
-                            // WhatsApp Contact
+                            // Message Contact with admin support
                             GestureDetector(
                               onTap: () async {
                                 var result = await showDialog(
@@ -704,6 +821,33 @@ class _HomeState extends State<Home> {
                                     message: '',
                                   );
                                 }
+
+                                // showGeneralDialog(
+                                //   context: context,
+                                //   barrierDismissible: false,
+                                //   barrierColor: AppColors.backgroundWhite,
+                                //   transitionDuration:
+                                //       const Duration(milliseconds: 350),
+                                //   pageBuilder:
+                                //       (context, animation, secondaryAnimation) {
+                                //     return const AdminChatSupportDialog();
+                                //   },
+                                //   transitionBuilder: (context, animation,
+                                //       secondaryAnimation, child) {
+                                //     return SlideTransition(
+                                //       position: Tween<Offset>(
+                                //         begin: const Offset(0, 1),
+                                //         end: Offset.zero,
+                                //       ).animate(
+                                //         CurvedAnimation(
+                                //           parent: animation,
+                                //           curve: Curves.easeInOutCubic,
+                                //         ),
+                                //       ),
+                                //       child: child,
+                                //     );
+                                //   },
+                                // );
                               },
                               child: Text(
                                 "\uf590",
@@ -729,7 +873,7 @@ class _HomeState extends State<Home> {
                                 children: [
                                   // Message Icon
                                   Text(
-                                    "\uf27a",
+                                    "\uf0f3",
                                     style: fontAwesomeSolid(
                                         null, 20, AppColors.iconLight, null),
                                   ),
@@ -1040,6 +1184,7 @@ class _HomeState extends State<Home> {
 
                                   SizedBox(height: 15),
 
+                                  // Event Detail Button - Open Register Event Screen
                                   Button(
                                     buttonColor: AppColors.info,
                                     text: "event_detail".tr,
@@ -1059,7 +1204,270 @@ class _HomeState extends State<Home> {
                             ),
                           ),
 
-                        // Category Cards
+                        // ====================================================================
+                        // List Box Card Job By Province
+                        // ====================================================================
+                        Padding(
+                          padding:
+                              EdgeInsets.only(top: 30, left: 20, right: 20),
+                          child: provinceProvider.isLoadingJobByProvince
+                              ? JobByProvinceShirmmerWidget()
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Title Province Hiring Now
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "job by province".tr,
+                                          style: bodyTitleNormal(
+                                              null, FontWeight.bold),
+                                        ),
+                                        Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            onTap: () async {
+                                              var result = await showDialog(
+                                                  barrierDismissible: false,
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return ListMultiSelectedAlertDialog(
+                                                      title:
+                                                          "job by province".tr,
+                                                      listItems:
+                                                          provinceProvider
+                                                              .listProvince,
+                                                      selectedListItem:
+                                                          _selectedProvincesListItem,
+                                                    );
+                                                  }).then(
+                                                (value) {
+                                                  if (value != null &&
+                                                      value.length > 0) {
+                                                    setState(() {
+                                                      _selectedProvincesListItem =
+                                                          value;
+                                                      _homeToJobSearchType =
+                                                          "Province";
+
+                                                      onTapBottomNav(1);
+                                                    });
+                                                  }
+                                                },
+                                              );
+                                            },
+                                            child: Text(
+                                              "see_more".tr,
+                                              style: bodyTextMinNormal(null,
+                                                  AppColors.fontPrimary, null),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+
+                                    SizedBox(height: 10),
+
+                                    // List Box Card Province
+                                    Container(
+                                      height: 140,
+                                      width: double.infinity,
+                                      child: ListView.builder(
+                                        physics: ClampingScrollPhysics(),
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: provinceProvider
+                                            .listProvince.length,
+                                        itemBuilder: (context, index) {
+                                          double spacing = 10;
+                                          dynamic i = provinceProvider
+                                              .listProvince[index];
+                                          List<dynamic>
+                                              listCompaniesAssignedProvince =
+                                              i['companiesAssigned'] ?? [];
+
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              left: index == 0 ? 0 : spacing,
+                                              right: index == 9 ? 0 : 0,
+                                            ),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _selectedProvincesListItem = [
+                                                    i['_id']
+                                                  ];
+                                                  _homeToJobSearchType =
+                                                      "Province";
+                                                  onTapBottomNav(1);
+                                                });
+                                              },
+
+                                              // Container Box Card Province
+                                              child: Container(
+                                                width: 220,
+                                                padding: EdgeInsets.all(20),
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      AppColors.backgroundWhite,
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: Border.all(
+                                                      color: AppColors.dark
+                                                          .withOpacity(0.05)),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: AppColors.dark
+                                                          .withOpacity(0.05),
+                                                      blurRadius: 5,
+                                                      spreadRadius: 0,
+                                                      offset: Offset(1, 1),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    // Province Name
+                                                    Flexible(
+                                                      child: Text(
+                                                        "${i['name']}",
+                                                        style:
+                                                            bodyTextMaxNormal(
+                                                                null,
+                                                                null,
+                                                                FontWeight
+                                                                    .bold),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 5),
+
+                                                    // Job Opening & Count
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          "${i['jobArvairiable'].toString()} ",
+                                                          style: bodyTextMinNormal(
+                                                              null,
+                                                              AppColors
+                                                                  .fontPrimary,
+                                                              null),
+                                                        ),
+                                                        Text(
+                                                          "job_opening".tr,
+                                                          style:
+                                                              bodyTextMinNormal(
+                                                                  null,
+                                                                  null,
+                                                                  null),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 10),
+
+                                                    //GridView.count logo company assigned to province
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Container(
+                                                            height: 40,
+                                                            child:
+                                                                GridView.count(
+                                                              crossAxisCount: 4,
+                                                              crossAxisSpacing:
+                                                                  8,
+                                                              mainAxisSpacing:
+                                                                  10,
+                                                              shrinkWrap: true,
+                                                              physics:
+                                                                  NeverScrollableScrollPhysics(),
+                                                              children: List.generate(
+                                                                  listCompaniesAssignedProvince
+                                                                      .length,
+                                                                  (index) {
+                                                                dynamic
+                                                                    logoProvince =
+                                                                    listCompaniesAssignedProvince[
+                                                                        index];
+
+                                                                return Container(
+                                                                  width: 40,
+                                                                  height: 40,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border:
+                                                                        Border
+                                                                            .all(
+                                                                      color: AppColors
+                                                                          .borderGreyOpacity,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10),
+                                                                    color: AppColors
+                                                                        .backgroundWhite,
+                                                                  ),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            5),
+                                                                    child:
+                                                                        ClipRRect(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
+                                                                      child:
+                                                                          Center(
+                                                                        child: logoProvince['logo'] == "" ||
+                                                                                logoProvince['logo'] == null
+                                                                            ? Image.asset(
+                                                                                'assets/image/no-image-available.png',
+                                                                                fit: BoxFit.contain,
+                                                                              )
+                                                                            : Image.network(
+                                                                                "https://storage.googleapis.com/108-bucket/${logoProvince['logo']}",
+                                                                                fit: BoxFit.contain,
+                                                                                errorBuilder: (context, error, stackTrace) {
+                                                                                  return Image.asset(
+                                                                                    'assets/image/no-image-available.png',
+                                                                                    fit: BoxFit.contain,
+                                                                                  ); // Display an error message
+                                                                                },
+                                                                              ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              }),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+
+                        // ====================================================================
+                        // Category Box Card
+                        // ====================================================================
                         Padding(
                           padding: const EdgeInsets.only(
                               top: 30, left: 20, right: 20),
@@ -1157,17 +1565,21 @@ class _HomeState extends State<Home> {
                                               "saved".tr,
                                       totalColor: AppColors.primary600,
                                       press: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => MyJobs(
-                                                myJobStatus: "SeekerSaveJob"),
-                                          ),
-                                        ).then((val) {
-                                          if (val == "next_jobsearch") {
-                                            onTapBottomNav(1);
-                                          }
+                                        setState(() {
+                                          _myJobStatus = "SeekerSaveJob";
                                         });
+                                        onTapBottomNav(3);
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) => MyJobs(
+                                        //         myJobStatus: "SeekerSaveJob"),
+                                        //   ),
+                                        // ).then((val) {
+                                        //   if (val == "next_jobsearch") {
+                                        //     onTapBottomNav(1);
+                                        //   }
+                                        // });
                                       },
                                     ),
                                   ),
@@ -1183,17 +1595,22 @@ class _HomeState extends State<Home> {
                                               "hidded".tr,
                                       totalColor: AppColors.warning600,
                                       press: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => MyJobs(
-                                                myJobStatus: "SeekerHideJob"),
-                                          ),
-                                        ).then((val) {
-                                          if (val == "next_jobsearch") {
-                                            onTapBottomNav(1);
-                                          }
+                                        setState(() {
+                                          _myJobStatus = "SeekerHideJob";
                                         });
+                                        onTapBottomNav(3);
+
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) => MyJobs(
+                                        //         myJobStatus: "SeekerHideJob"),
+                                        //   ),
+                                        // ).then((val) {
+                                        //   if (val == "next_jobsearch") {
+                                        //     onTapBottomNav(1);
+                                        //   }
+                                        // });
                                       },
                                     ),
                                   ),
@@ -1209,17 +1626,22 @@ class _HomeState extends State<Home> {
                                               "applied".tr,
                                       totalColor: AppColors.teal,
                                       press: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => MyJobs(
-                                                myJobStatus: "AppliedJob"),
-                                          ),
-                                        ).then((val) {
-                                          if (val == "next_jobsearch") {
-                                            onTapBottomNav(1);
-                                          }
+                                        setState(() {
+                                          _myJobStatus = "AppliedJob";
                                         });
+                                        onTapBottomNav(3);
+
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) => MyJobs(
+                                        //         myJobStatus: "AppliedJob"),
+                                        //   ),
+                                        // ).then((val) {
+                                        //   if (val == "next_jobsearch") {
+                                        //     onTapBottomNav(1);
+                                        //   }
+                                        // });
                                       },
                                     ),
                                   ),
@@ -1311,7 +1733,9 @@ class _HomeState extends State<Home> {
                           ),
                         ),
 
-                        // Profile Box
+                        // ====================================================================
+                        // Profile Box Card
+                        // ====================================================================
                         profileProvider.isLoadingProfile
                             ? Padding(
                                 padding: EdgeInsets.only(
@@ -1525,7 +1949,9 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
 
-                        // Recommended Jobs / AI Matching Jobs
+                        // ====================================================================
+                        // Recommended Jobs / AI Matching Jobs Box Card
+                        // ====================================================================
                         if (recommendJobByAI.listRecommendJobs.isNotEmpty)
                           Padding(
                             padding:

@@ -38,6 +38,10 @@ const apiSetPasswordSeeker = globalURL + "/seeker-set-password-app";
 //Delere Account
 const apiDeleteAccountSeeker = globalURL + "/seeker-delete-account-app";
 
+//Online Status / Presence
+const apiUpdateOnlineStatusSeeker =
+    globalURL + "/seeker-update-online-status-app";
+
 //Login
 const apiSigInSeeker = globalURL + "/seeker-login-app";
 const apiAddTokenSeeker = globalURL + "/add-token";
@@ -111,6 +115,7 @@ const catchDuckSeekerApi = globalURL + "/catch-duck-seeker-app";
 const getMyJobSeekerApi = globalURL + "/seeker-get-my-job-app";
 const getProfileDashboardStatus = globalURL + "/get-profile-dashboard-stats";
 const getRecommendJobByAIApi = globalURL + "/get-recommend-job-by-ai";
+const askAIJobSearchApi = globalURL + "/ask-ai-job-search";
 
 //
 //Notifications
@@ -205,6 +210,7 @@ const reedeemCodeEventApi = globalURL + "/redeem-code-wii-fair";
 //get-event-company-job-list-app
 
 //Get reuse type
+const apiGlobalSetting = globalURL + "/get-global-setting";
 const getReuseTypeApiSeeker = globalURL + "/get-reuse-in-seeker-app?";
 //Type Api reuse
 // 'Degree', 'Gender', 'Industry', 'SkillLevel', 'KeySkills',

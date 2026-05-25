@@ -10,6 +10,7 @@ import 'package:app/provider/avatarProvider.dart';
 import 'package:app/provider/bannerProvider.dart';
 import 'package:app/provider/companyProvider.dart';
 import 'package:app/provider/eventAvailableProvider.dart';
+import 'package:app/provider/globalSettingProvider.dart';
 import 'package:app/provider/jobSearchProvider.dart';
 import 'package:app/provider/localSharePrefsProvider.dart';
 import 'package:app/provider/myJobProvider.dart';
@@ -18,7 +19,9 @@ import 'package:app/provider/popupBanner.dart';
 import 'package:app/provider/profileDashboardStatus.dart';
 import 'package:app/provider/profileProvider.dart';
 import 'package:app/provider/recommendJobByAI.dart';
+import 'package:app/provider/provinceProvider.dart';
 import 'package:app/provider/reuseTypeProvider.dart';
+import 'package:app/functions/api.dart';
 import 'package:app/routes.dart';
 import 'package:app/screen/ScreenAfterSignIn/Home/home.dart';
 import 'package:app/screen/login/login.dart';
@@ -373,6 +376,17 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> checkUserOnlineStatus(bool isOnline) async {
+    try {
+      final token = await SharedPrefsHelper.getString("employeeToken");
+      if (token == null || token.isEmpty) return;
+      // await postData(apiUpdateOnlineStatusSeeker, {"isOnline": isOnline});
+      print("Online status updated: isOnline=$isOnline");
+    } catch (e) {
+      print("Failed to update online status: $e");
+    }
+  }
+
   checkLanguage() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -465,6 +479,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     checkLanguage();
     initializeFCM();
     handleDynamicLinks();
+    checkUserOnlineStatus(true);
   }
 
   @override
@@ -479,8 +494,12 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       print("Main App Resumed");
       _isDynamicLinkHandled = false;
       handleDynamicLinks();
-      // ✅ ล้าง badge เมื่อกลับมาใช้แอป
       _clearBadgeNumber();
+      checkUserOnlineStatus(true);
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached ||
+        state == AppLifecycleState.hidden) {
+      checkUserOnlineStatus(false);
     }
   }
 
@@ -500,6 +519,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider(create: (_) => AvatarProvider()),
         ChangeNotifierProvider(create: (_) => PopupBannerProvider()),
         ChangeNotifierProvider(create: (_) => EventAvailableProvider()),
+        ChangeNotifierProvider(create: (_) => GlobalSettingProvider()),
         ChangeNotifierProvider(create: (_) => ReuseTypeProvider()),
         ChangeNotifierProvider(create: (_) => LocalSharedPrefsProvider()),
         ChangeNotifierProvider(create: (_) => RecommendJobAIProvider()),
@@ -507,6 +527,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider(create: (_) => JobSearchProvider()),
         ChangeNotifierProvider(create: (_) => MyJobProvider()),
         ChangeNotifierProvider(create: (_) => CompanyProvider()),
+        ChangeNotifierProvider(create: (_) => ProvinceProvider()),
       ],
       child: Sizer(
         builder: (context, orientation, deviceType) {

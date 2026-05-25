@@ -90,8 +90,8 @@ class LocalString extends Translations {
     {"key": "company name", "en": "Company name", "la": "ຊື່ບໍລິສັດ"},
     {"key": "all company", "en": "All Companies", "la": "ບໍລິສັດທັງໝົດ"},
     {
-      "key": "clear all filter",
-      "en": "Clear all filters",
+      "key": "clear_all_filter",
+      "en": "Clear all filter",
       "la": "ລ້າງຕົວເລືອກທັງໝົດ"
     },
     {"key": "ok", "en": "OK", "la": "ຕົກລົງ"},
@@ -113,7 +113,6 @@ class LocalString extends Translations {
     },
     {"key": "company type", "en": "Company type", "la": "ປະເພດບໍລິສັດ"},
     {"key": "hiring now", "en": "Hiring now", "la": "ປະກາດວຽກຕອນນີ້"},
-    {"key": "clear all", "en": "Clear all", "la": "ລ້າງທັງໝົດ"},
     {"key": "view more", "en": "View more", "la": "ເບິ່ງເພີ່ມຕື່ມ"},
     {"key": "photo", "en": "Photos", "la": "ຮູບພາບ"},
     {"key": "people", "en": "People", "la": "ບຸກຄະລາກອນ"},
@@ -443,7 +442,7 @@ class LocalString extends Translations {
       "la": "ບໍ່ມີຂໍ້ມູນ",
     },
     {
-      "key": "clear all",
+      "key": "clear_all",
       "en": "Clear All",
       "la": "ລ້າງຂໍ້ມູນ",
     },

@@ -6,6 +6,7 @@ import 'package:app/functions/outlineBorder.dart';
 import 'package:app/functions/textSize.dart';
 import 'package:app/helpers/eventAvailableHelper.dart';
 import 'package:app/provider/eventAvailableProvider.dart';
+import 'package:app/provider/globalSettingProvider.dart';
 import 'package:app/provider/profileProvider.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/Events/eventTicket.dart';
 import 'package:app/screen/ScreenAfterSignIn/Account/Events/positionCompany.dart';
@@ -87,6 +88,7 @@ class _RegisterEventState extends State<RegisterEvent>
   Widget build(BuildContext context) {
     final profileProvider = context.watch<ProfileProvider>();
     final eventAvailableProvider = context.watch<EventAvailableProvider>();
+    final globalSettingProvider = context.watch<GlobalSettingProvider>();
 
     if (eventAvailableProvider.boothsCheckedIn != "" &&
         eventAvailableProvider.boothsCheckedIn.isNotEmpty) {
@@ -542,417 +544,432 @@ class _RegisterEventState extends State<RegisterEvent>
                                                 );
                                               },
                                             ),
-                                            SizedBox(height: 20),
 
-                                            //Card Stampes
-                                            Container(
-                                              width: double.infinity,
-                                              padding: EdgeInsets.all(20),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.dark
-                                                    .withOpacity(0.9),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Column(
-                                                children: [
-                                                  // Header with title and progress
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                            if (!globalSettingProvider
+                                                .isHideBoothCheckIn)
+                                              //Card Stampes
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 20),
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  padding: EdgeInsets.all(20),
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.dark
+                                                        .withOpacity(0.9),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: Column(
                                                     children: [
-                                                      Text(
-                                                        "booth_stamp_card".tr,
-                                                        style: bodyTextNormal(
-                                                            null,
-                                                            AppColors.teal,
-                                                            FontWeight.bold),
+                                                      // Header with title and progress
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            "booth_stamp_card"
+                                                                .tr,
+                                                            style:
+                                                                bodyTextNormal(
+                                                                    null,
+                                                                    AppColors
+                                                                        .teal,
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          Container(
+                                                            child: Text(
+                                                              "${eventAvailableProvider.boothsCheckedIn}",
+                                                              style:
+                                                                  bodyTextMaxSmall(
+                                                                      null,
+                                                                      AppColors
+                                                                          .teal,
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
+                                                      SizedBox(height: 20),
+
+                                                      // First row: booths 0, 1, 2
                                                       Container(
-                                                        child: Text(
-                                                          "${eventAvailableProvider.boothsCheckedIn}",
-                                                          style:
-                                                              bodyTextMaxSmall(
-                                                                  null,
-                                                                  AppColors
-                                                                      .teal,
-                                                                  FontWeight
-                                                                      .bold),
+                                                        // color: AppColors.red,
+                                                        child: Row(
+                                                          // mainAxisAlignment:
+                                                          //     MainAxisAlignment
+                                                          //         .spaceAround,
+                                                          children: [
+                                                            cardVisitCompany(
+                                                                eventAvailableProvider
+                                                                            .boothCheckedInCompanies
+                                                                            .length >
+                                                                        0
+                                                                    ? "${eventAvailableProvider.boothCheckedInCompanies[0]["logo"].toString()}"
+                                                                    : "",
+                                                                eventAvailableProvider
+                                                                            .boothCheckedInCompanies
+                                                                            .length >
+                                                                        0
+                                                                    ? true
+                                                                    : false),
+                                                            // SizedBox(width: 5),
+                                                            cardVisitCompany(
+                                                                eventAvailableProvider
+                                                                            .boothCheckedInCompanies
+                                                                            .length >
+                                                                        1
+                                                                    ? "${eventAvailableProvider.boothCheckedInCompanies[1]["logo"].toString()}"
+                                                                    : "",
+                                                                eventAvailableProvider
+                                                                            .boothCheckedInCompanies
+                                                                            .length >
+                                                                        1
+                                                                    ? true
+                                                                    : false),
+                                                            // SizedBox(width: 5),
+                                                            cardVisitCompany(
+                                                                eventAvailableProvider
+                                                                            .boothCheckedInCompanies
+                                                                            .length >
+                                                                        2
+                                                                    ? "${eventAvailableProvider.boothCheckedInCompanies[2]["logo"].toString()}"
+                                                                    : "",
+                                                                eventAvailableProvider
+                                                                            .boothCheckedInCompanies
+                                                                            .length >
+                                                                        2
+                                                                    ? true
+                                                                    : false),
+                                                            // SizedBox(width: 5),
+
+                                                            cardVisitCompany(
+                                                                eventAvailableProvider
+                                                                            .boothCheckedInCompanies
+                                                                            .length >
+                                                                        3
+                                                                    ? "${eventAvailableProvider.boothCheckedInCompanies[3]["logo"].toString()}"
+                                                                    : "",
+                                                                eventAvailableProvider
+                                                                            .boothCheckedInCompanies
+                                                                            .length >
+                                                                        3
+                                                                    ? true
+                                                                    : false),
+                                                            // SizedBox(width: 5),
+                                                            cardVisitCompany(
+                                                                eventAvailableProvider
+                                                                            .boothCheckedInCompanies
+                                                                            .length >
+                                                                        4
+                                                                    ? "${eventAvailableProvider.boothCheckedInCompanies[4]["logo"].toString()}"
+                                                                    : "",
+                                                                eventAvailableProvider
+                                                                            .boothCheckedInCompanies
+                                                                            .length >
+                                                                        4
+                                                                    ? true
+                                                                    : false),
+                                                            // SizedBox(width: 5),
+
+                                                            // Button Open Camera Scan QR
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap: () {
+                                                                  Navigator
+                                                                      .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              QRScanner(),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                                child: Stack(
+                                                                  clipBehavior:
+                                                                      Clip.none,
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Container(
+                                                                      height:
+                                                                          43,
+                                                                      width: 43,
+                                                                      padding:
+                                                                          EdgeInsets.all(
+                                                                              10),
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: AppColors
+                                                                            .teal,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                        border:
+                                                                            Border.all(
+                                                                          color:
+                                                                              AppColors.teal,
+                                                                          width:
+                                                                              1,
+                                                                        ),
+                                                                      ),
+                                                                      child:
+                                                                          Container(
+                                                                        height:
+                                                                            43,
+                                                                        width:
+                                                                            43,
+                                                                        child:
+                                                                            ClipRRect(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8),
+                                                                          child:
+                                                                              Icon(
+                                                                            Icons.camera_alt,
+                                                                            size:
+                                                                                15,
+                                                                            color:
+                                                                                AppColors.iconLight,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
+                                                      ),
+                                                      // SizedBox(height: 10),
+
+                                                      // Second row: booths 3, 4 + camera scan QR
+                                                      // Row(
+                                                      //   children: [
+                                                      //     cardVisitCompany(
+                                                      //         eventAvailableProvider
+                                                      //                     .boothCheckedInCompanies
+                                                      //                     .length >
+                                                      //                 3
+                                                      //             ? "${eventAvailableProvider.boothCheckedInCompanies[3]["logo"].toString()}"
+                                                      //             : "",
+                                                      //         eventAvailableProvider
+                                                      //                     .boothCheckedInCompanies
+                                                      //                     .length >
+                                                      //                 3
+                                                      //             ? true
+                                                      //             : false),
+                                                      //     SizedBox(width: 10),
+                                                      //     cardVisitCompany(
+                                                      //         eventAvailableProvider
+                                                      //                     .boothCheckedInCompanies
+                                                      //                     .length >
+                                                      //                 4
+                                                      //             ? "${eventAvailableProvider.boothCheckedInCompanies[4]["logo"].toString()}"
+                                                      //             : "",
+                                                      //         eventAvailableProvider
+                                                      //                     .boothCheckedInCompanies
+                                                      //                     .length >
+                                                      //                 4
+                                                      //             ? true
+                                                      //             : false),
+                                                      //     SizedBox(width: 10),
+                                                      //     // Button Open Camera Scan QR
+                                                      //     Expanded(
+                                                      //       child: Stack(
+                                                      //         clipBehavior:
+                                                      //             Clip.none,
+                                                      //         alignment:
+                                                      //             Alignment.center,
+                                                      //         children: [
+                                                      //           Container(
+                                                      //             height: 50,
+                                                      //             width: 50,
+                                                      //             padding:
+                                                      //                 EdgeInsets
+                                                      //                     .all(10),
+                                                      //             decoration:
+                                                      //                 BoxDecoration(
+                                                      //               color: AppColors
+                                                      //                   .teal,
+                                                      //               borderRadius:
+                                                      //                   BorderRadius
+                                                      //                       .circular(
+                                                      //                           8),
+                                                      //               border:
+                                                      //                   Border.all(
+                                                      //                 color:
+                                                      //                     AppColors
+                                                      //                         .teal,
+                                                      //                 width: 1,
+                                                      //               ),
+                                                      //             ),
+                                                      //             child: Container(
+                                                      //               height: 50,
+                                                      //               width: 50,
+                                                      //               child:
+                                                      //                   ClipRRect(
+                                                      //                 borderRadius:
+                                                      //                     BorderRadius
+                                                      //                         .circular(
+                                                      //                             8),
+                                                      //                 child: Icon(
+                                                      //                   Icons
+                                                      //                       .camera_alt,
+                                                      //                   size: 30,
+                                                      //                   color: AppColors
+                                                      //                       .iconLight,
+                                                      //                 ),
+                                                      //               ),
+                                                      //             ),
+                                                      //           ),
+                                                      //         ],
+                                                      //       ),
+                                                      //     ),
+                                                      //   ],
+                                                      // ),
+
+                                                      SizedBox(height: 20),
+
+                                                      // Redeem button
+                                                      Button(
+                                                        boxDecBorderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        buttonColor:
+                                                            !eventAvailableProvider
+                                                                    .isRedeemAvailableBooth
+                                                                ? AppColors
+                                                                    .dark500
+                                                                : AppColors
+                                                                    .teal,
+                                                        text: eventAvailableProvider
+                                                                .isAlreadyRedeemedBooth
+                                                            ? "redeemed".tr
+                                                            : "redeem_reward"
+                                                                .tr,
+                                                        textColor:
+                                                            AppColors.fontWhite,
+                                                        textFontWeight:
+                                                            FontWeight.bold,
+                                                        press: () async {
+                                                          // That booth is not available for redemption
+                                                          if (!eventAvailableProvider
+                                                              .isRedeemAvailableBooth) {
+                                                            // Display warning dialog
+                                                            await showDialog(
+                                                              barrierDismissible:
+                                                                  false,
+                                                              context: context,
+                                                              builder:
+                                                                  (context) {
+                                                                return NewVer5CustAlertDialogWarningBtnConfirm(
+                                                                  title:
+                                                                      "warning"
+                                                                          .tr,
+                                                                  contentText: "u_must_check_in".tr +
+                                                                      "\n\n" +
+                                                                      "checked_in"
+                                                                          .tr +
+                                                                      ": ${boothCurrentCheckIn} \n" +
+                                                                      "must_check_in_all"
+                                                                          .tr +
+                                                                      ": ${boothMustCheckIn}"
+                                                                          .tr,
+                                                                  textButton:
+                                                                      "ok".tr,
+                                                                  press: () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                );
+                                                              },
+                                                            );
+                                                          }
+
+                                                          // That booth is already redeemed
+                                                          // else if (eventAvailableProvider
+                                                          //     .isAlreadyRedeemedBooth) {
+                                                          //   // Display warning dialog
+                                                          //   await showDialog(
+                                                          //     context: context,
+                                                          //     builder: (context) {
+                                                          //       return CustAlertDialogWarningWithoutBtn(
+                                                          //         title:
+                                                          //             "warning".tr,
+                                                          //         contentText:
+                                                          //             "redeemed".tr,
+                                                          //       );
+                                                          //     },
+                                                          //   );
+                                                          // }
+
+                                                          // That booth is available for redemption
+                                                          else if (eventAvailableProvider
+                                                                  .isRedeemAvailableBooth &&
+                                                              !eventAvailableProvider
+                                                                  .isAlreadyRedeemedBooth) {
+                                                            modalBottomSheetCodeAndConfirm(
+                                                                context,
+                                                                "redeem_reward"
+                                                                    .tr,
+                                                                () async {
+                                                              if (_redeemFormKey
+                                                                  .currentState!
+                                                                  .validate()) {
+                                                                // Handle redeem logic here
+                                                                print(
+                                                                    'Text code: ${_textCodeController.text}');
+                                                                // Dismiss keyboard completely using modal context
+                                                                FocusManager
+                                                                    .instance
+                                                                    .primaryFocus
+                                                                    ?.unfocus();
+
+                                                                // Delay to ensure keyboard is dismissed
+                                                                await Future.delayed(
+                                                                    Duration(
+                                                                        milliseconds:
+                                                                            100));
+
+                                                                // Api Reedeem Reward Event
+
+                                                                reedeemCodeEventHelper(
+                                                                    "${_textCodeController.text}",
+                                                                    onPressOkay:
+                                                                        () {
+                                                                  // Close dialog
+                                                                  Navigator.pop(
+                                                                      context);
+
+                                                                  // Navigate back to registerEvent.dart
+                                                                  if (Navigator
+                                                                      .canPop(
+                                                                          context)) {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  }
+                                                                });
+
+                                                                _clearCodeEmpty();
+                                                              }
+                                                            }).whenComplete(() {
+                                                              // Clear input when modal is dismissed (back button pressed)
+                                                              _clearCodeEmpty();
+                                                            });
+                                                          }
+                                                        },
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(height: 20),
-
-                                                  // First row: booths 0, 1, 2
-                                                  Container(
-                                                    // color: AppColors.red,
-                                                    child: Row(
-                                                      // mainAxisAlignment:
-                                                      //     MainAxisAlignment
-                                                      //         .spaceAround,
-                                                      children: [
-                                                        cardVisitCompany(
-                                                            eventAvailableProvider
-                                                                        .boothCheckedInCompanies
-                                                                        .length >
-                                                                    0
-                                                                ? "${eventAvailableProvider.boothCheckedInCompanies[0]["logo"].toString()}"
-                                                                : "",
-                                                            eventAvailableProvider
-                                                                        .boothCheckedInCompanies
-                                                                        .length >
-                                                                    0
-                                                                ? true
-                                                                : false),
-                                                        // SizedBox(width: 5),
-                                                        cardVisitCompany(
-                                                            eventAvailableProvider
-                                                                        .boothCheckedInCompanies
-                                                                        .length >
-                                                                    1
-                                                                ? "${eventAvailableProvider.boothCheckedInCompanies[1]["logo"].toString()}"
-                                                                : "",
-                                                            eventAvailableProvider
-                                                                        .boothCheckedInCompanies
-                                                                        .length >
-                                                                    1
-                                                                ? true
-                                                                : false),
-                                                        // SizedBox(width: 5),
-                                                        cardVisitCompany(
-                                                            eventAvailableProvider
-                                                                        .boothCheckedInCompanies
-                                                                        .length >
-                                                                    2
-                                                                ? "${eventAvailableProvider.boothCheckedInCompanies[2]["logo"].toString()}"
-                                                                : "",
-                                                            eventAvailableProvider
-                                                                        .boothCheckedInCompanies
-                                                                        .length >
-                                                                    2
-                                                                ? true
-                                                                : false),
-                                                        // SizedBox(width: 5),
-
-                                                        cardVisitCompany(
-                                                            eventAvailableProvider
-                                                                        .boothCheckedInCompanies
-                                                                        .length >
-                                                                    3
-                                                                ? "${eventAvailableProvider.boothCheckedInCompanies[3]["logo"].toString()}"
-                                                                : "",
-                                                            eventAvailableProvider
-                                                                        .boothCheckedInCompanies
-                                                                        .length >
-                                                                    3
-                                                                ? true
-                                                                : false),
-                                                        // SizedBox(width: 5),
-                                                        cardVisitCompany(
-                                                            eventAvailableProvider
-                                                                        .boothCheckedInCompanies
-                                                                        .length >
-                                                                    4
-                                                                ? "${eventAvailableProvider.boothCheckedInCompanies[4]["logo"].toString()}"
-                                                                : "",
-                                                            eventAvailableProvider
-                                                                        .boothCheckedInCompanies
-                                                                        .length >
-                                                                    4
-                                                                ? true
-                                                                : false),
-                                                        // SizedBox(width: 5),
-
-                                                        // Button Open Camera Scan QR
-                                                        Expanded(
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          QRScanner(),
-                                                                ),
-                                                              );
-                                                            },
-                                                            child: Stack(
-                                                              clipBehavior:
-                                                                  Clip.none,
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              children: [
-                                                                Container(
-                                                                  height: 43,
-                                                                  width: 43,
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              10),
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color:
-                                                                        AppColors
-                                                                            .teal,
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                    border:
-                                                                        Border
-                                                                            .all(
-                                                                      color: AppColors
-                                                                          .teal,
-                                                                      width: 1,
-                                                                    ),
-                                                                  ),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 43,
-                                                                    width: 43,
-                                                                    child:
-                                                                        ClipRRect(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8),
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .camera_alt,
-                                                                        size:
-                                                                            15,
-                                                                        color: AppColors
-                                                                            .iconLight,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  // SizedBox(height: 10),
-
-                                                  // Second row: booths 3, 4 + camera scan QR
-                                                  // Row(
-                                                  //   children: [
-                                                  //     cardVisitCompany(
-                                                  //         eventAvailableProvider
-                                                  //                     .boothCheckedInCompanies
-                                                  //                     .length >
-                                                  //                 3
-                                                  //             ? "${eventAvailableProvider.boothCheckedInCompanies[3]["logo"].toString()}"
-                                                  //             : "",
-                                                  //         eventAvailableProvider
-                                                  //                     .boothCheckedInCompanies
-                                                  //                     .length >
-                                                  //                 3
-                                                  //             ? true
-                                                  //             : false),
-                                                  //     SizedBox(width: 10),
-                                                  //     cardVisitCompany(
-                                                  //         eventAvailableProvider
-                                                  //                     .boothCheckedInCompanies
-                                                  //                     .length >
-                                                  //                 4
-                                                  //             ? "${eventAvailableProvider.boothCheckedInCompanies[4]["logo"].toString()}"
-                                                  //             : "",
-                                                  //         eventAvailableProvider
-                                                  //                     .boothCheckedInCompanies
-                                                  //                     .length >
-                                                  //                 4
-                                                  //             ? true
-                                                  //             : false),
-                                                  //     SizedBox(width: 10),
-                                                  //     // Button Open Camera Scan QR
-                                                  //     Expanded(
-                                                  //       child: Stack(
-                                                  //         clipBehavior:
-                                                  //             Clip.none,
-                                                  //         alignment:
-                                                  //             Alignment.center,
-                                                  //         children: [
-                                                  //           Container(
-                                                  //             height: 50,
-                                                  //             width: 50,
-                                                  //             padding:
-                                                  //                 EdgeInsets
-                                                  //                     .all(10),
-                                                  //             decoration:
-                                                  //                 BoxDecoration(
-                                                  //               color: AppColors
-                                                  //                   .teal,
-                                                  //               borderRadius:
-                                                  //                   BorderRadius
-                                                  //                       .circular(
-                                                  //                           8),
-                                                  //               border:
-                                                  //                   Border.all(
-                                                  //                 color:
-                                                  //                     AppColors
-                                                  //                         .teal,
-                                                  //                 width: 1,
-                                                  //               ),
-                                                  //             ),
-                                                  //             child: Container(
-                                                  //               height: 50,
-                                                  //               width: 50,
-                                                  //               child:
-                                                  //                   ClipRRect(
-                                                  //                 borderRadius:
-                                                  //                     BorderRadius
-                                                  //                         .circular(
-                                                  //                             8),
-                                                  //                 child: Icon(
-                                                  //                   Icons
-                                                  //                       .camera_alt,
-                                                  //                   size: 30,
-                                                  //                   color: AppColors
-                                                  //                       .iconLight,
-                                                  //                 ),
-                                                  //               ),
-                                                  //             ),
-                                                  //           ),
-                                                  //         ],
-                                                  //       ),
-                                                  //     ),
-                                                  //   ],
-                                                  // ),
-
-                                                  SizedBox(height: 20),
-
-                                                  // Redeem button
-                                                  Button(
-                                                    boxDecBorderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    buttonColor:
-                                                        !eventAvailableProvider
-                                                                .isRedeemAvailableBooth
-                                                            ? AppColors.dark500
-                                                            : AppColors.teal,
-                                                    text: eventAvailableProvider
-                                                            .isAlreadyRedeemedBooth
-                                                        ? "redeemed".tr
-                                                        : "redeem_reward".tr,
-                                                    textColor:
-                                                        AppColors.fontWhite,
-                                                    textFontWeight:
-                                                        FontWeight.bold,
-                                                    press: () async {
-                                                      // That booth is not available for redemption
-                                                      if (!eventAvailableProvider
-                                                          .isRedeemAvailableBooth) {
-                                                        // Display warning dialog
-                                                        await showDialog(
-                                                          barrierDismissible:
-                                                              false,
-                                                          context: context,
-                                                          builder: (context) {
-                                                            return NewVer5CustAlertDialogWarningBtnConfirm(
-                                                              title:
-                                                                  "warning".tr,
-                                                              contentText: "u_must_check_in".tr +
-                                                                  "\n\n" +
-                                                                  "checked_in"
-                                                                      .tr +
-                                                                  ": ${boothCurrentCheckIn} \n" +
-                                                                  "must_check_in_all"
-                                                                      .tr +
-                                                                  ": ${boothMustCheckIn}"
-                                                                      .tr,
-                                                              textButton:
-                                                                  "ok".tr,
-                                                              press: () {
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
-                                                            );
-                                                          },
-                                                        );
-                                                      }
-
-                                                      // That booth is already redeemed
-                                                      // else if (eventAvailableProvider
-                                                      //     .isAlreadyRedeemedBooth) {
-                                                      //   // Display warning dialog
-                                                      //   await showDialog(
-                                                      //     context: context,
-                                                      //     builder: (context) {
-                                                      //       return CustAlertDialogWarningWithoutBtn(
-                                                      //         title:
-                                                      //             "warning".tr,
-                                                      //         contentText:
-                                                      //             "redeemed".tr,
-                                                      //       );
-                                                      //     },
-                                                      //   );
-                                                      // }
-
-                                                      // That booth is available for redemption
-                                                      else if (eventAvailableProvider
-                                                              .isRedeemAvailableBooth &&
-                                                          !eventAvailableProvider
-                                                              .isAlreadyRedeemedBooth) {
-                                                        modalBottomSheetCodeAndConfirm(
-                                                            context,
-                                                            "redeem_reward".tr,
-                                                            () async {
-                                                          if (_redeemFormKey
-                                                              .currentState!
-                                                              .validate()) {
-                                                            // Handle redeem logic here
-                                                            print(
-                                                                'Text code: ${_textCodeController.text}');
-                                                            // Dismiss keyboard completely using modal context
-                                                            FocusManager
-                                                                .instance
-                                                                .primaryFocus
-                                                                ?.unfocus();
-
-                                                            // Delay to ensure keyboard is dismissed
-                                                            await Future.delayed(
-                                                                Duration(
-                                                                    milliseconds:
-                                                                        100));
-
-                                                            // Api Reedeem Reward Event
-
-                                                            reedeemCodeEventHelper(
-                                                                "${_textCodeController.text}",
-                                                                onPressOkay:
-                                                                    () {
-                                                              // Close dialog
-                                                              Navigator.pop(
-                                                                  context);
-
-                                                              // Navigate back to registerEvent.dart
-                                                              if (Navigator
-                                                                  .canPop(
-                                                                      context)) {
-                                                                Navigator.pop(
-                                                                    context);
-                                                              }
-                                                            });
-
-                                                            _clearCodeEmpty();
-                                                          }
-                                                        }).whenComplete(() {
-                                                          // Clear input when modal is dismissed (back button pressed)
-                                                          _clearCodeEmpty();
-                                                        });
-                                                      }
-                                                    },
-                                                  ),
-                                                ],
+                                                ),
                                               ),
-                                            ),
                                           ],
                                         ),
                                       )
@@ -2078,7 +2095,8 @@ class _RegisterEventState extends State<RegisterEvent>
                     //
                     //ກວດສະຖານະງານຈັດຂຶ້ນ ແລະ ກົດລົງທະບຽນແລ້ວ ມີປູ່ມ Check-in by Code, Scan QR(Visit booths check in)
                     if (eventAvailableProvider.eventInfo != null &&
-                        eventAvailableProvider.isApplied)
+                        eventAvailableProvider.isApplied &&
+                        !globalSettingProvider.isHideBoothCheckIn)
                       Container(
                         padding:
                             EdgeInsets.symmetric(horizontal: 20, vertical: 20),
