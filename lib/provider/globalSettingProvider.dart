@@ -10,6 +10,7 @@ class GlobalSettingProvider extends ChangeNotifier {
   // Getters
   bool get isHideBoothCheckIn => _isHideBoothCheckIn;
 
+  //
   // Setters
   set isHideBoothCheckIn(bool value) {
     _isHideBoothCheckIn = value;
