@@ -71,6 +71,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow 108 Jobs to access your camera to take a picture and detect your face.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow 108 Jobs to access your microphone to record and send voice messages in support chat.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

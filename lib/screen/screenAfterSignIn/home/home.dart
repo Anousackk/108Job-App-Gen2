@@ -37,7 +37,7 @@ import 'package:app/screen/login/login.dart';
 import 'package:app/screen/screenAfterSignIn/account/account.dart';
 import 'package:app/screen/screenAfterSignIn/company/company.dart';
 import 'package:app/screen/screenAfterSignIn/home/Widget/profileShimmerWidget.dart';
-import 'package:app/screen/screenAfterSignIn/home/Widget/adminChatSupportDialog.dart';
+import 'package:app/screen/screenAfterSignIn/home/Widget/chatWithAdminSupport.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearch.dart';
 import 'package:app/screen/screenAfterSignIn/jobSearch/jobSearchDetail.dart';
 import 'package:app/screen/screenAfterSignIn/myJob/myJob_old.dart';
@@ -47,6 +47,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'package:get/get.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -97,6 +98,7 @@ class _HomeState extends State<Home> {
 
   Timer? _disconnectTimer;
   bool _hasShownDisconnectedDialog = false;
+  bool _showFullFAB = true;
 
   loadInfo() async {
     final info = await DeviceInfoHelper.getDeviceInfo();
@@ -253,11 +255,23 @@ class _HomeState extends State<Home> {
     // Display popup banner
     if (popupProvider.isShowPopupBanner &&
         popupProvider.imagePopupBanner.isNotEmpty) {
-      showDialogPopupBanner(
-        context,
-        popupProvider.imagePopupBanner,
-        popupProvider.urlPopupBanner,
-      );
+      try {
+        // Pre-cache the image before showing the dialog so it is ready immediately
+        await precacheImage(
+          NetworkImage(popupProvider.imagePopupBanner),
+          context,
+        );
+      } catch (e) {
+        print("Failed to precache popup banner image: $e");
+      }
+
+      if (mounted) {
+        showDialogPopupBanner(
+          context,
+          popupProvider.imagePopupBanner,
+          popupProvider.urlPopupBanner,
+        );
+      }
     }
   }
 
@@ -416,6 +430,24 @@ class _HomeState extends State<Home> {
     internetConnectionChecker();
     loadPopupBanner();
     loadLanguageSharedPrefs();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (_showFullFAB) {
+          setState(() {
+            _showFullFAB = false;
+          });
+        }
+      } else if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (!_showFullFAB) {
+          setState(() {
+            _showFullFAB = true;
+          });
+        }
+      }
+    });
   }
 
   @override
@@ -710,6 +742,219 @@ class _HomeState extends State<Home> {
         //     ],
         //   ),
         // ),
+
+        floatingActionButton: _currentIndex != 0
+            ? null
+            : AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                height: 54,
+                width: _showFullFAB ? 175 : 54,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ChatWithAdminSupport(),
+                      ),
+                    );
+                  },
+                  backgroundColor: AppColors.teal,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(27),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    clipBehavior: Clip.none,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "\uf590",
+                            style: TextStyle(
+                              fontFamily: "FontAwesomeSolid",
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                          if (_showFullFAB) ...[
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                "Admin Support".tr,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "Inter",
+                                  fontSize: 13,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      // if (profileDashboardStatusProvider.totalMessages != 0)
+                      //   Positioned(
+                      //     top: -6,
+                      //     right: _showFullFAB ? -10 : -4,
+                      //     child: Container(
+                      //       padding: const EdgeInsets.all(4),
+                      //       decoration: BoxDecoration(
+                      //         color: AppColors.danger,
+                      //         shape: BoxShape.circle,
+                      //         border:
+                      //             Border.all(color: Colors.white, width: 1.5),
+                      //       ),
+                      //       constraints: const BoxConstraints(
+                      //         minWidth: 18,
+                      //         minHeight: 18,
+                      //       ),
+                      //       child: Center(
+                      //         child: Text(
+                      //           profileDashboardStatusProvider.totalMessages >=
+                      //                   100
+                      //               ? "99+"
+                      //               : "${profileDashboardStatusProvider.totalMessages}",
+                      //           style: const TextStyle(
+                      //             color: Colors.white,
+                      //             fontSize: 8,
+                      //             fontWeight: FontWeight.bold,
+                      //             fontFamily: "Inter",
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                    ],
+                  ),
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildAdminSupportPromoCard(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.primaryCustom,
+              AppColors.primaryCustom.withOpacity(0.85),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primaryCustom.withOpacity(0.25),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            Positioned(
+              right: -20,
+              bottom: -20,
+              child: Opacity(
+                opacity: 0.1,
+                child: Text(
+                  "\uf590",
+                  style: TextStyle(
+                    fontFamily: "FontAwesomeSolid",
+                    fontSize: 150,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Text(
+                      "\uf590",
+                      style: TextStyle(
+                        fontFamily: "FontAwesomeSolid",
+                        fontSize: 28,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "need_help_question".tr,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Inter",
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "chat_with_support_desc".tr,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: 13,
+                            fontFamily: "Inter",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ChatWithAdminSupport(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.primaryCustom,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Text(
+                      "start_chat".tr,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -788,39 +1033,42 @@ class _HomeState extends State<Home> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            // Language Switcher
-                            ChangeLanguage(callBackSetLanguage: (val) {}),
-                            SizedBox(width: 25),
-
                             // Message Contact with admin support
                             GestureDetector(
                               onTap: () async {
-                                var result = await showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) {
-                                    return NewVer2CustAlertDialogWarningBtnConfirmCancel(
-                                      boxCircleColor: AppColors.success200,
-                                      strIcon: "\uf232",
-                                      fontFamilyIcon: "FontAwesomeBrands",
-                                      iconColor: AppColors.success600,
-                                      title: "open_whatsapp".tr,
-                                      contentText: "contact_us_whatsapp".tr,
-                                      textButtonLeft: "cancel".tr,
-                                      textButtonRight: "confirm".tr,
-                                      buttonRightColor: AppColors.success200,
-                                      textButtonRightColor:
-                                          AppColors.success600,
-                                      widgetBottomColor: AppColors.success200,
-                                    );
-                                  },
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ChatWithAdminSupport(),
+                                  ),
                                 );
-                                if (result == "Ok") {
-                                  openWhatsApp(
-                                    phone: '8562028034426',
-                                    message: '',
-                                  );
-                                }
+                                // var result = await showDialog(
+                                //   barrierDismissible: false,
+                                //   context: context,
+                                //   builder: (context) {
+                                //     return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                //       boxCircleColor: AppColors.success200,
+                                //       strIcon: "\uf232",
+                                //       fontFamilyIcon: "FontAwesomeBrands",
+                                //       iconColor: AppColors.success600,
+                                //       title: "open_whatsapp".tr,
+                                //       contentText: "contact_us_whatsapp".tr,
+                                //       textButtonLeft: "cancel".tr,
+                                //       textButtonRight: "confirm".tr,
+                                //       buttonRightColor: AppColors.success200,
+                                //       textButtonRightColor:
+                                //           AppColors.success600,
+                                //       widgetBottomColor: AppColors.success200,
+                                //     );
+                                //   },
+                                // );
+                                // if (result == "Ok") {
+                                //   openWhatsApp(
+                                //     phone: '8562028034426',
+                                //     message: '',
+                                //   );
+                                // }
 
                                 // showGeneralDialog(
                                 //   context: context,
@@ -849,13 +1097,16 @@ class _HomeState extends State<Home> {
                                 //   },
                                 // );
                               },
-                              child: Text(
-                                "\uf590",
-                                style: fontAwesomeSolid(
-                                    null, 20, AppColors.iconLight, null),
+                              child: Container(
+                                padding: EdgeInsets.all(15),
+                                child: Text(
+                                  "\uf590",
+                                  style: fontAwesomeSolid(
+                                      null, 20, AppColors.iconLight, null),
+                                ),
                               ),
                             ),
-                            SizedBox(width: 30),
+                            // SizedBox(width: 30),
 
                             // Messages with Badge
                             GestureDetector(
@@ -867,52 +1118,66 @@ class _HomeState extends State<Home> {
                                   ),
                                 );
                               },
-                              child: Stack(
-                                clipBehavior: Clip.none,
-                                alignment: AlignmentDirectional.center,
-                                children: [
-                                  // Message Icon
-                                  Text(
-                                    "\uf0f3",
-                                    style: fontAwesomeSolid(
-                                        null, 20, AppColors.iconLight, null),
-                                  ),
-                                  // Unread Message Badge
-                                  if (profileDashboardStatusProvider
-                                          .totalMessages !=
-                                      0)
-                                    Positioned(
-                                      top: -12,
-                                      right: -15,
-                                      child: Container(
-                                        height: 22,
-                                        width: 22,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.danger,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              profileDashboardStatusProvider
-                                                          .totalMessages >=
-                                                      100
-                                                  ? "10+"
-                                                  : "${profileDashboardStatusProvider.totalMessages}",
-                                              style: bodyTextMiniSmall(
-                                                  null,
-                                                  AppColors.fontWhite,
-                                                  FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
+                              child: Padding(
+                                padding: EdgeInsets.all(15),
+                                child: Stack(
+                                  clipBehavior: Clip.none,
+                                  alignment: AlignmentDirectional.center,
+                                  children: [
+                                    // Message Icon
+                                    Container(
+                                      child: Text(
+                                        "\uf0f3",
+                                        style: fontAwesomeSolid(null, 20,
+                                            AppColors.iconLight, null),
                                       ),
                                     ),
-                                ],
+                                    // Unread Message Badge
+                                    if (profileDashboardStatusProvider
+                                            .totalMessages !=
+                                        0)
+                                      Positioned(
+                                        top: -12,
+                                        right: -15,
+                                        child: Container(
+                                          height: 22,
+                                          width: 22,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.danger,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                profileDashboardStatusProvider
+                                                            .totalMessages >=
+                                                        100
+                                                    ? "10+"
+                                                    : "${profileDashboardStatusProvider.totalMessages}",
+                                                style: bodyTextMiniSmall(
+                                                    null,
+                                                    AppColors.fontWhite,
+                                                    FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ),
                             ),
+
+                            // Language Switcher
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: 15, top: 15, bottom: 15),
+                              child:
+                                  ChangeLanguage(callBackSetLanguage: (val) {}),
+                            ),
+                            // SizedBox(width: 25),
                           ],
                         ),
                       ),
@@ -1033,6 +1298,9 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
+                // SliverToBoxAdapter(
+                //   child: _buildAdminSupportPromoCard(context),
+                // ),
                 SliverToBoxAdapter(
                   child: Container(
                     color: AppColors.backgroundWhite,
