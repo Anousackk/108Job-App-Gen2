@@ -1115,10 +1115,7 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
             backgroundColor: AppColors.white.withOpacity(0.2),
             child: Text(
               title.isNotEmpty ? title[0].toUpperCase() : 'S',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.white,
-                  fontSize: 16),
+              style: bodyTextMaxNormal(null, AppColors.white, FontWeight.bold),
             ),
           ),
           const SizedBox(width: 12),
@@ -1129,10 +1126,8 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
+                  style:
+                      bodyTextMaxNormal(null, AppColors.white, FontWeight.bold),
                   overflow: TextOverflow.ellipsis,
                 ),
                 // Text(
@@ -1191,13 +1186,13 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
             const SizedBox(height: 24),
             Text(
               "Hello",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: bodyTextMaxNormal(null, AppColors.dark, FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               "Message Support \n Text, Photos, Videos, Files or Voice.".tr,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: Colors.black54),
+              style: bodyTextMinNormal(null, AppColors.dark, null),
             ),
             const SizedBox(height: 32),
             // ElevatedButton(
@@ -1284,9 +1279,8 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
         children: [
           Expanded(
             child: Divider(
-              color: AppColors.dark200,
-              thickness: 0.5,
-              // height: 1,
+              color: AppColors.dark,
+              thickness: 0.1,
             ),
           ),
           Container(
@@ -1303,9 +1297,8 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
           ),
           Expanded(
             child: Divider(
-              color: AppColors.dark200,
-              thickness: 0.5,
-              // height: 1,
+              color: AppColors.dark,
+              thickness: 0.1,
             ),
           ),
         ],
@@ -1319,7 +1312,7 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
         key: const ValueKey('empty_messages'),
         child: Text(
           "No messages yet.".tr,
-          style: const TextStyle(color: Colors.black38, fontSize: 13),
+          style: bodyTextMaxSmall(null, AppColors.dark, null),
         ),
       );
     }
@@ -1439,29 +1432,16 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
                           bottomLeft: Radius.circular(isMe ? 16 : 0),
                           bottomRight: Radius.circular(isMe ? 0 : 16),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                              color: AppColors.black.withOpacity(0.03),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2)),
-                        ],
                         border: isMe
                             ? null
                             : Border.all(
                                 color: AppColors.black.withOpacity(0.05),
                                 width: 0.5),
                       ),
-                      child: Text(
-                        text,
-                        style: TextStyle(
-                          color: isMe ? AppColors.white : AppColors.dark,
-                          fontSize: 14,
-                        ),
-                      ),
+                      child: _buildTextWithLinks(text, isMe),
                     ),
 
                   // Metadata row (Time and ticks)
-
                   Padding(
                     padding: const EdgeInsets.only(top: 3, left: 4, right: 4),
                     child: Row(
@@ -1504,6 +1484,89 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTextWithLinks(String text, bool isMe) {
+    final RegExp urlRegExp = RegExp(
+      r'(https?:\/\/[^\s]+)',
+      caseSensitive: false,
+    );
+
+    final Iterable<RegExpMatch> matches = urlRegExp.allMatches(text);
+
+    if (matches.isEmpty) {
+      return Text(
+        text,
+        style: bodyTextMinNormal(
+          null,
+          isMe ? AppColors.white : AppColors.dark,
+          FontWeight.bold,
+        ),
+      );
+    }
+
+    final List<String> urls = [];
+    String plainText = text;
+
+    for (final RegExpMatch match in matches) {
+      final String urlString = match.group(0)!;
+      urls.add(urlString);
+      plainText = plainText.replaceAll(urlString, '');
+    }
+
+    plainText = plainText.trim();
+    if (plainText.endsWith(':')) {
+      plainText = plainText.substring(0, plainText.length - 1).trim();
+    }
+
+    final List<Widget> children = [];
+
+    // 1. Links on top
+    for (int i = 0; i < urls.length; i++) {
+      final String urlString = urls[i];
+      children.add(
+        GestureDetector(
+          onTap: () => _launchURL(urlString),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            decoration: BoxDecoration(
+                color: isMe ? AppColors.primary600 : AppColors.dark200,
+                borderRadius: BorderRadius.circular(5)),
+            child: Text(
+              urlString,
+              style: bodyTextMinNormal(
+                  null,
+                  isMe ? Colors.white : AppColors.primaryCustom,
+                  FontWeight.bold),
+            ),
+          ),
+        ),
+      );
+      if (i < urls.length - 1) {
+        children.add(const SizedBox(height: 4));
+      }
+    }
+
+    // 2. Text under link
+    if (plainText.isNotEmpty) {
+      children.add(const SizedBox(height: 8));
+      children.add(
+        Text(
+          plainText,
+          style: bodyTextMinNormal(
+            null,
+            isMe ? AppColors.white : AppColors.dark,
+            FontWeight.bold,
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: children,
     );
   }
 
@@ -1651,11 +1714,8 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
                         ),
                         child: Text(
                           extension,
-                          style: TextStyle(
-                              color: indicatorColor,
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'SatoshiBold'),
+                          style: bodyTextCustom(
+                              8, null, indicatorColor, FontWeight.bold),
                         ),
                       ),
                     ],
@@ -1663,26 +1723,22 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
                   SizedBox(height: 3),
                   Text(
                     name.isNotEmpty ? name : "Attachment".tr,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: Colors.black87),
+                    style: bodyTextSmall(null, AppColors.dark, null),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                   if (sizeBytes != null) ...[
-                    const SizedBox(height: 1),
+                    SizedBox(height: 1),
                     Text(
                       _formatFileSize(sizeBytes),
-                      style:
-                          const TextStyle(color: Colors.black38, fontSize: 10),
+                      style: bodyTextCustom(10, null, AppColors.dark500, null),
                     ),
                   ],
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            const Icon(Icons.arrow_downward, color: Colors.black26, size: 16),
+            SizedBox(width: 8),
+            Icon(Icons.arrow_downward, color: AppColors.iconDark, size: 16),
           ],
         ),
       ),
@@ -2023,44 +2079,35 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
   Widget _buildResolvedBanner() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: const BoxDecoration(
-        color: Color(0xFFF0FDF4),
-        border: Border(
-          top: BorderSide(color: Color(0xFFBBF7D0), width: 0.5),
-          bottom: BorderSide(color: Color(0xFFBBF7D0), width: 0.5),
-        ),
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.success100,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.check_circle_outline,
-              color: Color(0xFF16A34A), size: 18),
-          const SizedBox(width: 10),
+          Icon(Icons.check_circle, color: AppColors.success, size: 18),
+          SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Resolved".tr,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF15803D),
-                      fontSize: 13),
+                  style: bodyTextMaxSmall(
+                      null, AppColors.success, FontWeight.bold),
                 ),
                 if (_resolveNote.isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(_resolveNote,
-                      style: const TextStyle(
-                          color: Color(0xFF166534), fontSize: 11)),
+                  SizedBox(height: 2),
+                  Text(
+                    _resolveNote,
+                    style: bodyTextMiniSmall(null, AppColors.success, null),
+                  ),
                 ],
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   "Send a message below to start a new chat".tr,
-                  style: TextStyle(
-                      color: const Color(0xFF166534).withOpacity(0.7),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500),
+                  style: bodyTextMiniSmall(null, AppColors.success, null),
                 ),
               ],
             ),
@@ -2107,20 +2154,18 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
             mediaWidget = Container(
               width: 76,
               height: 76,
-              color: Colors.black87,
+              color: AppColors.dark,
               child: Stack(
                 alignment: Alignment.center,
-                children: const [
+                children: [
                   Icon(Icons.play_circle_outline,
                       color: Colors.white, size: 28),
                   Positioned(
                     bottom: 4,
                     child: Text(
                       "VIDEO",
-                      style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 8,
-                          fontWeight: FontWeight.bold),
+                      style: bodyTextCustom(
+                          8, null, AppColors.dark, FontWeight.bold),
                     ),
                   ),
                 ],
@@ -2135,13 +2180,11 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.mic, color: AppColors.primaryCustom, size: 24),
-                  const SizedBox(height: 4),
-                  const Text(
+                  SizedBox(height: 4),
+                  Text(
                     "AUDIO",
-                    style: TextStyle(
-                        fontSize: 8,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black54),
+                    style: bodyTextCustom(
+                        8, null, AppColors.dark, FontWeight.bold),
                   ),
                 ],
               ),
@@ -2153,15 +2196,13 @@ class _ChatWithAdminSupportState extends State<ChatWithAdminSupport> {
               color: Colors.grey[100],
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Icon(Icons.insert_drive_file, color: Colors.teal, size: 24),
                   SizedBox(height: 4),
                   Text(
                     "FILE",
-                    style: TextStyle(
-                        fontSize: 8,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black54),
+                    style: bodyTextCustom(
+                        8, null, AppColors.dark, FontWeight.bold),
                   ),
                 ],
               ),

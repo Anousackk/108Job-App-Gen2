@@ -62,8 +62,8 @@ android {
         minSdkVersion 23
         targetSdk 35
         //Production
-        versionCode 131
-        versionName "3.7.1"
+        versionCode 133
+        versionName "3.7.3"
         multiDexEnabled true
         //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

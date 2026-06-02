@@ -472,6 +472,7 @@ class _HomeState extends State<Home> {
     final recommendJobByAI = context.watch<RecommendJobAIProvider>();
     final profileDashboardStatusProvider =
         context.watch<ProfileDashboardStatusProvider>();
+    final globalSettingProvider = context.watch<GlobalSettingProvider>();
 
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
@@ -504,6 +505,7 @@ class _HomeState extends State<Home> {
               statisticEventProvider: statisticEventProvider,
               recommendJobByAI: recommendJobByAI,
               profileDashboardStatusProvider: profileDashboardStatusProvider,
+              globalSettingProvider: globalSettingProvider,
             ),
 
             // Tab 1 Job Search
@@ -659,6 +661,8 @@ class _HomeState extends State<Home> {
           ],
         ),
 
+        // Floating action button for chat with admin support
+
         // floatingActionButton: Padding(
         //   padding: const EdgeInsets.only(bottom: 10.0, right: 4.0),
         //   child: Column(
@@ -743,96 +747,95 @@ class _HomeState extends State<Home> {
         //   ),
         // ),
 
-        floatingActionButton: _currentIndex != 0
-            ? null
-            : AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                height: 54,
-                width: _showFullFAB ? 175 : 54,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ChatWithAdminSupport(),
-                      ),
-                    );
-                  },
-                  backgroundColor: AppColors.teal,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(27),
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    clipBehavior: Clip.none,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "\uf590",
-                            style: TextStyle(
-                              fontFamily: "FontAwesomeSolid",
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
-                          ),
-                          if (_showFullFAB) ...[
-                            const SizedBox(width: 8),
-                            Flexible(
-                              child: Text(
-                                "Admin Support".tr,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: "Inter",
-                                  fontSize: 13,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                      // if (profileDashboardStatusProvider.totalMessages != 0)
-                      //   Positioned(
-                      //     top: -6,
-                      //     right: _showFullFAB ? -10 : -4,
-                      //     child: Container(
-                      //       padding: const EdgeInsets.all(4),
-                      //       decoration: BoxDecoration(
-                      //         color: AppColors.danger,
-                      //         shape: BoxShape.circle,
-                      //         border:
-                      //             Border.all(color: Colors.white, width: 1.5),
-                      //       ),
-                      //       constraints: const BoxConstraints(
-                      //         minWidth: 18,
-                      //         minHeight: 18,
-                      //       ),
-                      //       child: Center(
-                      //         child: Text(
-                      //           profileDashboardStatusProvider.totalMessages >=
-                      //                   100
-                      //               ? "99+"
-                      //               : "${profileDashboardStatusProvider.totalMessages}",
-                      //           style: const TextStyle(
-                      //             color: Colors.white,
-                      //             fontSize: 8,
-                      //             fontWeight: FontWeight.bold,
-                      //             fontFamily: "Inter",
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                    ],
-                  ),
-                ),
-              ),
+        // Floating action button for chat with admin support
+
+        // floatingActionButton: _currentIndex != 0
+        //     ? null
+        //     : AnimatedContainer(
+        //         duration: const Duration(milliseconds: 300),
+        //         curve: Curves.easeInOut,
+        //         height: 54,
+        //         width: _showFullFAB ? 175 : 54,
+        //         child: FloatingActionButton(
+        //           onPressed: () {
+        //             Navigator.push(
+        //               context,
+        //               MaterialPageRoute(
+        //                 builder: (context) => const ChatWithAdminSupport(),
+        //               ),
+        //             );
+        //           },
+        //           backgroundColor: AppColors.primaryCustom,
+        //           elevation: 0,
+        //           shape: RoundedRectangleBorder(
+        //             borderRadius: BorderRadius.circular(100),
+        //           ),
+        //           child: Stack(
+        //             alignment: Alignment.center,
+        //             clipBehavior: Clip.none,
+        //             children: [
+        //               Row(
+        //                 mainAxisAlignment: MainAxisAlignment.center,
+        //                 children: [
+        //                   Text(
+        //                     "\uf590",
+        //                     style: fontAwesomeSolid(
+        //                       null,
+        //                       18,
+        //                       AppColors.iconLight,
+        //                       null,
+        //                     ),
+        //                   ),
+        //                   if (_showFullFAB) ...[
+        //                     const SizedBox(width: 8),
+        //                     Flexible(
+        //                       child: Text(
+        //                         "Admin Support".tr,
+        //                         style: bodyTextNormal(
+        //                             null, AppColors.fontWhite, null),
+        //                         maxLines: 1,
+        //                         overflow: TextOverflow.ellipsis,
+        //                       ),
+        //                     ),
+        //                   ],
+        //                 ],
+        //               ),
+        //               // if (profileDashboardStatusProvider.totalMessages != 0)
+        //               //   Positioned(
+        //               //     top: -6,
+        //               //     right: _showFullFAB ? -10 : -4,
+        //               //     child: Container(
+        //               //       padding: const EdgeInsets.all(4),
+        //               //       decoration: BoxDecoration(
+        //               //         color: AppColors.danger,
+        //               //         shape: BoxShape.circle,
+        //               //         border:
+        //               //             Border.all(color: Colors.white, width: 1.5),
+        //               //       ),
+        //               //       constraints: const BoxConstraints(
+        //               //         minWidth: 18,
+        //               //         minHeight: 18,
+        //               //       ),
+        //               //       child: Center(
+        //               //         child: Text(
+        //               //           profileDashboardStatusProvider.totalMessages >=
+        //               //                   100
+        //               //               ? "99+"
+        //               //               : "${profileDashboardStatusProvider.totalMessages}",
+        //               //           style: const TextStyle(
+        //               //             color: Colors.white,
+        //               //             fontSize: 8,
+        //               //             fontWeight: FontWeight.bold,
+        //               //             fontFamily: "Inter",
+        //               //           ),
+        //               //         ),
+        //               //       ),
+        //               //     ),
+        //               //   ),
+        //             ],
+        //           ),
+        //         ),
+        //       ),
       ),
     );
   }
@@ -968,6 +971,7 @@ class _HomeState extends State<Home> {
     required EventAvailableProvider statisticEventProvider,
     required RecommendJobAIProvider recommendJobByAI,
     required ProfileDashboardStatusProvider profileDashboardStatusProvider,
+    required GlobalSettingProvider globalSettingProvider,
   }) {
     return SafeArea(
       child: Stack(
@@ -1034,78 +1038,79 @@ class _HomeState extends State<Home> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             // Message Contact with admin support
-                            GestureDetector(
-                              onTap: () async {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ChatWithAdminSupport(),
-                                  ),
-                                );
-                                // var result = await showDialog(
-                                //   barrierDismissible: false,
-                                //   context: context,
-                                //   builder: (context) {
-                                //     return NewVer2CustAlertDialogWarningBtnConfirmCancel(
-                                //       boxCircleColor: AppColors.success200,
-                                //       strIcon: "\uf232",
-                                //       fontFamilyIcon: "FontAwesomeBrands",
-                                //       iconColor: AppColors.success600,
-                                //       title: "open_whatsapp".tr,
-                                //       contentText: "contact_us_whatsapp".tr,
-                                //       textButtonLeft: "cancel".tr,
-                                //       textButtonRight: "confirm".tr,
-                                //       buttonRightColor: AppColors.success200,
-                                //       textButtonRightColor:
-                                //           AppColors.success600,
-                                //       widgetBottomColor: AppColors.success200,
-                                //     );
-                                //   },
-                                // );
-                                // if (result == "Ok") {
-                                //   openWhatsApp(
-                                //     phone: '8562028034426',
-                                //     message: '',
-                                //   );
-                                // }
+                            if (!globalSettingProvider.isHideChat)
+                              GestureDetector(
+                                onTap: () async {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ChatWithAdminSupport(),
+                                    ),
+                                  );
+                                  // var result = await showDialog(
+                                  //   barrierDismissible: false,
+                                  //   context: context,
+                                  //   builder: (context) {
+                                  //     return NewVer2CustAlertDialogWarningBtnConfirmCancel(
+                                  //       boxCircleColor: AppColors.success200,
+                                  //       strIcon: "\uf232",
+                                  //       fontFamilyIcon: "FontAwesomeBrands",
+                                  //       iconColor: AppColors.success600,
+                                  //       title: "open_whatsapp".tr,
+                                  //       contentText: "contact_us_whatsapp".tr,
+                                  //       textButtonLeft: "cancel".tr,
+                                  //       textButtonRight: "confirm".tr,
+                                  //       buttonRightColor: AppColors.success200,
+                                  //       textButtonRightColor:
+                                  //           AppColors.success600,
+                                  //       widgetBottomColor: AppColors.success200,
+                                  //     );
+                                  //   },
+                                  // );
+                                  // if (result == "Ok") {
+                                  //   openWhatsApp(
+                                  //     phone: '8562028034426',
+                                  //     message: '',
+                                  //   );
+                                  // }
 
-                                // showGeneralDialog(
-                                //   context: context,
-                                //   barrierDismissible: false,
-                                //   barrierColor: AppColors.backgroundWhite,
-                                //   transitionDuration:
-                                //       const Duration(milliseconds: 350),
-                                //   pageBuilder:
-                                //       (context, animation, secondaryAnimation) {
-                                //     return const AdminChatSupportDialog();
-                                //   },
-                                //   transitionBuilder: (context, animation,
-                                //       secondaryAnimation, child) {
-                                //     return SlideTransition(
-                                //       position: Tween<Offset>(
-                                //         begin: const Offset(0, 1),
-                                //         end: Offset.zero,
-                                //       ).animate(
-                                //         CurvedAnimation(
-                                //           parent: animation,
-                                //           curve: Curves.easeInOutCubic,
-                                //         ),
-                                //       ),
-                                //       child: child,
-                                //     );
-                                //   },
-                                // );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(15),
-                                child: Text(
-                                  "\uf590",
-                                  style: fontAwesomeSolid(
-                                      null, 20, AppColors.iconLight, null),
+                                  // showGeneralDialog(
+                                  //   context: context,
+                                  //   barrierDismissible: false,
+                                  //   barrierColor: AppColors.backgroundWhite,
+                                  //   transitionDuration:
+                                  //       const Duration(milliseconds: 350),
+                                  //   pageBuilder:
+                                  //       (context, animation, secondaryAnimation) {
+                                  //     return const AdminChatSupportDialog();
+                                  //   },
+                                  //   transitionBuilder: (context, animation,
+                                  //       secondaryAnimation, child) {
+                                  //     return SlideTransition(
+                                  //       position: Tween<Offset>(
+                                  //         begin: const Offset(0, 1),
+                                  //         end: Offset.zero,
+                                  //       ).animate(
+                                  //         CurvedAnimation(
+                                  //           parent: animation,
+                                  //           curve: Curves.easeInOutCubic,
+                                  //         ),
+                                  //       ),
+                                  //       child: child,
+                                  //     );
+                                  //   },
+                                  // );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(15),
+                                  child: Text(
+                                    "\uf590",
+                                    style: fontAwesomeSolid(
+                                        null, 20, AppColors.iconLight, null),
+                                  ),
                                 ),
                               ),
-                            ),
                             // SizedBox(width: 30),
 
                             // Messages with Badge
